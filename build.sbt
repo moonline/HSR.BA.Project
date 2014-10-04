@@ -10,7 +10,15 @@ libraryDependencies ++= Seq(
   javaJdbc,
   javaEbean,
   cache,
-  javaWs
+  javaWs,
+  //see latest versions under: http://mvnrepository.com/artifact/org.seleniumhq.selenium
+  "org.seleniumhq.selenium"   % "selenium-api"             % "2.43.1",
+  "org.seleniumhq.selenium"   % "selenium-java"            % "2.43.1",
+  "org.seleniumhq.selenium"   % "selenium-support"         % "2.43.1",
+  "org.seleniumhq.selenium"   % "selenium-firefox-driver"  % "2.43.1",
+  "org.seleniumhq.selenium"   % "selenium-htmlunit-driver" % "2.43.1"
+  //"org.seleniumhq.selenium" % "selenium-ie-driver"       % "2.43.1",
+  //"org.seleniumhq.selenium" % "selenium-chrome-driver"   % "2.43.1",
 )
 
 // Jacoco
