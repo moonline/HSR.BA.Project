@@ -32,6 +32,8 @@ sudo apt-get -y install tomcat7
 echo "== Deploying CDAR.war =="
 sudo cp /vagrant/CDAR.war /var/lib/tomcat7/webapps/
 sudo chown tomcat7:tomcat7 /var/lib/tomcat7/webapps/CDAR.war
+echo "== Changing port to 9900 =="
+sudo sed -i "s/port=\"8080\"/port=\"9900\"/g" /etc/tomcat7/server.xml
 echo "== Restarting Tomcat =="
 sudo service tomcat7 restart
 echo "------ Installation of CDAR done ------"
@@ -52,6 +54,12 @@ sudo rm /tmp/mediawiki-*.tar.gz
 echo "== Linking Mediawiki into webserver =="
 sudo ln -s /etc/mediawiki/ /var/www/html
 
+echo "== Changing port to 9901 =="
+sudo echo "Listen 9901" >> /etc/apache2/ports.conf
+sudo sed -i "s/VirtualHost \*:80/VirtualHost *:80 *:9901/g" /etc/apache2/sites-enabled/000-default.conf
+echo "== Restarting webserver =="
+sudo service apache2 restart
+
 echo "== Setting up MySQL for Mediawiki (create user) =="
 mysql -u root -ptrVhFRXeDxYvN6js -e "CREATE USER 'wiki'@'localhost' IDENTIFIED BY 'wiki';"
 echo "== Setting up MySQL for Mediawiki (create schema) =="
@@ -62,7 +70,7 @@ echo "== Setting up MySQL for Mediawiki (flush privileges) =="
 mysql -u root -ptrVhFRXeDxYvN6js -e "FLUSH PRIVILEGES;"
 
 echo "== Configuring Mediawiki =="
-sudo php /etc/mediawiki/maintenance/install.php EEPPI-CDAR wikiadmin --pass TjLjJ7Urw9veVmtv --scriptpath /mediawiki --dbname wiki --dbuser wiki --dbpass wiki --server http://localhost:18080
+sudo php /etc/mediawiki/maintenance/install.php EEPPI-CDAR wikiadmin --pass TjLjJ7Urw9veVmtv --scriptpath /mediawiki --dbname wiki --dbuser wiki --dbpass wiki --server http://localhost:9901
 echo "------ Installation and configuration of Mediawiki done ------"
 
 
