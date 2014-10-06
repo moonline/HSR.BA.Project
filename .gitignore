@@ -38,3 +38,7 @@ dist
 
 # run  alias
 /run.sh
+
+# js
+public/classes/*.js
+public/Main.js

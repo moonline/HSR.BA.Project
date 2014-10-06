@@ -1,0 +1,14 @@
+{
+	"name": "EEPPI",
+	"version": "0.1",
+	"description": "Transform architectural decisions to project planning tasks",
+	"launch_path": "index.html",
+	"icons": {
+		"256": "/resources/img/appIcon-256.png",
+	},
+	"developer": {
+		"name": "Tobias Blaser, Laurin Murer",
+		"url": "http://www.eeppi.ch"
+	},
+	"default_locale": "en"
+}

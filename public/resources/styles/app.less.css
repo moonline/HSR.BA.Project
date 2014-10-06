@@ -1,0 +1,12 @@
+* { -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; padding: 0; margin: 0; text-indent: 0; text-align: left; }
+
+html, body { margin: 0; padding: 0; }
+body { font-family: Arial, Helvetica, sans-serif; }
+
+header, footer { background: dodgerblue; background: linear-gradient(dodgerblue, steelblue); color: white; padding: 0.5rem; }
+header { border-bottom: 0.25rem solid black; }
+
+div.main { padding: 0.5rem; }
+
+ol, ul { list-style-position: inside; }
+ol ol, ol ul, ul ul, ul ol { margin-left: 1rem; }

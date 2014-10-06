@@ -1,0 +1,29 @@
+<section id="listView" data-layout="border" data-role="region">
+	<header data-region="north" data-layout="border" data-flow-direction="row">
+		<div data-region="middle" data-align="center">
+			<h1 data-region="west">Welcome to EEPPI</h1>
+		</div>
+	</header>
+	<div data-region="middle">
+		<div class="main" data-region="center" data-layout="flow" data-flow-direction="column" data-align="start">
+            <h2>Task templates</h2>
+            <ol data-type="list">
+                <li data-ng-repeat="template in taskTemplates">
+                    {{template.name}}
+                    <ul>
+                        <li data-ng-repeat="property in template.properties">
+                            {{property.name}}
+                        </li>
+                    </ul>
+                </li>
+            </ol>
+		</div>
+	</div>
+	<footer data-region="south">
+        <p>(C) EEPPI 2014</p>
+		<!--<menu data-type="toolbar" data-layout="flow" data-flow-direction="row">
+			
+			
+		</menu>-->
+	</footer>
+</section>

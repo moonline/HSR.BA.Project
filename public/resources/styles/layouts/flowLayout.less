@@ -1,0 +1,23 @@
+[data-layout="flow"], [data-layout="flow"] * { 
+	box-sizing: border-box; 
+}
+
+[data-layout="flow"] {
+	display: flex; 
+	justify-content: flex-start;
+	
+	[data-layout="flow"] { 
+		height: auto; 
+		align-items: center;
+	}
+	
+	&[data-flow-direction="column"]  {
+		> * { width: 100%; }
+		> [data-layout="flow"][data-flow-direction="column"] { 
+			width: auto; 
+		}
+	}
+	
+	&[data-flow-direction="column"] { flex-direction: column; }
+	&[data-flow-direction="row"] { flex-direction: row; }
+}
