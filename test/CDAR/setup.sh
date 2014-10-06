@@ -75,5 +75,5 @@ echo "------ Installation and configuration of Mediawiki done ------"
 
 
 echo "||=================================================================||"
-echo "|| CDAR is now available at http://localhost:8080/CDAR/cdarclient/ ||"
+echo "|| CDAR is now available at http://localhost:9900/CDAR/cdarclient/ ||"
 echo "||=================================================================||"

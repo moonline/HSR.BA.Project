@@ -30,3 +30,11 @@ dist
 
 # Vagrant
 .vagrant
+
+# linux trash
+*~
+*.tmp.*
+*.lock
+
+# run  alias
+/run.sh
