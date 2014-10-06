@@ -13,18 +13,10 @@ module core {
             '$location'
         ];
 
-        constructor($scope, $location) {
-            var taskProperties = [
-                new TaskProperty("type"), new TaskProperty("assignee"), new TaskProperty("Description")
-            ];
-
-            var taskTemplates = [
-                new TaskTemplate("Define criterions", [taskProperties[0], taskProperties[2]]),
-                new TaskTemplate("Rank criterions", [taskProperties[2]]),
-                new TaskTemplate("Find crition values", [taskProperties[0], taskProperties[1]])
-            ];
-
-            $scope.taskTemplates = taskTemplates;
+        constructor($scope, $location, persistenceService) {
+            persistenceService['taskTemplateRepository'].findAll(function(taskTemplates) {
+                $scope.taskTemplates = taskTemplates;
+            });
         }
     }
 }

@@ -1,0 +1,34 @@
+{
+    "taskTemplates": [
+        {
+            "name": "Define criterions",
+            "properties": [
+                {
+                    "name": "assignee"
+                },
+                {
+                    "name": "type"
+                }
+            ]
+        },
+        {
+            "name": "Rank criterions",
+            "properties": [
+                {
+                    "name": "assignee"
+                }
+            ]
+        },
+        {
+            "name": "Define criterion values",
+            "properties": [
+                {
+                    "name": "description"
+                },
+                {
+                    "name": "type"
+                }
+            ]
+        }
+    ]
+}
