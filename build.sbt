@@ -38,3 +38,9 @@ jacoco.excludes in jacoco.Config := Seq(
   "Routes*",
   "views.*"
 )
+
+// LESS compiler
+includeFilter in (Assets, LessKeys.less) := "*.less"
+
+// for minified *.min.css files instead of "normal" *.css files generated from the *less files
+// LessKeys.compress := true
