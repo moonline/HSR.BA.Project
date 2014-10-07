@@ -1544,7 +1544,7 @@ function setupModuleLoader(window) {
            * @propertyOf angular.Module
            * @returns {Array.<string>} List of module names which must be loaded before this module.
            * @description
-           * Holds the list of modules which the injector will load before the current module is
+           * Holds the list.json.json of modules which the injector will load before the current module is
            * loaded.
            */
           requires: requires,
@@ -2890,7 +2890,7 @@ HashMap.prototype = {
  * dependency injection (see {@link guide/di dependency injection}).
  *
 
- * @param {Array.<string|Function>} modules A list of module functions or their aliases. See
+ * @param {Array.<string|Function>} modules A list.json.json of module functions or their aliases. See
  *        {@link angular.module}. The `ng` module must be explicitly added.
  * @returns {function()} Injector function. See {@link AUTO.$injector $injector}.
  *
@@ -4070,7 +4070,7 @@ function Browser(window, document, $log, $sniffer) {
    * @param {function()} fn Poll function to add
    *
    * @description
-   * Adds a function to the list of functions that poller periodically executes,
+   * Adds a function to the list.json.json of functions that poller periodically executes,
    * and starts polling if not started yet.
    *
    * @returns {function()} the added function
@@ -4490,7 +4490,7 @@ function $CacheFactoryProvider() {
 
 
       /**
-       * makes the `entry` the freshEnd of the LRU linked list
+       * makes the `entry` the freshEnd of the LRU linked list.json.json
        */
       function refresh(entry) {
         if (entry != freshEnd) {
@@ -4509,7 +4509,7 @@ function $CacheFactoryProvider() {
 
 
       /**
-       * bidirectionally links two entries of the LRU linked list
+       * bidirectionally links two entries of the LRU linked list.json.json
        */
       function link(nextEntry, prevEntry) {
         if (nextEntry != prevEntry) {
@@ -4881,7 +4881,7 @@ function $TemplateCacheProvider() {
  *   * `tElement` - template element - The element where the directive has been declared. It is
  *     safe to do template transformation on the element and child elements only.
  *
- *   * `tAttrs` - template attributes - Normalized list of attributes declared on this element shared
+ *   * `tAttrs` - template attributes - Normalized list.json.json of attributes declared on this element shared
  *     between all directive compile functions.
  *
  *   * `transclude` -  [*DEPRECATED*!] A transclude linking function: `function(scope, cloneLinkingFn)`
@@ -4927,7 +4927,7 @@ function $TemplateCacheProvider() {
  *     manipulate the children of the element only in `postLink` function since the children have
  *     already been linked.
  *
- *   * `iAttrs` - instance attributes - Normalized list of attributes declared on this element shared
+ *   * `iAttrs` - instance attributes - Normalized list.json.json of attributes declared on this element shared
  *     between all directive linking functions.
  *
  *   * `controller` - a controller instance - A controller instance if at least one directive on the
@@ -5516,7 +5516,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
       function compositeLinkFn(scope, nodeList, $rootElement, boundTranscludeFn) {
         var nodeLinkFn, childLinkFn, node, $node, childScope, childTranscludeFn, i, ii, n;
 
-        // copy nodeList so that linking doesn't break due to live list updates.
+        // copy nodeList so that linking doesn't break due to live list.json.json updates.
         var stableNodeList = [];
         for (i = 0, ii = nodeList.length; i < ii; i++) {
           stableNodeList.push(nodeList[i]);
@@ -7010,7 +7010,7 @@ function $HttpProvider() {
      *   $http.post('/someUrl', data).success(successCallback);
      * </pre>
      *
-     * Complete list of shortcut methods:
+     * Complete list.json.json of shortcut methods:
      *
      * - {@link ng.$http#methods_get $http.get}
      * - {@link ng.$http#methods_head $http.head}
@@ -10968,7 +10968,7 @@ function qFactory(nextTick, exceptionHandler) {
  *     items to the array at the beginning (shift) instead of at the end (push)
  *
  * Child scopes are created and removed often
- *   - Using an array would be slow since inserts in middle are expensive so we use linked list
+ *   - Using an array would be slow since inserts in middle are expensive so we use linked list.json.json
  *
  * There are few watches then a lot of observers. This is why you don't want the observer to be
  * implemented in the same way as watch. Watch requires return of initialization function which
@@ -14622,7 +14622,7 @@ function ngDirective(directive) {
  *
  * This change permits the easy creation of action links with the `ngClick` directive
  * without changing the location or causing page reloads, e.g.:
- * `<a href="" ng-click="list.addItem()">Add Item</a>`
+ * `<a href="" ng-click="list.json.json.addItem()">Add Item</a>`
  */
 var htmlAnchorDirective = valueFn({
   restrict: 'E',
@@ -16517,7 +16517,7 @@ var NgModelController = ['$scope', '$exceptionHandler', '$attrs', '$element', '$
    * which includes any validators. The value that comes out of this `$parsers` pipeline, be applied to
    * `$modelValue` and the **expression** specified in the `ng-model` attribute.
    * 
-   * Lastly, all the registered change listeners, in the `$viewChangeListeners` list, are called.
+   * Lastly, all the registered change listeners, in the `$viewChangeListeners` list.json.json, are called.
    *
    * Note that calling this function does not trigger a `$digest`.
    *
@@ -16746,7 +16746,7 @@ var requiredDirective = function() {
          }
        </script>
        <form name="myForm" ng-controller="Ctrl">
-         List: <input name="namesInput" ng-model="names" ng-list required>
+         List: <input name="namesInput" ng-model="names" ng-list.json.json required>
          <span class="error" ng-show="myForm.namesInput.$error.required">
            Required!</span>
          <br>
@@ -17863,11 +17863,11 @@ forEach(
      <doc:source>
       <script>
         function Ctrl($scope) {
-          $scope.list = [];
+          $scope.list.json.json = [];
           $scope.text = 'hello';
           $scope.submit = function() {
             if (this.text) {
-              this.list.push(this.text);
+              this.list.json.json.push(this.text);
               this.text = '';
             }
           };
@@ -17877,21 +17877,21 @@ forEach(
         Enter text and hit enter:
         <input type="text" ng-model="text" name="text" />
         <input type="submit" id="submit" value="Submit" />
-        <pre>list={{list}}</pre>
+        <pre>list.json.json={{list.json.json}}</pre>
       </form>
      </doc:source>
      <doc:scenario>
        it('should check ng-submit', function() {
-         expect(binding('list')).toBe('[]');
+         expect(binding('list.json.json')).toBe('[]');
          element('.doc-example-live #submit').click();
-         expect(binding('list')).toBe('["hello"]');
+         expect(binding('list.json.json')).toBe('["hello"]');
          expect(input('text').val()).toBe('');
        });
        it('should ignore empty strings', function() {
-         expect(binding('list')).toBe('[]');
+         expect(binding('list.json.json')).toBe('[]');
          element('.doc-example-live #submit').click();
          element('.doc-example-live #submit').click();
-         expect(binding('list')).toBe('["hello"]');
+         expect(binding('list.json.json')).toBe('["hello"]');
        });
      </doc:scenario>
    </doc:example>
@@ -18332,13 +18332,13 @@ var ngIncludeDirective = ['$http', '$templateCache', '$anchorScroll', '$compile'
      <doc:source>
    <script>
      function Ctrl($scope) {
-       $scope.list = [['a', 'b'], ['c', 'd']];
+       $scope.list.json.json = [['a', 'b'], ['c', 'd']];
      }
    </script>
    <div ng-controller="Ctrl">
-     <div ng-repeat="innerList in list" ng-init="outerIndex = $index">
+     <div ng-repeat="innerList in list.json.json" ng-init="outerIndex = $index">
        <div ng-repeat="value in innerList" ng-init="innerIndex = $index">
-          <span class="example-init">list[ {{outerIndex}} ][ {{innerIndex}} ] = {{value}};</span>
+          <span class="example-init">list.json.json[ {{outerIndex}} ][ {{innerIndex}} ] = {{value}};</span>
        </div>
      </div>
    </div>
@@ -18346,10 +18346,10 @@ var ngIncludeDirective = ['$http', '$templateCache', '$anchorScroll', '$compile'
      <doc:scenario>
        it('should alias index positions', function() {
          expect(element('.example-init').text())
-           .toBe('list[ 0 ][ 0 ] = a;' +
-                 'list[ 0 ][ 1 ] = b;' +
-                 'list[ 1 ][ 0 ] = c;' +
-                 'list[ 1 ][ 1 ] = d;');
+           .toBe('list.json.json[ 0 ][ 0 ] = a;' +
+                 'list.json.json[ 0 ][ 1 ] = b;' +
+                 'list.json.json[ 1 ][ 0 ] = c;' +
+                 'list.json.json[ 1 ][ 1 ] = d;');
        });
      </doc:scenario>
    </doc:example>
@@ -18677,8 +18677,8 @@ var ngPluralizeDirective = ['$locale', '$interpolate', function($locale, $interp
  * as **data-ng-repeat-start**, **x-ng-repeat-start** and **ng:repeat-start**).
  *
  * @animations
- * enter - when a new item is added to the list or when an item is revealed after a filter
- * leave - when an item is removed from the list or when an item is filtered out
+ * enter - when a new item is added to the list.json.json or when an item is revealed after a filter
+ * leave - when an item is removed from the list.json.json or when an item is filtered out
  * move - when an adjacent item is filtered out causing a reorder or when the item contents are reordered
  *
  * @element ANY
@@ -18720,7 +18720,7 @@ var ngPluralizeDirective = ['$locale', '$interpolate', function($locale, $interp
  *     to items in conjunction with a tracking expression.
  *
  * @example
- * This example initializes the scope to a list of names and
+ * This example initializes the scope to a list.json.json of names and
  * then uses `ngRepeat` to display every person:
   <example animations="true">
     <file name="index.html">
@@ -18749,14 +18749,14 @@ var ngPluralizeDirective = ['$locale', '$interpolate', function($locale, $interp
       .example-animate-container {
         background:white;
         border:1px solid black;
-        list-style:none;
+        list.json.json-style:none;
         margin:0;
         padding:0 10px;
       }
 
       .animate-repeat {
         line-height:40px;
-        list-style:none;
+        list.json.json-style:none;
         box-sizing:border-box;
       }
 
@@ -18854,7 +18854,7 @@ var ngRepeatDirective = ['$parse', '$animate', function($parse, $animate) {
         valueIdentifier = match[3] || match[1];
         keyIdentifier = match[2];
 
-        // Store a list of elements from previous run. This is a hash where key is the item from the
+        // Store a list.json.json of elements from previous run. This is a hash where key is the item from the
         // iterator, and the value is objects with following properties.
         //   - scope: bound scope
         //   - element: previous element.
@@ -19018,7 +19018,7 @@ var ngRepeatDirective = ['$parse', '$animate', function($parse, $animate) {
  *
  * You may be wondering why !important is used for the .ng-hide CSS class. This is because the `.ng-hide` selector
  * can be easily overridden by heavier selectors. For example, something as simple
- * as changing the display style on a HTML list item would make hidden elements appear visible.
+ * as changing the display style on a HTML list.json.json item would make hidden elements appear visible.
  * This also becomes a bigger issue when dealing with CSS frameworks.
  *
  * By using !important, the show and hide behavior will work as expected despite any clash between CSS selector
@@ -19167,7 +19167,7 @@ var ngShowDirective = ['$animate', function($animate) {
  *
  * You may be wondering why !important is used for the .ng-hide CSS class. This is because the `.ng-hide` selector
  * can be easily overridden by heavier selectors. For example, something as simple
- * as changing the display style on a HTML list item would make hidden elements appear visible.
+ * as changing the display style on a HTML list.json.json item would make hidden elements appear visible.
  * This also becomes a bigger issue when dealing with CSS frameworks.
  *
  * By using !important, the show and hide behavior will work as expected despite any clash between CSS selector
@@ -19644,7 +19644,7 @@ var ngOptionsMinErr = minErr('ngOptions');
  *
  * # `ngOptions`
  *
- * The `ngOptions` attribute can be used to dynamically generate a list of `<option>`
+ * The `ngOptions` attribute can be used to dynamically generate a list.json.json of `<option>`
  * elements for the `<select>` element using the array or object obtained by evaluating the
  * `ngOptions` comprehension_expression.
  *
@@ -19738,7 +19738,7 @@ var ngOptionsMinErr = minErr('ngOptions');
           </select><br/>
 
 
-          Select <a href ng-click="color={name:'not in list'}">bogus</a>.<br>
+          Select <a href ng-click="color={name:'not in list.json.json'}">bogus</a>.<br>
           <hr/>
           Currently selected: {{ {selected_color:color}  }}
           <div style="border:solid 1px black; height:20px"
@@ -19986,7 +19986,7 @@ var selectDirective = ['$compile', '$parse', function($compile,   $parse) {
               for (groupIndex = 0, groupLength = optionGroupsCache.length;
                    groupIndex < groupLength;
                    groupIndex++) {
-                // list of options for that group. (first item has the parent)
+                // list.json.json of options for that group. (first item has the parent)
                 optionGroup = optionGroupsCache[groupIndex];
 
                 for(index = 1, length = optionGroup.length; index < length; index++) {
@@ -20069,7 +20069,7 @@ var selectDirective = ['$compile', '$parse', function($compile,   $parse) {
             }
           }
 
-          // We now build up the list of options we need (we merge later)
+          // We now build up the list.json.json of options we need (we merge later)
           for (index = 0; length = keys.length, index < length; index++) {
             
             key = index;
@@ -20121,14 +20121,14 @@ var selectDirective = ['$compile', '$parse', function($compile,   $parse) {
             }
           }
 
-          // Now we need to update the list of DOM nodes to match the optionGroups we computed above
+          // Now we need to update the list.json.json of DOM nodes to match the optionGroups we computed above
           for (groupIndex = 0, groupLength = optionGroupNames.length;
                groupIndex < groupLength;
                groupIndex++) {
             // current option group name or '' if no group
             optionGroupName = optionGroupNames[groupIndex];
 
-            // list of options for that group. (first item has the parent)
+            // list.json.json of options for that group. (first item has the parent)
             optionGroup = optionGroups[optionGroupName];
 
             if (optionGroupsCache.length <= groupIndex) {

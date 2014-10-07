@@ -1,0 +1,14 @@
+<div class="main" data-region="center" data-layout="flow" data-flow-direction="column" data-align="start">
+	<h2>Decisions</h2>
+	<ol data-type="list">
+		<li data-ng-repeat="decision in decisions">
+			{{decision.name}}<br />
+			Options:<br />
+			<ul>
+				<li data-ng-repeat="option in decision.options">
+					{{option.name}}
+				</li>
+			</ul>
+		</li>
+	</ol>
+</div>
