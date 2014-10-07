@@ -13,7 +13,24 @@
 
 	</head>
 	<body>
-        <div class="page" data-ng-view></div>
+		<header data-region="north" data-layout="border" data-flow-direction="row">
+			<div data-region="middle" data-align="center">
+				<h1 data-region="west">EEPPI</h1>
+			</div>
+		</header>
+
+		<section id="listView" data-layout="border" data-role="region">
+			<div data-region="middle" data-ng-view></div>
+		</section>
+
+		<footer data-region="south">
+			<p>(C) EEPPI 2014</p>
+			<nav data-type="toolbar" data-layout="flow" data-flow-direction="row">
+				<a href="#/">Task templates</a>
+				<a href="#/decisions">Decisions</a>
+			</nav>
+		</footer>
+
         <script src="resources/libraries/angularJs/angular.js" ></script>
         <script src="resources/libraries/angularJs/angularRoute.js" ></script>
 

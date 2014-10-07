@@ -10,3 +10,6 @@ div.main { padding: 0.5rem; }
 
 ol, ul { list-style-position: inside; }
 ol ol, ol ul, ul ul, ul ol { margin-left: 1rem; }
+
+a, a:link, a:hover { color: black; }
+a:hover { color: white; }
