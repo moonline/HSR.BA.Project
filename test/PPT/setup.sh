@@ -34,3 +34,42 @@ echo "||================================================||"
 echo "|| JIRA is now available at http://localhost:9920 ||"
 echo "||================================================||"
 
+
+echo
+
+
+echo "====== Starting installation and configuration of Redmine ======"
+
+echo "== Installing Redmine =="
+sudo debconf-set-selections <<< 'redmine redmine/instances/default/dbconfig-install boolean true'
+sudo debconf-set-selections <<< 'redmine redmine/instances/default/database-type select  sqlite3'
+sudo apt-get -y install redmine-sqlite
+
+echo "== Installing Apache =="
+sudo apt-get -y install apache2 libapache2-mod-passenger libapache2-mod-fcgid
+
+echo "== Configuring Apache to serve Redmine =="
+sudo cp /usr/share/doc/redmine/examples/apache2-host.conf /etc/apache2/sites-enabled/redmine.conf
+
+echo "== Enabling necessary Apache modules =="
+sudo a2enmod rewrite
+
+echo "== Changing port to 9930 =="
+sudo bash -c 'echo "Listen 9930" >> /etc/apache2/ports.conf'
+sudo sed -i "s/8080/9930/g" /etc/apache2/sites-enabled/redmine.conf
+
+echo "== Installing necessary GEMs =="
+sudo gem install passenger
+sudo gem install bundler
+
+echo "== Make Redmine-folder owned by Webserver-User =="
+sudo chown www-data:www-data -R /usr/share/redmine
+
+echo "== Restarting Apache =="
+sudo service apache2 restart
+
+echo "------ Installation and configuration of Redmine done ------"
+
+echo "||===================================================||"
+echo "|| Redmine is now available at http://localhost:9930 ||"
+echo "||===================================================||"
