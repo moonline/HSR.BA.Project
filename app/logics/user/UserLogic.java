@@ -27,6 +27,15 @@ public class UserLogic {
 		session.remove(SESSION_USER_IDENTIFIER);
 	}
 
+	public User getLoggedInUser(Http.Session session) {
+		String userIdString = session.get(SESSION_USER_IDENTIFIER);
+		if (userIdString == null || !userIdString.matches("\\d+")) {
+			return null;
+		}
+		Long userId = Long.valueOf(userIdString);
+		return USER_DAO.readById(userId);
+	}
+
 	public boolean changePassword(User user, String old_password, String new_password) {
 		if (!passwordCorrect(user, old_password)) {
 			return false;

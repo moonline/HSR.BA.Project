@@ -14,6 +14,8 @@ import static play.test.Helpers.callAction;
 
 public abstract class AbstractControllerTest extends AbstractDatabaseTest {
 
+	private static int uniqueIdCounter = 0;
+
 	protected static Result callPostAction(HandlerRef<?> target, String... postParamsKeyValuePairs) {
 		final Map<String, String> postData = new HashMap<>();
 		for (int i = 0; i < postParamsKeyValuePairs.length; i += 2) {
@@ -34,6 +36,15 @@ public abstract class AbstractControllerTest extends AbstractDatabaseTest {
 		FakeRequest fakeRequest = new FakeRequest().withFormUrlEncodedBody(postData);
 		fakeRequest = fakeRequest.withSession(UserLogic.SESSION_USER_IDENTIFIER, user.getId() + "");
 		return callAction(target, fakeRequest);
+	}
+
+	protected static Result callActionWithUser(HandlerRef<?> target) {
+		return callActionWithUser(target, new HashMap<String, String>(0));
+	}
+
+	protected static Result callActionWithUser(HandlerRef<?> target, Map<String, String> postData) {
+		User user = AbstractTestDataCreator.createUser("Benutzer " + uniqueIdCounter++, "1234");
+		return callActionWithUser(target, user, postData);
 	}
 
 }

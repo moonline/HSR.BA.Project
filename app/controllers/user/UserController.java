@@ -1,9 +1,12 @@
 package controllers.user;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import logics.user.UserLogic;
+import models.user.User;
 import play.data.DynamicForm;
 import play.data.Form;
 import play.db.jpa.Transactional;
+import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 
@@ -29,8 +32,15 @@ public class UserController extends Controller {
 		return ok();
 	}
 
+	@Transactional(readOnly = true)
 	public static Result login_status() {
-		return TODO;
+		ObjectNode result = Json.newObject();
+		User user = USER_LOGIC.getLoggedInUser(session());
+		result.put("is_logged_in", user != null);
+		if (user != null) {
+			result.put("name", user.getName());
+		}
+		return ok(result);
 	}
 
 	@Transactional()

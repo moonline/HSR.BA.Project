@@ -85,4 +85,24 @@ public class UserControllerTest extends AbstractControllerTest {
 		assertThat(USER_DAO.readAll().size()).isEqualTo(userCountAtStart);
 	}
 
+	@Test
+	public void testLoginStatusForUser() throws Throwable {
+		//Setup
+		User user = AbstractTestDataCreator.createUserWithTransaction("Hans Meier", "1234");
+		//Test
+		Result result = callActionWithUser(controllers.user.routes.ref.UserController.login_status(), user);
+		//Verification
+		assertThat(status(result)).isEqualTo(OK);
+		assertThat(contentAsString(result)).isEqualTo("{\"is_logged_in\":true,\"name\":\"Hans Meier\"}");
+	}
+
+	@Test
+	public void testLoginStatusForGuest() {
+		//Test
+		Result result = callAction(controllers.user.routes.ref.UserController.login_status());
+		//Verification
+		assertThat(status(result)).isEqualTo(OK);
+		assertThat(contentAsString(result)).isEqualTo("{\"is_logged_in\":false}");
+	}
+
 }
