@@ -1,9 +1,13 @@
+/// <reference path='resources/libraries/angularJs/angular.d.ts' />
+/// <reference path='classes/module/MainModule.ts' />
+
 /// <reference path='classes/application/TaskTemplateListController.ts' />
 /// <reference path='classes/application/DecisionListController.ts' />
-/// <reference path='classes/module/MainModule.ts' />
-/// <reference path='resources/libraries/angularJs/angular.d.ts' />
+/// <reference path='classes/application/MappingController.ts' />
+
 /// <reference path='classes/domain/repository/TaskTemplateRepository.ts' />
 /// <reference path='classes/domain/repository/DecisionRepository.ts' />
+/// <reference path='classes/domain/repository/MappingRepository.ts' />
 
 
 module core {
@@ -20,6 +24,10 @@ module core {
 			templateUrl: 'resources/views/templates/decisionListView.html',
 			controller: 'decisionListController'
 		});
+		$routeProvider.when('/mappings', {
+			templateUrl: 'resources/views/templates/mappingView.html',
+			controller: 'mappingController'
+		});
         $routeProvider.otherwise({
             redirectTo:'/'
         });
@@ -27,12 +35,15 @@ module core {
 
     app.controller('taskTemplateListController', ['$scope', '$location', 'persistenceService', TaskTemplateListController]);
 	app.controller('decisionListController', ['$scope', '$location', 'persistenceService', DecisionListController]);
+	app.controller('mappingController', ['$scope', '$location', 'persistenceService', MappingController]);
 
     app.service('persistenceService', ['$http', function($http) {
-        return {
+		var services = {
             taskTemplateRepository: new core.TaskTemplateRepository($http),
-			decisionRepository: new dks.DecisionRepository($http)
+			decisionRepository: new dks.DecisionRepository($http),
+			mappingRepository: new core.MappingRepository($http)
         };
+		return services;
     }]);
 
     angular.bootstrap(document, ["MainModule"]);

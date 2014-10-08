@@ -1,13 +1,13 @@
 <div class="main" data-region="center" data-layout="flow" data-flow-direction="column" data-align="start">
-	<h2>Task templates</h2>
-	<ol data-type="list">
+	<h2>Task templates ({{taskTemplates.length}})</h2>
+	<ul data-type="list">
 		<li data-ng-repeat="template in taskTemplates">
-			{{template.name}}
+			{{template.name}} [{{template.id}}]
 			<ul>
 				<li data-ng-repeat="property in template.properties">
-					{{property.name}}
+					{{property.name}} [{{property.id}}]
 				</li>
 			</ul>
 		</li>
-	</ol>
+	</ul>
 </div>

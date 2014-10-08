@@ -1,9 +1,12 @@
 /// <reference path='../../classes/domain/model/TaskTemplate.ts' />
+/// <reference path='../../classes/domain/repository/TaskTemplateRepository.ts' />
 
 module core {
     'use strict';
 
     export class TaskTemplateListController {
+		taskTemplateRepository: TaskTemplateRepository;
+		$scope: any;
 
         /**
          * @inject
@@ -14,9 +17,11 @@ module core {
         ];
 
         constructor($scope, $location, persistenceService) {
-            persistenceService['taskTemplateRepository'].findAll(function(taskTemplates) {
+			this.$scope = $scope;
+			this.taskTemplateRepository = persistenceService['taskTemplateRepository'];
+            this.taskTemplateRepository.findAll(function(taskTemplates) {
                 $scope.taskTemplates = taskTemplates;
             });
-        }
+		}
     }
 }

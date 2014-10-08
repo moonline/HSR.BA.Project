@@ -1,0 +1,22 @@
+<div class="main" data-region="center" data-layout="flow" data-flow-direction="column" data-align="start">
+	<h2>Mappings ({{mappings.length}})</h2>
+	<ul data-type="list">
+		<li data-ng-repeat="mapping in mappings">
+			<strong>[{{mapping.id}}]: {{mapping.decision.name}} [{{mapping.decision.id}}]</strong><br />
+			Task templates:<br />
+			<ul>
+				<li data-ng-repeat="taskTemplate in mapping.taskTemplates">
+					{{taskTemplate.name}} [{{taskTemplate.id}}]
+				</li>
+			</ul>
+		</li>
+	</ul>
+	<h2>New Mapping</h2>
+	<form>
+		<label>Decision</label><br />
+		<select data-ng-model="newMapping.decision" data-ng-options="decision.name for decision in decisions"></select><br />
+		<label>Task templates</label><br />
+		<select data-ng-model="newMapping.taskTemplates" multiple data-ng-multiple="true" data-ng-options="taskTemplate.name for taskTemplate in taskTemplates"></select><br />
+		<button data-ng-click="create()">(+) Create</button>
+	</form>
+</div>

@@ -8,6 +8,8 @@ header { border-bottom: 0.25rem solid black; }
 
 div.main { padding: 0.5rem; }
 
+h2 { margin-top: 0.5rem; margin-bottom: 0.25rem; }
+
 ol, ul { list-style-position: inside; }
 ol ol, ol ul, ul ul, ul ol { margin-left: 1rem; }
 
