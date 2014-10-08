@@ -16,14 +16,6 @@ public abstract class AbstractControllerTest extends AbstractDatabaseTest {
 
 	private static int uniqueIdCounter = 0;
 
-	protected static Result callPostAction(HandlerRef<?> target, String... postParamsKeyValuePairs) {
-		final Map<String, String> postData = new HashMap<>();
-		for (int i = 0; i < postParamsKeyValuePairs.length; i += 2) {
-			postData.put(postParamsKeyValuePairs[i], postParamsKeyValuePairs[i + 1]);
-		}
-		return callPostAction(target, postData);
-	}
-
 	protected static Result callPostAction(HandlerRef<?> target, Map<String, String> postData) {
 		return callAction(target, new FakeRequest().withFormUrlEncodedBody(postData));
 	}
@@ -45,6 +37,14 @@ public abstract class AbstractControllerTest extends AbstractDatabaseTest {
 	protected static Result callActionWithUser(HandlerRef<?> target, Map<String, String> postData) {
 		User user = AbstractTestDataCreator.createUser("Benutzer " + uniqueIdCounter++, "1234");
 		return callActionWithUser(target, user, postData);
+	}
+
+	protected static Map<String, String> postData(String... data) {
+		final Map<String, String> postData = new HashMap<>();
+		for (int i = 0; i < data.length; i += 2) {
+			postData.put(data[i], data[i + 1]);
+		}
+		return postData;
 	}
 
 }

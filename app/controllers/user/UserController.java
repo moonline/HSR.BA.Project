@@ -58,4 +58,23 @@ public class UserController extends Controller {
 		return ok();
 	}
 
+	@Transactional()
+	public static Result changePassword() {
+		User user = USER_LOGIC.getLoggedInUser(session());
+		DynamicForm requestData = Form.form().bindFromRequest();
+		String old_password = requestData.get("old_password");
+		String new_password = requestData.get("new_password");
+		String new_password_repeat = requestData.get("new_password_repeat");
+		if (new_password == null || new_password_repeat == null) {
+			return badRequest("Missing new password");
+		} else if (!new_password.equals(new_password_repeat)) {
+			return badRequest("The two passwords do not match");
+		}
+		if (USER_LOGIC.changePassword(user, old_password, new_password)) {
+			return ok();
+		} else {
+			return badRequest("Could not change password");
+		}
+	}
+
 }
