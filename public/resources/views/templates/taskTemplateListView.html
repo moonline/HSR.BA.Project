@@ -2,10 +2,11 @@
 	<h2>Task templates ({{taskTemplates.length}})</h2>
 	<ul data-type="list">
 		<li data-ng-repeat="template in taskTemplates">
-			{{template.name}} [{{template.id}}]
+			<strong>{{template.name}}</strong> [{{template.id}}]<br />
+			Properties:<br />
 			<ul>
 				<li data-ng-repeat="property in template.properties">
-					{{property.name}} [{{property.id}}]
+					<strong>{{property.property.name}}</strong>[{{property.property.id}}]: {{property.value}} [{{property.id}}]
 				</li>
 			</ul>
 		</li>

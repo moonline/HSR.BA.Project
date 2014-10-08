@@ -1,5 +1,6 @@
 /// <reference path='../../classes/domain/model/TaskTemplate.ts' />
 /// <reference path='../../classes/domain/model/Decision.ts' />
+
 /// <reference path='../../classes/domain/repository/TaskTemplateRepository.ts' />
 /// <reference path='../../classes/domain/repository/DecisionRepository.ts' />
 /// <reference path='../../classes/domain/repository/MappingRepository.ts' />

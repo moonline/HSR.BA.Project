@@ -2,7 +2,7 @@
 	<h2>Mappings ({{mappings.length}})</h2>
 	<ul data-type="list">
 		<li data-ng-repeat="mapping in mappings">
-			<strong>[{{mapping.id}}]: {{mapping.decision.name}} [{{mapping.decision.id}}]</strong><br />
+			[{{mapping.id}}]: <strong>{{mapping.decision.name}}</strong> [{{mapping.decision.id}}]<br />
 			Task templates:<br />
 			<ul>
 				<li data-ng-repeat="taskTemplate in mapping.taskTemplates">

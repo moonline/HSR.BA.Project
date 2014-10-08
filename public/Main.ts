@@ -4,6 +4,7 @@
 /// <reference path='classes/application/TaskTemplateListController.ts' />
 /// <reference path='classes/application/DecisionListController.ts' />
 /// <reference path='classes/application/MappingController.ts' />
+/// <reference path='classes/application/TransmissionController.ts' />
 
 /// <reference path='classes/domain/repository/TaskTemplateRepository.ts' />
 /// <reference path='classes/domain/repository/DecisionRepository.ts' />
@@ -28,6 +29,10 @@ module core {
 			templateUrl: 'resources/views/templates/mappingView.html',
 			controller: 'mappingController'
 		});
+		$routeProvider.when('/transmission', {
+			templateUrl: 'resources/views/templates/transmissionView.html',
+			controller: 'transmissionController'
+		});
         $routeProvider.otherwise({
             redirectTo:'/'
         });
@@ -36,14 +41,14 @@ module core {
     app.controller('taskTemplateListController', ['$scope', '$location', 'persistenceService', TaskTemplateListController]);
 	app.controller('decisionListController', ['$scope', '$location', 'persistenceService', DecisionListController]);
 	app.controller('mappingController', ['$scope', '$location', 'persistenceService', MappingController]);
+	app.controller('transmissionController', ['$scope', '$location', 'persistenceService', TransmissionController]);
 
     app.service('persistenceService', ['$http', function($http) {
-		var services = {
+		return {
             taskTemplateRepository: new core.TaskTemplateRepository($http),
 			decisionRepository: new dks.DecisionRepository($http),
 			mappingRepository: new core.MappingRepository($http)
         };
-		return services;
     }]);
 
     angular.bootstrap(document, ["MainModule"]);

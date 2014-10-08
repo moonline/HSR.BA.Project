@@ -1,4 +1,4 @@
-/// <reference path='../../../classes/domain/model/TaskProperty.ts' />
+/// <reference path='../../../classes/domain/model/TaskPropertyValue.ts' />
 /// <reference path='../../../classes/domain/repository/PersistentEntity.ts' />
 
 module core {
@@ -8,10 +8,10 @@ module core {
         // TODO: replace this ugly hack. This is only for first json import
         public static createFromJson(object: any): TaskTemplate {
 			console.log(object);
-			var taskProperties: TaskProperty[] = [];
+			var taskProperties: TaskPropertyValue[] = [];
 
 			object.properties.forEach(function(element){
-				taskProperties.push(TaskProperty.createFromJson(element));
+				taskProperties.push(TaskPropertyValue.createFromJson(element));
 			});
             var domainObject: TaskTemplate = new TaskTemplate(object.name, taskProperties);
 			domainObject.id = object.id;
@@ -21,19 +21,19 @@ module core {
 
 		public id;
         public name:string;
-        private theProperties: TaskProperty[];
+        private theProperties: TaskPropertyValue[];
 
-        constructor(name: string, properties: TaskProperty[] = []) {
+        constructor(name: string, properties: TaskPropertyValue[] = []) {
 			this.id = Math.round(Math.random()*1000000);
 			this.name = name;
             this.theProperties = properties;
         }
 
-        get properties():TaskProperty[] {
+        get properties():TaskPropertyValue[] {
             return this.theProperties;
         }
 
-        public addProperty(property: TaskProperty) {
+        public addProperty(property: TaskPropertyValue) {
             this.theProperties.push(property);
         }
     }
