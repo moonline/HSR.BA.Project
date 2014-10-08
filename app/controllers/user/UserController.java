@@ -25,7 +25,8 @@ public class UserController extends Controller {
 	}
 
 	public static Result logout() {
-		return TODO;
+		USER_LOGIC.logoutUser(session());
+		return ok();
 	}
 
 	public static Result login_status() {

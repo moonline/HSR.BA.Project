@@ -12,14 +12,19 @@ import java.util.logging.Logger;
 public class UserLogic {
 
 	public static final UserDAO USER_DAO = new UserDAO();
+	public static final String SESSION_USER_IDENTIFIER = "user";
 
 	public User loginUser(String name, String password, Http.Session session) {
 		User user = USER_DAO.readByName(name);
 		if (passwordCorrect(user, password)) {
-			session.put("user", user.getId() + "");
+			session.put(SESSION_USER_IDENTIFIER, user.getId() + "");
 			return user;
 		}
 		return null;
+	}
+
+	public void logoutUser(Http.Session session) {
+		session.remove(SESSION_USER_IDENTIFIER);
 	}
 
 	public boolean changePassword(User user, String old_password, String new_password) {
