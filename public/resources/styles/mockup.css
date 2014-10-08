@@ -12,6 +12,8 @@ header, footer { background: silver; }
 
 h2 { width: 100%; border-bottom: 2px solid black; margin-bottom: 10px; margin-top: 5px; }
 
+pre, code { font-family: mono; background: white; margin-top: 5px; }
+
 ul, ol { list-style-position: inside; list-style-type: none; }
 ul li, ol li { text-indent: 0px; background: gainsboro; margin-bottom: 5px; padding: 5px; }
 ul ul, ul ol, ol ul, ol ol { margin-left: 20px; }

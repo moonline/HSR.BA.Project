@@ -7,7 +7,6 @@ module core {
     export class TaskTemplate implements core.PersistentEntity {
         // TODO: replace this ugly hack. This is only for first json import
         public static createFromJson(object: any): TaskTemplate {
-			console.log(object);
 			var taskProperties: TaskPropertyValue[] = [];
 
 			object.properties.forEach(function(element){
@@ -32,6 +31,14 @@ module core {
         get properties():TaskPropertyValue[] {
             return this.theProperties;
         }
+
+		public getPropertieValuesByProperty(): {[index: string]: TaskPropertyValue } {
+			var propertyValues: {[index: string]: TaskPropertyValue } = {};
+			this.theProperties.forEach(function(propertyValue){
+				propertyValues[propertyValue.property.name] = propertyValue;
+			});
+			return propertyValues;
+		}
 
         public addProperty(property: TaskPropertyValue) {
             this.theProperties.push(property);
