@@ -2,6 +2,7 @@ package controllers.user;
 
 import controllers.AbstractControllerTest;
 import controllers.AbstractTestDataCreator;
+import daos.user.UserDAO;
 import logics.user.UserLogic;
 import models.user.User;
 import org.fest.assertions.MapAssert;
@@ -14,6 +15,8 @@ import static play.mvc.Http.Status.OK;
 import static play.test.Helpers.*;
 
 public class UserControllerTest extends AbstractControllerTest {
+
+	public static final UserDAO USER_DAO = new UserDAO();
 
 	@Test
 	public void testLoginWithoutParams() {
@@ -29,10 +32,10 @@ public class UserControllerTest extends AbstractControllerTest {
 		Result result = callPostAction(controllers.user.routes.ref.UserController.login(), "name", "Hansli", "password", "1234");
 		//Verification
 		assertThat(status(result)).isEqualTo(OK);
-		testLogedIn(user, result, true);
+		verifyLoggedIn(user, result, true);
 	}
 
-	private void testLogedIn(User user, Result result, boolean expectedLogedIn) {
+	private void verifyLoggedIn(User user, Result result, boolean expectedLogedIn) {
 		MapAssert session = assertThat(session(result));
 		MapAssert.Entry userToken = MapAssert.entry(UserLogic.SESSION_USER_IDENTIFIER, user.getId() + "");
 		if (!expectedLogedIn) {
@@ -50,14 +53,36 @@ public class UserControllerTest extends AbstractControllerTest {
 	}
 
 	@Test
-	public void testLogout() throws Throwable {
+	public void testLogoutSuccessful() throws Throwable {
 		//Setup
 		User user = AbstractTestDataCreator.createUserWithTransaction("Hanss", "1234");
 		//Test
 		Result result = callActionWithUser(controllers.user.routes.ref.UserController.logout(), user);
 		//Verification
 		assertThat(status(result)).isEqualTo(OK);
-		testLogedIn(user, result, false);
+		verifyLoggedIn(user, result, false);
+	}
+
+	@Test
+	public void testRegisterSuccessful() {
+		//Setup
+		int userCountAtStart = USER_DAO.readAll().size();
+		//Test
+		Result result = callPostAction(controllers.user.routes.ref.UserController.register(), "name", "Hans3", "password", "0000", "password_repeat", "0000");
+		//Verification
+		assertThat(status(result)).isEqualTo(OK);
+		assertThat(USER_DAO.readAll().size()).isEqualTo(userCountAtStart + 1);
+	}
+
+	@Test
+	public void testRegisterWithDifferentPasswords() {
+		//Setup
+		int userCountAtStart = USER_DAO.readAll().size();
+		//Test
+		Result result = callPostAction(controllers.user.routes.ref.UserController.register(), "name", "Hans4", "password", "0000", "password_repeat", "1111");
+		//Verification
+		assertThat(status(result)).isEqualTo(BAD_REQUEST);
+		assertThat(USER_DAO.readAll().size()).isEqualTo(userCountAtStart);
 	}
 
 }

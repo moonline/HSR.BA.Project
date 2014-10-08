@@ -35,10 +35,17 @@ public class UserController extends Controller {
 
 	@Transactional()
 	public static Result register() {
-		String name;
-		String password;
-		String password_repeat;
-		return TODO;
+		DynamicForm requestData = Form.form().bindFromRequest();
+		String name = requestData.get("name");
+		String password = requestData.get("password");
+		String password_repeat = requestData.get("password_repeat");
+		if (name == null || password == null) {
+			return badRequest("Missing registration data");
+		} else if (!password.equals(password_repeat)) {
+			return badRequest("The two passwords do not match");
+		}
+		USER_LOGIC.createUser(name, password);
+		return ok();
 	}
 
 }
