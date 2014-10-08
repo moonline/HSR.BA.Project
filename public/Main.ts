@@ -38,10 +38,14 @@ module core {
         });
     });
 
+	app.config(function ( $httpProvider) {
+		delete $httpProvider.defaults.headers.common['X-Requested-With'];
+	});
+
     app.controller('taskTemplateListController', ['$scope', '$location', 'persistenceService', TaskTemplateListController]);
 	app.controller('decisionListController', ['$scope', '$location', 'persistenceService', DecisionListController]);
 	app.controller('mappingController', ['$scope', '$location', 'persistenceService', MappingController]);
-	app.controller('transmissionController', ['$scope', '$location', 'persistenceService', TransmissionController]);
+	app.controller('transmissionController', ['$scope', '$location', 'persistenceService', '$http', TransmissionController]);
 
     app.service('persistenceService', ['$http', function($http) {
 		return {

@@ -3,6 +3,8 @@
 		<input type="text" data-ng-model="url" /><br />
 		<textarea data-ng-model="data" ></textarea><br />
 		<button data-ng-click="render(data)">Render</button>
+		<button data-ng-if="output.length > 0" data-ng-click="transmit()">Transmit to PPT</button><br />
+		<span data-ng-if="trasmitCount > 0">{{transmitSuccessfullCount}} of {{trasmitCount}} successfull transmitted!</span>
 	</form>
 	<ul>
 		<li data-ng-repeat="decisionTemplates in output">
