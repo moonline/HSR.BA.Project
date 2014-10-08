@@ -13,7 +13,7 @@ import javax.persistence.EntityTransaction;
 
 import static play.test.Helpers.inMemoryDatabase;
 
-public class AbstractDatabaseTest {
+public abstract class AbstractDatabaseTest {
 
 	private static FakeApplication app;
 	private EntityManager em;

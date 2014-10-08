@@ -4,6 +4,7 @@ create table person (
     id bigint not null,
     name varchar(255),
     password_hash varchar(255),
+    salt binary(255),
     primary key (id)
 );
 
