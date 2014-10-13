@@ -10,6 +10,7 @@
 /// <reference path='classes/domain/repository/TaskTemplateRepository.ts' />
 /// <reference path='classes/domain/repository/DecisionRepository.ts' />
 /// <reference path='classes/domain/repository/MappingRepository.ts' />
+/// <reference path='classes/domain/repository/UserRepository.ts' />
 
 
 module core {
@@ -57,7 +58,8 @@ module core {
 		return {
             taskTemplateRepository: new core.TaskTemplateRepository($http),
 			decisionRepository: new dks.DecisionRepository($http),
-			mappingRepository: new core.MappingRepository($http)
+			mappingRepository: new core.MappingRepository($http),
+			userRepository: new core.UserRepository($http)
         };
     }]);
 

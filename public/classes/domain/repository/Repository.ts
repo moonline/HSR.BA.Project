@@ -33,7 +33,7 @@ module core {
 			}
 		}
 
-		public add(item: T): void {
+		public add(item: T, callback: (item: T) => void): void {
 			// TODO: Replace caching with real persistence
 			this.itemCache.push(item);
 		}

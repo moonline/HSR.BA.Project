@@ -1,8 +1,9 @@
+/// <reference path='../../../classes/domain/repository/PersistentEntity.ts' />
 
 module core {
-	export class User {
+	export class User implements core.PersistentEntity {
 
-		private id: number;
+		public id: number;
 		public userName: string;
 
 		constructor(userName: string) { this.userName = userName; }
