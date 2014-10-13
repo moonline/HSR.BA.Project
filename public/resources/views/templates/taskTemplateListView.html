@@ -1,0 +1,14 @@
+<div class="main" data-region="center" data-layout="flow" data-flow-direction="column" data-align="start">
+	<h2>Task templates ({{taskTemplates.length}})</h2>
+	<ul data-type="list">
+		<li data-ng-repeat="template in taskTemplates">
+			<strong>{{template.name}}</strong> [{{template.id}}]<br />
+			Properties:<br />
+			<ul>
+				<li data-ng-repeat="property in template.properties">
+					<strong>{{property.property.name}}</strong>[{{property.property.id}}]: {{property.value}} [{{property.id}}]
+				</li>
+			</ul>
+		</li>
+	</ul>
+</div>

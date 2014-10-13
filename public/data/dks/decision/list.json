@@ -1,0 +1,34 @@
+{
+	"items": [
+		{
+			"id": 1,
+			"name": "Decide server technology",
+			"choosenOption": null,
+			"options": [
+			 	{
+			 		"id": 1,
+			 		"name": "Play Framework"
+			 	},
+			 	{
+			 		"id": 2,
+			 		"name": "Node.js"
+			 	}
+			 ]
+		},
+		{
+			"id": 2,
+			"name": "Decide client technology",
+			"choosenOption": 2,
+			"options": [
+				{
+					"id": 1,
+					"name": "JavaScript"
+				},
+				{
+					"id": 2,
+					"name": "TypeScript"
+				}
+			]
+		}
+	]
+}

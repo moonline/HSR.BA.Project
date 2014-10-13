@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<title>EEPPI</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width">
+
+		<link rel="shortcut icon" href="/public/resources/img/appIcon-256.png" />
+
+		<!-- styles -->
+        <!--<link href="/public/resources/styles/app.less.css" type="text/css" rel="stylesheet" />-->
+		<link href="/public/resources/font/comicRelief/font.css" type="text/css" rel="stylesheet" />
+		<link href="/public/resources/styles/mockup.css" type="text/css" rel="stylesheet" />
+		
+
+	</head>
+	<body>
+		<header data-region="north" data-layout="border" data-flow-direction="row">
+			<div data-region="middle" data-align="center">
+				<h1 data-region="west">EEPPI</h1>
+			</div>
+		</header>
+
+		<section id="listView" data-layout="border" data-role="region">
+			<div data-region="middle" data-ng-view></div>
+		</section>
+
+		<footer data-region="south">
+			<p>(C) EEPPI 2014</p>
+			<nav data-type="toolbar" data-layout="flow" data-flow-direction="row">
+				<a href="#/">Task templates</a>
+				<a href="#/decisions">Decisions</a>
+				<a href="#/mappings">Mappings</a>
+				<a href="#/transmission">Transmit</a>
+			</nav>
+		</footer>
+
+        <script src="/public/resources/libraries/angularJs/angular.js" ></script>
+        <script src="/public/resources/libraries/angularJs/angularRoute.js" ></script>
+
+        <script src="/public/Main.js" ></script>
+    </body>
+</html>

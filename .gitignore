@@ -8,6 +8,9 @@
 *.war
 *.ear
 
+# Webstorm trash
+/public/.idea
+
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 
@@ -27,3 +30,22 @@ dist
 /.project
 /RUNNING_PID
 /.settings
+
+# Vagrant
+.vagrant
+
+# linux trash
+*~
+*.tmp.*
+*.lock
+
+# run  alias
+/run.sh
+
+# js
+public/classes/*.js
+public/Main.js
+public/test/*.js
+
+# secret configuration files
+test/PPT/jira-license.key
