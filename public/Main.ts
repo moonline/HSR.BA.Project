@@ -18,19 +18,19 @@ module core {
 
     app.config(function($routeProvider) {
         $routeProvider.when('/', {
-            templateUrl: 'resources/views/templates/taskTemplateListView.html',
+            templateUrl: '/public/resources/views/templates/taskTemplateListView.html',
             controller: 'taskTemplateListController'
         });
 		$routeProvider.when('/decisions', {
-			templateUrl: 'resources/views/templates/decisionListView.html',
+			templateUrl: '/public/resources/views/templates/decisionListView.html',
 			controller: 'decisionListController'
 		});
 		$routeProvider.when('/mappings', {
-			templateUrl: 'resources/views/templates/mappingView.html',
+			templateUrl: '/public/resources/views/templates/mappingView.html',
 			controller: 'mappingController'
 		});
 		$routeProvider.when('/transmission', {
-			templateUrl: 'resources/views/templates/transmissionView.html',
+			templateUrl: '/public/resources/views/templates/transmissionView.html',
 			controller: 'transmissionController'
 		});
         $routeProvider.otherwise({

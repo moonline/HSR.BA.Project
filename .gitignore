@@ -46,3 +46,6 @@ dist
 public/classes/*.js
 public/Main.js
 public/test/*.js
+
+# secret configuration files
+test/PPT/jira-license.key
