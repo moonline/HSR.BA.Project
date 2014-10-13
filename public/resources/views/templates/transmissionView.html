@@ -1,0 +1,14 @@
+<div class="main" data-region="center" data-layout="flow" data-flow-direction="column" data-align="start">
+	<form>
+		<input type="text" data-ng-model="url" /><br />
+		<textarea data-ng-model="data" ></textarea><br />
+		<button data-ng-click="render(data)">Render</button>
+		<button data-ng-if="output.length > 0" data-ng-click="transmit()">Transmit to PPT</button><br />
+		<span data-ng-if="trasmitCount > 0">{{transmitSuccessfullCount}} of {{trasmitCount}} successfull transmitted!</span>
+	</form>
+	<ul>
+		<li data-ng-repeat="decisionTemplates in output">
+			<pre data-ng-repeat="decisionTaskTemplate in decisionTemplates">{{decisionTaskTemplate}}</pre><br />
+		</ul>
+	</ul>
+</div>

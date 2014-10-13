@@ -1,32 +1,60 @@
 {
     "items": [
         {
+			"id": 1,
             "name": "Define criterions",
             "properties": [
                 {
-                    "name": "assignee"
+					"id": 1,
+                    "value": "laurin",
+					"property": {
+						"id": 1,
+						"name": "assignee"
+					}
                 },
                 {
-                    "name": "type"
+					"id": 2,
+					"value": "Task",
+					"property": {
+						"id": 2,
+						"name": "type"
+					}
                 }
             ]
         },
         {
+			"id": 2,
             "name": "Rank criterions",
             "properties": [
                 {
-                    "name": "assignee"
+					"id": 3,
+					"value": "tobias",
+					"property": {
+						"id": 1,
+						"name": "assignee"
+					}
                 }
             ]
         },
         {
+			"id": 3,
             "name": "Define criterion values",
             "properties": [
                 {
-                    "name": "description"
+					"id": 4,
+					"value": "Rank every item for every criterion.",
+					"property": {
+						"id": 3,
+						"name": "description"
+					}
                 },
                 {
-                    "name": "type"
+					"id": 5,
+					"value": "Task",
+					"property": {
+						"id": 2,
+						"name": "type"
+					}
                 }
             ]
         }
