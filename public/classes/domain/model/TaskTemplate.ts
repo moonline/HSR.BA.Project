@@ -1,33 +1,46 @@
-/// <reference path='../../../classes/domain/model/TaskProperty.ts' />
+/// <reference path='../../../classes/domain/model/TaskPropertyValue.ts' />
+/// <reference path='../../../classes/domain/repository/PersistentEntity.ts' />
 
 module core {
     'use strict';
 
-    export class TaskTemplate {
+    export class TaskTemplate implements core.PersistentEntity {
         // TODO: replace this ugly hack. This is only for first json import
         public static createFromJson(object: any): TaskTemplate {
-            object = new TaskTemplate(object.name, object.properties);
+			var taskProperties: TaskPropertyValue[] = [];
 
-            object.theProperties.forEach(function(element){
-                element = new TaskProperty(element.name);
-            });
-            return object;
+			object.properties.forEach(function(element){
+				taskProperties.push(TaskPropertyValue.createFromJson(element));
+			});
+            var domainObject: TaskTemplate = new TaskTemplate(object.name, taskProperties);
+			domainObject.id = object.id;
+
+            return domainObject;
         }
 
-
+		public id;
         public name:string;
-        private theProperties: TaskProperty[];
+        private theProperties: TaskPropertyValue[];
 
-        constructor(name: string, properties: TaskProperty[] = []) {
-            this.name = name;
+        constructor(name: string, properties: TaskPropertyValue[] = []) {
+			this.id = Math.round(Math.random()*1000000);
+			this.name = name;
             this.theProperties = properties;
         }
 
-        get properties():TaskProperty[] {
+        get properties():TaskPropertyValue[] {
             return this.theProperties;
         }
 
-        public addProperty(property: TaskProperty) {
+		public getPropertieValuesByProperty(): {[index: string]: TaskPropertyValue } {
+			var propertyValues: {[index: string]: TaskPropertyValue } = {};
+			this.theProperties.forEach(function(propertyValue){
+				propertyValues[propertyValue.property.name] = propertyValue;
+			});
+			return propertyValues;
+		}
+
+        public addProperty(property: TaskPropertyValue) {
             this.theProperties.push(property);
         }
     }

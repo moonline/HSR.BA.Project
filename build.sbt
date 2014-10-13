@@ -25,6 +25,11 @@ libraryDependencies ++= Seq(
   //"org.seleniumhq.selenium" % "selenium-chrome-driver"   % "2.43.1",
 )
 
+resolvers ++= Seq(
+  // IDEA Nullable Annotations
+  "idea nullable" at "https://repository.jboss.org/nexus/content/repositories/thirdparty-releases"
+)
+
 // Jacoco
 jacoco.settings
 
