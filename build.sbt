@@ -76,7 +76,7 @@ javacOptions += "-Xlint:unchecked"
 lazy val compileTS = taskKey[Unit]("Compiling the TypeScript files to JavaScript files")
 
 compileTS := {
-  "tsc --target ES5 --out public/Main.js app/assets/scripts/Main.ts".!
+  "tsc --target ES5 --out public/scripts/Main.js app/assets/scripts/Main.ts".!
 }
 
 //(compile in Compile) <<= (compile in Compile) dependsOn (compileTS)
