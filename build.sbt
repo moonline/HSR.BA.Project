@@ -1,8 +1,10 @@
+//import com.arpnetworking.sbt.typescript.Import.TypescriptKeys._ //TODO Laurin: clean up this when https://github.com/ArpNetworking/sbt-typescript/issues/1 is solved
+
 name := """eeppi"""
 
 version := "1.0-SNAPSHOT"
 
-lazy val root = (project in file(".")).enablePlugins(PlayJava)
+lazy val root = (project in file(".")).enablePlugins(PlayJava, SbtWeb)
 
 scalaVersion := "2.11.1"
 
@@ -59,3 +61,38 @@ Keys.fork in Test := false
 
 ///////// blames you, if you use unchecked conversions
 javacOptions += "-Xlint:unchecked"
+
+
+///////////////////////////// TODO Laurin: Clean up here /////////////////////////////
+
+// Typescript compiler
+// possible configurations if https://github.com/ArpNetworking/sbt-typescript/issues/1 is solved
+//includeFilter in TypescriptKeys.typescript := "mainexample.ts"
+//includeFilter in TypescriptKeys.typescript := "myFile.ts"
+//TypescriptKeys.removeComments := true
+//outFile := "mainexample.js"
+//moduleKind := "commonjs"
+//outDir := "x"
+
+lazy val compileTS = taskKey[Unit]("Compiling the TypeScript files to JavaScript files")
+
+compileTS := {
+  "tsc --target ES5 --out public/mainexample.js app/assets/mainexample.ts".!
+}
+
+//(compile in Compile) <<= (compile in Compile) dependsOn (compileTS)
+(compile in Compile) <<= (compile in Compile) dependsOn compileTS
+//sourceGenerators in Compile += compileTS.taskValue
+
+mappings in (Compile, packageBin) += {
+  (baseDirectory.value / "public" / "mainexample.js") -> "xyz.js"
+}
+
+
+//resourceGenerators in Compile += Def.task {
+//  val file = (resourceManaged in Compile).value / "mainexample.js"
+//  "tsc --target ES5 --out "+file.getPath+" app/assets/mainexample.ts".!
+//  Seq(file)
+//}.taskValue
+
+///////////////////////////////////// until here /////////////////////////////////////
