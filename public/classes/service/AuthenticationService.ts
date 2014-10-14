@@ -32,11 +32,6 @@ module core {
 				this.resources['login'],
 				{ "name": username, "password": password }
 			).success(function(data, status, headers, config) {
-				// TODO: remove after serverside api update
-				data = data || {};
-				data.name = data.name || username;
-				data.id = data.id || Math.round(Math.random()*1000000);
-
 				var user: User = User.createFromJson(data);
 				this.loggedInUser = user;
 				this.isUserLoggedIn = true;
@@ -58,24 +53,20 @@ module core {
 			}.bind(this));
 		}
 
-		public register(username: string, password: string, passwordRepeat: string, callback: (success: boolean) => void = (s) => {}): void {
+		public register(username: string, password: string, passwordRepeat: string, callback: (success: boolean, item: User) => void = (s,i) => {}): void {
 			this.httpService.post(
 				this.resources['register'],
 				{ "name": username, "password": password, "password_repeat": passwordRepeat }
 			).success(function(data, status, headers, config) {
-					callback(true);
+					callback(true, User.createFromJson(data));
 			}.bind(this)).error(function(data, status, headers, config) {
-					callback(false);
+					callback(false, null);
 			}.bind(this));
 		}
 
 		public loginStatus(callback: (item: User) => void = (i) => {}): void {
 			this.httpService.get(this.resources['status']).success(function(data) {
-				if(data != {} && data != null && data.is_logged_in != false) {
-					// TODO: remove after serverside api update
-					data.name = data.name || "unknown user";
-					data.id = data.id || Math.round(Math.random()*1000000);
-
+				if(data != null && data != {} && User.isCompatibleObject(data)) {
 					var user: User = User.createFromJson(data);
 					this.loggedInUser = user;
 					this.isUserLoggedIn = true;

@@ -48,8 +48,6 @@ module core {
 
 			$scope.logoff = function() {
 				this.authenticationService.logout(function(success: boolean) {
-					console.log(success);
-					console.log($scope.authenticator);
 				});
 			}.bind(this);
 		}
