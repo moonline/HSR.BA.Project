@@ -1,5 +1,5 @@
-/// <reference path='../../classes/domain/model/User.ts' />
-/// <reference path='../../classes/service/AuthenticationService.ts' />
+/// <reference path='../domain/model/User.ts' />
+/// <reference path='../service/AuthenticationService.ts' />
 
 module core {
 	'use strict';

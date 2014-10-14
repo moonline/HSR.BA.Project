@@ -1,6 +1,6 @@
-/// <reference path='../../../classes/domain/model/Option.ts' />
-/// <reference path='../../../classes/domain/model/Node.ts' />
-/// <reference path='../../../classes/domain/repository/PersistentEntity.ts' />
+/// <reference path='Option.ts' />
+/// <reference path='../../domain/model/Node.ts' />
+/// <reference path='../../domain/repository/PersistentEntity.ts' />
 
 module dks {
 	export class Decision implements dks.Node, core.PersistentEntity {

@@ -1,5 +1,5 @@
-/// <reference path='../../../classes/domain/repository/Repository.ts' />
-/// <reference path='../../../classes/domain/model/Decision.ts' />
+/// <reference path='Repository.ts' />
+/// <reference path='../../domain/model/Decision.ts' />
 
 module dks {
 	export class DecisionRepository extends core.Repository<Decision> {
@@ -7,7 +7,7 @@ module dks {
 			super(httpService);
 			this.type = Decision;
 			this.resources = {
-				'all': 'data/dks/decision/list.json'
+				'all': 'public/temporaryDevelopmentData/dks/decision/list.json'
 			};
 		}
 	}

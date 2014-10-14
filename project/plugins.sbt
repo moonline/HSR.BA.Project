@@ -1,4 +1,6 @@
-resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/"
+resolvers ++= Seq(
+  "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/"
+)
 
 // The Play plugin
 addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.3.4")
@@ -25,3 +27,5 @@ addSbtPlugin("de.johoop" % "jacoco4sbt" % "2.1.6")
 // LESS compilation
 addSbtPlugin("com.typesafe.sbt" % "sbt-less" % "1.0.0")
 
+// Typescript compilation
+//addSbtPlugin("com.arpnetworking" % "sbt-typescript" % "0.1.4") //TODO Laurin: clean up this when https://github.com/ArpNetworking/sbt-typescript/issues/1 is solved

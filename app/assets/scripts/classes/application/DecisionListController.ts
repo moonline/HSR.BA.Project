@@ -1,5 +1,5 @@
-/// <reference path='../../classes/domain/model/Decision.ts' />
-/// <reference path='../../classes/domain/model/Option.ts' />
+/// <reference path='../domain/model/Decision.ts' />
+/// <reference path='../domain/model/Option.ts' />
 
 module core {
 	'use strict';

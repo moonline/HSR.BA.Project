@@ -1,4 +1,4 @@
-/// <reference path='../../classes/domain/model/User.ts' />
+/// <reference path='../domain/model/User.ts' />
 
 module core {
 	export class AuthenticationService {

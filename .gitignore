@@ -43,8 +43,7 @@ dist
 /run.sh
 
 # js
-public/classes/*.js
-public/Main.js
+public/scripts/Main.js
 public/test/*.js
 
 # secret configuration files

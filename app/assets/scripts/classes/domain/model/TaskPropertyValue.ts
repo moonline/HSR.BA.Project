@@ -1,6 +1,6 @@
-/// <reference path='../../../classes/domain/repository/PersistentEntity.ts' />
+/// <reference path='../repository/PersistentEntity.ts' />
 
-/// <reference path='../../../classes/domain/model/TaskProperty.ts' />
+/// <reference path='../../domain/model/TaskProperty.ts' />
 
 module core {
     export class TaskPropertyValue implements core.PersistentEntity {

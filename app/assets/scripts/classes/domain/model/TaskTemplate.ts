@@ -1,5 +1,5 @@
-/// <reference path='../../../classes/domain/model/TaskPropertyValue.ts' />
-/// <reference path='../../../classes/domain/repository/PersistentEntity.ts' />
+/// <reference path='TaskPropertyValue.ts' />
+/// <reference path='../../domain/repository/PersistentEntity.ts' />
 
 module core {
     'use strict';

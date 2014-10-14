@@ -1,5 +1,5 @@
-/// <reference path='../../classes/domain/model/TaskTemplate.ts' />
-/// <reference path='../../classes/domain/repository/TaskTemplateRepository.ts' />
+/// <reference path='../domain/model/TaskTemplate.ts' />
+/// <reference path='../domain/repository/TaskTemplateRepository.ts' />
 
 module core {
     'use strict';

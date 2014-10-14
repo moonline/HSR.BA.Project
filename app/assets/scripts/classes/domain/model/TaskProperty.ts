@@ -1,4 +1,4 @@
-/// <reference path='../../../classes/domain/repository/PersistentEntity.ts' />
+/// <reference path='../repository/PersistentEntity.ts' />
 
 module core {
     export class TaskProperty implements core.PersistentEntity {
