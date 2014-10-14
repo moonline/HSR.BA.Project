@@ -1,16 +1,21 @@
 package controllers;
 
-import daos.AbstractDatabaseTest;
+import com.fasterxml.jackson.databind.JsonNode;
 import logics.user.UserLogic;
 import models.user.User;
 import play.api.mvc.HandlerRef;
+import play.libs.Json;
 import play.mvc.Result;
 import play.test.FakeRequest;
+import test.AbstractDatabaseTest;
+import test.AbstractTestDataCreator;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.fest.assertions.Assertions.assertThat;
 import static play.test.Helpers.callAction;
+import static play.test.Helpers.contentAsString;
 
 public abstract class AbstractControllerTest extends AbstractDatabaseTest {
 
@@ -45,6 +50,13 @@ public abstract class AbstractControllerTest extends AbstractDatabaseTest {
 			postData.put(data[i], data[i + 1]);
 		}
 		return postData;
+	}
+
+	protected void assertCheckJsonResponse(Result result, JsonNode expected) {
+		String result_content = contentAsString(result);
+		result_content = Json.stringify(Json.parse(result_content)); //format with "correct" spaces
+		final String expected_content = Json.stringify(expected);
+		assertThat(result_content).isEqualTo(expected_content);
 	}
 
 }

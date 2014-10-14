@@ -1,12 +1,10 @@
 package controllers.user;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import logics.user.UserLogic;
 import models.user.User;
 import play.data.DynamicForm;
 import play.data.Form;
 import play.db.jpa.Transactional;
-import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 
@@ -21,10 +19,12 @@ public class UserController extends Controller {
 		String password = requestData.get("password");
 		if (name == null || password == null) {
 			return badRequest("Missing login data");
-		} else if (USER_LOGIC.loginUser(name, password, session()) == null) {
+		}
+		final User user = USER_LOGIC.loginUser(name, password, session());
+		if (user == null) {
 			return badRequest("Username or Password wrong");
 		}
-		return ok();
+		return ok(USER_LOGIC.getAsJson(user));
 	}
 
 	public static Result logout() {
@@ -34,13 +34,8 @@ public class UserController extends Controller {
 
 	@Transactional(readOnly = true)
 	public static Result login_status() {
-		ObjectNode result = Json.newObject();
-		User user = USER_LOGIC.getLoggedInUser(session());
-		result.put("is_logged_in", user != null);
-		if (user != null) {
-			result.put("name", user.getName());
-		}
-		return ok(result);
+		final User user = USER_LOGIC.getLoggedInUser(session());
+		return ok(USER_LOGIC.getAsJson(user));
 	}
 
 	@Transactional()
@@ -54,8 +49,8 @@ public class UserController extends Controller {
 		} else if (!password.equals(password_repeat)) {
 			return badRequest("The two passwords do not match");
 		}
-		USER_LOGIC.createUser(name, password);
-		return ok();
+		final User user = USER_LOGIC.createUser(name, password);
+		return ok(USER_LOGIC.getAsJson(user));
 	}
 
 	@Transactional()
