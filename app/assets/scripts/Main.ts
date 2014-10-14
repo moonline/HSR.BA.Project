@@ -21,7 +21,7 @@ module core {
 
     app.config(function($routeProvider) {
         $routeProvider.when('/', {
-            templateUrl: '/public/resources/views/templates/taskTemplateListView.html',
+            templateUrl: '/public/views/templates/taskTemplateListView.html',
             controller: 'taskTemplateListController',
 			resolve: {
 				auth: ["$q", "authenticationService", function($q, authenticationService) {
@@ -32,7 +32,7 @@ module core {
 			}
         });
 		$routeProvider.when('/decisions', {
-			templateUrl: '/public/resources/views/templates/decisionListView.html',
+			templateUrl: '/public/views/templates/decisionListView.html',
 			controller: 'decisionListController',
 			resolve: {
 				auth: ["$q", "authenticationService", function($q, authenticationService) {
@@ -42,7 +42,7 @@ module core {
 			}
 		});
 		$routeProvider.when('/mappings', {
-			templateUrl: '/public/resources/views/templates/mappingView.html',
+			templateUrl: '/public/views/templates/mappingView.html',
 			controller: 'mappingController',
 			resolve: {
 				auth: ["$q", "authenticationService", function($q, authenticationService) {
@@ -52,7 +52,7 @@ module core {
 			}
 		});
 		$routeProvider.when('/transmission', {
-			templateUrl: '/public/resources/views/templates/transmissionView.html',
+			templateUrl: '/public/views/templates/transmissionView.html',
 			controller: 'transmissionController',
 			resolve: {
 				auth: ["$q", "authenticationService", function($q, authenticationService) {
@@ -62,7 +62,7 @@ module core {
 			}
 		});
 		$routeProvider.when('/user', {
-			templateUrl: '/public/resources/views/templates/loginView.html',
+			templateUrl: '/public/views/templates/loginView.html',
 			controller: 'loginController'
 		});
         $routeProvider.otherwise({
