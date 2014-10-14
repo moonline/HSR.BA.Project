@@ -7,7 +7,7 @@ module core {
 			super(httpService);
 			this.type = Mapping;
 			this.resources = {
-				'all': 'data/eeppi/mapping/list.json'
+				'all': 'public/temporaryDevelopmentData/eeppi/mapping/list.json'
 			};
 		}
 	}

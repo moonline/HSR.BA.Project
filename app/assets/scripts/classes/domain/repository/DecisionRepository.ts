@@ -7,7 +7,7 @@ module dks {
 			super(httpService);
 			this.type = Decision;
 			this.resources = {
-				'all': 'data/dks/decision/list.json'
+				'all': 'public/temporaryDevelopmentData/dks/decision/list.json'
 			};
 		}
 	}

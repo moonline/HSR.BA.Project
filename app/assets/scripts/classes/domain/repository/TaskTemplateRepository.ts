@@ -7,7 +7,7 @@ module core {
 			super(httpService);
 			this.type = TaskTemplate;
 			this.resources = {
-				'all': 'data/eeppi/tasktemplate/list.json'
+				'all': 'public/temporaryDevelopmentData/eeppi/tasktemplate/list.json'
 			};
 		}
     }
