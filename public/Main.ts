@@ -10,7 +10,8 @@
 /// <reference path='classes/domain/repository/TaskTemplateRepository.ts' />
 /// <reference path='classes/domain/repository/DecisionRepository.ts' />
 /// <reference path='classes/domain/repository/MappingRepository.ts' />
-/// <reference path='classes/domain/repository/UserRepository.ts' />
+
+/// <reference path='classes/service/AuthenticationService.ts' />
 
 
 module core {
@@ -21,19 +22,44 @@ module core {
     app.config(function($routeProvider) {
         $routeProvider.when('/', {
             templateUrl: '/public/resources/views/templates/taskTemplateListView.html',
-            controller: 'taskTemplateListController'
+            controller: 'taskTemplateListController',
+			resolve: {
+				auth: ["$q", "authenticationService", function($q, authenticationService) {
+					// check if user is still logged in (promise still resolved), otherwise wait for resolve
+					if(authenticationService.isLoggedIn) { return true; }
+					return authenticationService.readyPromise.then(function(user) {});
+				}]
+			}
         });
 		$routeProvider.when('/decisions', {
 			templateUrl: '/public/resources/views/templates/decisionListView.html',
-			controller: 'decisionListController'
+			controller: 'decisionListController',
+			resolve: {
+				auth: ["$q", "authenticationService", function($q, authenticationService) {
+					if(authenticationService.isLoggedIn) { return true; }
+					return authenticationService.readyPromise.then(function(user) {});
+				}]
+			}
 		});
 		$routeProvider.when('/mappings', {
 			templateUrl: '/public/resources/views/templates/mappingView.html',
-			controller: 'mappingController'
+			controller: 'mappingController',
+			resolve: {
+				auth: ["$q", "authenticationService", function($q, authenticationService) {
+					if(authenticationService.isLoggedIn) { return true; }
+					return authenticationService.readyPromise.then(function(user) {});
+				}]
+			}
 		});
 		$routeProvider.when('/transmission', {
 			templateUrl: '/public/resources/views/templates/transmissionView.html',
-			controller: 'transmissionController'
+			controller: 'transmissionController',
+			resolve: {
+				auth: ["$q", "authenticationService", function($q, authenticationService) {
+					if(authenticationService.isLoggedIn) { return true; }
+					return authenticationService.readyPromise.then(function(user) {});
+				}]
+			}
 		});
 		$routeProvider.when('/user', {
 			templateUrl: '/public/resources/views/templates/loginView.html',
@@ -48,28 +74,27 @@ module core {
 		delete $httpProvider.defaults.headers.common['X-Requested-With'];
 	});
 
+	app.run(['$rootScope', '$location', 'authenticationService', function ($rootScope, $location, authenticationService) {
+		$rootScope.$on("$routeChangeError", function(event, current, previous, eventObj) {
+			$location.path("/user");
+		});
+	}]);
+
     app.controller('taskTemplateListController', ['$scope', '$location', 'persistenceService', TaskTemplateListController]);
 	app.controller('decisionListController', ['$scope', '$location', 'persistenceService', DecisionListController]);
 	app.controller('mappingController', ['$scope', '$location', 'persistenceService', MappingController]);
 	app.controller('transmissionController', ['$scope', '$location', 'persistenceService', '$http', TransmissionController]);
-	app.controller('loginController', ['$scope', '$location', '$http', 'persistenceService', 'userManagementService', LoginController]);
+	app.controller('loginController', ['$scope', '$location', '$http', 'authenticationService', LoginController]);
 
     app.service('persistenceService', ['$http', function($http) {
 		return {
             taskTemplateRepository: new core.TaskTemplateRepository($http),
 			decisionRepository: new dks.DecisionRepository($http),
-			mappingRepository: new core.MappingRepository($http),
-			userRepository: new core.UserRepository($http)
+			mappingRepository: new core.MappingRepository($http)
         };
     }]);
 
-	app.service('userManagementService', ['$http', function($http) {
-		var userManagementService: any = {
-			loggedInUser: null
-		};
-
-		return userManagementService;
-	}]);
+	app.service('authenticationService', ['$http', '$rootScope', '$q', AuthenticationService]);
 
     angular.bootstrap(document, ["MainModule"]);
 }

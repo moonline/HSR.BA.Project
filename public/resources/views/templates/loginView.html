@@ -1,20 +1,4 @@
 <div class="main" data-region="center" data-layout="flow" data-flow-direction="column" data-align="start">
-	<h2>User ({{loginStatus}})</h2>
-	<button data-ng-if="loggedInUser != null" data-ng-click="logoff()">Logout {{loggedInUser.userName}}</button>
-	<div>
-		<form novalidate name="login"><!-- data-ng-if="!loggedInUser"-->
-			<fieldset>
-				<legend>Login</legend>
-				<label>username</label><br />
-				<input type="text" data-ng-model="loginUserName" /><br />
-				<label>password</label><br />
-				<input type="password" data-ng-model="loginPassword" /><br />
-				<button data-ng-click="signIn()">Login</button>
-			</fieldset>
-		</form>
-	</div>
-
-    <span novalidate data-ng-if="registerStatus">Status: {{registerStatus}}</span><br />
     <form>
         <fieldset>
             <legend>Register</legend>
