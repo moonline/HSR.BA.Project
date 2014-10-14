@@ -24,7 +24,6 @@
 					<input type="password" data-ng-model="password" placeholder="password" />
 					<button data-ng-click="authenticator.login(username, password)">Login</button>
 				</form>
-				<a data-ng-if="authenticator.loggedInUser == null" href="#/user">Register</a>
 			</div>
 		</header>
 
@@ -35,11 +34,11 @@
 		<footer data-region="south">
 			<p>(C) EEPPI 2014</p>
 			<nav data-type="toolbar" data-layout="flow" data-flow-direction="row">
-				<a href="#/">Task templates</a>
-				<a href="#/decisions">Decisions</a>
-				<a href="#/mappings">Mappings</a>
-				<a href="#/transmission">Transmit</a>
-                <a href="#/user">User</a>
+				<a data-ng-if="authenticator.loggedInUser != null" href="#/">Task templates</a>
+				<a data-ng-if="authenticator.loggedInUser != null" href="#/decisions">Decisions</a>
+				<a data-ng-if="authenticator.loggedInUser != null" href="#/mappings">Mappings</a>
+				<a data-ng-if="authenticator.loggedInUser != null" href="#/transmission">Transmit</a>
+				<a href="#/user">Register</a>
 			</nav>
 		</footer>
 
