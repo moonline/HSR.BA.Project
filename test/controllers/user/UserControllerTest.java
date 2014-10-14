@@ -1,13 +1,13 @@
 package controllers.user;
 
 import controllers.AbstractControllerTest;
-import controllers.AbstractTestDataCreator;
 import daos.user.UserDAO;
 import logics.user.UserLogic;
 import models.user.User;
 import org.fest.assertions.MapAssert;
 import org.junit.Test;
 import play.mvc.Result;
+import test.AbstractTestDataCreator;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static play.mvc.Http.Status.BAD_REQUEST;
@@ -17,6 +17,7 @@ import static play.test.Helpers.*;
 public class UserControllerTest extends AbstractControllerTest {
 
 	public static final UserDAO USER_DAO = new UserDAO();
+	public static final UserLogic USER_LOGIC = new UserLogic();
 
 	@Test
 	public void testLoginWithoutParams() {
@@ -32,6 +33,7 @@ public class UserControllerTest extends AbstractControllerTest {
 		Result result = callPostAction(controllers.user.routes.ref.UserController.login(), postData("name", "Hansli", "password", "1234"));
 		//Verification
 		assertThat(status(result)).isEqualTo(OK);
+		assertCheckJsonResponse(result, USER_LOGIC.getAsJson(user));
 		verifyLoggedIn(user, result, true);
 	}
 
@@ -72,6 +74,7 @@ public class UserControllerTest extends AbstractControllerTest {
 		//Verification
 		assertThat(status(result)).isEqualTo(OK);
 		assertThat(USER_DAO.readAll().size()).isEqualTo(userCountAtStart + 1);
+		assertCheckJsonResponse(result, USER_LOGIC.getAsJson(USER_DAO.readByName("Hans3")));
 	}
 
 	@Test
@@ -93,7 +96,7 @@ public class UserControllerTest extends AbstractControllerTest {
 		Result result = callActionWithUser(controllers.user.routes.ref.UserController.login_status(), user);
 		//Verification
 		assertThat(status(result)).isEqualTo(OK);
-		assertThat(contentAsString(result)).isEqualTo("{\"is_logged_in\":true,\"name\":\"Hans Meier\"}");
+		assertCheckJsonResponse(result, USER_LOGIC.getAsJson(user));
 	}
 
 	@Test
@@ -102,7 +105,7 @@ public class UserControllerTest extends AbstractControllerTest {
 		Result result = callAction(controllers.user.routes.ref.UserController.login_status());
 		//Verification
 		assertThat(status(result)).isEqualTo(OK);
-		assertThat(contentAsString(result)).isEqualTo("{\"is_logged_in\":false}");
+		assertThat(contentAsString(result)).isEqualTo("{}");
 	}
 
 	@Test

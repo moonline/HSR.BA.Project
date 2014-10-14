@@ -1,7 +1,7 @@
 package daos.user;
 
-import controllers.AbstractTestDataCreator;
-import daos.AbstractDatabaseTest;
+import test.AbstractTestDataCreator;
+import test.AbstractDatabaseTest;
 import models.user.User;
 import org.junit.Test;
 

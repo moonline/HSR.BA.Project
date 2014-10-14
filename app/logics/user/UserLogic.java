@@ -1,7 +1,9 @@
 package logics.user;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import daos.user.UserDAO;
 import models.user.User;
+import play.libs.Json;
 import play.mvc.Http;
 
 import java.security.MessageDigest;
@@ -74,4 +76,13 @@ public class UserLogic {
 		return out;
 	}
 
+	public ObjectNode getAsJson(User user) {
+		if (user == null) {
+			return new ObjectNode(null);
+		}
+		ObjectNode json = (ObjectNode) Json.toJson(user);
+		json.remove("salt");
+		json.remove("password_hash");
+		return json;
+	}
 }
