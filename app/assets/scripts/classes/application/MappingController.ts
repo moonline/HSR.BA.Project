@@ -1,9 +1,9 @@
-/// <reference path='../../classes/domain/model/TaskTemplate.ts' />
-/// <reference path='../../classes/domain/model/Decision.ts' />
+/// <reference path='../domain/model/TaskTemplate.ts' />
+/// <reference path='../domain/model/Decision.ts' />
 
-/// <reference path='../../classes/domain/repository/TaskTemplateRepository.ts' />
-/// <reference path='../../classes/domain/repository/DecisionRepository.ts' />
-/// <reference path='../../classes/domain/repository/MappingRepository.ts' />
+/// <reference path='../domain/repository/TaskTemplateRepository.ts' />
+/// <reference path='../domain/repository/DecisionRepository.ts' />
+/// <reference path='../domain/repository/MappingRepository.ts' />
 
 module core {
 	'use strict';

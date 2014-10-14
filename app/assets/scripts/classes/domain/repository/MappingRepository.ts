@@ -1,5 +1,5 @@
-/// <reference path='../../../classes/domain/repository/Repository.ts' />
-/// <reference path='../../../classes/domain/model/Mapping.ts' />
+/// <reference path='Repository.ts' />
+/// <reference path='../../domain/model/Mapping.ts' />
 
 module core {
 	export class MappingRepository extends core.Repository<Mapping> {

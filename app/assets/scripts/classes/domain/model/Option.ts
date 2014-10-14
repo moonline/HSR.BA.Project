@@ -1,5 +1,5 @@
-/// <reference path='../../../classes/domain/model/Node.ts' />
-/// <reference path='../../../classes/domain/repository/PersistentEntity.ts' />
+/// <reference path='Node.ts' />
+/// <reference path='../../domain/repository/PersistentEntity.ts' />
 
 module dks {
 	export class Option implements Node, core.PersistentEntity {

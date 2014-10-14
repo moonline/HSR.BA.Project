@@ -1,6 +1,6 @@
-/// <reference path='../../../classes/domain/model/TaskTemplate.ts' />
-/// <reference path='../../../classes/domain/model/Decision.ts' />
-/// <reference path='../../../classes/domain/repository/PersistentEntity.ts' />
+/// <reference path='TaskTemplate.ts' />
+/// <reference path='../../domain/model/Decision.ts' />
+/// <reference path='../../domain/repository/PersistentEntity.ts' />
 
 module core {
 	export class Mapping implements core.PersistentEntity {

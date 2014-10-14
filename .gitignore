@@ -43,7 +43,6 @@ dist
 /run.sh
 
 # js
-public/classes/*.js
 public/Main.js
 public/test/*.js
 

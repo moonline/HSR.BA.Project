@@ -1,5 +1,5 @@
-/// <reference path='../../../classes/domain/repository/Repository.ts' />
-/// <reference path='../../../classes/domain/model/TaskTemplate.ts' />
+/// <reference path='Repository.ts' />
+/// <reference path='../../domain/model/TaskTemplate.ts' />
 
 module core {
     export class TaskTemplateRepository extends core.Repository<TaskTemplate> {

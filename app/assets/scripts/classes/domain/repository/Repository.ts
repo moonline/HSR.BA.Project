@@ -1,4 +1,4 @@
-/// <reference path='../../../classes/domain/repository/PersistentEntity.ts' />
+/// <reference path='PersistentEntity.ts' />
 
 module core {
 	export class Repository<T extends PersistentEntity> {

@@ -67,8 +67,7 @@ javacOptions += "-Xlint:unchecked"
 
 // Typescript compiler
 // possible configurations if https://github.com/ArpNetworking/sbt-typescript/issues/1 is solved
-//includeFilter in TypescriptKeys.typescript := "mainexample.ts"
-//includeFilter in TypescriptKeys.typescript := "myFile.ts"
+//includeFilter in TypescriptKeys.typescript := "Main.ts"
 //TypescriptKeys.removeComments := true
 //outFile := "mainexample.js"
 //moduleKind := "commonjs"
@@ -77,7 +76,7 @@ javacOptions += "-Xlint:unchecked"
 lazy val compileTS = taskKey[Unit]("Compiling the TypeScript files to JavaScript files")
 
 compileTS := {
-  "tsc --target ES5 --out public/mainexample.js app/assets/mainexample.ts".!
+  "tsc --target ES5 --out public/Main.js app/assets/scripts/Main.ts".!
 }
 
 //(compile in Compile) <<= (compile in Compile) dependsOn (compileTS)

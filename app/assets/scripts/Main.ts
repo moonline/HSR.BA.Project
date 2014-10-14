@@ -1,4 +1,4 @@
-/// <reference path='resources/libraries/angularJs/angular.d.ts' />
+/// <reference path='../../../public/resources/libraries/angularJs/angular.d.ts' />
 /// <reference path='classes/module/MainModule.ts' />
 
 /// <reference path='classes/application/TaskTemplateListController.ts' />

@@ -1,10 +1,10 @@
 /// <reference path='../../../resources/libraries/jasmin/ts/jasmine.d.ts' />
 /// <reference path='../../../resources/libraries/angularJs/angular.d.ts' />
-/// <reference path='../../../classes/module/MainModule.ts' />
+/// <reference path='../../.././module/MainModule.ts' />
 
-/// <reference path='../../../classes/domain/model/Node.ts' />
-/// <reference path='../../../classes/domain/repository/PersistentEntity.ts' />
-/// <reference path='../../../classes/domain/repository/Repository.ts' />
+/// <reference path='../../.././domain/model/Node.ts' />
+/// <reference path='../../.././domain/repository/PersistentEntity.ts' />
+/// <reference path='../../.././domain/repository/Repository.ts' />
 
 module test {
 	export module helper {

@@ -1,5 +1,5 @@
-/// <reference path='../../../classes/domain/repository/Repository.ts' />
-/// <reference path='../../../classes/domain/model/Decision.ts' />
+/// <reference path='Repository.ts' />
+/// <reference path='../../domain/model/Decision.ts' />
 
 module dks {
 	export class DecisionRepository extends core.Repository<Decision> {
