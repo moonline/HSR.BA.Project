@@ -1,7 +1,7 @@
 package controllers.user;
 
 import controllers.AbstractControllerTest;
-import controllers.AbstractTestDataCreator;
+import test.AbstractTestDataCreator;
 import daos.user.UserDAO;
 import logics.user.UserLogic;
 import models.user.User;
@@ -17,6 +17,7 @@ import static play.test.Helpers.*;
 public class UserControllerTest extends AbstractControllerTest {
 
 	public static final UserDAO USER_DAO = new UserDAO();
+	public static final UserLogic USER_LOGIC = new UserLogic();
 
 	@Test
 	public void testLoginWithoutParams() {
@@ -32,6 +33,7 @@ public class UserControllerTest extends AbstractControllerTest {
 		Result result = callPostAction(controllers.user.routes.ref.UserController.login(), postData("name", "Hansli", "password", "1234"));
 		//Verification
 		assertThat(status(result)).isEqualTo(OK);
+		assertCheckJsonResponse(result, USER_LOGIC.getAsJson(user));
 		verifyLoggedIn(user, result, true);
 	}
 

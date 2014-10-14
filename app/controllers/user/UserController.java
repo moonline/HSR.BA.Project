@@ -21,10 +21,12 @@ public class UserController extends Controller {
 		String password = requestData.get("password");
 		if (name == null || password == null) {
 			return badRequest("Missing login data");
-		} else if (USER_LOGIC.loginUser(name, password, session()) == null) {
+		}
+		final User user = USER_LOGIC.loginUser(name, password, session());
+		if (user == null) {
 			return badRequest("Username or Password wrong");
 		}
-		return ok();
+		return ok(USER_LOGIC.getAsJson(user));
 	}
 
 	public static Result logout() {
