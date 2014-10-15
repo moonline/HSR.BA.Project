@@ -1,5 +1,5 @@
-/// <reference path='../resources/libraries/jasmin/ts/jasmine.d.ts' />
-/// <reference path='../test/domain/model/RepositoryTest.ts' />
+/// <reference path='../test/libraries/declarations/jasmin/jasmine.d.ts' />
+/// <reference path='../test/classes/domain/model/RepositoryTest.ts' />
 
 module test {
 	describe("Domain test suite", function() {
