@@ -5,11 +5,13 @@ sudo apt-get -y autoremove
 echo "====== Starting installation and configuration of JIRA ======"
 
 echo "== Downloading Jira =="
-curl -sS -o /tmp/atlassian-jira.bin http://downloads.atlassian.com/software/jira/downloads/atlassian-jira-6.3.7-x64.bin
-chmod +x /tmp/atlassian-jira.bin
+if [ ! -s /vagrant/atlassian-jira.bin ]; then
+	curl -sS -o /vagrant/atlassian-jira.bin http://downloads.atlassian.com/software/jira/downloads/atlassian-jira-6.3.7-x64.bin ;
+fi
+chmod +x /vagrant/atlassian-jira.bin
 
 echo "== Installing Jira =="
-sudo /tmp/atlassian-jira.bin -q -varfile /vagrant/jira-setup.varfile
+sudo /vagrant/atlassian-jira.bin -q -varfile /vagrant/jira-setup.varfile
 
 echo "== Waiting for first Jira startup =="
 curl -sS http://localhost:9920 > /dev/null
