@@ -47,4 +47,4 @@ public/scripts/Main.js
 public/test/*.js
 
 # secret configuration files
-test/PPT/jira-license.key
+test/integration/PPT/jira-license.key
