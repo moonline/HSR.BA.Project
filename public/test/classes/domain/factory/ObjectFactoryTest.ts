@@ -8,7 +8,7 @@ module test {
 }
 module test {
 	export function ObjectFactoryTest() {
-		describe("Repository class suite", function() {
+		describe("ObjectFactory class suite", function() {
 
 			it("create simple object from json", function(){
 				var dummyData = { "id": 5, "name": "DummyObject" };
@@ -19,7 +19,7 @@ module test {
 
 
 
-			it("create complex object", function() {
+			it("create complex object from json", function() {
 				var dummyData: any = {
 					"id": 1234,
 					"size": 2,
@@ -37,7 +37,6 @@ module test {
 					dummyData.data
 				);
 
-				console.log(core.ObjectFactory.createFromJson<helper.DummyContainer>(helper.DummyContainer, dummyData),dummyContainer);
 				expect(core.ObjectFactory.createFromJson<helper.DummyContainer>(helper.DummyContainer, dummyData)).toEqual(dummyContainer);
 			});
 		});
