@@ -11,10 +11,9 @@ module test {
 module test {
 	export function AuthenticationServiceTest() {
 		describe("Authentication service test suite", function() {
-			var http, httpBackend, rootScope, q;
+			var http, httpBackend, q;
 
-			beforeEach(inject(function ($q, $rootScope, $http, $httpBackend) {
-				rootScope = $rootScope;
+			beforeEach(inject(function ($q, $http, $httpBackend) {
 				http = $http;
 				httpBackend = $httpBackend;
 				q = $q;
@@ -24,12 +23,12 @@ module test {
 			describe("Status", function() {
 				it("Not logged in", function() {
 					httpBackend.when("GET", '/user/login-status').respond({});
-					var authentivationService: core.AuthenticationService = new core.AuthenticationService(http, rootScope, q);
+					var authentivationService: core.AuthenticationService = new core.AuthenticationService(http, q);
 
 					expect(authentivationService.isLoggedIn).toEqual(false);
 					expect(authentivationService.currentUser).toEqual(null);
 
-					var returnValue;
+					var returnValue = {};
 					authentivationService.loginStatus(function(user) {
 						returnValue = user;
 					});
@@ -48,8 +47,8 @@ module test {
 					httpBackend.when("POST", '/user/login').respond(testUserData);
 					httpBackend.when("POST", '/user/logout').respond(200);
 
-					var returnValue;
-					var authentivationService: core.AuthenticationService = new core.AuthenticationService(http, rootScope, q);
+					var returnValue = {};
+					var authentivationService: core.AuthenticationService = new core.AuthenticationService(http, q);
 					authentivationService.login(testUserData.name, "pwd", function(status, user) {
 						returnValue = { "status": status, "user": user };
 					});
@@ -74,8 +73,8 @@ module test {
 					httpBackend.when("POST", '/user/login').respond(testUserData);
 					httpBackend.when("POST", '/user/logout').respond(403);
 
-					var returnValue;
-					var authentivationService: core.AuthenticationService = new core.AuthenticationService(http, rootScope, q);
+					var returnValue = {};
+					var authentivationService: core.AuthenticationService = new core.AuthenticationService(http, q);
 					authentivationService.login(testUserData.name, "pwd", function(status, user) {
 						returnValue = { "status": status, "user": user };
 					});
@@ -99,8 +98,8 @@ module test {
 					httpBackend.when("GET", '/user/login-status').respond({});
 					httpBackend.when("POST", '/user/login').respond(403);
 
-					var returnValue;
-					var authentivationService: core.AuthenticationService = new core.AuthenticationService(http, rootScope, q);
+					var returnValue = {};
+					var authentivationService: core.AuthenticationService = new core.AuthenticationService(http, q);
 					authentivationService.login(testUserData.name, "pwd", function(status, user) {
 						returnValue = { "status": status, "user": user };
 					});
@@ -120,8 +119,8 @@ module test {
 					httpBackend.when("GET", '/user/login-status').respond({});
 					httpBackend.when("POST", '/user/register').respond(testUser);
 
-					var returnValue;
-					var authentivationService: core.AuthenticationService = new core.AuthenticationService(http, rootScope, q);
+					var returnValue = {};
+					var authentivationService: core.AuthenticationService = new core.AuthenticationService(http, q);
 					authentivationService.register(testUser.name, "pwd", "pwd", function(status, user) {
 						returnValue = { "status": status, "user": user };
 					});
@@ -133,8 +132,8 @@ module test {
 					httpBackend.when("GET", '/user/login-status').respond({});
 					httpBackend.when("POST", '/user/register').respond({});
 
-					var returnValue;
-					var authentivationService: core.AuthenticationService = new core.AuthenticationService(http, rootScope, q);
+					var returnValue = {};
+					var authentivationService: core.AuthenticationService = new core.AuthenticationService(http, q);
 					authentivationService.register("peter", "pwd", "pwd", function(status, user) {
 						returnValue = { "status": status, "user": user };
 					});
@@ -146,8 +145,8 @@ module test {
 					httpBackend.when("GET", '/user/login-status').respond({});
 					httpBackend.when("POST", '/user/register').respond(403);
 
-					var returnValue;
-					var authentivationService: core.AuthenticationService = new core.AuthenticationService(http, rootScope, q);
+					var returnValue = {};
+					var authentivationService: core.AuthenticationService = new core.AuthenticationService(http, q);
 					authentivationService.register("peter", "pwd", "pwd", function(status, user) {
 						returnValue = { "status": status, "user": user };
 					});

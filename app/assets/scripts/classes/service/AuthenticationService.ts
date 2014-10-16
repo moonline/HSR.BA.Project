@@ -8,7 +8,7 @@ module core {
 		private loggedInUser: User = null;
 		private ready;
 
-		constructor(httpService, $rootScope, $q) {
+		constructor(httpService, $q) {
 			this.ready = $q.defer();
 			this.httpService = httpService;
 			this.resources = {
@@ -17,7 +17,6 @@ module core {
 				'status': '/user/login-status',
 				'register': '/user/register'
 			};
-			$rootScope.authenticator = this;
 			this.loginStatus(function(user:User) {
 				if(user != null) {
 					this.ready.resolve(this.loggedInUser);

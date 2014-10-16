@@ -93,7 +93,11 @@ module core {
         };
     }]);
 
-	app.service('authenticationService', ['$http', '$rootScope', '$q', AuthenticationService]);
+	app.service('authenticationService', ['$http', '$rootScope', '$q', function($http, $rootScope, $q) {
+		var authenticationService: AuthenticationService = new AuthenticationService($http, $q);
+		$rootScope.authenticator = authenticationService;
+		return authenticationService;
+	}]);
 
     angular.bootstrap(document, ["MainModule"]);
 }
