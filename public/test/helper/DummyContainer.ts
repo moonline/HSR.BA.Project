@@ -1,5 +1,5 @@
 /// <reference path='Dummy.ts' />
-/// <reference path='../../../app/assets/scripts/classes/domain/factory/Serializable.ts' />
+/// <reference path='../../../app/assets/scripts/classes/domain/factory/FactoryConfiguration.ts' />
 
 
 module test {

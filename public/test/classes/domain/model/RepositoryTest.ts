@@ -3,6 +3,7 @@
 /// <reference path='../../../../../app/assets/scripts/classes/domain/model/Node.ts' />
 /// <reference path='../../../../../app/assets/scripts/classes/domain/repository/PersistentEntity.ts' />
 /// <reference path='../../../../../app/assets/scripts/classes/domain/repository/Repository.ts' />
+/// <reference path='../../../../../app/assets/scripts/classes/domain/factory/ObjectFactory.ts' />
 
 module test {
 	export module helper {
@@ -26,7 +27,7 @@ module test {
 				var dummy: test.helper.Dummy = new helper.Dummy("dummy1");
 				var data: any = { "id": dummy.id, "name": "dummy1" };
 
-				expect(helper.Dummy.createFromJson(data)).toEqual(dummy);
+				expect(core.ObjectFactory.createFromJson<helper.Dummy>(helper.Dummy,data)).toEqual(dummy);
 			});
 
 			it("get Dummies using repository.findAll()",angular.mock.inject(function($httpBackend, $http) {

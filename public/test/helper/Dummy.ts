@@ -1,16 +1,10 @@
 /// <reference path='../../../app/assets/scripts/classes/domain/model/Node.ts' />
 /// <reference path='../../../app/assets/scripts/classes/domain/repository/PersistentEntity.ts' />
-/// <reference path='../../../app/assets/scripts/classes/domain/factory/Serializable.ts' />
+/// <reference path='../../../app/assets/scripts/classes/domain/factory/FactoryConfiguration.ts' />
 
 module test {
 	export module helper {
 		export class Dummy implements dks.Node, core.PersistentEntity {
-			public static createFromJson(object: any): Dummy {
-				var domainObject = new Dummy(object.name);
-				domainObject.id = object.id;
-
-				return domainObject;
-			}
 			public static createDummy(id: number, name: string): Dummy {
 				var dummy: Dummy = new Dummy(name);
 				dummy.id = id;

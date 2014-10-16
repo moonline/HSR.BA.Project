@@ -8,22 +8,27 @@ module core {
 		 * create an prototype-object from object data recursive
 		 *
 		 * @param type e.g. String, Number, Object, Array, YourPrototype, ...
+		 * 	-> Own Prototypes must implement static property factoryConfiguration (core.FactoryConfiguration)
 		 * @param data e.g. { "id": 5, "name": "DummyObject" }
 		 * @returns {T}
 		 */
 		public static createFromJson<T>(type: any, data: any):T {
-			var constructorArguments: any[] = [];
-			type.factoryConfiguration.constructorArguments.forEach(function(argument){
-				constructorArguments.push(ObjectFactory.createProperty(data[argument['name']], argument));
-			});
+			if(type.factoryConfiguration) {
+				var constructorArguments: any[] = [];
+				type.factoryConfiguration.constructorArguments.forEach(function(argument){
+					constructorArguments.push(ObjectFactory.createProperty(data[argument['name']], argument));
+				});
 
-			var domainObject:T = ObjectFactory.createObject<T>(type,constructorArguments);
+				var domainObject:T = ObjectFactory.createObject<T>(type,constructorArguments);
 
-			type.factoryConfiguration.publicProperties.forEach(function(property){
-				domainObject[property['name']] = ObjectFactory.createProperty(data[property['name']], property);
-			});
+				type.factoryConfiguration.publicProperties.forEach(function(property){
+					domainObject[property['name']] = ObjectFactory.createProperty(data[property['name']], property);
+				});
 
-			return domainObject;
+				return domainObject;
+			} else {
+				return null;
+			}
 		}
 
 		/**
