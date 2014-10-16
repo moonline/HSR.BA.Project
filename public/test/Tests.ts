@@ -1,5 +1,6 @@
 /// <reference path='../test/libraries/declarations/jasmin/jasmine.d.ts' />
 /// <reference path='../test/classes/domain/model/RepositoryTest.ts' />
+/// <reference path='../test/classes/domain/factory/ObjectFactoryTest.ts' />
 /// <reference path='../test/classes/service/AuthenticationServiceTest.ts' />
 
 module test {
@@ -7,8 +8,12 @@ module test {
 		describe("Model test suite", function() {
 			RepositoryTest();
 		});
-		describe("Service test suite", function() {
-			AuthenticationServiceTest();
+		describe("Factory test suite", function() {
+			ObjectFactoryTest();
 		});
+	});
+
+	describe("Service test suite", function() {
+		AuthenticationServiceTest();
 	});
 }
