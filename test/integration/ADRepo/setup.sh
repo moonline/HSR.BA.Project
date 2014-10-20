@@ -1,5 +1,6 @@
 #!/bin/bash
 
+sudo apt-get update
 sudo apt-get -y autoremove
 
 echo "====== Starting installation and configuration of ADRepo ======"
