@@ -41,7 +41,7 @@ module core {
 					} else {
 						$scope.registerPassword = "";
 						$scope.registerPasswordRepeat = "";
-						alert("Registration error. User already exists or passwort repetation incorrect.");
+						alert("Registration error. User already exists or password repetition incorrect.");
 					}
 				});
 			}.bind(this);
