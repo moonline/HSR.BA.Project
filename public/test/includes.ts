@@ -3,4 +3,5 @@
 /// <reference path='../../app/assets/scripts/classes/module/MainModule.ts' />
 
 /// <reference path='../../public/test/helper/Dummy.ts' />
+/// <reference path='../../public/test/helper/CLO.ts' />
 /// <reference path='../../public/test/helper/DummyContainer.ts' />

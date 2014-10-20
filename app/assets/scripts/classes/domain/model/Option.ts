@@ -1,15 +1,13 @@
 /// <reference path='Node.ts' />
 /// <reference path='../../domain/repository/PersistentEntity.ts' />
+/// <reference path='../../domain/factory/FactoryConfiguration.ts' />
 
 module dks {
 	export class Option implements Node, core.PersistentEntity {
-		// TODO: replace this ugly hack. This is only for first json import
-		public static createFromJson(object: any): Option {
-			var domainObject = new Option(object.name);
-			domainObject.id = object.id;
-
-			return domainObject;
-		}
+		public static factoryConfiguration: core.FactoryConfiguration = {
+			constructorArguments: [{ name: "name", type: String, subType: null }],
+			publicProperties: [{ name: "id", type: Number, subType: null }]
+		};
 
 		public id: number;
 		public name: string;

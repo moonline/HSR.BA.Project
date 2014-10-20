@@ -27,7 +27,7 @@ module core {
 
 				return domainObject;
 			} else {
-				return null;
+				throw new Error("No factory configuration defined for entity!");
 			}
 		}
 

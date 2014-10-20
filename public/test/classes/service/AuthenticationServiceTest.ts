@@ -3,6 +3,8 @@
 /// <reference path='../../../../app/assets/scripts/classes/domain/model/User.ts' />
 /// <reference path='../../../../app/assets/scripts/classes/service/AuthenticationService.ts' />
 
+/// <reference path='../../../../app/assets/scripts/classes/domain/factory/ObjectFactory.ts' />
+
 module test {
 	export module helper {
 	}
@@ -42,6 +44,11 @@ module test {
 			describe("Login / Logout", function() {
 				it("Successful login & successful logout", function() {
 					var testUserData: any = { "id": 5, "name": "peter" };
+					var testUser = (function(){
+						var user: core.User = new core.User(testUserData.name);
+						user.id = testUserData.id;
+						return user;
+					})();
 
 					httpBackend.when("GET", '/user/login-status').respond({});
 					httpBackend.when("POST", '/user/login').respond(testUserData);
@@ -53,9 +60,9 @@ module test {
 						returnValue = { "status": status, "user": user };
 					});
 					httpBackend.flush();
-					expect(returnValue).toEqual({ status: true, user: core.User.createFromJson(testUserData) });
+					expect(returnValue).toEqual({ status: true, user: testUser });
 					expect(authentivationService.isLoggedIn).toEqual(true);
-					expect(authentivationService.currentUser).toEqual(core.User.createFromJson(testUserData));
+					expect(authentivationService.currentUser).toEqual(testUser);
 
 					authentivationService.logout(function(status) {
 						returnValue = status;
@@ -68,6 +75,11 @@ module test {
 
 				it("Successful login & failed logout", function() {
 					var testUserData: any = { "id": 5, "name": "peter" };
+					var testUser = (function(){
+						var user: core.User = new core.User(testUserData.name);
+						user.id = testUserData.id;
+						return user;
+					})();
 
 					httpBackend.when("GET", '/user/login-status').respond({});
 					httpBackend.when("POST", '/user/login').respond(testUserData);
@@ -79,9 +91,9 @@ module test {
 						returnValue = { "status": status, "user": user };
 					});
 					httpBackend.flush();
-					expect(returnValue).toEqual({ status: true, user: core.User.createFromJson(testUserData) });
+					expect(returnValue).toEqual({ status: true, user: testUser });
 					expect(authentivationService.isLoggedIn).toEqual(true);
-					expect(authentivationService.currentUser).toEqual(core.User.createFromJson(testUserData));
+					expect(authentivationService.currentUser).toEqual(testUser);
 
 					authentivationService.logout(function(status) {
 						returnValue = status;
@@ -89,7 +101,7 @@ module test {
 					httpBackend.flush();
 					expect(returnValue).toEqual(false);
 					expect(authentivationService.isLoggedIn).toEqual(true);
-					expect(authentivationService.currentUser).toEqual(core.User.createFromJson(testUserData));
+					expect(authentivationService.currentUser).toEqual(testUser);
 				});
 
 				it("Failed login", function() {
@@ -114,18 +126,23 @@ module test {
 
 			describe("Registration", function() {
 				it("Successful registration", function() {
-					var testUser: any = { "id": 5, "name": "peter" };
+					var testUserData: any = { "id": 5, "name": "peter" };
+					var testUser = (function(){
+						var user: core.User = new core.User(testUserData.name);
+						user.id = testUserData.id;
+						return user;
+					})();
 
 					httpBackend.when("GET", '/user/login-status').respond({});
-					httpBackend.when("POST", '/user/register').respond(testUser);
+					httpBackend.when("POST", '/user/register').respond(testUserData);
 
 					var returnValue = {};
 					var authentivationService: core.AuthenticationService = new core.AuthenticationService(http, q);
-					authentivationService.register(testUser.name, "pwd", "pwd", function(status, user) {
+					authentivationService.register(testUserData.name, "pwd", "pwd", function(status, user) {
 						returnValue = { "status": status, "user": user };
 					});
 					httpBackend.flush();
-					expect(returnValue).toEqual({ status: true, user: core.User.createFromJson(testUser) });
+					expect(returnValue).toEqual({ status: true, user: testUser });
 				});
 
 				it("Malformed data returned", function() {
@@ -138,7 +155,7 @@ module test {
 						returnValue = { "status": status, "user": user };
 					});
 					httpBackend.flush();
-					expect(returnValue).toEqual({ status: true, user: core.User.createFromJson({}) });
+					expect(returnValue).toEqual({ status: true, user: core.ObjectFactory.createFromJson<any>(core.User,{}) });
 				});
 
 				it("Failed registration", function() {

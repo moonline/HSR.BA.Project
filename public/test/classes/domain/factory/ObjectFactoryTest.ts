@@ -17,7 +17,12 @@ module test {
 				expect(core.ObjectFactory.createFromJson<helper.Dummy>(helper.Dummy,dummyData)).toEqual(dummyObject);
 			});
 
+			it("throw error on object without factory configuration", function() {
+				var testObjectData: any = { "id": 5, "name": "peter" };
 
+				expect(function() { core.ObjectFactory.createFromJson<helper.CLO>(helper.CLO,testObjectData); }).
+					toThrow(new Error("No factory configuration defined for entity!"));
+			});
 
 			it("create complex object from json", function() {
 				var dummyData: any = {
@@ -39,6 +44,7 @@ module test {
 
 				expect(core.ObjectFactory.createFromJson<helper.DummyContainer>(helper.DummyContainer, dummyData)).toEqual(dummyContainer);
 			});
+
 		});
 	}
 }
