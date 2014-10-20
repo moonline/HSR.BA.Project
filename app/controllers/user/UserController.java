@@ -1,5 +1,6 @@
 package controllers.user;
 
+import controllers.GuaranteeAuthenticatedUser;
 import logics.user.UserLogic;
 import models.user.User;
 import play.data.DynamicForm;
@@ -54,6 +55,7 @@ public class UserController extends Controller {
 	}
 
 	@Transactional()
+	@GuaranteeAuthenticatedUser()
 	public static Result changePassword() {
 		User user = USER_LOGIC.getLoggedInUser(session());
 		DynamicForm requestData = Form.form().bindFromRequest();

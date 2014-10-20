@@ -38,6 +38,10 @@ public class UserLogic {
 		return USER_DAO.readById(userId);
 	}
 
+	public boolean isUserLoggedIn(Http.Session session) {
+		return getLoggedInUser(session) != null;
+	}
+
 	public boolean changePassword(User user, String old_password, String new_password) {
 		if (!passwordCorrect(user, old_password)) {
 			return false;
