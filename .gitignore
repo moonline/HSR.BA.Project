@@ -49,3 +49,5 @@ public/test/*.js
 
 # secret configuration files
 test/PPT/jira-license.key
+# Vagrant up cached files
+test/integration/*/downloads/*
