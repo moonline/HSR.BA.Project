@@ -3,7 +3,7 @@
 
 /// <reference path='classes/application/TaskTemplateListController.ts' />
 /// <reference path='classes/application/DecisionListController.ts' />
-/// <reference path='classes/application/LoginController.ts' />
+/// <reference path='classes/application/RegisterController.ts' />
 /// <reference path='classes/application/MappingController.ts' />
 /// <reference path='classes/application/TransmissionController.ts' />
 
@@ -61,9 +61,9 @@ module core {
 				}]
 			}
 		});
-		$routeProvider.when('/user', {
-			templateUrl: '/public/views/templates/loginView.html',
-			controller: 'loginController'
+		$routeProvider.when('/register', {
+			templateUrl: '/public/views/templates/registerView.html',
+			controller: 'registerController'
 		});
         $routeProvider.otherwise({
             redirectTo:'/'
@@ -74,8 +74,9 @@ module core {
 	});
 
 	app.run(['$rootScope', '$location', 'authenticationService', function ($rootScope, $location, authenticationService) {
+		// access denied for view? redirect to registration view
 		$rootScope.$on("$routeChangeError", function(event, current, previous, eventObj) {
-			$location.path("/user");
+			$location.path("/register");
 		});
 	}]);
 
@@ -83,7 +84,7 @@ module core {
 	app.controller('decisionListController', ['$scope', '$location', 'persistenceService', DecisionListController]);
 	app.controller('mappingController', ['$scope', '$location', 'persistenceService', MappingController]);
 	app.controller('transmissionController', ['$scope', '$location', 'persistenceService', '$http', TransmissionController]);
-	app.controller('loginController', ['$scope', '$location', '$http', 'authenticationService', LoginController]);
+	app.controller('registerController', ['$scope', '$location', '$http', 'authenticationService', RegisterController]);
 
     app.service('persistenceService', ['$http', function($http) {
 		return {
