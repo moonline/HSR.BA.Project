@@ -19,10 +19,12 @@ Testing in development
 ----------------------
 
 * Run `./activator` in this project to start the Play console
+* To exclude the integration tests, run `./activator -DtestScope=noIntegrationTests` instead
 * In the play console the following commands are especially useful:
   * `run` to start this project under http://localhost:9000
   * `test` to run all tests
   * `build` to build the project to target/universal/eeppi-1.0-SNAPSHOT.zip
+  * `compile` to just compile the code without running anyting
 
 
 Setup instructions
