@@ -7,6 +7,7 @@ HSR.BA.Project
 Requirements for development
 ----------------------------
 
+* JDK Version 1.8.0_25 or later
 * Typescript compiler
   1. Install [Node.js](http://nodejs.org/)
   2. Install Typescript compiler with `sudo npm install -g typescript`

@@ -18,6 +18,12 @@ libraryDependencies ++= Seq(
   "postgresql"                %  "postgresql"              % "9.1-901.jdbc4",
   //see latest version under: https://repository.jboss.org/nexus/content/repositories/thirdparty-releases/org/jetbrains/annotations/
   "org.jetbrains"             % "annotations"              % "7.0.2",
+  //see latest version under: http://mvnrepository.com/artifact/org.mockito
+  "org.mockito"               % "mockito-all"              % "1.10.8",
+  //see latest version under: http://mvnrepository.com/artifact/org.powermock
+  "org.powermock"             % "powermock-core"           % "1.5.6",
+  "org.powermock"             % "powermock-module-junit4"  % "1.5.6",
+  "org.powermock"             % "powermock-api-mockito"    % "1.5.6",
   //see latest versions under: http://mvnrepository.com/artifact/org.seleniumhq.selenium
   "org.seleniumhq.selenium"   % "selenium-api"             % "2.43.1",
   "org.seleniumhq.selenium"   % "selenium-java"            % "2.43.1",

@@ -82,8 +82,7 @@ public class PPTIntegrationTest extends AbstractIntegrationTest {
 						"          \"name\": \"Task\"\n" +
 						"       }\n" +
 						"   }\n" +
-						"}")
-		)).isTrue();
+						"}"), "admin", "admin")).isTrue();
 
 		System.out.println("PPTIntegrationTest.testLoginStatusForUser: END");
 	}

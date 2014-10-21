@@ -26,4 +26,39 @@ public class PPTAccount {
 
 	private String ppt_password;
 
+	public Long getId() {
+		return id;
+	}
+
+	public String getPptUrl() {
+		return pptUrl;
+	}
+
+	public void setPptUrl(String pptUrl) {
+		this.pptUrl = pptUrl;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	public String getPpt_username() {
+		return ppt_username;
+	}
+
+	public void setPpt_username(String ppt_username) {
+		this.ppt_username = ppt_username;
+	}
+
+	public String getPpt_password() {
+		return ppt_password;
+	}
+
+	public void setPpt_password(String ppt_password) {
+		this.ppt_password = ppt_password;
+	}
 }
