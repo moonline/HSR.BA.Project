@@ -40,7 +40,7 @@ public class ProjectPlanningToolControllerTest extends AbstractControllerTest {
 		String urlPath = "/testPath";
 		String username = "admin";
 		String password = "1234";
-		String authentication = AbstractTestDataCreator.createPPTAccountWithTransaction(user, baseUrl, username, password).getId() + "";
+		String account = AbstractTestDataCreator.createPPTAccountWithTransaction(user, baseUrl, username, password).getId() + "";
 		String content_string = "{\"content\": \"Test content\"}";
 		JsonNode content = Json.parse(content_string);
 		int result_status = 123;
@@ -58,7 +58,7 @@ public class ProjectPlanningToolControllerTest extends AbstractControllerTest {
 		when(WS.url(baseUrl + urlPath)).thenReturn(wsURL);
 
 		//Test
-		Result result = callActionWithUser(routes.ref.ProjectPlanningToolController.sendToPPT(), user, postData("path", urlPath, "content", content_string, "authentication", authentication));
+		Result result = callActionWithUser(routes.ref.ProjectPlanningToolController.sendToPPT(), user, postData("path", urlPath, "content", content_string, "account", account));
 
 		//Verification
 		assertThat(status(result)).isEqualTo(result_status);
