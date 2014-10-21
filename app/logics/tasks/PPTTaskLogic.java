@@ -12,13 +12,6 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class PPTTaskLogic {
 
-	@Deprecated
-	public boolean createPPTTask(String url, JsonNode postData, String username, String password) {
-		WSResponse wsResponse = sendCreatePPTTaskRequest(url, postData, username, password);
-		JsonNode response = wsResponse.asJson();
-		return response.has("key");
-	}
-
 	private WSResponse sendCreatePPTTaskRequest(String url, JsonNode postData, String username, String password) {
 		WSRequestHolder wsRequest = WS.url(url)
 				.setHeader("Content-Type", "application/json")

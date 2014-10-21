@@ -10,6 +10,7 @@ import play.libs.ws.WS;
 import play.libs.ws.WSCookie;
 import play.libs.ws.WSRequestHolder;
 import play.libs.ws.WSResponse;
+import test.AbstractTestDataCreator;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,6 +22,7 @@ import java.util.List;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.fest.assertions.Assertions.assertThat;
+import static play.mvc.Http.Status.CREATED;
 
 public class PPTIntegrationTest extends AbstractIntegrationTest {
 
@@ -69,20 +71,30 @@ public class PPTIntegrationTest extends AbstractIntegrationTest {
 		createJiraProject(projectKey);
 
 		//Create an issue
-		assertThat(new PPTTaskLogic().createPPTTask(JIRA_URL + "/rest/api/2/issue/",
-				Json.parse("{\n" +
-						"    \"fields\": {\n" +
-						"       \"project\":\n" +
-						"       {\n" +
-						"          \"key\": \"" + projectKey + "\"\n" +
-						"       },\n" +
-						"       \"summary\": \"My generated issue\",\n" +
-						"       \"description\": \"This is an issue, which is created by EEPPI over the API\",\n" +
-						"       \"issuetype\": {\n" +
-						"          \"name\": \"Task\"\n" +
-						"       }\n" +
-						"   }\n" +
-						"}"), "admin", "admin")).isTrue();
+		{
+			//Setup
+			PPTTaskLogic.CreatePPTTaskForm form = new PPTTaskLogic.CreatePPTTaskForm();
+			form.account = AbstractTestDataCreator.createPPTAccountWithTransaction(AbstractTestDataCreator.createUserWithTransaction("Admin", "123"), JIRA_URL, "admin", "admin");
+			form.path = "/rest/api/2/issue/";
+			form.content = Json.parse("{\n" +
+					"    \"fields\": {\n" +
+					"       \"project\":\n" +
+					"       {\n" +
+					"          \"key\": \"" + projectKey + "\"\n" +
+					"       },\n" +
+					"       \"summary\": \"My generated issue\",\n" +
+					"       \"description\": \"This is an issue, which is created by EEPPI over the API\",\n" +
+					"       \"issuetype\": {\n" +
+					"          \"name\": \"Task\"\n" +
+					"       }\n" +
+					"   }\n" +
+					"}");
+			//Test
+			WSResponse response = new PPTTaskLogic().createPPTTask(form);
+			//Verification
+			assertThat(response.getStatus()).isEqualTo(CREATED);
+			assertThat(response.asJson().has("key")).isTrue();
+		}
 
 		System.out.println("PPTIntegrationTest.testLoginStatusForUser: END");
 	}
