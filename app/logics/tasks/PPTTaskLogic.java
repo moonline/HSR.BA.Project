@@ -5,23 +5,19 @@ import models.user.PPTAccount;
 import org.jetbrains.annotations.NotNull;
 import play.data.validation.Constraints;
 import play.libs.ws.WS;
-import play.libs.ws.WSRequestHolder;
 import play.libs.ws.WSResponse;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class PPTTaskLogic {
 
-	private WSResponse sendCreatePPTTaskRequest(String url, JsonNode postData, String username, String password) {
-		WSRequestHolder wsRequest = WS.url(url)
-				.setHeader("Content-Type", "application/json")
-				.setAuth(username, password);
-		return wsRequest.post(postData).get(30, SECONDS);
-	}
-
 	public WSResponse createPPTTask(@NotNull CreatePPTTaskForm form) {
 		PPTAccount account = form.account;
-		return sendCreatePPTTaskRequest(account.getPptUrl() + form.path, form.content, account.getPpt_username(), account.getPpt_password());
+		return WS.url(account.getPptUrl() + form.path)
+				.setHeader("Content-Type", "application/json")
+				.setAuth(account.getPpt_username(), account.getPpt_password())
+				.post(form.content)
+				.get(30, SECONDS);
 	}
 
 	public static class CreatePPTTaskForm {
