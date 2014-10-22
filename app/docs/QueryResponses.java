@@ -12,7 +12,7 @@ public @interface QueryResponses {
 	Response[] value();
 
 	public @interface Response {
-		int status();
+		int status() default 0;
 
 		String description();
 	}

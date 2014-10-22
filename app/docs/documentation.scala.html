@@ -48,7 +48,7 @@
                 </tr>
                 @for(response <- method.queryResponses) {
                 <tr>
-                    <td>@response.status</td>
+                    <td>@if(response.status>0){@response.status}else{&dash;}</td>
                     <td>@response.description</td>
                 </tr>
                 }
