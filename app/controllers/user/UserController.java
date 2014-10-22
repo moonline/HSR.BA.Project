@@ -1,6 +1,9 @@
 package controllers.user;
 
 import controllers.GuaranteeAuthenticatedUser;
+import docs.QueryDescription;
+import docs.QueryParameters;
+import docs.QueryResponses;
 import logics.user.UserLogic;
 import models.user.User;
 import play.data.DynamicForm;
@@ -9,9 +12,8 @@ import play.db.jpa.Transactional;
 import play.mvc.Controller;
 import play.mvc.Result;
 
-/**
- * @Path("/user")
- */
+import static docs.QueryResponses.Response;
+
 public class UserController extends Controller {
 
 	public static final UserLogic USER_LOGIC = new UserLogic();
@@ -42,15 +44,16 @@ public class UserController extends Controller {
 		return ok(USER_LOGIC.getAsJson(user));
 	}
 
-	/**
-	 * @POST
-	 * @Path("/register")
-	 * @QueryParam("name") string username
-	 * @QueryParam("password") string password
-	 * @QueryParam("password_repeat") string password repetition
-	 * @return User
-	 */
 	@Transactional()
+	@QueryParameters({
+			@QueryParameters.Parameter(name = "name", description = "username"),
+			@QueryParameters.Parameter(name = "password", description = "the new password for the user"),
+			@QueryParameters.Parameter(name = "password_repeat", description = "the new password for the user (repetition, to guarantee the user didn't make a typo)")})
+	@QueryDescription("This creates a new EEPPI-user.")
+	@QueryResponses({
+			@Response(status = BAD_REQUEST, description = "If the user could not be created."),
+			@Response(status = OK, description = "If the user could be created, it is returned.")
+	})
 	public static Result register() {
 		DynamicForm requestData = Form.form().bindFromRequest();
 		String name = requestData.get("name");
