@@ -8,6 +8,7 @@
 
 # Webstorm trash
 /public/.idea
+/app/.idea
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
@@ -39,3 +40,4 @@ public/test/*.js
 test/integration/PPT/jira-license.key
 # Vagrant up cached files
 test/integration/PPT/atlassian-jira.bin
+test/integration/*/downloads/*

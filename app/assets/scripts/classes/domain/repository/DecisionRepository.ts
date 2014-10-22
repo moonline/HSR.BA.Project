@@ -1,3 +1,5 @@
+/// <reference path='../../../configuration/paths.ts' />
+
 /// <reference path='Repository.ts' />
 /// <reference path='../../domain/model/Decision.ts' />
 
@@ -7,7 +9,7 @@ module dks {
 			super(httpService);
 			this.type = Decision;
 			this.resources = {
-				'all': 'public/temporaryDevelopmentData/dks/decision/list.json'
+				'all': configuration.paths.decision.list
 			};
 		}
 	}

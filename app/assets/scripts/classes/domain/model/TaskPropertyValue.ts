@@ -1,16 +1,17 @@
 /// <reference path='../repository/PersistentEntity.ts' />
+/// <reference path='../../domain/factory/FactoryConfiguration.ts' />
 
 /// <reference path='../../domain/model/TaskProperty.ts' />
 
 module core {
     export class TaskPropertyValue implements core.PersistentEntity {
-		// TODO: replace this ugly hack. This is only for first json import
-		public static createFromJson(object: any): TaskPropertyValue {
-			var domainObject: TaskPropertyValue = new TaskPropertyValue(TaskProperty.createFromJson(object.property), object.value);
-			domainObject.id = object.id;
-
-			return domainObject;
-		}
+		public static factoryConfiguration: core.FactoryConfiguration = {
+			constructorArguments: [
+				{ name: "property", type: TaskProperty, subType: null },
+				{ name: "value", type: String, subType: null }
+			],
+			publicProperties: [{ name: "id", type: Number, subType: null }]
+		};
 
 		public id: number;
 		public property: TaskProperty;

@@ -4,7 +4,7 @@
 module core {
 	'use strict';
 
-	export class LoginController {
+	export class RegisterController {
 		$scope: any;
 		authenticationService: AuthenticationService;
 

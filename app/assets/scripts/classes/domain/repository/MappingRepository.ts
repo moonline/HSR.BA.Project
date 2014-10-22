@@ -1,3 +1,5 @@
+/// <reference path='../../../configuration/paths.ts' />
+
 /// <reference path='Repository.ts' />
 /// <reference path='../../domain/model/Mapping.ts' />
 
@@ -7,7 +9,7 @@ module core {
 			super(httpService);
 			this.type = Mapping;
 			this.resources = {
-				'all': 'public/temporaryDevelopmentData/eeppi/mapping/list.json'
+				'all': configuration.paths.mapping.list
 			};
 		}
 	}

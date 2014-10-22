@@ -1,4 +1,8 @@
+/// <reference path='../../configuration/paths.ts' />
+
 /// <reference path='../domain/model/User.ts' />
+
+/// <reference path='../../classes/domain/factory/ObjectFactory.ts' />
 
 module core {
 	export class AuthenticationService {
@@ -8,18 +12,18 @@ module core {
 		private loggedInUser: User = null;
 		private ready;
 
-		constructor(httpService, $rootScope, $q) {
+		constructor(httpService, $q) {
 			this.ready = $q.defer();
 			this.httpService = httpService;
 			this.resources = {
-				'login':'/user/login',
-				'logout':'/user/logout',
-				'status': '/user/login-status',
-				'register': '/user/register'
+				'login': configuration.paths.user.login,
+				'logout': configuration.paths.user.logout,
+				'status': configuration.paths.user.status,
+				'register': configuration.paths.user.register
 			};
-			$rootScope.authenticator = this;
 			this.loginStatus(function(user:User) {
 				if(user != null) {
+					console.log(user);
 					this.ready.resolve(this.loggedInUser);
 				} else {
 					this.ready.reject();
@@ -32,7 +36,7 @@ module core {
 				this.resources['login'],
 				{ "name": username, "password": password }
 			).success(function(data, status, headers, config) {
-				var user: User = User.createFromJson(data);
+				var user: User = ObjectFactory.createFromJson<any>(User,data);
 				this.loggedInUser = user;
 				this.isUserLoggedIn = true;
 				callback(true, user);
@@ -58,7 +62,7 @@ module core {
 				this.resources['register'],
 				{ "name": username, "password": password, "password_repeat": passwordRepeat }
 			).success(function(data, status, headers, config) {
-					callback(true, User.createFromJson(data));
+					callback(true, ObjectFactory.createFromJson<any>(User,data));
 			}.bind(this)).error(function(data, status, headers, config) {
 					callback(false, null);
 			}.bind(this));
@@ -67,7 +71,7 @@ module core {
 		public loginStatus(callback: (item: User) => void = (i) => {}): void {
 			this.httpService.get(this.resources['status']).success(function(data) {
 				if(data != null && data != {} && User.isCompatibleObject(data)) {
-					var user: User = User.createFromJson(data);
+					var user: User = ObjectFactory.createFromJson<any>(User,data);
 					this.loggedInUser = user;
 					this.isUserLoggedIn = true;
 					callback(user);

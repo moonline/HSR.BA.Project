@@ -1,3 +1,5 @@
+/// <reference path='../../../configuration/paths.ts' />
+
 /// <reference path='Repository.ts' />
 /// <reference path='../../domain/model/TaskTemplate.ts' />
 
@@ -7,7 +9,7 @@ module core {
 			super(httpService);
 			this.type = TaskTemplate;
 			this.resources = {
-				'all': 'public/temporaryDevelopmentData/eeppi/tasktemplate/list.json'
+				'all': configuration.paths.taskTemplate.list
 			};
 		}
     }

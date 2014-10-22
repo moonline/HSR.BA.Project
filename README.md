@@ -20,7 +20,9 @@ Testing in development
 ----------------------
 
 * Run `./activator` in this project to start the Play console
-* To exclude the integration tests, run `./activator -DtestScope=noIntegrationTests` instead
+  * Optional restrict the memory for java: `./activator -mem 256`
+  * Optional debug mode: `./activator -jvm-debug 9999`
+  * Optional exclude integration tests: `./activator -DtestScope=noIntegrationTests`
 * In the play console the following commands are especially useful:
   * `run` to start this project under http://localhost:9000
   * `test` to run all tests
@@ -33,3 +35,13 @@ Setup instructions
 1. Get and unzip the latest build
 2. run `bin/eeppi` on Unix or `bin/eeppi.bat` on Windows
 3. Find it at http://localhost:9000
+
+
+Advanced Information
+--------------------
+
+### Compile client manually
+
+1. go to /app/assets/scripts
+2. run tsc --target ES5 --out Main.js Main.ts
+3. run activator and open localhost:9000 in your browser

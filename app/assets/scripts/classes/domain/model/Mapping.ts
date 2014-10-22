@@ -1,21 +1,18 @@
-/// <reference path='TaskTemplate.ts' />
 /// <reference path='../../domain/model/Decision.ts' />
 /// <reference path='../../domain/repository/PersistentEntity.ts' />
+/// <reference path='../../domain/factory/FactoryConfiguration.ts' />
+
+/// <reference path='TaskTemplate.ts' />
 
 module core {
 	export class Mapping implements core.PersistentEntity {
-		// TODO: replace this ugly hack. This is only for first json import
-		public static createFromJson(object: any): Mapping {
-			var taskTemplates: TaskTemplate[] = [];
-			object.taskTemplates.forEach(function(element) {
-				taskTemplates.push(TaskTemplate.createFromJson(element));
-			});
-
-			var domainObject: Mapping = new Mapping(dks.Decision.createFromJson(object.decision), taskTemplates);
-			domainObject.id = object.id;
-
-			return domainObject;
-		}
+		public static factoryConfiguration: core.FactoryConfiguration = {
+			constructorArguments: [
+				{ name: "decision", type: dks.Decision, subType: null },
+				{ name: "taskTemplates", type: Array, subType: core.TaskTemplate }
+			],
+			publicProperties: [{ name: "id", type: Number, subType: null }]
+		};
 
 		public id: number;
 		public decision: dks.Decision;

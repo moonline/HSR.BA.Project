@@ -1,30 +1,12 @@
-/// <reference path='../../../resources/libraries/jasmin/ts/jasmine.d.ts' />
-/// <reference path='../../../resources/libraries/angularJs/angular.d.ts' />
-/// <reference path='../../.././module/MainModule.ts' />
+/// <reference path='../../../../../public/test/includes.ts' />
 
-/// <reference path='../../.././domain/model/Node.ts' />
-/// <reference path='../../.././domain/repository/PersistentEntity.ts' />
-/// <reference path='../../.././domain/repository/Repository.ts' />
+/// <reference path='../../../../../app/assets/scripts/classes/domain/model/Node.ts' />
+/// <reference path='../../../../../app/assets/scripts/classes/domain/repository/PersistentEntity.ts' />
+/// <reference path='../../../../../app/assets/scripts/classes/domain/repository/Repository.ts' />
+/// <reference path='../../../../../app/assets/scripts/classes/domain/factory/ObjectFactory.ts' />
 
 module test {
 	export module helper {
-		export class Dummy implements dks.Node, core.PersistentEntity {
-			public static createFromJson(object: any): Dummy {
-				var domainObject = new Dummy(object.name);
-				domainObject.id = object.id;
-
-				return domainObject;
-			}
-
-			public id: number;
-			public name: string;
-
-			constructor(name: string) {
-				this.id = Math.round(Math.random()*1000000);
-				this.name = name;
-			}
-		}
-
 		export class DummyRepository extends core.Repository<Dummy> {
 			constructor(httpService) {
 				super(httpService);
@@ -33,12 +15,6 @@ module test {
 					'all': 'data/api/dummy/list.json'
 				};
 			}
-		}
-
-		export function dummyFactory(id: number, name: string): Dummy {
-			var dummy: Dummy = new Dummy(name);
-			dummy.id = id;
-			return dummy;
 		}
 	}
 }
@@ -51,7 +27,7 @@ module test {
 				var dummy: test.helper.Dummy = new helper.Dummy("dummy1");
 				var data: any = { "id": dummy.id, "name": "dummy1" };
 
-				expect(helper.Dummy.createFromJson(data)).toEqual(dummy);
+				expect(core.ObjectFactory.createFromJson<helper.Dummy>(helper.Dummy,data)).toEqual(dummy);
 			});
 
 			it("get Dummies using repository.findAll()",angular.mock.inject(function($httpBackend, $http) {
@@ -77,7 +53,7 @@ module test {
 					dummies = items;
 				});
 				$httpBackend.flush();
-				expect(dummies).toEqual([helper.dummyFactory(1,"DummyObject1"), helper.dummyFactory(2,"DummyObject2")]);
+				expect(dummies).toEqual([helper.Dummy.createDummy(1,"DummyObject1"), helper.Dummy.createDummy(2,"DummyObject2")]);
 			}));
 		});
 	}

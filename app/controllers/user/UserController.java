@@ -9,6 +9,9 @@ import play.db.jpa.Transactional;
 import play.mvc.Controller;
 import play.mvc.Result;
 
+/**
+ * @Path("/user")
+ */
 public class UserController extends Controller {
 
 	public static final UserLogic USER_LOGIC = new UserLogic();
@@ -39,6 +42,14 @@ public class UserController extends Controller {
 		return ok(USER_LOGIC.getAsJson(user));
 	}
 
+	/**
+	 * @POST
+	 * @Path("/register")
+	 * @QueryParam("name") string username
+	 * @QueryParam("password") string password
+	 * @QueryParam("password_repeat") string password repetition
+	 * @return User
+	 */
 	@Transactional()
 	public static Result register() {
 		DynamicForm requestData = Form.form().bindFromRequest();

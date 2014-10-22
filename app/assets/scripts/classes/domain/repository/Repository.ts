@@ -1,4 +1,5 @@
 /// <reference path='PersistentEntity.ts' />
+/// <reference path='../../../classes/domain/factory/ObjectFactory.ts' />
 
 module core {
 	export class Repository<T extends PersistentEntity> {
@@ -25,7 +26,7 @@ module core {
 				this.httpService.get(this.resources['all']).success(function(data){
 					var items: T[] = [];
 					data.items.forEach(function(element){
-						items.push(type.createFromJson(element));
+						items.push(ObjectFactory.createFromJson<any>(type,element));
 					});
 					[].push.apply(cache, items);
 					callback(items);
