@@ -3,6 +3,7 @@ package controllers.ppt;
 import com.fasterxml.jackson.databind.JsonNode;
 import controllers.GuaranteeAuthenticatedUser;
 import docs.QueryDescription;
+import docs.QueryExamples;
 import docs.QueryParameters;
 import docs.QueryResponses;
 import logics.tasks.PPTTaskLogic;
@@ -12,6 +13,7 @@ import play.libs.F;
 import play.mvc.Controller;
 import play.mvc.Result;
 
+import static docs.QueryExamples.Example;
 import static docs.QueryParameters.Parameter;
 import static docs.QueryResponses.Response;
 
@@ -31,6 +33,23 @@ public class ProjectPlanningToolController extends Controller {
 			@Response(status = BAD_REQUEST, description = "If there is an error during preparation of the request for the remote server."),
 			@Response(status = 0, description = "The return value from the remote server is returned")
 	})
+	@QueryExamples({@Example(parameters = {"100", "/rest/api/2/issue/", "{\n" +
+			"    \"fields\": {\n" +
+			"       \"project\":\n" +
+			"       {\n" +
+			"          \"key\": \"PRV\"\n" +
+			"       },\n" +
+			"       \"summary\": \"My generated issue\",\n" +
+			"       \"description\": \"This is an issue, which is created by EEPPI over the API\",\n" +
+			"       \"issuetype\": {\n" +
+			"          \"name\": \"Task\"\n" +
+			"       }\n" +
+			"   }\n" +
+			"}"}, response = @Example.Response(status = 201, content = "{\n" +
+			"    \"id\": \"10000\",\n" +
+			"    \"key\": \"PRV-24\",\n" +
+			"    \"self\": \"http://jira.example.ch/jira/rest/api/2/issue/10000\"\n" +
+			"}"))})
 	public static F.Promise<Result> sendToPPT() {
 		Form<PPTTaskLogic.CreatePPTTaskForm> form = Form.form(PPTTaskLogic.CreatePPTTaskForm.class).bindFromRequest();
 		if (form.hasErrors()) {

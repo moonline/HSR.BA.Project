@@ -1,5 +1,8 @@
 package docs;
 
+import controllers.GuaranteeAuthenticatedUser;
+import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.Nullable;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
 import org.reflections.scanners.SubTypesScanner;
@@ -9,13 +12,23 @@ import org.reflections.util.FilterBuilder;
 import play.Logger;
 import play.api.mvc.Call;
 import play.libs.F;
+import play.libs.ws.WS;
+import play.libs.ws.WSRequestHolder;
+import play.libs.ws.WSResponse;
 import play.mvc.Controller;
 import play.mvc.Result;
 
+import java.io.UnsupportedEncodingException;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.net.URLEncoder;
 import java.util.*;
+import java.util.function.Function;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static play.mvc.Http.Context.Implicit.ctx;
 
 public class DocumentationLogic {
 
@@ -90,6 +103,91 @@ public class DocumentationLogic {
 		return name;
 	}
 
+	public String getCurlRequestString(MethodDocumentation method, QueryExamples.Example example) {
+		StringBuilder request = new StringBuilder("curl");
+		if (!method.call.method().equals("GET")) {
+			request.append(" --request ").append(method.call.method());
+		}
+		String queryString = calculateQueryString(method, example.parameters());
+		if (queryString != null) {
+			request.append(" --data \"").append(queryString).append("\"");
+		}
+		request.append(" ").append(method.call.absoluteURL(ctx().request()));
+		return request.toString();
+	}
+
+	public SimpleResponse getResponseString(MethodDocumentation method, QueryExamples.Example example) {
+		QueryExamples.Example.Response exampleResponse = example.response();
+		if (exampleResponse.status() > 0) {
+			return new SimpleResponse(exampleResponse.status(), null, exampleResponse.content(), false);
+		} else {
+			return simulateRequest(method, example.parameters());
+		}
+	}
+
+	private SimpleResponse simulateRequest(MethodDocumentation method, String[] parameterValues) {
+		WSRequestHolder url = WS.url(method.call.absoluteURL(ctx().request()));
+		String queryString = calculateQueryString(method, parameterValues);
+		if (queryString != null) {
+			url.setQueryString(queryString);
+		}
+		WSResponse wsResponse = url.execute(method.call.method()).get(30, SECONDS);
+		return new SimpleResponse(wsResponse.getStatus(), wsResponse.getStatusText(), wsResponse.getBody(), true);
+	}
+
+	@Nullable
+	private String calculateQueryString(MethodDocumentation method, String[] parameterValues) {
+		int numberOfParameters = Math.min(method.queryParameters.length, parameterValues.length);
+		if (numberOfParameters == 0) {
+			return null;
+		} else {
+			List<String> data = new ArrayList<>();
+			for (int i = 0; i < numberOfParameters; i++) {
+				String parameterName = method.queryParameters[i].name();
+				String parameterValue;
+				try {
+					parameterValue = URLEncoder.encode(parameterValues[i], "UTF-8");
+				} catch (UnsupportedEncodingException e) {
+					Logger.error("UTF-8 is unsupported?", e);
+					throw new RuntimeException(e);
+				}
+				data.add(parameterName + "=" + parameterValue);
+			}
+			return StringUtils.join(data, "&");
+		}
+	}
+
+	public static class SimpleResponse {
+
+		private final int status;
+		private final String statusText;
+		private final String body;
+		private final boolean isRealSimulation;
+
+		public SimpleResponse(int status, String statusText, String body, boolean isRealSimulation) {
+			this.status = status;
+			this.statusText = statusText;
+			this.body = body;
+			this.isRealSimulation = isRealSimulation;
+		}
+
+		public int getStatus() {
+			return status;
+		}
+
+		public String getStatusText() {
+			return statusText;
+		}
+
+		public String getBody() {
+			return body;
+		}
+
+		public boolean isRealSimulation() {
+			return isRealSimulation;
+		}
+	}
+
 	/**
 	 * This class is a Value-Object (http://en.wikipedia.org/wiki/Value_object) containing information about one API call
 	 */
@@ -99,15 +197,25 @@ public class DocumentationLogic {
 		public final QueryParameters.Parameter[] queryParameters;
 		public final String queryDescription;
 		public final QueryResponses.Response[] queryResponses;
+		public final QueryExamples.Example[] queryExamples;
+		public final boolean requireAuthentication;
 
 		public MethodDocumentation(Method method, Call call) {
 			this.call = call;
-			QueryParameters[] queryParameters = method.getAnnotationsByType(QueryParameters.class);
-			this.queryParameters = queryParameters.length > 0 ? queryParameters[0].value() : null;
-			QueryDescription[] queryDescription = method.getAnnotationsByType(QueryDescription.class);
-			this.queryDescription = queryDescription.length > 0 ? queryDescription[0].value() : null;
-			QueryResponses[] queryResponses = method.getAnnotationsByType(QueryResponses.class);
-			this.queryResponses = queryResponses.length > 0 ? queryResponses[0].value() : null;
+			this.queryParameters = getAnnotationContent(method, QueryParameters.class, QueryParameters::value);
+			this.queryDescription = getAnnotationContent(method, QueryDescription.class, QueryDescription::value);
+			this.queryResponses = getAnnotationContent(method, QueryResponses.class, QueryResponses::value);
+			this.queryExamples = getAnnotationContent(method, QueryExamples.class, QueryExamples::value);
+			this.requireAuthentication = method.getAnnotationsByType(GuaranteeAuthenticatedUser.class).length > 0;
+		}
+
+		private <A extends Annotation, Return> Return getAnnotationContent(Method method, Class<A> annotationClass, Function<A, Return> get) {
+			A[] annotation = method.getAnnotationsByType(annotationClass);
+			if (annotation.length > 0) {
+				return get.apply(annotation[0]);
+			} else {
+				return null;
+			}
 		}
 
 	}

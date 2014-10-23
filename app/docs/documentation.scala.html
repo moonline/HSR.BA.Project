@@ -21,6 +21,12 @@
             <p>@method.queryDescription</p>
         }
 
+        @if(method.requireAuthentication) {
+            Authentication is required to use this method.
+        }else{
+            This method is public and can be used without authentication.
+        }
+
         @if(method.queryParameters != null) {
             <h4>Parameters</h4>
             <table>
@@ -55,8 +61,21 @@
             </table>
         }
 
-        <!-- TODO: Examples ("Die Schnittstelle der Datenquelle der Entscheidungen sowie die Schnitt- stellen für das Projektplanungstool sollen konfigurierbar gestaltet sein, sodass sie für andere Systeme als "CDAR" und Jira/Redmine umkonfiguriert werden können. Für Software eigene Schnittstellen sollen Aufrufparameter, Rückgabewerte und jeweils mindestens zwei Beispielaufrufe und Beispielantwortdatensätze dokumentiert werden, sodass zukünftige Projekte mit "EEPPI" interagieren können." -->
-
+        @if(method.queryExamples != null) {
+            <h4>Examples</h4>
+            @for(example <- method.queryExamples) {
+                <blockquote>@logics.getCurlRequestString(method, example)</blockquote>
+                @defining(logics.getResponseString(method, example)) { response=>
+                    The previous command
+                    @if(response.isRealSimulation){
+                        <strong title="This response was calculated live on generation of this documentation.">did</strong>
+                    }else{
+                        <strong title="This response is not a live result, as a creation of a live one isn't that easy.">would probably</strong>
+                    } return with status code <strong>@response.getStatus()@if(response.getStatusText!=null){ (@response.getStatusText())}</strong> and yield@if(response.isRealSimulation){ed} the following:
+                    <pre>@response.getBody</pre>
+                }
+            }
+        }
     }
 }
 
