@@ -1,18 +1,18 @@
-/// <reference path='../domain/model/TaskTemplate.ts' />
 /// <reference path='../domain/model/Decision.ts' />
+/// <reference path='../domain/model/Option.ts' />
+/// <reference path='../domain/model/Mapping.ts' />
+/// <reference path='../domain/model/TaskTemplate.ts' />
+/// <reference path='../domain/model/TaskProperty.ts' />
+/// <reference path='../domain/model/TaskPropertyValue.ts' />
+/// <reference path='../domain/model/DecisionKnowledgeSystem.ts' />
 
-/// <reference path='../domain/repository/TaskTemplateRepository.ts' />
-/// <reference path='../domain/repository/DecisionRepository.ts' />
+/// <reference path='../domain/repository/ProblemRepository.ts' />
 /// <reference path='../domain/repository/MappingRepository.ts' />
 
 module core {
 	'use strict';
 
 	export class MappingController {
-		taskTemplateRepository: core.TaskTemplateRepository;
-		decisionRepository: dks.DecisionRepository;
-		mappingRepository: core.MappingRepository;
-		$scope: any;
 
 		/**
 		 * @inject
@@ -22,33 +22,69 @@ module core {
 			'$location'
 		];
 
-		constructor($scope, $location, persistenceService) {
-			this.$scope = $scope;
-
-			this.taskTemplateRepository = persistenceService['taskTemplateRepository'];
-			this.decisionRepository = persistenceService['decisionRepository'];
-			this.mappingRepository = persistenceService['mappingRepository'];
-
-			this.taskTemplateRepository.findAll(function(items) {
-				$scope.taskTemplates = items;
-			});
-			this.decisionRepository.findAll(function(items) {
+		constructor($scope, $location, $http, persistenceService) {
+			var decisionRepository = persistenceService['decisionRepository'];
+			decisionRepository.findAll(function(items) {
 				$scope.decisions = items;
 			});
-			this.update();
 
-			$scope.newMapping = new Mapping(null,[]);
-			$scope.create = function() {
-				this.mappingRepository.add($scope.newMapping);
-				$scope.newMapping = new Mapping(null,[]);
-				this.update();
-			}.bind(this);
-		}
+			var taskTemplateRepository = persistenceService['taskTemplateRepository'];
+			taskTemplateRepository.findAll(function(taskTemplates) {
+				$scope.taskTemplates = taskTemplates;
+			});
 
-		private update(): void {
-			this.mappingRepository.findAll(function(items) {
-				this.$scope.mappings = items;
-			}.bind(this));
+			var taskPropertyRepository = persistenceService['taskPropertyRepository'];
+			taskPropertyRepository.findAll(function(taskProperties) {
+				$scope.taskProperties = taskProperties;
+			});
+
+			var problemRepository: dks.ProblemRepository = persistenceService['problemRepository'];
+			problemRepository.findAll(function(items) {
+				$scope.problems = items;
+			});
+			var mappingRepository: MappingRepository = persistenceService['mappingRepository'];
+
+			/*persistenceService['decisionKnowledgeRepository'].findAll(function(items) {
+				var currentDks:dks.DecisionKnowledgeSystem = <dks.DecisionKnowledgeSystem>items[0];
+				var problemRepository: dks.ProblemRepository = persistenceService['factories'].createProblemRepository();
+
+			});*/
+
+			$scope.currentDecision = null;
+			$scope.currentMapping = null;
+			$scope.setCurrentDecision = function(decision) {
+				$scope.currentDecision = decision;
+				mappingRepository.findOneByDecision(decision, function(mapping) {
+					$scope.currentMapping = mapping;
+				});
+			};
+
+			$scope.currentTaskTemplate = null;
+			$scope.setCurrentTaskTemplate = function(taskTemplate) {
+				$scope.currentTaskTemplate = taskTemplate;
+			};
+			$scope.createNewTaskTemplate = function() {
+				var newTaskTemplate = new core.TaskTemplate('');
+				taskTemplateRepository.add(newTaskTemplate);
+				$scope.currentTaskTemplate = newTaskTemplate;
+			};
+			$scope.addPropertyValue = function(property) {
+				if($scope.currentTaskTemplate) {
+					var taskPropertyValue: TaskPropertyValue = new TaskPropertyValue(property, '');
+					(<TaskTemplate>$scope.currentTaskTemplate).addProperty(taskPropertyValue);
+				}
+			};
+
+			$scope.mapTaskTemplate = function(taskTemplate) {
+				if($scope.currentMapping) {
+					$scope.currentMapping.addTaskTemplate(taskTemplate);
+				} else if($scope.currentDecision) {
+					var mapping: Mapping = new Mapping($scope.currentDecision);
+					mapping.addTaskTemplate(taskTemplate);
+					mappingRepository.add(mapping, function(item){});
+					$scope.currentMapping = mapping;
+				}
+			};
 		}
 	}
 }

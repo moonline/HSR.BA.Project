@@ -2,7 +2,6 @@
 
 /// <reference path='Repository.ts' />
 /// <reference path='../../domain/model/Problem.ts' />
-/// <reference path='../../domain/factory/ObjectFactory.ts' />
 
 module dks {
 	export class ProblemRepository extends core.Repository<Problem> {

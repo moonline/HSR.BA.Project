@@ -1,8 +1,6 @@
 /// <reference path='libraries/declarations/angularJs/angular.d.ts' />
 /// <reference path='classes/module/MainModule.ts' />
 
-/// <reference path='classes/application/TaskTemplateListController.ts' />
-/// <reference path='classes/application/DecisionListController.ts' />
 /// <reference path='classes/application/RegisterController.ts' />
 /// <reference path='classes/application/MappingController.ts' />
 /// <reference path='classes/application/TransmissionController.ts' />
@@ -23,28 +21,7 @@ module core {
     var app = angular.module('MainModule', ['ngRoute']);
 
     app.config(function($routeProvider) {
-        $routeProvider.when('/', {
-            templateUrl: '/public/views/templates/taskTemplateListView.html',
-            controller: 'taskTemplateListController',
-			resolve: {
-				auth: ["$q", "authenticationService", function($q, authenticationService) {
-					// check if user is still logged in (promise still resolved), otherwise wait for resolve
-					if(authenticationService.isLoggedIn) { return true; }
-					return authenticationService.readyPromise.then(function(user) {});
-				}]
-			}
-        });
-		$routeProvider.when('/decisions', {
-			templateUrl: '/public/views/templates/decisionListView.html',
-			controller: 'decisionListController',
-			resolve: {
-				auth: ["$q", "authenticationService", function($q, authenticationService) {
-					if(authenticationService.isLoggedIn) { return true; }
-					return authenticationService.readyPromise.then(function(user) {});
-				}]
-			}
-		});
-		$routeProvider.when('/mappings', {
+		$routeProvider.when('/mapping', {
 			templateUrl: '/public/views/templates/mappingView.html',
 			controller: 'mappingController',
 			resolve: {
@@ -83,9 +60,7 @@ module core {
 		});
 	}]);
 
-    app.controller('taskTemplateListController', ['$scope', '$location', 'persistenceService', TaskTemplateListController]);
-	app.controller('decisionListController', ['$scope', '$location', '$http', 'persistenceService', DecisionListController]);
-	app.controller('mappingController', ['$scope', '$location', 'persistenceService', MappingController]);
+	app.controller('mappingController', ['$scope', '$location', '$http', 'persistenceService', MappingController]);
 	app.controller('transmissionController', ['$scope', '$location', 'persistenceService', '$http', TransmissionController]);
 	app.controller('registerController', ['$scope', '$location', '$http', 'authenticationService', RegisterController]);
 
@@ -96,9 +71,7 @@ module core {
 			decisionRepository: new dks.DecisionRepository($http),
 			mappingRepository: new core.MappingRepository($http),
 			decisionKnowledgeRepository: new dks.DecisionKnowledgeSystemRepository($http),
-			factories: {
-				createProblemRepository: function() { return new dks.ProblemRepository($http); }
-			}
+			problemRepository: new dks.ProblemRepository($http)
         };
     }]);
 
