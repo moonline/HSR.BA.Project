@@ -12,17 +12,19 @@ module core {
 		 * @param data e.g. { "id": 5, "name": "DummyObject" }
 		 * @returns {T}
 		 */
-		public static createFromJson<T>(type: any, data: any):T {
+		public static createFromJson(type: any, data: any):any {
 			if(type.factoryConfiguration) {
 				var constructorArguments: any[] = [];
 				type.factoryConfiguration.constructorArguments.forEach(function(argument){
 					constructorArguments.push(ObjectFactory.createProperty(data[argument['name']], argument));
 				});
 
-				var domainObject:T = ObjectFactory.createObject<T>(type,constructorArguments);
+				var domainObject:any = ObjectFactory.createObject(type,constructorArguments);
 
 				type.factoryConfiguration.publicProperties.forEach(function(property){
-					domainObject[property['name']] = ObjectFactory.createProperty(data[property['name']], property);
+					if(data[property['name']]) {
+						domainObject[property['name']] = ObjectFactory.createProperty(data[property['name']], property);
+					}
 				});
 
 				return domainObject;
@@ -64,11 +66,11 @@ module core {
 		 * You can't user the type itself to instantiate an object body because
 		 * maybe some undefined properties will fail on access, so use an empty dummy class
 		 */
-		public static createObject<T>(constructor, args):T {
+		public static createObject(constructor, args):any {
 			Empty.prototype = constructor.prototype;
 			var x = new Empty();
 			constructor.apply(x, args);
-			return <T>x;
+			return x;
 		}
 	}
 }

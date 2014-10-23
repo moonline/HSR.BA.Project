@@ -1,4 +1,22 @@
-[data-layout="flow"], [data-layout] * { 
+/**
+.------------------------------------------------------------------------.
+| data-layout="border"                                                   |
+| .--------------------------------------------------------------------. |
+| | data-region="north"                                                | |
+| +--------------------------------------------------------------------+ |
+| | data-region="middle"                                               | |
+| | .--------------------.----------------------.--------------------. | |
+| | |                    |                      |                    | | |
+| | | data-region="west" | data-region="center" | data-region="west" | | |
+| | | data-align="?"     | data-align="?"       | data-align="?"     | | |
+| | |                    |                      |                    | | |
+| | '--------------------'----------------------'--------------------' | |
+| +--------------------------------------------------------------------+ |
+| | data-region="south"                                                | |
+| '--------------------------------------------------------------------' |
+'------------------------------------------------------------------------'
+*/
+[data-layout="border"], [data-layout="border"] * {
 	box-sizing: border-box;
 }
 
@@ -18,13 +36,11 @@
 			width: 100%; 
 		}
 	}
-}
 
-[data-layout="border"] {
 	[data-region="center"], [data-region="middle"] {
 		&[data-align="start"] { align-items: flex-start; }
 		&[data-align="center"] { align-items: center; }
-		&[data-align="end"] { align-items: end; }
+		&[data-align="end"] { align-items: flex-end; }
 	}
 
 	> [data-region="north"] > * { 

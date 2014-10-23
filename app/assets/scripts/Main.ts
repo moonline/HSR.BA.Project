@@ -8,8 +8,11 @@
 /// <reference path='classes/application/TransmissionController.ts' />
 
 /// <reference path='classes/domain/repository/TaskTemplateRepository.ts' />
+/// <reference path='classes/domain/repository/TaskPropertyRepository.ts' />
 /// <reference path='classes/domain/repository/DecisionRepository.ts' />
 /// <reference path='classes/domain/repository/MappingRepository.ts' />
+/// <reference path='classes/domain/repository/DecisionKnowledgeSystemRepository.ts' />
+/// <reference path='classes/domain/repository/ProblemRepository.ts' />
 
 /// <reference path='classes/service/AuthenticationService.ts' />
 
@@ -81,7 +84,7 @@ module core {
 	}]);
 
     app.controller('taskTemplateListController', ['$scope', '$location', 'persistenceService', TaskTemplateListController]);
-	app.controller('decisionListController', ['$scope', '$location', 'persistenceService', DecisionListController]);
+	app.controller('decisionListController', ['$scope', '$location', '$http', 'persistenceService', DecisionListController]);
 	app.controller('mappingController', ['$scope', '$location', 'persistenceService', MappingController]);
 	app.controller('transmissionController', ['$scope', '$location', 'persistenceService', '$http', TransmissionController]);
 	app.controller('registerController', ['$scope', '$location', '$http', 'authenticationService', RegisterController]);
@@ -89,8 +92,13 @@ module core {
     app.service('persistenceService', ['$http', function($http) {
 		return {
             taskTemplateRepository: new core.TaskTemplateRepository($http),
+			taskPropertyRepository: new core.TaskPropertyRepository($http),
 			decisionRepository: new dks.DecisionRepository($http),
-			mappingRepository: new core.MappingRepository($http)
+			mappingRepository: new core.MappingRepository($http),
+			decisionKnowledgeRepository: new dks.DecisionKnowledgeSystemRepository($http),
+			factories: {
+				createProblemRepository: function() { return new dks.ProblemRepository($http); }
+			}
         };
     }]);
 

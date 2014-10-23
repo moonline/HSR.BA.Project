@@ -1,0 +1,147 @@
+{"startAt": 0, "maxResults": 2147483647, "length": 9, "elements": [
+	{
+		"type": "OptionTemplate",
+		"path": ["Cloud Application", "Session Management", "Server Session State"],
+		"name": "Server Session State",
+		"self": "http://152.96.193.210:8080/element/Cloud+Application%2FSession+Management%2FServer+Session+State",
+		"attributes": {
+			"IPR Classification": "Open"
+		},
+		"notes": "Keep session state on web server\r\n\r\n# Pros\r\n\r\n* ...\r\n* ..."
+	},
+	{
+		"type": "OptionTemplate",
+		"path": ["Cloud Application", "Session Management", "DB Session State"],
+		"name": "DB Session State",
+		"self": "http://152.96.193.210:8080/element/Cloud+Application%2FSession+Management%2FDB+Session+State",
+		"attributes": {},
+		"notes": "Persist session state on remote DB"
+	},
+	{
+		"type": "ProblemTemplate",
+		"path": ["Cloud Application", "Session Management", "Session State Management"],
+		"name": "Session State Management",
+		"self": "http://152.96.193.210:8080/element/Cloud+Application%2FSession+Management%2FSession+State+Management",
+		"attributes": {},
+		"notes": "How to manage session state on servers?",
+		"alternatives": [
+			{
+				"type": "OptionTemplate",
+				"path": ["Cloud Application", "Session Management", "Server Session State"],
+				"name": "Server Session State",
+				"self": "http://152.96.193.210:8080/element/Cloud+Application%2FSession+Management%2FServer+Session+State"
+			},
+			{
+				"type": "OptionTemplate",
+				"path": ["Cloud Application", "Session Management", "DB Session State"],
+				"name": "DB Session State",
+				"self": "http://152.96.193.210:8080/element/Cloud+Application%2FSession+Management%2FDB+Session+State"
+			}
+		]
+	},
+	{
+		"type": "OptionTemplate",
+		"path": ["Cloud Application", "DB Technologies", "Relational DB"],
+		"name": "Relational DB",
+		"self": "http://152.96.193.210:8080/element/Cloud+Application%2FDB+Technologies%2FRelational+DB",
+		"attributes": {},
+		"notes": ""
+	},
+	{
+		"type": "OptionTemplate",
+		"path": ["Cloud Application", "DB Technologies", "Key/Value Store"],
+		"name": "Key/Value Store",
+		"self": "http://152.96.193.210:8080/element/Cloud+Application%2FDB+Technologies%2FKey%2F%2FValue+Store",
+		"attributes": {},
+		"notes": ""
+	},
+	{
+		"type": "ProblemTemplate",
+		"path": ["Cloud Application", "DB Technologies", "DB Model"],
+		"name": "DB Model",
+		"self": "http://152.96.193.210:8080/element/Cloud+Application%2FDB+Technologies%2FDB+Model",
+		"attributes": {},
+		"notes": "",
+		"alternatives": [
+			{
+				"type": "OptionTemplate",
+				"path": ["Cloud Application", "DB Technologies", "Relational DB"],
+				"name": "Relational DB",
+				"self": "http://152.96.193.210:8080/element/Cloud+Application%2FDB+Technologies%2FRelational+DB"
+			},
+			{
+				"type": "OptionTemplate",
+				"path": ["Cloud Application", "DB Technologies", "Key/Value Store"],
+				"name": "Key/Value Store",
+				"self": "http://152.96.193.210:8080/element/Cloud+Application%2FDB+Technologies%2FKey%2F%2FValue+Store"
+			}
+		]
+	},
+	{
+		"type": "OptionOccurrence",
+		"path": ["My Project", "Server Session State"],
+		"name": "Server Session State",
+		"self": "http://152.96.193.210:8080/element/My+Project%2FServer+Session+State",
+		"attributes": {
+			"IPR Classification": "Open"
+		},
+		"notes": "Keep session state on web server\r\n\r\n# Pros\r\n\r\n* ...\r\n* ...",
+		"state": "Eligible",
+		"template": {
+			"type": "OptionTemplate",
+			"path": ["Cloud Application", "Session Management", "Server Session State"],
+			"name": "Server Session State",
+			"self": "http://152.96.193.210:8080/element/Cloud+Application%2FSession+Management%2FServer+Session+State"
+		}
+	},
+	{
+		"type": "OptionOccurrence",
+		"path": ["My Project", "DB Session State"],
+		"name": "DB Session State",
+		"self": "http://152.96.193.210:8080/element/My+Project%2FDB+Session+State",
+		"attributes": {},
+		"notes": "Persist session state on remote DB",
+		"state": "Eligible",
+		"template": {
+			"type": "OptionTemplate",
+			"path": ["Cloud Application", "Session Management", "DB Session State"],
+			"name": "DB Session State",
+			"self": "http://152.96.193.210:8080/element/Cloud+Application%2FSession+Management%2FDB+Session+State"
+		}
+	},
+	{
+		"type": "ProblemOccurrence",
+		"path": ["My Project", "Session State Management"],
+		"name": "Session State Management",
+		"self": "http://152.96.193.210:8080/element/My+Project%2FSession+State+Management",
+		"attributes": {},
+		"notes": "How to manage session state on servers?",
+		"state": "Open",
+		"alternatives": [
+			{
+				"type": "OptionOccurrence",
+				"path": ["My Project", "Server Session State"],
+				"name": "Server Session State",
+				"self": "http://152.96.193.210:8080/element/My+Project%2FServer+Session+State"
+			},
+			{
+				"type": "OptionOccurrence",
+				"path": ["My Project", "DB Session State"],
+				"name": "DB Session State",
+				"self": "http://152.96.193.210:8080/element/My+Project%2FDB+Session+State"
+			},
+			{
+				"type": "OptionOccurrence",
+				"path": ["My Project", "Cloud Session State"],
+				"name": "Cloud Session State",
+				"self": "http://152.96.193.210:8080/element/My+Project%2FCloud+Session+State"
+			}
+		],
+		"template": {
+			"type": "ProblemTemplate",
+			"path": ["Cloud Application", "Session Management", "Session State Management"],
+			"name": "Session State Management",
+			"self": "http://152.96.193.210:8080/element/Cloud+Application%2FSession+Management%2FSession+State+Management"
+		}
+	}
+]}

@@ -155,7 +155,7 @@ module test {
 						returnValue = { "status": status, "user": user };
 					});
 					httpBackend.flush();
-					expect(returnValue).toEqual({ status: true, user: core.ObjectFactory.createFromJson<any>(core.User,{}) });
+					expect(returnValue).toEqual({ status: true, user: core.ObjectFactory.createFromJson(core.User,{}) });
 				});
 
 				it("Failed registration", function() {

@@ -36,7 +36,7 @@ module core {
 				this.resources['login'],
 				{ "name": username, "password": password }
 			).success(function(data, status, headers, config) {
-				var user: User = ObjectFactory.createFromJson<any>(User,data);
+				var user: User = ObjectFactory.createFromJson(User,data);
 				this.loggedInUser = user;
 				this.isUserLoggedIn = true;
 				callback(true, user);
@@ -62,7 +62,7 @@ module core {
 				this.resources['register'],
 				{ "name": username, "password": password, "password_repeat": passwordRepeat }
 			).success(function(data, status, headers, config) {
-					callback(true, ObjectFactory.createFromJson<any>(User,data));
+					callback(true, ObjectFactory.createFromJson(User,data));
 			}.bind(this)).error(function(data, status, headers, config) {
 					callback(false, null);
 			}.bind(this));
@@ -71,7 +71,7 @@ module core {
 		public loginStatus(callback: (item: User) => void = (i) => {}): void {
 			this.httpService.get(this.resources['status']).success(function(data) {
 				if(data != null && data != {} && User.isCompatibleObject(data)) {
-					var user: User = ObjectFactory.createFromJson<any>(User,data);
+					var user: User = ObjectFactory.createFromJson(User,data);
 					this.loggedInUser = user;
 					this.isUserLoggedIn = true;
 					callback(user);

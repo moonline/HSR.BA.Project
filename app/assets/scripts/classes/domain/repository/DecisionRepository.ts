@@ -11,6 +11,8 @@ module dks {
 			this.resources = {
 				'all': configuration.paths.decision.list
 			};
+			this.filter = function(element) { return element.type === "ProblemOccurrence"; };
+			this.dataList = 'elements';
 		}
 	}
 }
