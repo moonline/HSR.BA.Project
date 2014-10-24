@@ -8,6 +8,9 @@
     <meta name="viewport" content="width=device-width">
 
     <link rel="shortcut icon" href="/public/resources/img/appIcon-256.png"/>
+	<link rel="stylesheet" href="/public/styles/documentationStyle.css"/>
+	<!-- https://google-code-prettify.googlecode.com/svn/trunk/README.html -->
+	<script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
 </head>
 <body>
 
@@ -20,12 +23,13 @@
         @if(method.queryDescription != null) {
             <p>@method.queryDescription</p>
         }
-
+		<p>
         @if(method.requireAuthentication) {
             Authentication is required to use this method.
         }else{
             This method is public and can be used without authentication.
         }
+		</p>
 
         @if(method.queryParameters != null) {
             <h4>Parameters</h4>
@@ -64,7 +68,7 @@
         @if(method.queryExamples != null) {
             <h4>Examples</h4>
             @for(example <- method.queryExamples) {
-                <blockquote>@logics.getCurlRequestString(method, example)</blockquote>
+				<pre class="prettyprint"><code class="language-bash">@logics.getCurlRequestString(method, example)</code></pre>
                 @defining(logics.getResponseString(method, example)) { response=>
                     The previous command
                     @if(response.isRealSimulation){
@@ -72,7 +76,7 @@
                     }else{
                         <strong title="This response is not a live result, as a creation of a live one isn't that easy.">would probably</strong>
                     } return with status code <strong>@response.getStatus()@if(response.getStatusText!=null){ (@response.getStatusText())}</strong> and yield@if(response.isRealSimulation){ed} the following:
-                    <pre>@response.getBody</pre>
+				<pre class="prettyprint"><code class="language-json">@response.getBody</code></pre>
                 }
             }
         }
