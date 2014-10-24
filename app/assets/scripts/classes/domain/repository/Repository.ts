@@ -41,12 +41,14 @@ module core {
 
 				this.httpService.get(this.getResourcePath('all')).success(function(data){
 					var items: T[] = [];
-					data[dataList].forEach(function(element){
-						if(filter(element)) {
-							items.push(ObjectFactory.createFromJson(type,element));
-						}
-					});
-					[].push.apply(cache, items);
+					if(data && data[dataList]) {
+						data[dataList].forEach(function(element){
+							if(filter(element)) {
+								items.push(ObjectFactory.createFromJson(type,element));
+							}
+						});
+						[].push.apply(cache, items);
+					}
 					callback(cache);
 				});
 			}

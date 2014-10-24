@@ -4,7 +4,6 @@ module configuration {
 			remoteProxy: '/dks/getFromDKS?url={target}'
 		},
 		problem: {
-			//list: '/dks/getFromDKS?url='+encodeURIComponent('l')
 			//list: '/public/temporaryDevelopmentData/dks/element.json'
 			list: '/element'
 		},
@@ -15,13 +14,13 @@ module configuration {
 			list: '/public/temporaryDevelopmentData/dks/decisionKnowledgeSystem.json'
 		},
 		mapping: {
-			list: 'public/temporaryDevelopmentData/eeppi/mapping/list.json'
+			list: '/public/temporaryDevelopmentData/eeppi/mapping/list.json'
 		},
 		taskTemplate: {
-			list: 'public/temporaryDevelopmentData/eeppi/tasktemplate/list.json'
+			list: '/public/temporaryDevelopmentData/eeppi/tasktemplate/list.json'
 		},
 		taskProperty: {
-			list: 'public/temporaryDevelopmentData/eeppi/taskProperty.json'
+			list: '/public/temporaryDevelopmentData/eeppi/taskProperty.json'
 		},
 		user: {
 			'login':'/user/login',
