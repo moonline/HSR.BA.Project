@@ -13,6 +13,7 @@ GET		/user/login-status			controllers.user.UserController.login_status()
 POST	/user/register				controllers.user.UserController.register()
 POST	/user/changePassword		controllers.user.UserController.changePassword()
 POST	/ppt/sendToPPT				controllers.ppt.ProjectPlanningToolController.sendToPPT()
+GET		/dks/getFromDKS				controllers.dks.DecisionKnowledgeSystemController.getFromDKS(url: String)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /public/*file               controllers.Assets.at(path="/public", file)
