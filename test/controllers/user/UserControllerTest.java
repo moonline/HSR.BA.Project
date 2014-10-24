@@ -141,4 +141,12 @@ public class UserControllerTest extends AbstractControllerTest {
 		assertThat(status(callPostAction(controllers.user.routes.ref.UserController.login(), postData("name", "Hans Meier 4", "password", "pw")))).isEqualTo(BAD_REQUEST); //login with new password works
 	}
 
+	@Test
+	public void testChangePasswordWithoutLoggedinUser() throws Throwable {
+		//Test
+		Result result = callPostAction(routes.ref.UserController.changePassword(), postData("old_password", "2345", "new_password", "pw1", "new_password_repeat", "pw2"));
+		//Verification
+		assertThat(status(result)).isEqualTo(FORBIDDEN);
+	}
+
 }

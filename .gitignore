@@ -1,5 +1,3 @@
-*.class
-
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
@@ -18,17 +16,8 @@ hs_err_pid*
 # Play Framework
 logs
 project/project
-project/target
 target
-tmp
-.history
-dist
 /.idea
-/*.iml
-/out
-/.idea_modules
-/.classpath
-/.project
 /RUNNING_PID
 /.settings
 
@@ -48,6 +37,7 @@ public/scripts/Main.js
 public/test/*.js
 
 # secret configuration files
-test/PPT/jira-license.key
+test/integration/PPT/jira-license.key
 # Vagrant up cached files
+test/integration/PPT/atlassian-jira.bin
 test/integration/*/downloads/*

@@ -53,7 +53,7 @@ public class GenerateDDL {
 		dbCreationScheme = dbCreationScheme.toLowerCase();
 		dbCreationScheme = dbCreationScheme.replaceAll("\n\n", ";\n\n");
 		dbCreationScheme = dbCreationScheme.replaceAll("\n    ", "\n");
-		dbCreationScheme = dbCreationScheme.replaceAll("alter table \\w+ \n\\s+drop constraint \\w+;\n\n", "");
+		dbCreationScheme = dbCreationScheme.replaceAll("alter table \\w+ \n\\s+drop constraint [\\w_]+(\\sif exists)?;\n\n", "");
 		dbCreationScheme = dbCreationScheme.replaceAll("drop table (\\w+) if exists;", "drop table if exists $1;");
 		dbCreationScheme = dbCreationScheme.replaceAll("longvarchar", "text");
 		String createTables = joinString(getByRegex(dbCreationScheme, "create table [^;]*;"), "\n");
