@@ -10,7 +10,7 @@ public class SeleniumExampleTest extends AbstractSeleniumTest {
 
 	@Test
 	public void exampleTest() {
-		browser.goTo("/");
+		browser.goTo("/#/register");
 		//noinspection RedundantCast
 		browser.await().atMost(30, SECONDS).until((Predicate) (Object input) -> browser.pageSource().contains("password repeat"));
 		assertThat(browser.pageSource()).contains("EEPPI");
