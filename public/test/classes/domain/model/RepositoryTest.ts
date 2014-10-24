@@ -162,6 +162,35 @@ module test {
 				$httpBackend.flush();
 				expect(dummies).toEqual([helper.Dummy.createDummy(1,"DummyObject1"), helper.Dummy.createDummy(2,"DummyObject2")]);
 			}));
+
+			it("remote host call unsing local proxy",angular.mock.inject(function($httpBackend, $http) {
+				// Crappy passThrough() not working :-(
+				var url = '/dks/getFromDKS?url='+encodeURIComponent('http://www.eeppi.ch/data/api/dummy/list.json');
+				$httpBackend.when("GET", url).respond({
+					"items": [
+						{
+							"id": 1,
+							"name": "DummyObject1"
+
+						},
+						{
+							"id": 2,
+							"name": "DummyObject2"
+
+						}
+					]
+				});
+				var repository: helper.DummyRepository = new helper.DummyRepository($http);
+				repository.host = 'http://www.eeppi.ch';
+				repository.proxy = '/dks/getFromDKS?url={target}';
+				var dummies: helper.Dummy[];
+
+				repository.findAll(function(items: helper.Dummy[]) {
+					dummies = items;
+				});
+				$httpBackend.flush();
+				expect(dummies).toEqual([helper.Dummy.createDummy(1,"DummyObject1"), helper.Dummy.createDummy(2,"DummyObject2")]);
+			}));
 		});
 	}
 }

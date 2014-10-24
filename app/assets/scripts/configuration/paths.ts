@@ -1,10 +1,15 @@
 module configuration {
 	export var paths = {
+		dks: {
+			remoteProxy: '/dks/getFromDKS?url={target}'
+		},
 		problem: {
-			list: '/public/temporaryDevelopmentData/dks/element.json'
+			//list: '/dks/getFromDKS?url='+encodeURIComponent('l')
+			//list: '/public/temporaryDevelopmentData/dks/element.json'
+			list: '/element'
 		},
 		decision: {
-			list: '/public/temporaryDevelopmentData/dks/element.json'
+			list: '/element'
 		},
 		decisionKnowledgeSystem: {
 			list: '/public/temporaryDevelopmentData/dks/decisionKnowledgeSystem.json'

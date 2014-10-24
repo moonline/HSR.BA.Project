@@ -2,7 +2,7 @@
 	"items": [
 		{
 			"id": 1,
-			"address": "localhost:9000"
+			"address": "http://localhost:9940"
 		}
 	]
 }

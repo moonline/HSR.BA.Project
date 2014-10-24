@@ -24,9 +24,6 @@ module core {
 
 		constructor($scope, $location, $http, persistenceService) {
 			var decisionRepository = persistenceService['decisionRepository'];
-			decisionRepository.findAll(function(items) {
-				$scope.decisions = items;
-			});
 
 			var taskTemplateRepository = persistenceService['taskTemplateRepository'];
 			taskTemplateRepository.findAll(function(taskTemplates) {
@@ -39,16 +36,21 @@ module core {
 			});
 
 			var problemRepository: dks.ProblemRepository = persistenceService['problemRepository'];
-			problemRepository.findAll(function(items) {
-				$scope.problems = items;
-			});
 			var mappingRepository: MappingRepository = persistenceService['mappingRepository'];
 
-			/*persistenceService['decisionKnowledgeRepository'].findAll(function(items) {
-				var currentDks:dks.DecisionKnowledgeSystem = <dks.DecisionKnowledgeSystem>items[0];
-				var problemRepository: dks.ProblemRepository = persistenceService['factories'].createProblemRepository();
+			persistenceService['decisionKnowledgeRepository'].findAll(function(items) {
+				$scope.currentDks = <dks.DecisionKnowledgeSystem>items[0];
 
-			});*/
+				problemRepository.host = $scope.currentDks.address;
+				problemRepository.findAll(function(items) {
+					$scope.problems = items;
+				});
+
+				decisionRepository.host = $scope.currentDks.address;
+				decisionRepository.findAll(function(items) {
+					$scope.decisions = items;
+				});
+			});
 
 			$scope.currentDecision = null;
 			$scope.currentMapping = null;

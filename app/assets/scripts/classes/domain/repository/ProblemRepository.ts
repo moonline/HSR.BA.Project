@@ -13,6 +13,7 @@ module dks {
 			};
 			this.filter = function(element) { return element.type === "ProblemTemplate"; };
 			this.dataList = 'elements';
+			this.proxy = configuration.paths.dks.remoteProxy;
 		}
 	}
 }
