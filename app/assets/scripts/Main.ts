@@ -1,15 +1,16 @@
 /// <reference path='libraries/declarations/angularJs/angular.d.ts' />
 /// <reference path='classes/module/MainModule.ts' />
 
-/// <reference path='classes/application/TaskTemplateListController.ts' />
-/// <reference path='classes/application/DecisionListController.ts' />
 /// <reference path='classes/application/RegisterController.ts' />
 /// <reference path='classes/application/MappingController.ts' />
 /// <reference path='classes/application/TransmissionController.ts' />
 
 /// <reference path='classes/domain/repository/TaskTemplateRepository.ts' />
+/// <reference path='classes/domain/repository/TaskPropertyRepository.ts' />
 /// <reference path='classes/domain/repository/DecisionRepository.ts' />
 /// <reference path='classes/domain/repository/MappingRepository.ts' />
+/// <reference path='classes/domain/repository/DecisionKnowledgeSystemRepository.ts' />
+/// <reference path='classes/domain/repository/ProblemRepository.ts' />
 
 /// <reference path='classes/service/AuthenticationService.ts' />
 
@@ -20,28 +21,7 @@ module core {
     var app = angular.module('MainModule', ['ngRoute']);
 
     app.config(function($routeProvider) {
-        $routeProvider.when('/', {
-            templateUrl: '/public/views/templates/taskTemplateListView.html',
-            controller: 'taskTemplateListController',
-			resolve: {
-				auth: ["$q", "authenticationService", function($q, authenticationService) {
-					// check if user is still logged in (promise still resolved), otherwise wait for resolve
-					if(authenticationService.isLoggedIn) { return true; }
-					return authenticationService.readyPromise.then(function(user) {});
-				}]
-			}
-        });
-		$routeProvider.when('/decisions', {
-			templateUrl: '/public/views/templates/decisionListView.html',
-			controller: 'decisionListController',
-			resolve: {
-				auth: ["$q", "authenticationService", function($q, authenticationService) {
-					if(authenticationService.isLoggedIn) { return true; }
-					return authenticationService.readyPromise.then(function(user) {});
-				}]
-			}
-		});
-		$routeProvider.when('/mappings', {
+		$routeProvider.when('/mapping', {
 			templateUrl: '/public/views/templates/mappingView.html',
 			controller: 'mappingController',
 			resolve: {
@@ -80,17 +60,18 @@ module core {
 		});
 	}]);
 
-    app.controller('taskTemplateListController', ['$scope', '$location', 'persistenceService', TaskTemplateListController]);
-	app.controller('decisionListController', ['$scope', '$location', 'persistenceService', DecisionListController]);
-	app.controller('mappingController', ['$scope', '$location', 'persistenceService', MappingController]);
+	app.controller('mappingController', ['$scope', '$location', '$http', 'persistenceService', MappingController]);
 	app.controller('transmissionController', ['$scope', '$location', 'persistenceService', '$http', TransmissionController]);
 	app.controller('registerController', ['$scope', '$location', '$http', 'authenticationService', RegisterController]);
 
     app.service('persistenceService', ['$http', function($http) {
 		return {
             taskTemplateRepository: new core.TaskTemplateRepository($http),
+			taskPropertyRepository: new core.TaskPropertyRepository($http),
 			decisionRepository: new dks.DecisionRepository($http),
-			mappingRepository: new core.MappingRepository($http)
+			mappingRepository: new core.MappingRepository($http),
+			decisionKnowledgeRepository: new dks.DecisionKnowledgeSystemRepository($http),
+			problemRepository: new dks.ProblemRepository($http)
         };
     }]);
 

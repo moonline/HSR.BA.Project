@@ -7,12 +7,20 @@ module core {
 		type: any = null;
 		itemCache: T[];
 
+		public host: string = '';
+		public dataList: string = 'items';
+		public filter: (element: any) => boolean = function(element) { return true; };
+
 		httpService;
 		resources: { [index: string]: string } = {};
 
 		constructor(httpService) {
 			this.httpService = httpService;
 			this.itemCache = [];
+		}
+
+		private getResourcePath(resource: string) {
+			return this.host+this.resources[resource];
 		}
 
 		public findAll(callback: (items: T[]) => void): void {
@@ -22,14 +30,18 @@ module core {
 			} else {
 				var cache: T[] = this.itemCache;
 				var type = this.type;
+				var filter = this.filter;
+				var dataList = this.dataList;
 
-				this.httpService.get(this.resources['all']).success(function(data){
+				this.httpService.get(this.getResourcePath('all')).success(function(data){
 					var items: T[] = [];
-					data.items.forEach(function(element){
-						items.push(ObjectFactory.createFromJson<any>(type,element));
+					data[dataList].forEach(function(element){
+						if(filter(element)) {
+							items.push(ObjectFactory.createFromJson(type,element));
+						}
 					});
 					[].push.apply(cache, items);
-					callback(items);
+					callback(cache);
 				});
 			}
 		}
@@ -37,15 +49,22 @@ module core {
 		public add(item: T, callback: (item: T) => void): void {
 			// TODO: Replace caching with real persistence
 			this.itemCache.push(item);
+			callback(item);
 		}
 
 		public findOneById(id: number, callback: (item: T) => void): void {
+			this.findOneBy('id', id, callback);
+		}
+
+		public findOneBy(propertyName: string, property: any, callback: (item: T) => void): void {
 			this.findAll(function(items) {
+				var foundItem: T = null;
 				items.forEach(function(item){
-					if(item.id === id) {
-						callback(item);
+					if(item[propertyName] && item[propertyName] === property) {
+						foundItem = item;
 					}
 				});
+				callback(foundItem);
 			});
 		}
 	}
