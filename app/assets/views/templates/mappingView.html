@@ -1,7 +1,7 @@
 <div class="main" data-region="center" data-layout="flow" data-flow-direction="row" data-align="start">
 	<div class="column1 area" data-layout="flow" data-flow-direction="column" data-scroll="true">
 		<div class="areaContent">
-			<h2>Problems & Decisions</h2>
+			<h2>Problems & Decisions ({{currentDks.address}})</h2>
 			<h3>Problems ({{problems.length}})</h3>
 			<ul data-type="list">
 				<li data-ng-repeat="problem in problems" data-ng-state="{{problem == currentDecision && 'selected' || '' }}" data-ng-click="setCurrentDecision(problem)">

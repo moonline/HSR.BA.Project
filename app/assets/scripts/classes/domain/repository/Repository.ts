@@ -8,6 +8,8 @@ module core {
 		itemCache: T[];
 
 		public host: string = '';
+		// proxy path with {target} to be replaced by the remote url
+		public proxy: string = null;
 		public dataList: string = 'items';
 		public filter: (element: any) => boolean = function(element) { return true; };
 
@@ -20,7 +22,11 @@ module core {
 		}
 
 		private getResourcePath(resource: string) {
-			return this.host+this.resources[resource];
+			if(this.proxy != null && this.proxy.indexOf("{target}") > -1) {
+				return this.proxy.replace("{target}", encodeURIComponent(this.host+this.resources[resource]));
+			} else {
+				return this.host+this.resources[resource];
+			}
 		}
 
 		public findAll(callback: (items: T[]) => void): void {
@@ -35,12 +41,14 @@ module core {
 
 				this.httpService.get(this.getResourcePath('all')).success(function(data){
 					var items: T[] = [];
-					data[dataList].forEach(function(element){
-						if(filter(element)) {
-							items.push(ObjectFactory.createFromJson(type,element));
-						}
-					});
-					[].push.apply(cache, items);
+					if(data && data[dataList]) {
+						data[dataList].forEach(function(element){
+							if(filter(element)) {
+								items.push(ObjectFactory.createFromJson(type,element));
+							}
+						});
+						[].push.apply(cache, items);
+					}
 					callback(cache);
 				});
 			}
