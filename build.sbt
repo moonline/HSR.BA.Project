@@ -80,19 +80,27 @@ javacOptions += "-Xlint:unchecked"
 //moduleKind := "commonjs"
 //outDir := "x"
 
-lazy val compileTS = taskKey[Unit]("Compiling the TypeScript files to JavaScript files")
+lazy val compileTS = taskKey[Seq[File]]("Compiling the TypeScript files to JavaScript files")
 
 compileTS := {
-  "tsc --target ES5 --out public/scripts/Main.js app/assets/scripts/Main.ts".!
+  "echo Compiling TypeScript files now!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!2".!
+  ("tsc --target ES5 --out "+target.value+"/web/public/main/scripts/Main.js"+" "+baseDirectory.value+"/app/assets/scripts/Main.ts").!
+//  "pwd".!
+  Seq(new File(target.value+"/web/public/main/scripts/Main.js"))
+//  Seq()
 }
 
 //(compile in Compile) <<= (compile in Compile) dependsOn (compileTS)
-(compile in Compile) <<= (compile in Compile) dependsOn compileTS
+//(compile in Test) <<= (compile in Test) dependsOn compileTS
+(resourceGenerators in Compile) += compileTS.taskValue
+
+//excludeFilter in web-assets:unmanagedSources := HiddenFileFilter || ".js"
+
 //sourceGenerators in Compile += compileTS.taskValue
 
-mappings in (Compile, packageBin) += {
-  (baseDirectory.value / "public" / "mainexample.js") -> "xyz.js"
-}
+//mappings in (Compile, packageBin) += {
+//  (baseDirectory.value / "public" / "mainexample.js") -> "xyz.js"
+//}
 
 
 //resourceGenerators in Compile += Def.task {
