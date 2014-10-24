@@ -49,7 +49,9 @@ public class ProjectPlanningToolController extends Controller {
 			"    \"id\": \"10000\",\n" +
 			"    \"key\": \"PRV-24\",\n" +
 			"    \"self\": \"http://jira.example.ch/jira/rest/api/2/issue/10000\"\n" +
-			"}"))})
+			"}")),
+			@Example(parameters = {"not a number", "not a path", "no Json"})
+	})
 	public static F.Promise<Result> sendToPPT() {
 		Form<PPTTaskLogic.CreatePPTTaskForm> form = Form.form(PPTTaskLogic.CreatePPTTaskForm.class).bindFromRequest();
 		if (form.hasErrors()) {

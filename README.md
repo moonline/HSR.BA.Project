@@ -3,6 +3,8 @@ HSR.BA.Project
 
 "Entwurfsentscheidungen als Projektplanungsinstrument" (EEPPI) Bachelorarbeit Implementierung
 
+The description for the API is generated at runtime and can then be found under [/api/documentation](http://localhost:9000/api/documentation).
+
 
 Requirements for development
 ----------------------------
