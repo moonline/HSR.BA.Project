@@ -72,7 +72,7 @@ public class DocumentationLogic {
 	private Call getCallObject(Object routesObject, Method method) {
 		try {
 			Class<?> routesClass = routesObject.getClass();
-			return (Call) routesClass.getMethod(method.getName()).invoke(routesObject);
+			return (Call) routesClass.getMethod(method.getName(), method.getParameterTypes()).invoke(routesObject, new Object[method.getParameterCount()]);
 		} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
 			Logger.error("Could not create call object for " + routesObject + "/" + method, e);
 			throw new RuntimeException("An Error occurred on 823489");
