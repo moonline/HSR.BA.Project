@@ -53,5 +53,12 @@ public class DecisionKnowledgeSystemControllerTest extends AbstractControllerTes
 		WS.url(url);
 	}
 
+	@Test
+	public void testGetFromDKSWithNotRespondingTarget() throws Throwable {
+		//Test
+		Result result = callAction(controllers.dks.routes.ref.DecisionKnowledgeSystemController.getFromDKS("http://localhost:9876/myPath"));
+		//Verification
+		assertThat(status(result)).isEqualTo(BAD_REQUEST);
+	}
 
 }

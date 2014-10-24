@@ -29,19 +29,14 @@ public class DecisionKnowledgeSystemController extends Controller {
 			@Example(parameters = "http://headers.jsontest.com/"),
 			@Example(parameters = "hatetepe?__no-valid-url")
 	})
-	public static F.Promise<Result> getFromDKS(String remoteUrl) {
+	public static F.Promise<Result> getFromDKS(String url) {
+		//noinspection RedundantCast
 		return F.Promise.promise(() ->
-						DKS_LOGIC.getFromDKS(remoteUrl)
-		).fallbackTo(
-				F.Promise.pure(null)
-		).map(wsResponse -> {
-					if (wsResponse == null) {
-						return badRequest();
-					} else {
-						return status(wsResponse.getStatus(), wsResponse.asJson());
-					}
-				}
-		);
+						DKS_LOGIC.getFromDKS(url)
+		).map(wsResponse ->
+						(Result) status(wsResponse.getStatus(), wsResponse.asJson())
+		).recoverWith(throwable ->
+				F.Promise.pure(badRequest("Could not load " + url)));
 	}
 
 }
