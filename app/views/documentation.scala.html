@@ -1,18 +1,6 @@
 @(classesAndMethods: Map[Class[_ <: Controller], List[docs.DocumentationLogic.MethodDocumentation]], logics: docs.DocumentationLogic)
 
-<!DOCTYPE html>
-<html>
-<head>
-    <title>EEPPI API documentation</title>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width">
-
-    <link rel="shortcut icon" href="/public/resources/img/appIcon-256.png"/>
-	<link rel="stylesheet" href="/public/styles/documentationStyle.css"/>
-	<!-- https://google-code-prettify.googlecode.com/svn/trunk/README.html -->
-	<script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
-</head>
-<body>
+@main("API documentation") {
 
 <h1>API Documentation for EEPPI</h1>
 @for((aClass,methods) <- classesAndMethods) {
@@ -23,6 +11,7 @@
         @if(method.queryDescription != null) {
             <p>@method.queryDescription</p>
         }
+
 		<p>
         @if(method.requireAuthentication) {
             Authentication is required to use this method.
@@ -83,5 +72,4 @@
     }
 }
 
-</body>
-</html>
+}

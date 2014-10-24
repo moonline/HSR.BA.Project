@@ -1,6 +1,6 @@
 package docs;
 
-import docs.html.documentation;
+import views.html.documentation;
 import play.mvc.Controller;
 import play.mvc.Result;
 

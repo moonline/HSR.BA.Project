@@ -5,13 +5,18 @@ import models.user.PPTAccount;
 import play.Application;
 import play.GlobalSettings;
 import play.data.format.Formatters;
+import play.libs.F;
 import play.libs.Json;
+import play.mvc.Http;
+import play.mvc.Result;
 
 import java.text.ParseException;
 import java.util.Locale;
 
 import static play.mvc.Controller.session;
+import static play.mvc.Results.notFound;
 
+@SuppressWarnings("UnusedDeclaration")
 public class Global extends GlobalSettings {
 
 	public static final PPTAccountLogic PPT_ACCOUNT_LOGIC = new PPTAccountLogic();
@@ -52,5 +57,10 @@ public class Global extends GlobalSettings {
 			}
 
 		});
+	}
+
+	@Override
+	public F.Promise<Result> onHandlerNotFound(Http.RequestHeader request) {
+		return F.Promise.pure(notFound(views.html.notFound.render()));
 	}
 }
