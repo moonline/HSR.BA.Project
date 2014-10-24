@@ -1,5 +1,5 @@
 <div class="main" data-region="center" data-layout="flow" data-flow-direction="column" data-align="start">
-    <form>
+    <form data-ng-if="authenticator.loggedInUser == null">
         <fieldset>
             <legend>Register</legend>
             <label>username</label><br />
@@ -11,4 +11,15 @@
             <button data-ng-click="register()">Register</button>
         </fieldset>
     </form>
+	<form data-ng-if="authenticator.loggedInUser != null">
+		<fieldset>
+			<label>old password</label><br />
+			<input type="password" name="oldPassword" data-ng-model="oldPassword" /><br />
+			<label>password</label><br />
+			<input type="password" name="newPassword" data-ng-model="newPassword" /><br />
+			<label>password repeat</label><br />
+			<input type="password" name="newPasswordRepeat" data-ng-model="newPasswordRepeat" /><br />
+			<button data-ng-click="changePassword(oldPassword, newPassword, newPasswordRepeat)">Change</button>
+		</fieldset>
+	</form>
 </div>

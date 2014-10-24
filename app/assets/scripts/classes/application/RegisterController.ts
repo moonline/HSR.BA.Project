@@ -14,20 +14,22 @@ module core {
 			$scope.authenticator = authenticationService;
 			$scope.$watch('authenticator', function() {});
 
-			$scope.loginUserName = "";
-			$scope.loginPassword = "";
+			$scope.oldPassword = "";
+			$scope.newPassword = "";
+			$scope.newPasswordRepeat = "";
 
             $scope.registerUserName = "";
             $scope.registerPassword = "";
             $scope.registerPasswordRepeat = "";
 
-			$scope.signIn = function() {
-				this.authenticationService.login($scope.loginUserName, $scope.loginPassword, function(success: boolean, user: User) {
+			$scope.changePassword = function(oldPassword, newPassword, newPasswordRepeat) {
+				this.authenticationService.changePassword(oldPassword, newPassword, newPasswordRepeat, function(success: boolean) {
 					if(success) {
-						$scope.loginUserName = "";
-						$scope.loginPassword = "";
+						$scope.oldPassword = "";
+						$scope.newPassword = "";
+						$scope.newPasswordRepeat = "";
 					} else {
-						alert("Login error. Username or password incorrect.");
+						alert("Password change error. Old password wrong or password repetition incorrect.");
 					}
 				});
 			}.bind(this);
