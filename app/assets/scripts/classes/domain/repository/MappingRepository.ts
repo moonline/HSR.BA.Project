@@ -12,17 +12,5 @@ module core {
 				'all': configuration.paths.mapping.list
 			};
 		}
-
-		public findOneByDecision(decision: any, callback: (item: Mapping) => void): void {
-			this.findAll(function(items) {
-				items.forEach(function(item){
-					if(item.decision === decision) {
-						callback(item);
-					} else {
-						callback(null);
-					}
-				});
-			});
-		}
 	}
 }

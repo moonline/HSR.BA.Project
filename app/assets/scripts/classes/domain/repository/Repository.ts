@@ -53,12 +53,18 @@ module core {
 		}
 
 		public findOneById(id: number, callback: (item: T) => void): void {
+			this.findOneBy('id', id, callback);
+		}
+
+		public findOneBy(propertyName: string, property: any, callback: (item: T) => void): void {
 			this.findAll(function(items) {
+				var foundItem: T = null;
 				items.forEach(function(item){
-					if(item.id === id) {
-						callback(item);
+					if(item[propertyName] && item[propertyName] === property) {
+						foundItem = item;
 					}
 				});
+				callback(foundItem);
 			});
 		}
 	}

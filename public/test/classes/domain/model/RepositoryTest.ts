@@ -56,6 +56,32 @@ module test {
 				expect(dummies).toEqual([helper.Dummy.createDummy(1,"DummyObject1"), helper.Dummy.createDummy(2,"DummyObject2")]);
 			}));
 
+			it("get Dummy using repository.findOneBy()",angular.mock.inject(function($httpBackend, $http) {
+				// Crappy passThrough() not working :-(
+				$httpBackend.when("GET", '/data/api/dummy/list.json').respond({
+					"items": [
+						{
+							"id": 1,
+							"name": "DummyObject1"
+
+						},
+						{
+							"id": 2,
+							"name": "DummyObject2"
+
+						}
+					]
+				});
+				var repository: helper.DummyRepository = new helper.DummyRepository($http);
+				var dummy: helper.Dummy;
+
+				repository.findOneBy('name', "DummyObject2", function(item: helper.Dummy) {
+					dummy = item;
+				});
+				$httpBackend.flush();
+				expect(dummy).toEqual(helper.Dummy.createDummy(2,"DummyObject2"));
+			}));
+
 			it("using alternative items property name for data",angular.mock.inject(function($httpBackend, $http) {
 				// Crappy passThrough() not working :-(
 				$httpBackend.when("GET", '/data/api/dummy/list.json').respond({

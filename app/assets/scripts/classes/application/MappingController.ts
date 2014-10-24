@@ -54,7 +54,7 @@ module core {
 			$scope.currentMapping = null;
 			$scope.setCurrentDecision = function(decision) {
 				$scope.currentDecision = decision;
-				mappingRepository.findOneByDecision(decision, function(mapping) {
+				mappingRepository.findOneBy('decision', decision, function(mapping) {
 					$scope.currentMapping = mapping;
 				});
 			};
