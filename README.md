@@ -38,12 +38,3 @@ Setup instructions
 2. run `bin/eeppi` on Unix or `bin/eeppi.bat` on Windows
 3. Find it at http://localhost:9000
 
-
-Advanced Information
---------------------
-
-### Compile client manually
-
-1. go to /app/assets/scripts
-2. run tsc --target ES5 --out Main.js Main.ts
-3. run activator and open localhost:9000 in your browser

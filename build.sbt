@@ -69,36 +69,18 @@ Keys.fork in Test := false
 ///////// blames you, if you use unchecked conversions
 javacOptions += "-Xlint:unchecked"
 
-
-///////////////////////////// TODO Laurin: Clean up here /////////////////////////////
-
 // Typescript compiler
-// possible configurations if https://github.com/ArpNetworking/sbt-typescript/issues/1 is solved
-//includeFilter in TypescriptKeys.typescript := "Main.ts"
-//TypescriptKeys.removeComments := true
-//outFile := "mainexample.js"
-//moduleKind := "commonjs"
-//outDir := "x"
-
-lazy val compileTS = taskKey[Unit]("Compiling the TypeScript files to JavaScript files")
+lazy val compileTS = taskKey[Seq[File]]("Compiling the TypeScript files to JavaScript files")
 
 compileTS := {
-  "tsc --target ES5 --out public/scripts/Main.js app/assets/scripts/Main.ts".!
+  "echo Compiling TypeScript files now.".!
+  val sourceFile = (sourceDirectory in Assets).value / "scripts" / "Main.ts"
+  val targetFile = WebKeys.webTarget.value / "Main.js"
+  ("tsc --target ES5 --out "+targetFile+" "+sourceFile).!
+  val testTargetFile = WebKeys.webTarget.value / "Tests.js"
+  val testSourceFile = baseDirectory.value / "public" / "test" / "Tests.ts"
+  ("tsc --target ES5 --out "+testTargetFile+" "+testSourceFile).!
+  Seq(targetFile, testTargetFile)
 }
 
-//(compile in Compile) <<= (compile in Compile) dependsOn (compileTS)
-(compile in Compile) <<= (compile in Compile) dependsOn compileTS
-//sourceGenerators in Compile += compileTS.taskValue
-
-mappings in (Compile, packageBin) += {
-  (baseDirectory.value / "public" / "mainexample.js") -> "xyz.js"
-}
-
-
-//resourceGenerators in Compile += Def.task {
-//  val file = (resourceManaged in Compile).value / "mainexample.js"
-//  "tsc --target ES5 --out "+file.getPath+" app/assets/mainexample.ts".!
-//  Seq(file)
-//}.taskValue
-
-///////////////////////////////////// until here /////////////////////////////////////
+(resourceGenerators in Assets) <+= compileTS
