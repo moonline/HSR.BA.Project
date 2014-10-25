@@ -4,6 +4,10 @@
 module core {
 	'use strict';
 
+	enum Status {
+		success, error
+	}
+
 	export class RegisterController {
 		$scope: any;
 		authenticationService: AuthenticationService;
@@ -11,39 +15,38 @@ module core {
 		constructor($scope, $location, $http, authenticationService) {
 			this.$scope = $scope;
 			this.authenticationService = authenticationService;
+
+			$scope.Status = Status;
 			$scope.authenticator = authenticationService;
 			$scope.$watch('authenticator', function() {});
 
-			$scope.oldPassword = "";
+			$scope.passwordChangeStatus = null;
+			/*$scope.oldPassword = "";
 			$scope.newPassword = "";
-			$scope.newPasswordRepeat = "";
+			$scope.newPasswordRepeat = "";*/
 
-            $scope.registerUserName = "";
+			$scope.registerStatus = null;
+           /* $scope.registerUserName = "";
             $scope.registerPassword = "";
-            $scope.registerPasswordRepeat = "";
+            $scope.registerPasswordRepeat = "";*/
 
 			$scope.changePassword = function(oldPassword, newPassword, newPasswordRepeat) {
+				$scope.passwordChangeStatus = null;
 				this.authenticationService.changePassword(oldPassword, newPassword, newPasswordRepeat, function(success: boolean) {
 					if(success) {
-						$scope.oldPassword = "";
-						$scope.newPassword = "";
-						$scope.newPasswordRepeat = "";
+						$scope.passwordChangeStatus = Status.success;
 					} else {
-						alert("Password change error. Old password wrong or password repetition incorrect.");
+						$scope.passwordChangeStatus = Status.error;
 					}
 				});
 			}.bind(this);
 
-            $scope.register = function() {
-				this.authenticationService.register($scope.registerUserName, $scope.registerPassword, $scope.registerPasswordRepeat, function(success: boolean) {
+            $scope.register = function(username, password, passwordRepeat) {
+				this.authenticationService.register(username, password, passwordRepeat, function(success: boolean) {
 					if(success) {
-						$scope.registerUserName = "";
-						$scope.registerPassword = "";
-						$scope.registerPasswordRepeat = "";
+						$scope.registerStatus = Status.success;
 					} else {
-						$scope.registerPassword = "";
-						$scope.registerPasswordRepeat = "";
-						alert("Registration error. User already exists or password repetition incorrect.");
+						$scope.registerStatus = Status.error;
 					}
 				});
 			}.bind(this);
