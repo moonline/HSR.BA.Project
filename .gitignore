@@ -32,10 +32,6 @@ target
 # run  alias
 /run.sh
 
-# js
-public/scripts/Main.js
-public/test/*.js
-
 # secret configuration files
 test/integration/PPT/jira-license.key
 # Vagrant up cached files
