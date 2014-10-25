@@ -76,9 +76,11 @@ compileTS := {
   "echo Compiling TypeScript files now.".!
   val sourceFile = (sourceDirectory in Assets).value / "scripts" / "Main.ts"
   val targetFile = WebKeys.webTarget.value / "Main.js"
+  ("rmdir "+targetFile).!
   ("tsc --target ES5 --out "+targetFile+" "+sourceFile).!
   val testTargetFile = WebKeys.webTarget.value / "Tests.js"
   val testSourceFile = baseDirectory.value / "public" / "test" / "Tests.ts"
+  ("rmdir "+testTargetFile).!
   ("tsc --target ES5 --out "+testTargetFile+" "+testSourceFile).!
   Seq(targetFile, testTargetFile)
 }
