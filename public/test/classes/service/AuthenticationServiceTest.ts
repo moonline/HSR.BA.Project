@@ -171,6 +171,34 @@ module test {
 					expect(returnValue).toEqual({ status: false, user: null });
 				});
 			});
+
+			describe("Password change", function() {
+				it("Successful password change", function() {
+					httpBackend.when("GET", '/user/login-status').respond({});
+					httpBackend.when("POST", '/user/changePassword').respond({});
+
+					var returnValue = {};
+					var authentivationService: core.AuthenticationService = new core.AuthenticationService(http, q);
+					authentivationService.changePassword("oldPwd", "pwd", "pwd", function(status) {
+						returnValue = status;
+					});
+					httpBackend.flush();
+					expect(returnValue).toEqual(true);
+				});
+
+				it("Failed password change", function() {
+					httpBackend.when("GET", '/user/login-status').respond({});
+					httpBackend.when("POST", '/user/changePassword').respond(403);
+
+					var returnValue = {};
+					var authentivationService: core.AuthenticationService = new core.AuthenticationService(http, q);
+					authentivationService.changePassword("dontKnowOldOwd", "pwd", "pwd", function(status) {
+						returnValue = status;
+					});
+					httpBackend.flush();
+					expect(returnValue).toEqual(false);
+				});
+			});
 		});
 	}
 }

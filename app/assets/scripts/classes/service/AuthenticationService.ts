@@ -19,7 +19,8 @@ module core {
 				'login': configuration.paths.user.login,
 				'logout': configuration.paths.user.logout,
 				'status': configuration.paths.user.status,
-				'register': configuration.paths.user.register
+				'register': configuration.paths.user.register,
+				'changePassword': configuration.paths.user.changePassword
 			};
 			this.loginStatus(function(user:User) {
 				if(user != null) {
@@ -79,6 +80,17 @@ module core {
 					callback(null);
 				}
 			}.bind(this));
+		}
+
+		public changePassword(oldPassword: string, newPassword: string, newPasswordRepeat: string, callback: (success: boolean) => void = (s) => {}) {
+			this.httpService.post(
+				this.resources['changePassword'],
+				{ "old_password": oldPassword, "new_password": newPassword, "new_password_repeat": newPasswordRepeat }
+			).success(function(data, status, headers, config){
+					callback(true);
+				}.bind(this)).error(function(data, status, headers, config) {
+					callback(false);
+				}.bind(this));
 		}
 
 		get isLoggedIn(): boolean {
