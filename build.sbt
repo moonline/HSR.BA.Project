@@ -77,7 +77,10 @@ compileTS := {
   val sourceFile = (sourceDirectory in Assets).value / "scripts" / "Main.ts"
   val targetFile = WebKeys.webTarget.value / "Main.js"
   ("tsc --target ES5 --out "+targetFile+" "+sourceFile).!
-  Seq(targetFile)
+  val testTargetFile = WebKeys.webTarget.value / "Tests.js"
+  val testSourceFile = baseDirectory.value / "public" / "test" / "Tests.ts"
+  ("tsc --target ES5 --out "+testTargetFile+" "+testSourceFile).!
+  Seq(targetFile, testTargetFile)
 }
 
 (resourceGenerators in Assets) <+= compileTS
