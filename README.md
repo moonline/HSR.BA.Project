@@ -34,7 +34,53 @@ Testing in development
 
 Setup instructions
 ------------------
+
 1. Get and unzip the latest build
 2. run `bin/eeppi` on Unix or `bin/eeppi.bat` on Windows
 3. Find it at http://localhost:9000
 
+
+Environment test VM's
+---------------------
+
+There are some virtual environments you can use to test EEPPI:
+
+- ADRepo installation: /test/integration/ADRepo
+- CDAR installation: /test/integration/CDAR
+- Redmine/Jira installation: /test/integration/PPT
+
+
+# Requirements
+
+- Virtualbox
+- Vagrant
+
+
+# usage
+
+To start an virtual environment:
+
+1. Go to the corresponding directory (e.q. 'cd /test/integration/ADRepo' on linux)
+2. Run 'vagrant up' to start the environment
+	- This will take some time and needs an internet connection to load the box and the software packages
+	- After successfull installation and configuration, the environment is ready and the services are reachable using the printed host:port.
+3. To stop the environment, run 'vagrant halt', to destroy 'vagrant destroy'.
+
+
+Manual compilation of the client
+--------------------------------
+
+# Application
+
+tsc --target ES5 --out public/scripts/Main.js app/assets/scripts/Main.ts
+
+# Tests
+
+tsc --target ES5 --out public/test/Tests.js public/test/Tests.ts
+
+
+Run client tests
+----------------
+
+1. Compile tests manual if you didn't start the server app (play compiles the TS for you)
+2. Open public/test/index.html using Firefox
