@@ -47,7 +47,10 @@
 			<ul data-type="list">
 				<li data-ng-repeat="template in taskTemplates" data-ng-state="{{template == currentTaskTemplate && 'selected' || '' }}">
 					<button data-ng-if="currentDecision" data-ng-click="mapTaskTemplate(template)">&lt; map</button>&nbsp;
-					<strong data-ng-click="setCurrentTaskTemplate(template)">{{template.name}}</strong> [{{template.id}}]<br />
+					<strong data-ng-click="setCurrentTaskTemplate(template)">
+						<button>&#x270E;</button>&nbsp;
+						{{template.name}}
+					</strong> [{{template.id}}]<br />
 				</li>
 			</ul>
 
