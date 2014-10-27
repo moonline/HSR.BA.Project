@@ -11,14 +11,6 @@ module core {
 		mappingRepository: core.MappingRepository;
 		$scope: any;
 
-		/**
-		 * @inject
-		 */
-		public static $inject: string[] = [
-			'$scope',
-			'$location'
-		];
-
 		constructor($scope, $location, persistenceService, $http) {
 			this.$scope = $scope;
 			this.mappingRepository = persistenceService['mappingRepository'];

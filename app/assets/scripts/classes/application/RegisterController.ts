@@ -21,14 +21,8 @@ module core {
 			$scope.$watch('authenticator', function() {});
 
 			$scope.passwordChangeStatus = null;
-			/*$scope.oldPassword = "";
-			$scope.newPassword = "";
-			$scope.newPasswordRepeat = "";*/
 
 			$scope.registerStatus = null;
-           /* $scope.registerUserName = "";
-            $scope.registerPassword = "";
-            $scope.registerPasswordRepeat = "";*/
 
 			$scope.changePassword = function(oldPassword, newPassword, newPasswordRepeat) {
 				$scope.passwordChangeStatus = null;

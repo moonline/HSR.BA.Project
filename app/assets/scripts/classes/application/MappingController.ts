@@ -13,15 +13,6 @@ module core {
 	'use strict';
 
 	export class MappingController {
-
-		/**
-		 * @inject
-		 */
-		public static $inject: string[] = [
-			'$scope',
-			'$location'
-		];
-
 		constructor($scope, $location, $http, persistenceService) {
 			var decisionRepository = persistenceService['decisionRepository'];
 
@@ -70,14 +61,14 @@ module core {
 				taskTemplateRepository.add(newTaskTemplate);
 				$scope.currentTaskTemplate = newTaskTemplate;
 			};
-			$scope.addPropertyValue = function(property) {
+			$scope.addPropertyValue = function(property: TaskProperty) {
 				if($scope.currentTaskTemplate) {
 					var taskPropertyValue: TaskPropertyValue = new TaskPropertyValue(property, '');
 					(<TaskTemplate>$scope.currentTaskTemplate).addProperty(taskPropertyValue);
 				}
 			};
 
-			$scope.mapTaskTemplate = function(taskTemplate) {
+			$scope.mapTaskTemplate = function(taskTemplate: TaskTemplate) {
 				if($scope.currentMapping) {
 					$scope.currentMapping.addTaskTemplate(taskTemplate);
 				} else if($scope.currentDecision) {
