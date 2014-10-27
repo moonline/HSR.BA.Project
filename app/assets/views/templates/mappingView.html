@@ -1,0 +1,75 @@
+<div class="main" data-region="center" data-layout="flow" data-flow-direction="row" data-align="start">
+	<div class="column1 area" data-layout="flow" data-flow-direction="column" data-scroll="true">
+		<div class="areaContent">
+			<h2>Problems & Decisions ({{currentDks.address}})</h2>
+			<h3>Problems ({{problems.length}})</h3>
+			<ul data-type="list">
+				<li data-ng-repeat="problem in problems" data-ng-state="{{problem == currentDecision && 'selected' || '' }}" data-ng-click="setCurrentDecision(problem)">
+					<strong>{{problem.name}}</strong> [{{problem.id}}]
+				</li>
+			</ul>
+			<h3>Decisions ({{decisions.length}})</h3>
+			<ul data-type="list">
+				<li data-ng-repeat="decision in decisions" data-ng-click="setCurrentDecision(decision)">
+					<strong>{{decision.name}}</strong> [{{decision.id}}]
+				</li>
+			</ul>
+		</div>
+	</div>
+
+	<div class="column2 area" data-layout="flow" data-flow-direction="column" data-scroll="true">
+		<div class="areaContent">
+			<div class="decisionDetail" data-ng-if="currentDecision">
+				<h2><strong>{{currentDecision.name}}</strong> [{{currentDecision.id}}]</h2>
+				<h3>Options:</h3>
+				<ul>
+					<li data-ng-repeat="option in currentDecision.options">
+						{{option.name}} [{{option.id}}]
+					</li>
+				</ul>
+			</div>
+			<div class="mappingDetail" data-ng-if="currentMapping">
+				<h3>Task template mapping [{{currentMapping.id}}]</h3>
+				<ul>
+					<li data-ng-repeat="taskTemplate in currentMapping.taskTemplates">
+						{{taskTemplate.name}} [{{taskTemplate.id}}]
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+
+	<div class="column3 area" data-layout="flow" data-flow-direction="column" data-scroll="true">
+		<div class="areaContent">
+			<h2>Task templates</h2>
+
+			<h3>Existing templates ({{taskTemplates.length}})</h3>
+			<ul data-type="list">
+				<li data-ng-repeat="template in taskTemplates" data-ng-state="{{template == currentTaskTemplate && 'selected' || '' }}">
+					<button data-ng-if="currentDecision" data-ng-click="mapTaskTemplate(template)">&lt; map</button>&nbsp;
+					<strong data-ng-click="setCurrentTaskTemplate(template)">
+						<button>&#x270E;</button>&nbsp;
+						{{template.name}}
+					</strong> [{{template.id}}]<br />
+				</li>
+			</ul>
+
+			<h3>Task template [{{currentTaskTemplate.id}}]</h3>
+			<button data-ng-click="createNewTaskTemplate()">(+) add Template</button>
+			<form data-ng-if="currentTaskTemplate">
+				<div class="formLine">
+					<select data-ng-model="currentTaskProperty" data-ng-options="taskProperty.name for taskProperty in taskProperties" ></select>
+					<button data-ng-click="addPropertyValue(currentTaskProperty)">add property</button>
+				</div>
+				<div class="formLine">
+					<label>Name</label>
+					<input type="text" data-ng-model="currentTaskTemplate.name" />
+				</div>
+				<div data-ng-repeat="propertyValue in currentTaskTemplate.properties">
+					<label>{{propertyValue.property.name}}</label>
+					<input data-ng-model="propertyValue.value" />
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

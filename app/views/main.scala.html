@@ -3,13 +3,17 @@
 <!DOCTYPE html>
 
 <html>
-    <head>
-        <title>@title</title>
-        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
-        <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
-        <script src="@routes.Assets.at("javascripts/hello.js")" type="text/javascript"></script>
-    </head>
-    <body>
-        @content
-    </body>
+<head>
+    <title>@title</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width">
+
+    <link rel="shortcut icon" href="/public/resources/img/appIcon-256.png"/>
+    <link rel="stylesheet" href="/public/styles/documentationStyle.css"/>
+    <!-- https://google-code-prettify.googlecode.com/svn/trunk/README.html -->
+    <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+</head>
+<body>
+@content
+</body>
 </html>

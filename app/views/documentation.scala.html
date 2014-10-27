@@ -1,0 +1,75 @@
+@(classesAndMethods: Map[Class[_ <: Controller], List[docs.DocumentationLogic.MethodDocumentation]], logics: docs.DocumentationLogic)
+
+@main("API documentation") {
+
+<h1>API Documentation for EEPPI</h1>
+@for((aClass,methods) <- classesAndMethods) {
+    <h2>@logics.getHumanFriendlyClassName(aClass)</h2>
+    @for(method <- methods) {
+        <h3>@method.call.method @method.call.url.replaceAll("\\?.*","")</h3>
+
+        @if(method.queryDescription != null) {
+            <p>@method.queryDescription</p>
+        }
+
+		<p>
+        @if(method.requireAuthentication) {
+            Authentication is required to use this method.
+        }else{
+            This method is public and can be used without authentication.
+        }
+		</p>
+
+        @if(method.queryParameters != null) {
+            <h4>Parameters</h4>
+            <table>
+                <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                </tr>
+                @for(parameter <- method.queryParameters) {
+                <tr>
+                    <td>@parameter.name</td>
+                    <td>@parameter.format.getSimpleName</td>
+                    <td>@parameter.description</td>
+                </tr>
+                }
+            </table>
+        }
+
+        @if(method.queryResponses != null) {
+            <h4>Responses</h4>
+            <table>
+                <tr>
+                    <th>Status</th>
+                    <th>Description</th>
+                </tr>
+                @for(response <- method.queryResponses) {
+                <tr>
+                    <td>@if(response.status>0){@response.status}else{&dash;}</td>
+                    <td>@response.description</td>
+                </tr>
+                }
+            </table>
+        }
+
+        @if(method.queryExamples != null) {
+            <h4>Examples</h4>
+            @for(example <- method.queryExamples) {
+				<pre class="prettyprint"><code class="language-bash">@logics.getCurlRequestString(method, example)</code></pre>
+                @defining(logics.getResponseString(method, example)) { response=>
+                    The previous command
+                    @if(response.isRealSimulation){
+                        <strong title="This response was calculated live on generation of this documentation.">did</strong>
+                    }else{
+                        <strong title="This response is not a live result, as a creation of a live one isn't that easy.">would probably</strong>
+                    } return with status code <strong>@response.getStatus()@if(response.getStatusText!=null){ (@response.getStatusText())}</strong> and yield@if(response.isRealSimulation){ed} the following:
+				<pre class="prettyprint"><code class="language-json">@response.getBody</code></pre>
+                }
+            }
+        }
+    }
+}
+
+}

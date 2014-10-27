@@ -1,0 +1,57 @@
+/**
+.------------------------------------------------------------------------.
+| data-layout="border"                                                   |
+| .--------------------------------------------------------------------. |
+| | data-region="north"                                                | |
+| +--------------------------------------------------------------------+ |
+| | data-region="middle"                                               | |
+| | .--------------------.----------------------.--------------------. | |
+| | |                    |                      |                    | | |
+| | | data-region="west" | data-region="center" | data-region="west" | | |
+| | | data-align="?"     | data-align="?"       | data-align="?"     | | |
+| | |                    |                      |                    | | |
+| | '--------------------'----------------------'--------------------' | |
+| +--------------------------------------------------------------------+ |
+| | data-region="south"                                                | |
+| '--------------------------------------------------------------------' |
+'------------------------------------------------------------------------'
+*/
+[data-layout="border"], [data-layout="border"] * {
+	box-sizing: border-box;
+}
+
+[data-layout="border"] {
+	width: 100%; 
+	display: flex; 
+	flex-direction: column; 
+	justify-content: space-between; 
+	
+	> [data-region="middle"] { 
+		height: 100%; 
+		display: flex; 
+		flex-direction: row; 
+		justify-content: space-between;
+		
+		> [data-region="center"] { 
+			width: 100%; 
+		}
+	}
+
+	[data-region="center"], [data-region="middle"] {
+		&[data-align="start"] { align-items: flex-start; }
+		&[data-align="center"] { align-items: center; }
+		&[data-align="end"] { align-items: flex-end; }
+	}
+
+	> [data-region="north"] > * { 
+		width: 100%; 
+	}
+	> [data-region="middle"] {
+		> [data-region="west"] > * { height: 100%; }
+		> [data-region="center"] > * { width: 100%; height: 100%; }
+		> [data-region="east"] > * { height: 100%; }
+	}
+	> [data-region="south"] > * { 
+		width: 100%; 
+	}
+}

@@ -1,0 +1,59 @@
+/* variables */
+.blueGradient {
+	background: dodgerblue; background: linear-gradient(dodgerblue, steelblue); color: white;
+}
+
+
+/* general */
+* { -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; padding: 0; margin: 0; text-indent: 0; text-align: left; }
+
+html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; }
+body { font-family: Arial, Helvetica, sans-serif; }
+
+
+/* container */
+header, footer { .blueGradient; color: white; padding: 0.5rem; }
+header { border-bottom: 0.25rem solid black; }
+
+.page { height: 100%; width: 100% }
+.area {
+	background: aliceblue; padding: 0.5rem; box-shadow: 0 0 0.25rem silver;
+	border-radius: 0.5rem; margin: 0.5rem;
+
+	h2 { .blueGradient; padding: 0.5rem; margin: -0.5rem -0.5rem 0.5rem -0.5rem; }
+}
+
+div.main { padding: 0.5rem; }
+
+
+/* font / text */
+h2, h3 { margin-top: 0.5rem; margin-bottom: 0.25rem; }
+
+ol, ul {
+	list-style-position: inside;
+	ol, ul  {
+		margin-left: 1rem;
+	}
+}
+
+a {
+	&:link, &:hover { color: black; margin-left: 0.1rem; margin-right: 0.1rem; }
+	&:hover { color: white; }
+}
+
+
+/* forms */
+label { width: 10rem; display: inline-block; }
+input {
+	width: 15rem; display: inline-block;
+}
+form .status { margin: -0.5rem -0.5rem 0.5rem -0.5rem; }
+
+
+/* application state */
+[data-ng-click] { cursor: pointer; }
+
+li[data-ng-state="selected"] { color: teal; }
+
+.success { background: seagreen; color: white; font-weight: bold; padding: 0.5rem; }
+.error { background: maroon; color: white; font-weight: bold; padding: 0.5rem; }
