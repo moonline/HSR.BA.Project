@@ -45,7 +45,7 @@ public class UserLogic {
 		if (!passwordCorrect(user, old_password)) {
 			return false;
 		} else {
-			user.setPassword_hash(calculatePasswordHash(user, new_password));
+			user.setPasswordHash(calculatePasswordHash(user, new_password));
 			return true;
 		}
 	}
@@ -55,13 +55,13 @@ public class UserLogic {
 		User user = new User();
 		user.setName(name);
 		user.initSalt();
-		user.setPassword_hash(calculatePasswordHash(user, password));
+		user.setPasswordHash(calculatePasswordHash(user, password));
 		USER_DAO.persist(user);
 		return user;
 	}
 
 	private boolean passwordCorrect(User user, String password) {
-		return Arrays.equals(user.getPassword_hash(), calculatePasswordHash(user, password));
+		return Arrays.equals(user.getPasswordHash(), calculatePasswordHash(user, password));
 	}
 
 	private byte[] calculatePasswordHash(User user, String password) {

@@ -3,7 +3,7 @@
 create table person (
     id bigint not null,
     name varchar(255),
-    password_hash binary(255),
+    passwordhash binary(255),
     salt binary(255),
     primary key (id)
 );
@@ -14,9 +14,9 @@ create table ppt (
 );
 create table pptaccount (
     id bigint not null,
+    pptpassword varchar(255),
     ppturl varchar(255),
-    ppt_password varchar(255),
-    ppt_username varchar(255),
+    pptusername varchar(255),
     ppt_id bigint,
     user_id bigint,
     primary key (id)

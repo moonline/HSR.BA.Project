@@ -46,9 +46,9 @@ public class PPTAccountLogic {
 	public PPTAccount update(PPTAccount account, UpdatePPTAccountForm updateData) {
 		account.setPpt(updateData.ppt);
 		account.setPptUrl(updateData.url);
-		account.setPpt_username(updateData.pptUsername);
+		account.setPptUsername(updateData.pptUsername);
 		if (updateData.pptPassword != null) {
-			account.setPpt_password(updateData.pptPassword);
+			account.setPptPassword(updateData.pptPassword);
 		}
 		PPT_ACCOUNT_DAO.persist(account);
 		return account;

@@ -21,8 +21,8 @@ public abstract class AbstractTestDataCreator {
 
 	public static PPTAccount createPPTAccountWithTransaction(User user, String pptUrl, String pptUsername, String pptPassword) {
 		final PPTAccount account = new PPTAccount();
-		account.setPpt_password(pptPassword);
-		account.setPpt_username(pptUsername);
+		account.setPptPassword(pptPassword);
+		account.setPptUsername(pptUsername);
 		account.setPptUrl(pptUrl);
 		account.setUser(user);
 		persistAndFlushInTransaction(account);

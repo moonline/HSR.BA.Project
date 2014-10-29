@@ -42,8 +42,8 @@ public class PPTAccountControllerTest extends AbstractControllerTest {
 		assertThat(pptAccount.getUser().getId()).isEqualTo(user.getId());
 		assertThat(pptAccount.getPpt().getId()).isEqualTo(ppt.getId());
 		assertThat(pptAccount.getPptUrl()).isEqualTo("http://example.com");
-		assertThat(pptAccount.getPpt_username()).isEqualTo("my username");
-		assertThat(pptAccount.getPpt_password()).isEqualTo("123456");
+		assertThat(pptAccount.getPptUsername()).isEqualTo("my username");
+		assertThat(pptAccount.getPptPassword()).isEqualTo("123456");
 	}
 
 	@Test
@@ -157,8 +157,8 @@ public class PPTAccountControllerTest extends AbstractControllerTest {
 		assertThat(pptAccount.getUser().getId()).isEqualTo(user.getId());
 		assertThat(pptAccount.getPpt().getId()).isEqualTo(ppt.getId());
 		assertThat(pptAccount.getPptUrl()).isEqualTo("http://another-example.com");
-		assertThat(pptAccount.getPpt_username()).isEqualTo("my new username");
-		assertThat(pptAccount.getPpt_password()).isEqualTo("more secure");
+		assertThat(pptAccount.getPptUsername()).isEqualTo("my new username");
+		assertThat(pptAccount.getPptPassword()).isEqualTo("more secure");
 	}
 
 	@Test
@@ -184,8 +184,8 @@ public class PPTAccountControllerTest extends AbstractControllerTest {
 		assertThat(pptAccount.getUser().getId()).isEqualTo(user.getId());
 		assertThat(pptAccount.getPpt().getId()).isEqualTo(ppt.getId());
 		assertThat(pptAccount.getPptUrl()).isEqualTo("http://another-example.com");
-		assertThat(pptAccount.getPpt_username()).isEqualTo("my new username");
-		assertThat(pptAccount.getPpt_password()).isEqualTo("1234");
+		assertThat(pptAccount.getPptUsername()).isEqualTo("my new username");
+		assertThat(pptAccount.getPptPassword()).isEqualTo("1234");
 	}
 
 	@Test

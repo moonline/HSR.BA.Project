@@ -26,7 +26,7 @@ public class User {
 	private byte[] salt;
 
 	@JsonIgnore
-	private byte[] password_hash;
+	private byte[] passwordHash;
 
 	public Long getId() {
 		return id;
@@ -40,12 +40,12 @@ public class User {
 		this.name = name;
 	}
 
-	public byte[] getPassword_hash() {
-		return password_hash;
+	public byte[] getPasswordHash() {
+		return passwordHash;
 	}
 
-	public void setPassword_hash(byte[] password_hash) {
-		this.password_hash = password_hash;
+	public void setPasswordHash(byte[] password_hash) {
+		this.passwordHash = password_hash;
 	}
 
 	public byte[] getSalt() {
