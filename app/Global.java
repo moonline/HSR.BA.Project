@@ -17,7 +17,7 @@ import play.mvc.Result;
 import java.text.ParseException;
 import java.util.Locale;
 
-import static play.mvc.Controller.session;
+import static play.mvc.Controller.ctx;
 import static play.mvc.Results.notFound;
 
 @SuppressWarnings("UnusedDeclaration")
@@ -42,7 +42,7 @@ public class Global extends GlobalSettings {
 		Formatters.register(PPTAccount.class, new Formatters.SimpleFormatter<PPTAccount>() {
 			@Override
 			public PPTAccount parse(String authentication_id, Locale l) throws ParseException {
-				PPTAccount authentication = PPT_ACCOUNT_LOGIC.getAuthentication(USER_LOGIC.getLoggedInUser(session()), authentication_id);
+				PPTAccount authentication = PPT_ACCOUNT_LOGIC.getAuthentication(USER_LOGIC.getLoggedInUser(ctx()), authentication_id);
 				if (authentication == null) {
 					throw new ParseException("No valid input", 0);
 				}
