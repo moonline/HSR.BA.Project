@@ -15,7 +15,7 @@ public class PPTTaskLogic {
 		PPTAccount account = form.account;
 		return WS.url(account.getPptUrl() + form.path)
 				.setHeader("Content-Type", "application/json")
-				.setAuth(account.getPpt_username(), account.getPpt_password())
+				.setAuth(account.getPptUsername(), account.getPptPassword())
 				.post(form.content)
 				.get(30, SECONDS);
 	}

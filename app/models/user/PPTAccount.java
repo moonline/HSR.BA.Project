@@ -1,5 +1,6 @@
 package models.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import models.ppt.ProjectPlanningTool;
 
 import javax.persistence.*;
@@ -22,12 +23,21 @@ public class PPTAccount {
 	@ManyToOne
 	private User user;
 
-	private String ppt_username;
+	private String pptUsername;
 
-	private String ppt_password;
+	@JsonIgnore
+	private String pptPassword;
 
 	public Long getId() {
 		return id;
+	}
+
+	public ProjectPlanningTool getPpt() {
+		return ppt;
+	}
+
+	public void setPpt(ProjectPlanningTool ppt) {
+		this.ppt = ppt;
 	}
 
 	public String getPptUrl() {
@@ -46,19 +56,19 @@ public class PPTAccount {
 		this.user = user;
 	}
 
-	public String getPpt_username() {
-		return ppt_username;
+	public String getPptUsername() {
+		return pptUsername;
 	}
 
-	public void setPpt_username(String ppt_username) {
-		this.ppt_username = ppt_username;
+	public void setPptUsername(String ppt_username) {
+		this.pptUsername = ppt_username;
 	}
 
-	public String getPpt_password() {
-		return ppt_password;
+	public String getPptPassword() {
+		return pptPassword;
 	}
 
-	public void setPpt_password(String ppt_password) {
-		this.ppt_password = ppt_password;
+	public void setPptPassword(String ppt_password) {
+		this.pptPassword = ppt_password;
 	}
 }

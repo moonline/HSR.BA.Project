@@ -1,9 +1,9 @@
 package logic.user;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import logics.user.UserLogic;
 import models.user.User;
 import org.junit.Test;
+import play.libs.Json;
 import test.AbstractDatabaseTest;
 import test.AbstractTestDataCreator;
 
@@ -19,7 +19,7 @@ public class UserLogicTest extends AbstractDatabaseTest {
 		//Setup
 		User user = AbstractTestDataCreator.createUser("A", "123");
 		//Test
-		final JsonNode json = new UserLogic().getAsJson(user);
+		final JsonNode json = Json.toJson(user);
 		//Verification
 		assertThat(json.get("name").asText()).isEqualTo("A");
 		assertThat(json.get("password_hash")).isNull();

@@ -1,6 +1,10 @@
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import daos.ppt.ProjectPlanningToolDAO;
 import logics.user.PPTAccountLogic;
 import logics.user.UserLogic;
+import models.ppt.ProjectPlanningTool;
 import models.user.PPTAccount;
 import play.Application;
 import play.GlobalSettings;
@@ -21,11 +25,17 @@ public class Global extends GlobalSettings {
 
 	public static final PPTAccountLogic PPT_ACCOUNT_LOGIC = new PPTAccountLogic();
 	public static final UserLogic USER_LOGIC = new UserLogic();
+	public static final ProjectPlanningToolDAO PROJECT_PLANNING_TOOL_DAO = new ProjectPlanningToolDAO();
 
 	@Override
 	public void onStart(Application app) {
 		super.onStart(app);
 		registerFormatters();
+		registerJsonObjectMappers();
+	}
+
+	private void registerJsonObjectMappers() {
+		Json.setObjectMapper(new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT));
 	}
 
 	private void registerFormatters() {
@@ -56,6 +66,17 @@ public class Global extends GlobalSettings {
 				return json.asText();
 			}
 
+		});
+		Formatters.register(ProjectPlanningTool.class, new Formatters.SimpleFormatter<ProjectPlanningTool>() {
+			@Override
+			public ProjectPlanningTool parse(String text, Locale locale) throws ParseException {
+				return PROJECT_PLANNING_TOOL_DAO.readById(Long.parseLong(text));
+			}
+
+			@Override
+			public String print(ProjectPlanningTool projectPlanningTool, Locale locale) {
+				return projectPlanningTool.getId() + "";
+			}
 		});
 	}
 

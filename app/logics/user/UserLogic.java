@@ -1,9 +1,8 @@
 package logics.user;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import daos.user.UserDAO;
 import models.user.User;
-import play.libs.Json;
+import org.jetbrains.annotations.NotNull;
 import play.mvc.Http;
 
 import java.security.MessageDigest;
@@ -46,22 +45,23 @@ public class UserLogic {
 		if (!passwordCorrect(user, old_password)) {
 			return false;
 		} else {
-			user.setPassword_hash(calculatePasswordHash(user, new_password));
+			user.setPasswordHash(calculatePasswordHash(user, new_password));
 			return true;
 		}
 	}
 
+	@NotNull
 	public User createUser(String name, String password) {
 		User user = new User();
 		user.setName(name);
 		user.initSalt();
-		user.setPassword_hash(calculatePasswordHash(user, password));
+		user.setPasswordHash(calculatePasswordHash(user, password));
 		USER_DAO.persist(user);
 		return user;
 	}
 
 	private boolean passwordCorrect(User user, String password) {
-		return Arrays.equals(user.getPassword_hash(), calculatePasswordHash(user, password));
+		return Arrays.equals(user.getPasswordHash(), calculatePasswordHash(user, password));
 	}
 
 	private byte[] calculatePasswordHash(User user, String password) {
@@ -80,13 +80,4 @@ public class UserLogic {
 		return out;
 	}
 
-	public ObjectNode getAsJson(User user) {
-		if (user == null) {
-			return new ObjectNode(null);
-		}
-		ObjectNode json = (ObjectNode) Json.toJson(user);
-		json.remove("salt");
-		json.remove("password_hash");
-		return json;
-	}
 }
