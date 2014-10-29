@@ -14,6 +14,8 @@ public @interface QueryExamples {
 	public @interface Example {
 		String[] parameters();
 
+		String description() default "";
+
 		boolean provideAuthentication() default true;
 
 		Response response() default @Response(status = 0, content = "");

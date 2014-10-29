@@ -53,8 +53,8 @@ public class PPTAccountController extends Controller {
 			@Response(status = OK, description = "If the login information were stored. They are also returned in Json form.")
 	})
 	@QueryExamples({
-			@Example(parameters = {}, response = @Example.Response(status = OK, content = "[]")),
-			@Example(parameters = {}, response = @Example.Response(status = OK, content = "[ { \"id\" : 103,\n" +
+			@Example(parameters = {}, description = "assuming there is no login information stored for the user", response = @Example.Response(status = OK, content = "[]")),
+			@Example(parameters = {}, description = "now with stored login information for the user", response = @Example.Response(status = OK, content = "[ { \"id\" : 103,\n" +
 					"    \"ppt\" : null,\n" +
 					"    \"pptUrl\" : \"http://example1.com\",\n" +
 					"    \"ppt_username\" : \"admin\",\n" +
