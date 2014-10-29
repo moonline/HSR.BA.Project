@@ -92,13 +92,13 @@ public class PPTAccountControllerTest extends AbstractControllerTest {
 				"      \"user\" : { \"id\" : " + user.getId() + ",\n" +
 				"          \"name\" : \"User 9\"\n" +
 				"        },\n" +
-				"      \"ppt_username\" : \"admin\"\n" +
+				"      \"pptUsername\" : \"admin\"\n" +
 				"    },\n" +
 				"    { \"id\" : " + account2.getId() + ",\n" +
 				"      \"ppt\" : null,\n" +
 				"      \"pptUrl\" : \"http://example2.com\",\n" +
 				"      \"user\" : " + user.getId() + ",\n" +
-				"      \"ppt_username\" : \"admin\"\n" +
+				"      \"pptUsername\" : \"admin\"\n" +
 				"    }\n" +
 				"  ]"));
 	}
@@ -117,7 +117,7 @@ public class PPTAccountControllerTest extends AbstractControllerTest {
 				"      \"ppt\" : null,\n" +
 				"      \"pptUrl\" : \"http://example1.com\",\n" +
 				"      \"user\" : {\"id\":" + user.getId() + ",\"name\":\"User 9\"},\n" +
-				"      \"ppt_username\" : \"admin\"" +
+				"      \"pptUsername\" : \"admin\"" +
 				"    }"));
 	}
 
@@ -149,7 +149,7 @@ public class PPTAccountControllerTest extends AbstractControllerTest {
 				"      \"ppt\" :{\"id\":" + ppt.getId() + ",\"name\":\"My Project Planning Tool\"},\n" +
 				"      \"pptUrl\" : \"http://another-example.com\",\n" +
 				"      \"user\" : {\"id\":" + user.getId() + ",\"name\":\"User 9\"},\n" +
-				"      \"ppt_username\" : \"my new username\"" +
+				"      \"pptUsername\" : \"my new username\"" +
 				"    }"));
 		//Verification
 		assertThat(status(result)).isEqualTo(OK);
@@ -178,7 +178,7 @@ public class PPTAccountControllerTest extends AbstractControllerTest {
 				"      \"ppt\" :{\"id\":" + ppt.getId() + ",\"name\":\"My Project Planning Tool\"},\n" +
 				"      \"pptUrl\" : \"http://another-example.com\",\n" +
 				"      \"user\" : {\"id\":" + user.getId() + ",\"name\":\"User 9\"},\n" +
-				"      \"ppt_username\" : \"my new username\"" +
+				"      \"pptUsername\" : \"my new username\"" +
 				"    }"));
 		PPTAccount pptAccount = JPA.withTransaction(() -> PPT_ACCOUNT_DAO.readById(account.getId()));
 		assertThat(pptAccount.getUser().getId()).isEqualTo(user.getId());
