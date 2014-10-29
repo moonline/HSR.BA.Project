@@ -14,6 +14,8 @@ public @interface QueryParameters {
 	public @interface Parameter {
 		String name();
 
+		boolean isId() default false;
+
 		Class format() default String.class; //aka type, but "type" is a reserved word
 
 		String description();

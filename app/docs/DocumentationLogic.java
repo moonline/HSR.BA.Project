@@ -1,6 +1,7 @@
 package docs;
 
 import controllers.GuaranteeAuthenticatedUser;
+import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
 import org.reflections.Reflections;
@@ -31,17 +32,22 @@ import static play.mvc.Http.Context.Implicit.ctx;
 public class DocumentationLogic {
 
 	private static final Comparator<Class> classComparator = (o1, o2) -> o1.getCanonicalName().compareTo(o2.getCanonicalName());
+	public static final int MAGIC_CONSTANT_PARAMETER_IDENTIFICATION = 42;
 
 	/**
 	 * Gets all methods in all controllers (see getAllControllerClasses()) which is implicitly a list of all public API endpoints
 	 */
 	public Map<Class<? extends Controller>, List<MethodDocumentation>> getAllAPICalls() {
 		Map<Class<? extends Controller>, List<MethodDocumentation>> classesAndMethods = new TreeMap<>(classComparator);
+		//For each Controller
 		for (Class<? extends Controller> aClass : getAllControllerClasses()) {
 			Object routesObject = getRouteObject(aClass);
 			List<MethodDocumentation> methodsInClass = new ArrayList<>();
+			//For each Method of the Controller
 			for (Method method : aClass.getDeclaredMethods()) {
+				//If it's a callable method
 				if (Modifier.isPublic(method.getModifiers()) && (method.getReturnType().isAssignableFrom(F.Promise.class) || method.getReturnType().isAssignableFrom(Result.class))) {
+					//Remember it!
 					methodsInClass.add(new MethodDocumentation(method, getCallObject(routesObject, method)));
 				}
 			}
@@ -60,7 +66,7 @@ public class DocumentationLogic {
 			return routesClass.getField(controllerClass.getSimpleName()).get(routesClass.newInstance());
 		} catch (NoSuchFieldException | InstantiationException | IllegalAccessException e) {
 			Logger.error("Could not create instance for " + routesClass, e);
-			throw new RuntimeException("An Error occurred on 23523464");
+			throw new RuntimeException("An Error occurred on 23523464", e);
 		}
 
 	}
@@ -74,7 +80,7 @@ public class DocumentationLogic {
 			return (Call) routesClass.getMethod(method.getName(), method.getParameterTypes()).invoke(routesObject, getExampleParams(method.getParameterTypes()));
 		} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
 			Logger.error("Could not create call object for " + routesObject + "/" + method, e);
-			throw new RuntimeException("An Error occurred on 823489");
+			throw new RuntimeException("An Error occurred on 823489", e);
 		}
 
 	}
@@ -82,21 +88,16 @@ public class DocumentationLogic {
 	private Object[] getExampleParams(Class<?>[] parameterTypes) {
 		ArrayList<Object> params = new ArrayList<>();
 		for (Class<?> parameterType : parameterTypes) {
-			try {
-				if (parameterType.equals(Integer.class) || parameterType.equals(int.class)) {
-					params.add(0);
-
-				} else if (parameterType.equals(Long.class) || parameterType.equals(long.class)) {
-					params.add(0L);
-
-				} else if (parameterType.equals(Character.class) || parameterType.equals(char.class)) {
-					params.add('\0');
-
-				} else {
-					params.add(parameterType.getConstructor().newInstance());
-				}
-			} catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-				Logger.error("Could not create parameter for example object creation: " + parameterType, e);
+			if (parameterType.equals(Integer.class) || parameterType.equals(int.class)) {
+				params.add(MAGIC_CONSTANT_PARAMETER_IDENTIFICATION);
+			} else if (parameterType.equals(Long.class) || parameterType.equals(long.class)) {
+				params.add((long) MAGIC_CONSTANT_PARAMETER_IDENTIFICATION);
+			} else if (parameterType.equals(Character.class) || parameterType.equals(char.class)) {
+				params.add((char) MAGIC_CONSTANT_PARAMETER_IDENTIFICATION);
+			} else if (parameterType.equals(String.class)) {
+				params.add(MAGIC_CONSTANT_PARAMETER_IDENTIFICATION + "");
+			} else {
+				throw new NotImplementedException("Parameter creation for " + parameterType + " is not yet implemented");
 			}
 		}
 		return params.toArray();
@@ -133,18 +134,18 @@ public class DocumentationLogic {
 		if (queryString != null) {
 			request.append(" --data \"").append(queryString).append("\"");
 		}
-		request.append(" ").append(getRequestUrl(method, true));
+		request.append(" ").append(getRequestUrl(method, true, example.id()));
 		return request.toString();
 	}
 
-	public String getRequestUrl(MethodDocumentation method, boolean asAbsolute) {
+	public String getRequestUrl(MethodDocumentation method, boolean asAbsolute, String id) {
 		String url;
 		if (asAbsolute) {
 			url = method.call.absoluteURL(ctx().request());
 		} else {
 			url = method.call.url();
 		}
-		return url.replaceAll("\\?.*", "");
+		return url.replaceAll(MAGIC_CONSTANT_PARAMETER_IDENTIFICATION + "", id);
 	}
 
 	public SimpleResponse getResponseString(MethodDocumentation method, QueryExamples.Example example) {
@@ -152,17 +153,17 @@ public class DocumentationLogic {
 		if (exampleResponse.status() > 0) {
 			return new SimpleResponse(exampleResponse.status(), null, exampleResponse.content(), false);
 		} else {
-			return simulateRequest(method, example.parameters(), example.provideAuthentication());
+			return simulateRequest(method, example);
 		}
 	}
 
-	private SimpleResponse simulateRequest(MethodDocumentation method, String[] parameterValues, boolean provideAuthentication) {
-		WSRequestHolder url = WS.url(getRequestUrl(method, true));
-		String queryString = calculateQueryString(method, parameterValues);
+	private SimpleResponse simulateRequest(MethodDocumentation method, QueryExamples.Example example) {
+		WSRequestHolder url = WS.url(getRequestUrl(method, true, example.id()));
+		String queryString = calculateQueryString(method, example.parameters());
 		if (queryString != null) {
 			url.setQueryString(queryString);
 		}
-		if (provideAuthentication) {
+		if (example.provideAuthentication()) {
 			url.setAuth("demo", "demo");
 			url.setQueryParameter("basicAuth", "true");
 		}
@@ -177,18 +178,36 @@ public class DocumentationLogic {
 		if (method.queryParameters == null) {
 			numberOfParameters = 0;
 		} else {
-			numberOfParameters = Math.min(method.queryParameters.length, parameterValues.length);
+			numberOfParameters = calculateNumberOfRegularParameters(method.queryParameters, parameterValues);
 		}
 		if (numberOfParameters == 0) {
 			return null;
 		} else {
 			List<String> data = new ArrayList<>();
-			for (int i = 0; i < numberOfParameters; i++) {
-				String parameterName = method.queryParameters[i].name();
-				data.add(parameterName + "=" + parameterValues[i]);
+			int queryParameterIndex = 0, exampleParameterIndex = 0;
+			while (queryParameterIndex < method.queryParameters.length && exampleParameterIndex < parameterValues.length) {
+				while (method.queryParameters[queryParameterIndex].isId()) {
+					queryParameterIndex++;
+				}
+				data.add(method.queryParameters[queryParameterIndex].name() + "=" + parameterValues[exampleParameterIndex]);
+				queryParameterIndex++;
+				exampleParameterIndex++;
 			}
 			return StringUtils.join(data, "&");
 		}
+	}
+
+	private int calculateNumberOfRegularParameters(QueryParameters.Parameter[] parameters, String[] examples) {
+		int numberOfParameters = 0;
+		for (QueryParameters.Parameter parameter : parameters) {
+			if (!parameter.isId()) {
+				numberOfParameters++;
+			}
+		}
+		if (numberOfParameters != examples.length) {
+			Logger.error(StringUtils.join(parameters, ", ") + " has a non matching amount of example parameters (" + examples.length + ")");
+		}
+		return Math.min(numberOfParameters, examples.length);
 	}
 
 	public static class SimpleResponse {

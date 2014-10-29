@@ -77,7 +77,7 @@ public class PPTAccountController extends Controller {
 	@Transactional(readOnly = true)
 	@GuaranteeAuthenticatedUser
 	@QueryParameters({
-			@Parameter(name = "id", description = "The id of the login information")
+			@Parameter(name = "id", isId = true, description = "The id of the login information")
 	})
 	@QueryDescription("Returns one login information (but the password) for the currently logged in user for Project Planning Tools.")
 	@QueryResponses({
@@ -85,8 +85,8 @@ public class PPTAccountController extends Controller {
 			@Response(status = OK, description = "If the login information were stored. They are also returned in Json form.")
 	})
 	@QueryExamples({
-			@Example(parameters = {"9999"}),
-			@Example(parameters = {"104"})
+			@Example(id = "9999", parameters = {}),
+			@Example(id = "104", parameters = {})
 	})
 	public static Result readOne(long id) {
 		PPTAccount pptAccount = PPT_ACCOUNT_LOGIC.getForLoggedInUser(ctx(), id);
@@ -99,7 +99,7 @@ public class PPTAccountController extends Controller {
 	@Transactional()
 	@GuaranteeAuthenticatedUser
 	@QueryParameters({
-			@Parameter(name = "id", description = "The id of the login information to update"),
+			@Parameter(name = "id", isId = true, description = "The id of the login information to update"),
 			@Parameter(name = "ppt", description = "a reference (ID) to the Project Planning Tool"),
 			@Parameter(name = "url", description = "the URL to the Project Planning Tool"),
 			@Parameter(name = "pptUsername", description = "the username for the user for the Project Planning Tool"),
@@ -112,9 +112,9 @@ public class PPTAccountController extends Controller {
 			@Response(status = OK, description = "If the login information were updated. They are also returned in Json form.")
 	})
 	@QueryExamples({
-			@Example(parameters = {"9999", "1", "no url", "name", "1234"}),
-			@Example(parameters = {"1", "9999", "no url", "name", "1234"}),
-			@Example(parameters = {"1", "1", "http://example.com", "name", "1234"})
+			@Example(id = "9999", parameters = {"1", "no url", "name", "1234"}),
+			@Example(id = "1", parameters = {"9999", "no url", "name", "1234"}),
+			@Example(id = "1", parameters = {"1", "http://example.com", "name", "1234"})
 	})
 	public static Result update(long id) {
 		PPTAccount pptAccount = PPT_ACCOUNT_LOGIC.getForLoggedInUser(ctx(), id);
@@ -132,7 +132,7 @@ public class PPTAccountController extends Controller {
 	@Transactional()
 	@GuaranteeAuthenticatedUser
 	@QueryParameters({
-			@Parameter(name = "id", description = "The id of the login information to update")
+			@Parameter(name = "id", isId = true, description = "The id of the login information to update")
 	})
 	@QueryDescription("Deletes login information for a Project Planning Tool on the server.")
 	@QueryResponses({
@@ -140,8 +140,8 @@ public class PPTAccountController extends Controller {
 			@Response(status = NO_CONTENT, description = "If the login information were deleted.")
 	})
 	@QueryExamples({
-			@Example(parameters = {"9999"}),
-			@Example(parameters = {"1"}, response = @Example.Response(status = NO_CONTENT, content = ""))
+			@Example(id = "9999", parameters = {}),
+			@Example(id = "1", parameters = {}, response = @Example.Response(status = NO_CONTENT, content = ""))
 	})
 	public static Result delete(long id) {
 		PPTAccount pptAccount = PPT_ACCOUNT_LOGIC.getForLoggedInUser(ctx(), id);

@@ -12,6 +12,8 @@ public @interface QueryExamples {
 	Example[] value();
 
 	public @interface Example {
+		String id() default "";
+
 		String[] parameters();
 
 		String description() default "";

@@ -16,7 +16,7 @@
 @for((aClass,methods) <- classesAndMethods) {
     <h2>@logics.getHumanFriendlyClassName(aClass)</h2>
     @for(method <- methods) {
-        <h3>@method.call.method @logics.getRequestUrl(method, false)</h3>
+        <h3>@method.call.method @logics.getRequestUrl(method, false, "<id>")</h3>
 
         @if(method.queryDescription != null) {
             <p>@method.queryDescription</p>
