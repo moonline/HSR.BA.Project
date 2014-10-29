@@ -147,7 +147,7 @@ public class UserControllerTest extends AbstractControllerTest {
 		//Test
 		Result result = callPostAction(routes.ref.UserController.changePassword(), postData("old_password", "2345", "new_password", "pw1", "new_password_repeat", "pw2"));
 		//Verification
-		assertThat(status(result)).isEqualTo(FORBIDDEN);
+		assertThat(status(result)).isEqualTo(UNAUTHORIZED);
 	}
 
 }

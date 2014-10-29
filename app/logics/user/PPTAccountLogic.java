@@ -26,19 +26,19 @@ public class PPTAccountLogic {
 	}
 
 	@NotNull
-	public PPTAccount createPPTAccount(Http.Session session, CreatePPTAccountForm form) {
+	public PPTAccount createPPTAccount(Http.Context context, CreatePPTAccountForm form) {
 		PPTAccount account = new PPTAccount();
-		account.setUser(USER_LOGIC.getLoggedInUser(session));
+		account.setUser(USER_LOGIC.getLoggedInUser(context));
 		return update(account, form);
 	}
 
-	public JsonNode getAllForLoggedInUser(Http.Session session) {
-		User user = USER_LOGIC.getLoggedInUser(session);
+	public JsonNode getAllForLoggedInUser(Http.Context context) {
+		User user = USER_LOGIC.getLoggedInUser(context);
 		return Json.toJson(PPT_ACCOUNT_DAO.readByUser(user));
 	}
 
-	public PPTAccount getForLoggedInUser(Http.Session session, Long id) {
-		User user = USER_LOGIC.getLoggedInUser(session);
+	public PPTAccount getForLoggedInUser(Http.Context context, Long id) {
+		User user = USER_LOGIC.getLoggedInUser(context);
 		PPTAccount pptAccount = PPT_ACCOUNT_DAO.readById(id);
 		return pptAccount.getUser().equals(user) ? pptAccount : null;
 	}
