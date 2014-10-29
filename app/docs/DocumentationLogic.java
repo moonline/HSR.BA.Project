@@ -14,10 +14,10 @@ import play.api.mvc.Call;
 import play.libs.F;
 import play.libs.ws.WS;
 import play.libs.ws.WSRequestHolder;
+import play.libs.ws.WSResponse;
 import play.mvc.Controller;
 import play.mvc.Result;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
@@ -27,6 +27,7 @@ import java.net.URLEncoder;
 import java.util.*;
 import java.util.function.Function;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static play.mvc.Http.Context.Implicit.ctx;
 
 public class DocumentationLogic {
@@ -153,20 +154,9 @@ public class DocumentationLogic {
 		if (queryString != null) {
 			url.setQueryString(queryString);
 		}
-
-		try {
-			Runtime.getRuntime().exec("curl --request POST --data \"name=demo&password=demo\" http://localhost:9000/user/login").waitFor();
-		} catch (IOException | InterruptedException e) {
-			e.printStackTrace();
-		}
-
-//		F.Promise<WSResponse> promise = url.execute(method.call.method());
-//		F.Promise<WSResponse> promise = WS.url("http://localhost:9000/asdv").get();
-
-//		WSResponse wsResponse = promise.get(30, SECONDS);
-//		return new SimpleResponse(wsResponse.getStatus(), wsResponse.getStatusText(), wsResponse.getBody(), true);
-
-		return new SimpleResponse(123, "TODO", "TODO - TODO - TODO - TODO - TODO - TODO - TODO", true); //TODO: Fix that promise.get() returnes somewhen (parallel call problem)
+		F.Promise<WSResponse> promise = url.execute(method.call.method());
+		WSResponse wsResponse = promise.get(30, SECONDS);
+		return new SimpleResponse(wsResponse.getStatus(), wsResponse.getStatusText(), wsResponse.getBody(), true);
 	}
 
 	@Nullable
