@@ -18,12 +18,10 @@ import play.libs.ws.WSResponse;
 import play.mvc.Controller;
 import play.mvc.Result;
 
-import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.net.URLEncoder;
 import java.util.*;
 import java.util.function.Function;
 
@@ -135,8 +133,18 @@ public class DocumentationLogic {
 		if (queryString != null) {
 			request.append(" --data \"").append(queryString).append("\"");
 		}
-		request.append(" ").append(method.call.absoluteURL(ctx().request()));
+		request.append(" ").append(getRequestUrl(method, true));
 		return request.toString();
+	}
+
+	public String getRequestUrl(MethodDocumentation method, boolean asAbsolute) {
+		String url;
+		if (asAbsolute) {
+			url = method.call.absoluteURL(ctx().request());
+		} else {
+			url = method.call.url();
+		}
+		return url.replaceAll("\\?.*", "");
 	}
 
 	public SimpleResponse getResponseString(MethodDocumentation method, QueryExamples.Example example) {
@@ -149,7 +157,7 @@ public class DocumentationLogic {
 	}
 
 	private SimpleResponse simulateRequest(MethodDocumentation method, String[] parameterValues) {
-		WSRequestHolder url = WS.url(method.call.absoluteURL(ctx().request()));
+		WSRequestHolder url = WS.url(getRequestUrl(method, true));
 		String queryString = calculateQueryString(method, parameterValues);
 		if (queryString != null) {
 			url.setQueryString(queryString);
@@ -173,14 +181,7 @@ public class DocumentationLogic {
 			List<String> data = new ArrayList<>();
 			for (int i = 0; i < numberOfParameters; i++) {
 				String parameterName = method.queryParameters[i].name();
-				String parameterValue;
-				try {
-					parameterValue = URLEncoder.encode(parameterValues[i], "UTF-8");
-				} catch (UnsupportedEncodingException e) {
-					Logger.error("UTF-8 is unsupported?", e);
-					throw new RuntimeException(e);
-				}
-				data.add(parameterName + "=" + parameterValue);
+				data.add(parameterName + "=" + parameterValues[i]);
 			}
 			return StringUtils.join(data, "&");
 		}
