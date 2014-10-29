@@ -1,11 +1,9 @@
 package daos;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import play.Logger;
 import play.db.jpa.JPA;
-import play.libs.Json;
 
 import javax.persistence.Query;
 import java.lang.reflect.ParameterizedType;
@@ -100,10 +98,6 @@ public abstract class AbstractDAO<T> {
 	protected T find(String query, Object... params) {
 		final List<T> results = findAll(query, params);
 		return results.isEmpty() ? null : results.get(0);
-	}
-
-	public ObjectNode getAsJson(T entity) {
-		return entity == null ? new ObjectNode(null) : (ObjectNode) Json.toJson(entity);
 	}
 
 }

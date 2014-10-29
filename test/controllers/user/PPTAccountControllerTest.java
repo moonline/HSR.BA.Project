@@ -116,7 +116,7 @@ public class PPTAccountControllerTest extends AbstractControllerTest {
 		assertCheckJsonResponse(result, Json.parse("{ \"id\" : " + account.getId() + ",\n" +
 				"      \"ppt\" : null,\n" +
 				"      \"pptUrl\" : \"http://example1.com\",\n" +
-				"      \"user\" : " + user.getId() + ",\n" +
+				"      \"user\" : {\"id\":" + user.getId() + ",\"name\":\"User 9\"},\n" +
 				"      \"ppt_username\" : \"admin\"" +
 				"    }"));
 	}
@@ -148,7 +148,7 @@ public class PPTAccountControllerTest extends AbstractControllerTest {
 		assertCheckJsonResponse(result, Json.parse("{ \"id\" : " + account.getId() + ",\n" +
 				"      \"ppt\" :{\"id\":" + ppt.getId() + ",\"name\":\"My Project Planning Tool\"},\n" +
 				"      \"pptUrl\" : \"http://another-example.com\",\n" +
-				"      \"user\" : " + user.getId() + ",\n" +
+				"      \"user\" : {\"id\":" + user.getId() + ",\"name\":\"User 9\"},\n" +
 				"      \"ppt_username\" : \"my new username\"" +
 				"    }"));
 		//Verification
@@ -177,7 +177,7 @@ public class PPTAccountControllerTest extends AbstractControllerTest {
 		assertCheckJsonResponse(result, Json.parse("{ \"id\" : " + account.getId() + ",\n" +
 				"      \"ppt\" :{\"id\":" + ppt.getId() + ",\"name\":\"My Project Planning Tool\"},\n" +
 				"      \"pptUrl\" : \"http://another-example.com\",\n" +
-				"      \"user\" : " + user.getId() + ",\n" +
+				"      \"user\" : {\"id\":" + user.getId() + ",\"name\":\"User 9\"},\n" +
 				"      \"ppt_username\" : \"my new username\"" +
 				"    }"));
 		PPTAccount pptAccount = JPA.withTransaction(() -> PPT_ACCOUNT_DAO.readById(account.getId()));

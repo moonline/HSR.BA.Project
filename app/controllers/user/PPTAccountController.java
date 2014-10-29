@@ -1,7 +1,6 @@
 package controllers.user;
 
 import controllers.GuaranteeAuthenticatedUser;
-import daos.user.PPTAccountDAO;
 import docs.QueryDescription;
 import docs.QueryExamples;
 import docs.QueryParameters;
@@ -10,6 +9,7 @@ import logics.user.PPTAccountLogic;
 import models.user.PPTAccount;
 import play.data.Form;
 import play.db.jpa.Transactional;
+import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 
@@ -20,7 +20,6 @@ import static docs.QueryResponses.Response;
 public class PPTAccountController extends Controller {
 
 	public static final PPTAccountLogic PPT_ACCOUNT_LOGIC = new PPTAccountLogic();
-	public static final PPTAccountDAO PPT_ACCOUNT_DAO = new PPTAccountDAO();
 
 	@Transactional()
 	@GuaranteeAuthenticatedUser
@@ -44,7 +43,7 @@ public class PPTAccountController extends Controller {
 		if (form.hasErrors()) {
 			return badRequest(form.errorsAsJson());
 		}
-		return ok(PPT_ACCOUNT_DAO.getAsJson(PPT_ACCOUNT_LOGIC.createPPTAccount(session(), form.get())));
+		return ok(Json.toJson(PPT_ACCOUNT_LOGIC.createPPTAccount(session(), form.get())));
 	}
 
 	@Transactional(readOnly = true)
@@ -94,7 +93,7 @@ public class PPTAccountController extends Controller {
 		if (pptAccount == null) {
 			return notFound("The account " + id + " could not be found for the logged in user.");
 		}
-		return ok(PPT_ACCOUNT_DAO.getAsJson(pptAccount));
+		return ok(Json.toJson(pptAccount));
 	}
 
 	@Transactional()
@@ -127,7 +126,7 @@ public class PPTAccountController extends Controller {
 			return badRequest(form.errorsAsJson());
 		}
 		PPT_ACCOUNT_LOGIC.update(pptAccount, form.get());
-		return ok(PPT_ACCOUNT_DAO.getAsJson(pptAccount));
+		return ok(Json.toJson(pptAccount));
 	}
 
 	@Transactional()
@@ -152,6 +151,5 @@ public class PPTAccountController extends Controller {
 		PPT_ACCOUNT_LOGIC.delete(pptAccount);
 		return noContent();
 	}
-
 
 }

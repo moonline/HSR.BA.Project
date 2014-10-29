@@ -6,6 +6,7 @@ import logics.user.UserLogic;
 import models.user.User;
 import org.fest.assertions.MapAssert;
 import org.junit.Test;
+import play.libs.Json;
 import play.mvc.Result;
 import test.AbstractTestDataCreator;
 
@@ -32,7 +33,7 @@ public class UserControllerTest extends AbstractControllerTest {
 		Result result = callPostAction(controllers.user.routes.ref.UserController.login(), postData("name", "Hansli", "password", "1234"));
 		//Verification
 		assertThat(status(result)).isEqualTo(OK);
-		assertCheckJsonResponse(result, USER_DAO.getAsJson(user));
+		assertCheckJsonResponse(result, Json.toJson(user));
 		verifyLoggedIn(user, result, true);
 	}
 
@@ -73,7 +74,8 @@ public class UserControllerTest extends AbstractControllerTest {
 		//Verification
 		assertThat(status(result)).isEqualTo(OK);
 		assertThat(USER_DAO.readAll().size()).isEqualTo(userCountAtStart + 1);
-		assertCheckJsonResponse(result, USER_DAO.getAsJson(USER_DAO.readByName("Hans3")));
+		User entity = USER_DAO.readByName("Hans3");
+		assertCheckJsonResponse(result, Json.toJson(entity));
 	}
 
 	@Test
@@ -95,7 +97,7 @@ public class UserControllerTest extends AbstractControllerTest {
 		Result result = callActionWithUser(controllers.user.routes.ref.UserController.login_status(), user);
 		//Verification
 		assertThat(status(result)).isEqualTo(OK);
-		assertCheckJsonResponse(result, USER_DAO.getAsJson(user));
+		assertCheckJsonResponse(result, Json.toJson(user));
 	}
 
 	@Test

@@ -5,6 +5,7 @@ import daos.user.PPTAccountDAO;
 import models.ppt.ProjectPlanningTool;
 import models.user.PPTAccount;
 import models.user.User;
+import org.jetbrains.annotations.NotNull;
 import play.data.validation.Constraints;
 import play.libs.Json;
 import play.mvc.Http;
@@ -24,6 +25,7 @@ public class PPTAccountLogic {
 		return null;
 	}
 
+	@NotNull
 	public PPTAccount createPPTAccount(Http.Session session, CreatePPTAccountForm form) {
 		PPTAccount account = new PPTAccount();
 		account.setUser(USER_LOGIC.getLoggedInUser(session));
