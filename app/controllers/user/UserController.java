@@ -72,7 +72,7 @@ public class UserController extends Controller {
 	})
 	@Transactional(readOnly = true)
 	public static Result login_status() {
-		final User user = USER_LOGIC.getLoggedInUser(session());
+		final User user = USER_LOGIC.getLoggedInUser(ctx());
 		if (user == null) {
 			return ok(new ObjectNode(null));
 		} else {
@@ -123,7 +123,7 @@ public class UserController extends Controller {
 			@Example(parameters = {"demo", "1234", "another password"})
 	})
 	public static Result changePassword() {
-		User user = USER_LOGIC.getLoggedInUser(session());
+		User user = USER_LOGIC.getLoggedInUser(ctx());
 		DynamicForm requestData = Form.form().bindFromRequest();
 		String old_password = requestData.get("old_password");
 		String new_password = requestData.get("new_password");

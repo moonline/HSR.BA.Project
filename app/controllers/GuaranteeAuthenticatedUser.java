@@ -23,20 +23,24 @@ public @interface GuaranteeAuthenticatedUser {
 
 		@Override
 		public F.Promise<Result> call(final Http.Context ctx) throws Throwable {
-			if (USER_LOGIC.isUserLoggedIn(ctx.session())) {
+			if (USER_LOGIC.isUserLoggedIn(ctx)) {
 				return delegate.call(ctx);
 			} else {
-				return denyAccess();
+				return denyAccess(ctx);
 			}
 		}
 
-		private static F.Promise<Result> denyAccess() {
-			return F.Promise.promise(new F.Function0<Result>() {
-				@Override
-				public Result apply() throws Throwable {
-					return forbidden("You need to authenticate to use this resource.");
+		private static F.Promise<Result> denyAccess(Http.Context ctx) {
+			return F.Promise.promise(() -> {
+				if (isBasicAuthenticationEnabled(ctx)) {
+					ctx.response().setHeader("WWW-Authenticate", "Basic realm=\"" + "" /*  <-- you could provide a description for this site here */ + "\"");
 				}
+				return unauthorized("You need to authenticate to use this resource. You can either login or use the HTTP Basic Authentication.");
 			});
+		}
+
+		public static boolean isBasicAuthenticationEnabled(Http.Context ctx) {
+			return "true".equals(ctx.request().getQueryString("basicAuth"));
 		}
 	}
 

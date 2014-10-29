@@ -43,7 +43,7 @@ public class PPTAccountController extends Controller {
 		if (form.hasErrors()) {
 			return badRequest(form.errorsAsJson());
 		}
-		return ok(Json.toJson(PPT_ACCOUNT_LOGIC.createPPTAccount(session(), form.get())));
+		return ok(Json.toJson(PPT_ACCOUNT_LOGIC.createPPTAccount(ctx(), form.get())));
 	}
 
 	@Transactional(readOnly = true)
@@ -71,7 +71,7 @@ public class PPTAccountController extends Controller {
 					"]"))
 	})
 	public static Result readAll() {
-		return ok(PPT_ACCOUNT_LOGIC.getAllForLoggedInUser(session()));
+		return ok(PPT_ACCOUNT_LOGIC.getAllForLoggedInUser(ctx()));
 	}
 
 	@Transactional(readOnly = true)
@@ -89,7 +89,7 @@ public class PPTAccountController extends Controller {
 			@Example(parameters = {"104"})
 	})
 	public static Result readOne(long id) {
-		PPTAccount pptAccount = PPT_ACCOUNT_LOGIC.getForLoggedInUser(session(), id);
+		PPTAccount pptAccount = PPT_ACCOUNT_LOGIC.getForLoggedInUser(ctx(), id);
 		if (pptAccount == null) {
 			return notFound("The account " + id + " could not be found for the logged in user.");
 		}
@@ -117,7 +117,7 @@ public class PPTAccountController extends Controller {
 			@Example(parameters = {"1", "1", "http://example.com", "name", "1234"})
 	})
 	public static Result update(long id) {
-		PPTAccount pptAccount = PPT_ACCOUNT_LOGIC.getForLoggedInUser(session(), id);
+		PPTAccount pptAccount = PPT_ACCOUNT_LOGIC.getForLoggedInUser(ctx(), id);
 		if (pptAccount == null) {
 			return notFound("The account " + id + " could not be found for the logged in user.");
 		}
@@ -144,7 +144,7 @@ public class PPTAccountController extends Controller {
 			@Example(parameters = {"1"}, response = @Example.Response(status = NO_CONTENT, content = ""))
 	})
 	public static Result delete(long id) {
-		PPTAccount pptAccount = PPT_ACCOUNT_LOGIC.getForLoggedInUser(session(), id);
+		PPTAccount pptAccount = PPT_ACCOUNT_LOGIC.getForLoggedInUser(ctx(), id);
 		if (pptAccount == null) {
 			return notFound("The account " + id + " could not be found for the logged in user.");
 		}
