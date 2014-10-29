@@ -152,15 +152,19 @@ public class DocumentationLogic {
 		if (exampleResponse.status() > 0) {
 			return new SimpleResponse(exampleResponse.status(), null, exampleResponse.content(), false);
 		} else {
-			return simulateRequest(method, example.parameters());
+			return simulateRequest(method, example.parameters(), example.provideAuthentication());
 		}
 	}
 
-	private SimpleResponse simulateRequest(MethodDocumentation method, String[] parameterValues) {
+	private SimpleResponse simulateRequest(MethodDocumentation method, String[] parameterValues, boolean provideAuthentication) {
 		WSRequestHolder url = WS.url(getRequestUrl(method, true));
 		String queryString = calculateQueryString(method, parameterValues);
 		if (queryString != null) {
 			url.setQueryString(queryString);
+		}
+		if (provideAuthentication) {
+			url.setAuth("demo", "demo");
+			url.setQueryParameter("basicAuth", "true");
 		}
 		F.Promise<WSResponse> promise = url.execute(method.call.method());
 		WSResponse wsResponse = promise.get(30, SECONDS);
