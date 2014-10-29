@@ -1,10 +1,15 @@
 package models.user;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import javax.persistence.*;
 import java.security.SecureRandom;
 
 @Entity
 @Table(name = "person")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class User {
 
 	public static final SecureRandom SECURE_RANDOM = new SecureRandom();
@@ -17,8 +22,10 @@ public class User {
 
 	private String name;
 
+	@JsonIgnore
 	private byte[] salt;
 
+	@JsonIgnore
 	private byte[] password_hash;
 
 	public Long getId() {

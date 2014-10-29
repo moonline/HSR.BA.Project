@@ -72,12 +72,35 @@ public class DocumentationLogic {
 	private Call getCallObject(Object routesObject, Method method) {
 		try {
 			Class<?> routesClass = routesObject.getClass();
-			return (Call) routesClass.getMethod(method.getName(), method.getParameterTypes()).invoke(routesObject, new Object[method.getParameterCount()]);
+			return (Call) routesClass.getMethod(method.getName(), method.getParameterTypes()).invoke(routesObject, getExampleParams(method.getParameterTypes()));
 		} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
 			Logger.error("Could not create call object for " + routesObject + "/" + method, e);
 			throw new RuntimeException("An Error occurred on 823489");
 		}
 
+	}
+
+	private Object[] getExampleParams(Class<?>[] parameterTypes) {
+		ArrayList<Object> params = new ArrayList<>();
+		for (Class<?> parameterType : parameterTypes) {
+			try {
+				if (parameterType.equals(Integer.class) || parameterType.equals(int.class)) {
+					params.add(0);
+
+				} else if (parameterType.equals(Long.class) || parameterType.equals(long.class)) {
+					params.add(0L);
+
+				} else if (parameterType.equals(Character.class) || parameterType.equals(char.class)) {
+					params.add('\0');
+
+				} else {
+					params.add(parameterType.getConstructor().newInstance());
+				}
+			} catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+				Logger.error("Could not create parameter for example object creation: " + parameterType, e);
+			}
+		}
+		return params.toArray();
 	}
 
 	/**

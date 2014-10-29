@@ -1,5 +1,6 @@
 package controllers.user;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import controllers.GuaranteeAuthenticatedUser;
 import docs.QueryDescription;
 import docs.QueryExamples;
@@ -10,6 +11,7 @@ import models.user.User;
 import play.data.DynamicForm;
 import play.data.Form;
 import play.db.jpa.Transactional;
+import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 
@@ -46,7 +48,7 @@ public class UserController extends Controller {
 		if (user == null) {
 			return badRequest("Username or Password wrong");
 		}
-		return ok(USER_LOGIC.getAsJson(user));
+		return ok(Json.toJson(user));
 	}
 
 	@QueryDescription("Does log out the currently logged in user by removing the cookie.")
@@ -71,7 +73,11 @@ public class UserController extends Controller {
 	@Transactional(readOnly = true)
 	public static Result login_status() {
 		final User user = USER_LOGIC.getLoggedInUser(session());
-		return ok(USER_LOGIC.getAsJson(user));
+		if (user == null) {
+			return ok(new ObjectNode(null));
+		} else {
+			return ok(Json.toJson(user));
+		}
 	}
 
 	@Transactional()
@@ -98,8 +104,7 @@ public class UserController extends Controller {
 		} else if (!password.equals(password_repeat)) {
 			return badRequest("The two passwords do not match");
 		}
-		final User user = USER_LOGIC.createUser(name, password);
-		return ok(USER_LOGIC.getAsJson(user));
+		return ok(Json.toJson(USER_LOGIC.createUser(name, password)));
 	}
 
 	@Transactional()
