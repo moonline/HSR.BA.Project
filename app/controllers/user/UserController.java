@@ -34,7 +34,7 @@ public class UserController extends Controller {
 			@Response(status = OK, description = "If the user could be logged in, and a cookie is set.")
 	})
 	@QueryExamples({
-			@Example(parameters = {"demo", "demo"}),
+			@Example(parameters = {"demo", "demo"}, response = @Example.Response(status = OK, content = "{\"id\":1,\"name\":\"demo\"}")),
 			@Example(parameters = {"demo", "invalid password"})
 	})
 	public static Result login() {
