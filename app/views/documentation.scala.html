@@ -65,8 +65,8 @@
         }
 
         @if(method.queryExamples != null) {
-            <h4>Examples</h4>
-            @for(example <- method.queryExamples) {
+            @for((example, index) <- method.queryExamples.zipWithIndex) {
+                <h4>Example @{index+1}</h4>
 				<pre class="prettyprint"><code class="language-bash">@logics.getCurlRequestString(method, example)</code></pre>
                 @defining(logics.getResponseString(method, example, exampleDataCreator)) { response=>
                     The previous command
