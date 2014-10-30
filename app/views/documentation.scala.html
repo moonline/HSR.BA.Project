@@ -13,6 +13,8 @@
     A response with status code 401 (Unauthorized) is returned, when authentication information are required but are not provided.
 </p>
 
+<h1>Methods</h1>
+
 @for((aClass,methods) <- classesAndMethods) {
     <h2>@logics.getHumanFriendlyClassName(aClass)</h2>
     @for(method <- methods) {
