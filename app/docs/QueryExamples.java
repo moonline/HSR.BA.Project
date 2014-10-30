@@ -20,6 +20,8 @@ public @interface QueryExamples {
 
 		boolean provideAuthentication() default true;
 
+		boolean isDataCacheable() default true;
+
 		Response response() default @Response(status = 0, content = "");
 
 		public @interface Response {
