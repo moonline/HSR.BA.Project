@@ -94,7 +94,7 @@ public class UserLogic {
 		return user;
 	}
 
-	private boolean passwordCorrect(User user, String password) {
+	public boolean passwordCorrect(User user, String password) {
 		return Arrays.equals(user.getPasswordHash(), calculatePasswordHash(user, password));
 	}
 

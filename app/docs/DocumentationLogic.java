@@ -134,7 +134,7 @@ public class DocumentationLogic {
 		if (queryString != null) {
 			request.append(" --data \"").append(queryString).append("\"");
 		}
-		request.append(" ").append(getRequestUrl(method, true, example.id()));
+		request.append(" ").append(getRequestUrl(method, true, getRealQueryParameter(example.id())));
 		return request.toString();
 	}
 
@@ -148,23 +148,23 @@ public class DocumentationLogic {
 		return url.replaceAll(MAGIC_CONSTANT_PARAMETER_IDENTIFICATION + "", id);
 	}
 
-	public SimpleResponse getResponseString(MethodDocumentation method, QueryExamples.Example example) {
+	public SimpleResponse getResponseString(MethodDocumentation method, QueryExamples.Example example, ExampleDataCreator exampleDataCreator) {
 		QueryExamples.Example.Response exampleResponse = example.response();
 		if (exampleResponse.status() > 0) {
 			return new SimpleResponse(exampleResponse.status(), null, exampleResponse.content(), false);
 		} else {
-			return simulateRequest(method, example);
+			return simulateRequest(method, example, exampleDataCreator);
 		}
 	}
 
-	private SimpleResponse simulateRequest(MethodDocumentation method, QueryExamples.Example example) {
-		WSRequestHolder url = WS.url(getRequestUrl(method, true, example.id()));
+	private SimpleResponse simulateRequest(MethodDocumentation method, QueryExamples.Example example, ExampleDataCreator exampleDataCreator) {
+		WSRequestHolder url = WS.url(getRequestUrl(method, true, getRealQueryParameter(example.id())));
 		String queryString = calculateQueryString(method, example.parameters());
 		if (queryString != null) {
 			url.setQueryString(queryString);
 		}
 		if (example.provideAuthentication()) {
-			url.setAuth("demo", "demo");
+			url.setAuth(exampleDataCreator.USER_NAME, ExampleDataCreator.USER_PASSWORD);
 			url.setQueryParameter("basicAuth", "true");
 		}
 		F.Promise<WSResponse> promise = url.execute(method.call.method());
@@ -189,12 +189,16 @@ public class DocumentationLogic {
 				while (method.queryParameters[queryParameterIndex].isId()) {
 					queryParameterIndex++;
 				}
-				data.add(method.queryParameters[queryParameterIndex].name() + "=" + parameterValues[exampleParameterIndex]);
+				data.add(method.queryParameters[queryParameterIndex].name() + "=" + getRealQueryParameter(parameterValues[exampleParameterIndex]));
 				queryParameterIndex++;
 				exampleParameterIndex++;
 			}
 			return StringUtils.join(data, "&");
 		}
+	}
+
+	private String getRealQueryParameter(String queryParameter) {
+		return queryParameter.replaceFirst("REFERENCE_[^_]+_", "");
 	}
 
 	private int calculateNumberOfRegularParameters(QueryParameters.Parameter[] parameters, String[] examples) {
@@ -208,6 +212,18 @@ public class DocumentationLogic {
 			Logger.error(StringUtils.join(parameters, ", ") + " has a non matching amount of example parameters (" + examples.length + ")");
 		}
 		return Math.min(numberOfParameters, examples.length);
+	}
+
+	public void createCallExampleData(Collection<List<MethodDocumentation>> allAPIMethods, ExampleDataCreator exampleDataCreator) {
+		for (List<MethodDocumentation> apiMethods : allAPIMethods) {
+			for (MethodDocumentation apiMethod : apiMethods) {
+				for (QueryExamples.Example queryExample : apiMethod.queryExamples) {
+					if (queryExample.id().startsWith("REFERENCE_")) {
+						exampleDataCreator.createObject("REFERENCE_PPTACCOUNT_3", true /*TODO*/);
+					}
+				}
+			}
+		}
 	}
 
 	public static class SimpleResponse {

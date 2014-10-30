@@ -113,8 +113,8 @@ public class PPTAccountController extends Controller {
 	})
 	@QueryExamples({
 			@Example(id = "9999", parameters = {"1", "no url", "name", "1234"}),
-			@Example(id = "1", parameters = {"9999", "no url", "name", "1234"}),
-			@Example(id = "1", parameters = {"1", "http://example.com", "name", "1234"})
+			@Example(id = "REFERENCE_PPTACCOUNT_3", parameters = {"9999", "no url", "name", "1234"}),
+			@Example(id = "REFERENCE_PPTACCOUNT_3", parameters = {"1", "http://example.com", "name", "1234"})
 	})
 	public static Result update(long id) {
 		PPTAccount pptAccount = PPT_ACCOUNT_LOGIC.getForLoggedInUser(ctx(), id);

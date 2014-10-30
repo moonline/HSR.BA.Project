@@ -11,7 +11,8 @@ public class DocumentationSeleniumTest extends AbstractSeleniumTest {
 	public void testDocumentation() throws Throwable {
 		browser.goTo(routes.DocumentationController.getAPIDocumentation().url());
 		assertThat(browser.pageSource()).contains("API Documentation for EEPPI");
-		assertThat(browser.pageSource()).contains("POST /user/register");
+		assertThat(browser.pageSource()).contains("GET /dks/getFromDKS?url=<id>");
+		assertThat(browser.pageSource()).contains("/user/pptAccount/3");
 	}
 
 }

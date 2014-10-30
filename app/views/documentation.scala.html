@@ -1,4 +1,4 @@
-@(classesAndMethods: Map[Class[_ <: Controller], List[docs.DocumentationLogic.MethodDocumentation]], logics: docs.DocumentationLogic)
+@(classesAndMethods: Map[Class[_ <: Controller], List[docs.DocumentationLogic.MethodDocumentation]], logics: docs.DocumentationLogic, exampleDataCreator: docs.ExampleDataCreator)
 
 @main("API documentation") {
 
@@ -68,7 +68,7 @@
             <h4>Examples</h4>
             @for(example <- method.queryExamples) {
 				<pre class="prettyprint"><code class="language-bash">@logics.getCurlRequestString(method, example)</code></pre>
-                @defining(logics.getResponseString(method, example)) { response=>
+                @defining(logics.getResponseString(method, example, exampleDataCreator)) { response=>
                     The previous command
                     @if(response.isRealSimulation){
                         <strong title="This response was calculated live on generation of this documentation.">did</strong>
