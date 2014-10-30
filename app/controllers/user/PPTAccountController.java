@@ -36,7 +36,7 @@ public class PPTAccountController extends Controller {
 	})
 	@QueryExamples({
 			@Example(parameters = {"9999", "no url", "name", "1234"}),
-			@Example(parameters = {"1", "http.jira.example.com", "admin", "12345678"})
+			@Example(parameters = {"REFERENCE_PPT_5", "http.jira.example.com", "admin", "12345678"})
 	})
 	public static Result create() {
 		Form<PPTAccountLogic.CreatePPTAccountForm> form = Form.form(PPTAccountLogic.CreatePPTAccountForm.class).bindFromRequest();
@@ -86,7 +86,7 @@ public class PPTAccountController extends Controller {
 	})
 	@QueryExamples({
 			@Example(id = "9999", parameters = {}),
-			@Example(id = "104", parameters = {})
+			@Example(id = "REFERENCE_PPTACCOUNT_3", parameters = {})
 	})
 	public static Result readOne(long id) {
 		PPTAccount pptAccount = PPT_ACCOUNT_LOGIC.getForLoggedInUser(ctx(), id);
@@ -113,8 +113,8 @@ public class PPTAccountController extends Controller {
 	})
 	@QueryExamples({
 			@Example(id = "9999", parameters = {"1", "no url", "name", "1234"}),
-			@Example(id = "REFERENCE_PPTACCOUNT_3", parameters = {"9999", "no url", "name", "1234"}),
-			@Example(id = "REFERENCE_PPTACCOUNT_3", parameters = {"1", "http://example.com", "name", "1234"})
+			@Example(id = "REFERENCE_PPTACCOUNT_3", parameters = {"9999", "no url", "ozander", "pMuE2ekiDa"}),
+			@Example(id = "REFERENCE_PPTACCOUNT_3", parameters = {"1", "http://jira.example.com", "tbucher", "7YqupNxN9v"})
 	})
 	public static Result update(long id) {
 		PPTAccount pptAccount = PPT_ACCOUNT_LOGIC.getForLoggedInUser(ctx(), id);
@@ -141,7 +141,7 @@ public class PPTAccountController extends Controller {
 	})
 	@QueryExamples({
 			@Example(id = "9999", parameters = {}),
-			@Example(id = "1", parameters = {}, response = @Example.Response(status = NO_CONTENT, content = ""))
+			@Example(id = "REFERENCE_PPTACCOUNT_7", isDataCacheable = false, parameters = {})
 	})
 	public static Result delete(long id) {
 		PPTAccount pptAccount = PPT_ACCOUNT_LOGIC.getForLoggedInUser(ctx(), id);

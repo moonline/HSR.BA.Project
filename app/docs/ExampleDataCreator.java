@@ -1,5 +1,7 @@
 package docs;
 
+import daos.AbstractDAO;
+import daos.ppt.ProjectPlanningToolDAO;
 import daos.user.PPTAccountDAO;
 import daos.user.UserDAO;
 import logics.user.UserLogic;
@@ -47,53 +49,67 @@ public class ExampleDataCreator {
 	public void createObject(String reference, boolean canBeCached) {
 		ExampleObjectCreator objectCreator;
 		String[] referenceParts = reference.split("_");
-		if (referenceParts[1].equals("PPTACCOUNT")) {
-			String pptUrl = "https://ppt.example.com";
-			String ppt_username = "tbucher";
-			String ppt_password = "7YqupNxN9v";
-			objectCreator = new ExampleObjectCreator(
-					"PPTAccount",
-					PPT_ACCOUNT_DAO,
-					() -> {
-						ProjectPlanningTool ppt = new ProjectPlanningTool();
-						ppt.setName("Example Project Planning Tool");
+		switch (referenceParts[1]) {
+			case "PPTACCOUNT":
+				String pptUrl = "https://ppt.example.com";
+				String ppt_username = "tbucher";
+				String ppt_password = "7YqupNxN9v";
+				objectCreator = new ExampleObjectCreator<>(
+						"PPTAccount",
+						PPT_ACCOUNT_DAO,
+						() -> {
+							ProjectPlanningTool ppt = new ProjectPlanningTool();
+							ppt.setName("Example Project Planning Tool");
 
-						PPTAccount pptAccount = new PPTAccount();
-						pptAccount.setPpt(ppt);
-						pptAccount.setPptUrl(pptUrl);
-						pptAccount.setPptUsername(ppt_username);
-						pptAccount.setPptPassword(ppt_password);
-						pptAccount.setUser(USER_DAO.readById(USER_ID));
+							PPTAccount pptAccount = new PPTAccount();
+							pptAccount.setPpt(ppt);
+							pptAccount.setPptUrl(pptUrl);
+							pptAccount.setPptUsername(ppt_username);
+							pptAccount.setPptPassword(ppt_password);
+							pptAccount.setUser(USER_DAO.readById(USER_ID));
 
-						persist(ppt, pptAccount);
+							persist(ppt, pptAccount);
 
-						return pptAccount.getId();
-					},
-					(existingPPTAccount) -> (existingPPTAccount.getPptUrl().equals(pptUrl) && existingPPTAccount.getPptUsername().equals(ppt_username) && existingPPTAccount.getPptPassword().equals(ppt_password)),
-					Long.parseLong(referenceParts[2]));
-		} else {
-			throw new NotImplementedException("Example-object-creation not implemented for " + referenceParts[1]);
+							return pptAccount.getId();
+						},
+						(existingPPTAccount) -> (
+								existingPPTAccount.getPptUrl().equals(pptUrl)
+										&& existingPPTAccount.getPptUsername().equals(ppt_username)
+										&& existingPPTAccount.getPptPassword().equals(ppt_password)));
+				break;
+			case "PPT":
+				String pptName = "Example Jira";
+				objectCreator = new ExampleObjectCreator<>("ProjectPlanningTool",
+						new ProjectPlanningToolDAO(),
+						() -> {
+							ProjectPlanningTool ppt = new ProjectPlanningTool();
+							ppt.setName(pptName);
+							persist(ppt);
+							return ppt.getId();
+						},
+						account -> account.getName().equals(pptName));
+				break;
+			default:
+				throw new NotImplementedException("Example-object-creation not implemented for " + referenceParts[1]);
 		}
-		doCreateObject(reference, canBeCached, objectCreator);
+		doCreateObject(reference, canBeCached, objectCreator, Long.parseLong(referenceParts[2]));
 	}
 
-	private static class ExampleObjectCreator {
+	private static class ExampleObjectCreator<T> {
 		private final String className;
-		private final PPTAccountDAO dao;
+		private final AbstractDAO<T> dao;
 		private final Function0<Long> createNewFunction;
-		private final Function<PPTAccount, Boolean> isExistingAndExpectedFunction;
-		private final long id;
+		private final Function<T, Boolean> isExistingAndExpectedFunction;
 
-		public ExampleObjectCreator(String className, PPTAccountDAO dao, Function0<Long> createNewFunction, Function<PPTAccount, Boolean> isExistingAndExpectedFunction, long id) {
+		public ExampleObjectCreator(String className, AbstractDAO<T> dao, Function0<Long> createNewFunction, Function<T, Boolean> isExistingAndExpectedFunction) {
 			this.className = className;
 			this.dao = dao;
 			this.createNewFunction = createNewFunction;
 			this.isExistingAndExpectedFunction = isExistingAndExpectedFunction;
-			this.id = id;
 		}
 
-		public void create() {
-			PPTAccount existingPPTAccount = dao.readById(id);
+		public void create(long id) {
+			T existingPPTAccount = dao.readById(id);
 			if (existingPPTAccount == null) {
 				Long currentId = createNewFunction.apply();
 				JPA.em().createQuery("update " + className + " p set p.id=:new where p.id=:old").setParameter("old", currentId).setParameter("new", id).executeUpdate();
@@ -128,12 +144,12 @@ public class ExampleDataCreator {
 		em.flush();
 	}
 
-	private void doCreateObject(String reference, boolean canBeCached, ExampleObjectCreator function) {
+	private void doCreateObject(String reference, boolean canBeCached, ExampleObjectCreator function, long id) {
 		if (canBeCached && cache.contains(reference)) {
 			return;
 		}
 		try {
-			function.create();
+			function.create(id);
 		} catch (Throwable throwable) {
 			Logger.error("Could not create example object " + reference, throwable);
 		}
