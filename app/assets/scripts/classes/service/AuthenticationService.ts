@@ -24,7 +24,6 @@ module app.service {
 			};
 			this.loginStatus(function(user:app.domain.model.core.User) {
 				if(user != null) {
-					console.log(user);
 					this.ready.resolve(this.loggedInUser);
 				} else {
 					this.ready.reject();
