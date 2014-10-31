@@ -2,6 +2,8 @@
 /// <reference path='../../classes/application/MappingController.ts' />
 /// <reference path='../../classes/application/TransmissionController.ts' />
 
+/// <reference path='../../classes/domain/model/User.ts' />
+
 /// <reference path='../../classes/domain/repository/TaskTemplateRepository.ts' />
 /// <reference path='../../classes/domain/repository/TaskPropertyRepository.ts' />
 /// <reference path='../../classes/domain/repository/DecisionRepository.ts' />
@@ -29,6 +31,24 @@ module app.mod {
 				$rootScope.$on("$routeChangeError", function(event, current, previous, eventObj) {
 					$location.path("/register");
 				});
+
+				// make Status available in view
+				$rootScope.Status = app.application.Status;
+
+				$rootScope.loginStatus = null;
+				$rootScope.login = function(username: string, password: string) {
+					authenticationService.login(username, password, function(success: boolean, user: app.domain.model.core.User) {
+						if(success) {
+							$rootScope.loginStatus = app.application.Status.success;
+						} else {
+							$rootScope.loginStatus = app.application.Status.error;
+						}
+					});
+				};
+				$rootScope.logout = function() {
+					authenticationService.logout();
+					$rootScope.loginStatus = null;
+				}
 			}]);
 		}
 
@@ -68,6 +88,7 @@ module app.mod {
 			this.module.controller('mappingController', ['$scope', '$location', '$http', 'persistenceService', app.application.MappingController]);
 			this.module.controller('transmissionController', ['$scope', '$location', 'persistenceService', '$http', app.application.TransmissionController]);
 			this.module.controller('registerController', ['$scope', '$location', '$http', 'authenticationService', app.application.RegisterController]);
+
 		}
 
 		private addServices() {

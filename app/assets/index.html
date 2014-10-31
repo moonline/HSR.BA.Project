@@ -19,11 +19,12 @@
 			<header data-region="north" data-layout="border">
 				<div data-region="middle" data-align="center">
 					<h1 data-region="west">EEPPI</h1>
-					<button data-ng-if="authenticator.loggedInUser != null" data-ng-click="authenticator.logout()">Logout {{authenticator.loggedInUser.userName}}</button>
+					<button data-ng-if="authenticator.loggedInUser != null"
+						data-ng-click="logout()">Logout {{authenticator.loggedInUser.userName}}</button>
 					<form data-ng-if="authenticator.loggedInUser == null">
-						<input type="text" data-ng-model="username" placeholder="username" />
-						<input type="password" data-ng-model="password" placeholder="password" />
-						<button data-ng-click="authenticator.login(username, password)">Login</button>
+						<input class="{{loginStatus == Status.error && 'error' || '' }}" type="text" data-ng-model="username" placeholder="username" />
+						<input class="{{loginStatus == Status.error && 'error' || '' }}" type="password" data-ng-model="password" placeholder="password" />
+						<button data-ng-click="login(username, password)">Login</button>
 					</form>
 				</div>
 			</header>

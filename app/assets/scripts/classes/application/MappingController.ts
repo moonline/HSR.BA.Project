@@ -13,6 +13,8 @@ module app.application {
 	'use strict';
 
 	export class MappingController {
+		private scope: any;
+
 		constructor($scope, $location, $http, persistenceService) {
 			var decisionRepository = persistenceService['decisionRepository'];
 
