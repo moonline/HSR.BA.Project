@@ -2,10 +2,12 @@ package logics.docs;
 
 import daos.AbstractDAO;
 import daos.ppt.ProjectPlanningToolDAO;
+import daos.task.TaskTemplateDAO;
 import daos.user.PPTAccountDAO;
 import daos.user.UserDAO;
 import logics.user.UserLogic;
 import models.ppt.ProjectPlanningTool;
+import models.task.TaskTemplate;
 import models.user.PPTAccount;
 import models.user.User;
 import org.apache.commons.lang3.NotImplementedException;
@@ -88,6 +90,18 @@ public class ExampleDataCreator {
 							return ppt.getId();
 						},
 						account -> account.getName().equals(pptName));
+				break;
+			case "TASKTEMPLATE":
+				String ttName = "My example Task Template";
+				objectCreator = new ExampleObjectCreator<>("TaskTemplate",
+						new TaskTemplateDAO(),
+						() -> {
+							TaskTemplate taskTemplate = new TaskTemplate();
+							taskTemplate.setName(ttName);
+							persist(taskTemplate);
+							return taskTemplate.getId();
+						},
+						existingTaskTemplate -> existingTaskTemplate.getName().equals(ttName));
 				break;
 			default:
 				throw new NotImplementedException("Example-object-creation not implemented for " + referenceParts[1]);

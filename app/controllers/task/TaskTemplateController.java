@@ -33,7 +33,7 @@ public class TaskTemplateController extends Controller {
 			@Response(status = OK, description = "The new created Task Template is returned")
 	})
 	@QueryExamples({
-			@Example(parameters = {})
+			@Example(parameters = {"A new Task Template"})
 	})
 	public static Result create() {
 		Form<TaskTemplateLogic.CreateTaskTemplateForm> form = Form.form(TaskTemplateLogic.CreateTaskTemplateForm.class).bindFromRequest();
@@ -52,10 +52,10 @@ public class TaskTemplateController extends Controller {
 			@Response(status = OK, description = "If it's found, it's returned")
 	})
 	@QueryExamples({
-			@Example(parameters = {"9999"}),
-			@Example(parameters = {"REFERENCE_TASKTEMPLATE_8"})
+			@Example(id = "9999", parameters = {}),
+			@Example(id = "REFERENCE_TASKTEMPLATE_8", parameters = {})
 	})
-	public static Result read(Long id) {
+	public static Result read(long id) {
 		TaskTemplate taskTemplate = TASK_TEMPLATE_DAO.readById(id);
 		if (taskTemplate == null) {
 			return notFound();
@@ -88,10 +88,10 @@ public class TaskTemplateController extends Controller {
 			@Response(status = OK, description = "The new created Task Template is returned")
 	})
 	@QueryExamples({
-			@Example(parameters = {"9999"}),
-			@Example(parameters = {"REFERENCE_TASKTEMPLATE_8"})
+			@Example(id = "9999", parameters = {"My beautiful task template"}),
+			@Example(id = "REFERENCE_TASKTEMPLATE_8", parameters = {"My example Task Template"})
 	})
-	public static Result update(Long id) {
+	public static Result update(long id) {
 		TaskTemplate taskTemplate = TASK_TEMPLATE_DAO.readById(id);
 		if (taskTemplate == null) {
 			return notFound();
@@ -113,10 +113,10 @@ public class TaskTemplateController extends Controller {
 			@Response(status = NO_CONTENT, description = "If the Task Template is successfully deleted")
 	})
 	@QueryExamples({
-			@Example(parameters = {"9999"}),
-			@Example(parameters = {"REFERENCE_TASKTEMPLATE_13"}, isDataCacheable = false)
+			@Example(id = "9999", parameters = {}),
+			@Example(id = "REFERENCE_TASKTEMPLATE_13", parameters = {}, isDataCacheable = false)
 	})
-	public static Result delete(Long id) {
+	public static Result delete(long id) {
 		TaskTemplate taskTemplate = TASK_TEMPLATE_DAO.readById(id);
 		if (taskTemplate == null) {
 			return notFound();
