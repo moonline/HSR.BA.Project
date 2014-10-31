@@ -21,4 +21,17 @@ public class TaskTemplate {
 	@ManyToOne
 	private TaskTemplate parent; //todo, guarantee parent has no parent and new parent hast no children
 
+	private String name;
+
+	public Long getId() {
+		return id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
 }

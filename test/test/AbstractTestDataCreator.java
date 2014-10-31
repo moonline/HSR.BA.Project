@@ -2,6 +2,7 @@ package test;
 
 import logics.user.UserLogic;
 import models.ppt.ProjectPlanningTool;
+import models.task.TaskTemplate;
 import models.user.PPTAccount;
 import models.user.User;
 import play.db.jpa.JPA;
@@ -44,5 +45,12 @@ public abstract class AbstractTestDataCreator {
 		EntityManager em = JPA.em();
 		em.persist(entity);
 		em.flush();
+	}
+
+	public static TaskTemplate createTaskTemplateWithTransaction(String name) {
+		TaskTemplate taskTemplate = new TaskTemplate();
+		taskTemplate.setName(name);
+		persistAndFlushInTransaction(taskTemplate);
+		return taskTemplate;
 	}
 }

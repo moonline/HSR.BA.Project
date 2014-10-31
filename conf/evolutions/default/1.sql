@@ -27,6 +27,7 @@ create table pptaccount (
 );
 create table tasktemplate (
     id bigint not null,
+    name varchar(255),
     parent_id bigint,
     primary key (id)
 );
