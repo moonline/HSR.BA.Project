@@ -1,5 +1,9 @@
 # --- !Ups
 
+create table node (
+    tasktemplate_id bigint not null,
+    dksnode varchar(255)
+);
 create table person (
     id bigint not null,
     name varchar(255),
@@ -21,7 +25,16 @@ create table pptaccount (
     user_id bigint,
     primary key (id)
 );
+create table tasktemplate (
+    id bigint not null,
+    parent_id bigint,
+    primary key (id)
+);
 
+alter table node
+    add constraint fk_3916o7fta2h8s2j0wyquumqub
+    foreign key (tasktemplate_id)
+    references tasktemplate;
 alter table pptaccount
     add constraint fk_ah1kp16nv53avs0s61b0qfje2
     foreign key (ppt_id)
@@ -30,21 +43,29 @@ alter table pptaccount
     add constraint fk_jpo3oot8ssbfu986lj40tefbh
     foreign key (user_id)
     references person;
+alter table tasktemplate
+    add constraint fk_2wtpsk3lq7w8v5y6ldc4pboar
+    foreign key (parent_id)
+    references tasktemplate;
 
 create sequence ppt_seq;
 create sequence pptaccount_seq;
+create sequence tasktemplate_seq;
 create sequence user_seq;
 
 # --- !Downs
 
 SET REFERENTIAL_INTEGRITY FALSE;
 
+drop table if exists node;
 drop table if exists person;
 drop table if exists ppt;
 drop table if exists pptaccount;
+drop table if exists tasktemplate;
 
 SET REFERENTIAL_INTEGRITY TRUE;
 
 drop sequence ppt_seq;
 drop sequence pptaccount_seq;
+drop sequence tasktemplate_seq;
 drop sequence user_seq;
