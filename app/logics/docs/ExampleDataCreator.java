@@ -55,8 +55,8 @@ public class ExampleDataCreator {
 		switch (referenceParts[1]) {
 			case "PPTACCOUNT":
 				String pptUrl = "https://ppt.example.com";
-				String ppt_username = "tbucher";
-				String ppt_password = "7YqupNxN9v";
+				String pptUsername = "tbucher";
+				String pptPassword = "7YqupNxN9v";
 				objectCreator = new ExampleObjectCreator<>(
 						"PPTAccount",
 						PPT_ACCOUNT_DAO,
@@ -67,8 +67,8 @@ public class ExampleDataCreator {
 							PPTAccount pptAccount = new PPTAccount();
 							pptAccount.setPpt(ppt);
 							pptAccount.setPptUrl(pptUrl);
-							pptAccount.setPptUsername(ppt_username);
-							pptAccount.setPptPassword(ppt_password);
+							pptAccount.setPptUsername(pptUsername);
+							pptAccount.setPptPassword(pptPassword);
 							pptAccount.setUser(USER_DAO.readById(USER_ID));
 
 							persist(ppt, pptAccount);
@@ -77,8 +77,8 @@ public class ExampleDataCreator {
 						},
 						(existingPPTAccount) -> (
 								existingPPTAccount.getPptUrl().equals(pptUrl)
-										&& existingPPTAccount.getPptUsername().equals(ppt_username)
-										&& existingPPTAccount.getPptPassword().equals(ppt_password)));
+										&& existingPPTAccount.getPptUsername().equals(pptUsername)
+										&& existingPPTAccount.getPptPassword().equals(pptPassword)));
 				break;
 			case "PPT":
 				String pptName = "Example Jira";

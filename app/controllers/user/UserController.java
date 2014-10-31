@@ -75,7 +75,7 @@ public class UserController extends Controller {
 					"}"))
 	})
 	@Transactional(readOnly = true)
-	public Result login_status() {
+	public Result loginStatus() {
 		final User user = USER_LOGIC.getLoggedInUser(ctx());
 		if (user == null) {
 			return ok(new ObjectNode(null));
@@ -88,7 +88,7 @@ public class UserController extends Controller {
 	@QueryParameters({
 			@Parameter(name = "name", description = "username"),
 			@Parameter(name = "password", description = "the new password for the user"),
-			@Parameter(name = "password_repeat", description = "the new password for the user (repetition, to guarantee the user didn't make a typo)")})
+			@Parameter(name = "passwordRepeat", description = "the new password for the user (repetition, to guarantee the user didn't make a typo)")})
 	@QueryDescription("This creates a new EEPPI-user.")
 	@QueryResponses({
 			@Response(status = BAD_REQUEST, description = "If the user could not be created."),
@@ -102,10 +102,10 @@ public class UserController extends Controller {
 		DynamicForm requestData = Form.form().bindFromRequest();
 		String name = requestData.get("name");
 		String password = requestData.get("password");
-		String password_repeat = requestData.get("password_repeat");
+		String passwordRepeat = requestData.get("passwordRepeat");
 		if (name == null || password == null) {
 			return badRequest("Missing registration data");
-		} else if (!password.equals(password_repeat)) {
+		} else if (!password.equals(passwordRepeat)) {
 			return badRequest("The two passwords do not match");
 		}
 		return ok(Json.toJson(USER_LOGIC.createUser(name, password)));
@@ -114,9 +114,9 @@ public class UserController extends Controller {
 	@Transactional()
 	@GuaranteeAuthenticatedUser()
 	@QueryParameters({
-			@Parameter(name = "old_password", description = "the current password for the user"),
-			@Parameter(name = "new_password", description = "the new password for the user"),
-			@Parameter(name = "new_password_repeat", description = "the new password for the user (repetition, to guarantee the user didn't make a typo)")})
+			@Parameter(name = "oldPassword", description = "the current password for the user"),
+			@Parameter(name = "newPassword", description = "the new password for the user"),
+			@Parameter(name = "newPasswordRepeat", description = "the new password for the user (repetition, to guarantee the user didn't make a typo)")})
 	@QueryDescription("This creates a new EEPPI-user.")
 	@QueryResponses({
 			@Response(status = BAD_REQUEST, description = "If the password could not be changed."),
@@ -129,15 +129,15 @@ public class UserController extends Controller {
 	public Result changePassword() {
 		User user = USER_LOGIC.getLoggedInUser(ctx());
 		DynamicForm requestData = Form.form().bindFromRequest();
-		String old_password = requestData.get("old_password");
-		String new_password = requestData.get("new_password");
-		String new_password_repeat = requestData.get("new_password_repeat");
-		if (new_password == null || new_password_repeat == null) {
+		String oldPassword = requestData.get("oldPassword");
+		String newPassword = requestData.get("newPassword");
+		String newPasswordRepeat = requestData.get("newPasswordRepeat");
+		if (newPassword == null || newPasswordRepeat == null) {
 			return badRequest("Missing new password");
-		} else if (!new_password.equals(new_password_repeat)) {
+		} else if (!newPassword.equals(newPasswordRepeat)) {
 			return badRequest("The two passwords do not match");
 		}
-		if (USER_LOGIC.changePassword(user, old_password, new_password)) {
+		if (USER_LOGIC.changePassword(user, oldPassword, newPassword)) {
 			return ok();
 		} else {
 			return badRequest("Could not change password");

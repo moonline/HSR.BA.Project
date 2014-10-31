@@ -42,8 +42,8 @@ public class User {
 		return passwordHash;
 	}
 
-	public void setPasswordHash(byte[] password_hash) {
-		this.passwordHash = password_hash;
+	public void setPasswordHash(byte[] passwordHash) {
+		this.passwordHash = passwordHash;
 	}
 
 	public byte[] getSalt() {

@@ -70,8 +70,8 @@ public class Global extends GlobalSettings {
 	private void registerFormatters() {
 		Formatters.register(PPTAccount.class, new Formatters.SimpleFormatter<PPTAccount>() {
 			@Override
-			public PPTAccount parse(String authentication_id, Locale l) throws ParseException {
-				PPTAccount authentication = PPT_ACCOUNT_LOGIC.getAuthentication(USER_LOGIC.getLoggedInUser(ctx()), authentication_id);
+			public PPTAccount parse(String authenticationId, Locale l) throws ParseException {
+				PPTAccount authentication = PPT_ACCOUNT_LOGIC.getAuthentication(USER_LOGIC.getLoggedInUser(ctx()), authenticationId);
 				if (authentication == null) {
 					throw new ParseException("No valid input", 0);
 				}

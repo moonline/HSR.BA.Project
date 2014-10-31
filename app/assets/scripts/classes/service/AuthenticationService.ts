@@ -60,7 +60,7 @@ module app.service {
 		public register(username: string, password: string, passwordRepeat: string, callback: (success: boolean, item: app.domain.model.core.User) => void = (s,i) => {}): void {
 			this.httpService.post(
 				this.resources['register'],
-				{ "name": username, "password": password, "password_repeat": passwordRepeat }
+				{ "name": username, "password": password, "passwordRepeat": passwordRepeat }
 			).success(function(data, status, headers, config) {
 					callback(true, app.domain.factory.ObjectFactory.createFromJson(app.domain.model.core.User,data));
 			}.bind(this)).error(function(data, status, headers, config) {
@@ -84,7 +84,7 @@ module app.service {
 		public changePassword(oldPassword: string, newPassword: string, newPasswordRepeat: string, callback: (success: boolean) => void = (s) => {}) {
 			this.httpService.post(
 				this.resources['changePassword'],
-				{ "old_password": oldPassword, "new_password": newPassword, "new_password_repeat": newPasswordRepeat }
+				{ "oldPassword": oldPassword, "newPassword": newPassword, "newPasswordRepeat": newPasswordRepeat }
 			).success(function(data, status, headers, config){
 					callback(true);
 				}.bind(this)).error(function(data, status, headers, config) {

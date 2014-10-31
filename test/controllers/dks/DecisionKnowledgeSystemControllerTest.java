@@ -29,12 +29,12 @@ public class DecisionKnowledgeSystemControllerTest extends AbstractControllerTes
 	public void testGetFromDKSWithGoodData() throws Throwable {
 		//Setup
 		String url = "http://localhost:1234/myPath";
-		int result_status = 123;
-		String result_json = "{\"result\":\"Check!\"}";
+		int resultStatus = 123;
+		String resultJson = "{\"result\":\"Check!\"}";
 
 		WSResponse response = mock(WSResponse.class);
-		when(response.getStatus()).thenReturn(result_status);
-		when(response.asJson()).thenReturn(Json.parse(result_json));
+		when(response.getStatus()).thenReturn(resultStatus);
+		when(response.asJson()).thenReturn(Json.parse(resultJson));
 
 		WSRequestHolder wsURL = spy(WS.url(url));
 		when(wsURL.get()).thenReturn(F.Promise.promise(() -> response));
@@ -46,8 +46,8 @@ public class DecisionKnowledgeSystemControllerTest extends AbstractControllerTes
 		Result result = callAction(controllers.dks.routes.ref.DecisionKnowledgeSystemController.getFromDKS(url));
 
 		//Verification
-		assertThat(status(result)).isEqualTo(result_status);
-		assertThat(contentAsString(result)).isEqualTo(result_json);
+		assertThat(status(result)).isEqualTo(resultStatus);
+		assertThat(contentAsString(result)).isEqualTo(resultJson);
 
 		verifyStatic(atLeastOnce());
 		WS.url(url);

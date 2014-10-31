@@ -82,11 +82,11 @@ public class UserLogic {
 		return getLoggedInUser(context) != null;
 	}
 
-	public boolean changePassword(User user, String old_password, String new_password) {
-		if (!passwordCorrect(user, old_password)) {
+	public boolean changePassword(User user, String oldPassword, String newPassword) {
+		if (!passwordCorrect(user, oldPassword)) {
 			return false;
 		} else {
-			user.setPasswordHash(calculatePasswordHash(user, new_password));
+			user.setPasswordHash(calculatePasswordHash(user, newPassword));
 			return true;
 		}
 	}

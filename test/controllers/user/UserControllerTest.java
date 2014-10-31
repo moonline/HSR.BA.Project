@@ -76,7 +76,7 @@ public class UserControllerTest extends AbstractControllerTest {
 		//Setup
 		int userCountAtStart = USER_DAO.readAll().size();
 		//Test
-		Result result = callPostAction(controllers.user.routes.ref.UserController.register(), postData("name", "Hans3", "password", "0000", "password_repeat", "0000"));
+		Result result = callPostAction(controllers.user.routes.ref.UserController.register(), postData("name", "Hans3", "password", "0000", "passwordRepeat", "0000"));
 		//Verification
 		assertThat(status(result)).isEqualTo(OK);
 		assertThat(USER_DAO.readAll().size()).isEqualTo(userCountAtStart + 1);
@@ -89,7 +89,7 @@ public class UserControllerTest extends AbstractControllerTest {
 		//Setup
 		int userCountAtStart = USER_DAO.readAll().size();
 		//Test
-		Result result = callPostAction(controllers.user.routes.ref.UserController.register(), postData("name", "Hans4", "password", "0000", "password_repeat", "1111"));
+		Result result = callPostAction(controllers.user.routes.ref.UserController.register(), postData("name", "Hans4", "password", "0000", "passwordRepeat", "1111"));
 		//Verification
 		assertThat(status(result)).isEqualTo(BAD_REQUEST);
 		assertThat(USER_DAO.readAll().size()).isEqualTo(userCountAtStart);
@@ -100,7 +100,7 @@ public class UserControllerTest extends AbstractControllerTest {
 		//Setup
 		User user = AbstractTestDataCreator.createUserWithTransaction("Hans Meier", "1234");
 		//Test
-		Result result = callActionWithUser(controllers.user.routes.ref.UserController.login_status(), user);
+		Result result = callActionWithUser(controllers.user.routes.ref.UserController.loginStatus(), user);
 		//Verification
 		assertThat(status(result)).isEqualTo(OK);
 		assertCheckJsonResponse(result, Json.toJson(user));
@@ -109,7 +109,7 @@ public class UserControllerTest extends AbstractControllerTest {
 	@Test
 	public void testLoginStatusForGuest() {
 		//Test
-		Result result = callAction(controllers.user.routes.ref.UserController.login_status());
+		Result result = callAction(controllers.user.routes.ref.UserController.loginStatus());
 		//Verification
 		assertThat(status(result)).isEqualTo(OK);
 		assertThat(contentAsString(result)).isEqualTo("{}");
@@ -120,7 +120,7 @@ public class UserControllerTest extends AbstractControllerTest {
 		//Setup
 		User user = AbstractTestDataCreator.createUserWithTransaction("Hans Meier 2", "2345");
 		//Test
-		Result result = callActionWithUser(routes.ref.UserController.changePassword(), user, postData("old_password", "2345", "new_password", "pw", "new_password_repeat", "pw"));
+		Result result = callActionWithUser(routes.ref.UserController.changePassword(), user, postData("oldPassword", "2345", "newPassword", "pw", "newPasswordRepeat", "pw"));
 		//Verification
 		assertThat(status(result)).isEqualTo(OK);
 		assertThat(status(callPostAction(controllers.user.routes.ref.UserController.login(), postData("name", "Hans Meier 2", "password", "pw")))).isEqualTo(OK); //login with new password works
@@ -131,7 +131,7 @@ public class UserControllerTest extends AbstractControllerTest {
 		//Setup
 		User user = AbstractTestDataCreator.createUserWithTransaction("Hans Meier 3", "2345");
 		//Test
-		Result result = callActionWithUser(routes.ref.UserController.changePassword(), user, postData("old_password", "wrong pw", "new_password", "pw", "new_password_repeat", "pw"));
+		Result result = callActionWithUser(routes.ref.UserController.changePassword(), user, postData("oldPassword", "wrong pw", "newPassword", "pw", "newPasswordRepeat", "pw"));
 		//Verification
 		assertThat(status(result)).isEqualTo(BAD_REQUEST);
 		assertThat(status(callPostAction(controllers.user.routes.ref.UserController.login(), postData("name", "Hans Meier 3", "password", "pw")))).isEqualTo(BAD_REQUEST); //login with new password works
@@ -142,7 +142,7 @@ public class UserControllerTest extends AbstractControllerTest {
 		//Setup
 		User user = AbstractTestDataCreator.createUserWithTransaction("Hans Meier 4", "2345");
 		//Test
-		Result result = callActionWithUser(routes.ref.UserController.changePassword(), user, postData("old_password", "2345", "new_password", "pw1", "new_password_repeat", "pw2"));
+		Result result = callActionWithUser(routes.ref.UserController.changePassword(), user, postData("oldPassword", "2345", "newPassword", "pw1", "newPasswordRepeat", "pw2"));
 		//Verification
 		assertThat(status(result)).isEqualTo(BAD_REQUEST);
 		assertThat(status(callPostAction(controllers.user.routes.ref.UserController.login(), postData("name", "Hans Meier 4", "password", "pw")))).isEqualTo(BAD_REQUEST); //login with new password works
@@ -151,7 +151,7 @@ public class UserControllerTest extends AbstractControllerTest {
 	@Test
 	public void testChangePasswordWithoutLoggedinUser() throws Throwable {
 		//Test
-		Result result = callPostAction(routes.ref.UserController.changePassword(), postData("old_password", "2345", "new_password", "pw1", "new_password_repeat", "pw2"));
+		Result result = callPostAction(routes.ref.UserController.changePassword(), postData("oldPassword", "2345", "newPassword", "pw1", "newPasswordRepeat", "pw2"));
 		//Verification
 		assertThat(status(result)).isEqualTo(UNAUTHORIZED);
 	}

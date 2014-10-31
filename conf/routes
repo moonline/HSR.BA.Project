@@ -9,7 +9,7 @@ GET     /api/documentation          @controllers.docs.DocumentationController.ge
 
 POST	/user/logout				@controllers.user.UserController.logout()
 POST	/user/login					@controllers.user.UserController.login()
-GET		/user/login-status			@controllers.user.UserController.login_status()
+GET		/user/loginStatus			@controllers.user.UserController.loginStatus()
 POST	/user/register				@controllers.user.UserController.register()
 POST	/user/changePassword		@controllers.user.UserController.changePassword()
 POST	/ppt/sendToPPT				@controllers.ppt.ProjectPlanningToolController.sendToPPT()

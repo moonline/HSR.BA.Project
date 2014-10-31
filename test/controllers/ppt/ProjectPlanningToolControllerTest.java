@@ -41,15 +41,15 @@ public class ProjectPlanningToolControllerTest extends AbstractControllerTest {
 		String username = "admin";
 		String password = "1234";
 		String account = AbstractTestDataCreator.createPPTAccountWithTransaction(user, baseUrl, username, password).getId() + "";
-		String content_string = "{\"content\": \"Test content\"}";
-		JsonNode content = Json.parse(content_string);
-		int result_status = 123;
-		String result_json_string = "{\"result\":\"Check!\"}";
-		JsonNode result_json = Json.parse(result_json_string);
+		String contentString = "{\"content\": \"Test content\"}";
+		JsonNode content = Json.parse(contentString);
+		int resultStatus = 123;
+		String resultJsonString = "{\"result\":\"Check!\"}";
+		JsonNode resultJson = Json.parse(resultJsonString);
 
 		WSResponse response = mock(WSResponse.class);
-		when(response.getStatus()).thenReturn(result_status);
-		when(response.asJson()).thenReturn(result_json);
+		when(response.getStatus()).thenReturn(resultStatus);
+		when(response.asJson()).thenReturn(resultJson);
 
 		WSRequestHolder wsURL = spy(WS.url(baseUrl + urlPath));
 		when(wsURL.post(content)).thenReturn(F.Promise.promise(() -> response));
@@ -58,11 +58,11 @@ public class ProjectPlanningToolControllerTest extends AbstractControllerTest {
 		when(WS.url(baseUrl + urlPath)).thenReturn(wsURL);
 
 		//Test
-		Result result = callActionWithUser(routes.ref.ProjectPlanningToolController.sendToPPT(), user, postData("path", urlPath, "content", content_string, "account", account));
+		Result result = callActionWithUser(routes.ref.ProjectPlanningToolController.sendToPPT(), user, postData("path", urlPath, "content", contentString, "account", account));
 
 		//Verification
-		assertThat(status(result)).isEqualTo(result_status);
-		assertThat(contentAsString(result)).isEqualTo(result_json_string);
+		assertThat(status(result)).isEqualTo(resultStatus);
+		assertThat(contentAsString(result)).isEqualTo(resultJsonString);
 
 		verifyStatic(atLeastOnce());
 		WS.url(baseUrl + urlPath);

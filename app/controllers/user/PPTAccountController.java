@@ -61,7 +61,7 @@ public class PPTAccountController extends Controller {
 			@Example(parameters = {}, description = "now with stored login information for the user", response = @Example.Response(status = OK, content = "[ { \"id\" : 103,\n" +
 					"    \"ppt\" : null,\n" +
 					"    \"pptUrl\" : \"http://example1.com\",\n" +
-					"    \"ppt_username\" : \"admin\",\n" +
+					"    \"pptUsername\" : \"admin\",\n" +
 					"    \"user\" : { \"id\" : 104,\n" +
 					"        \"name\" : \"User 9\"\n" +
 					"      }\n" +
@@ -69,7 +69,7 @@ public class PPTAccountController extends Controller {
 					"  { \"id\" : 104,\n" +
 					"    \"ppt\" : null,\n" +
 					"    \"pptUrl\" : \"http://example2.com\",\n" +
-					"    \"ppt_username\" : \"admin\",\n" +
+					"    \"pptUsername\" : \"admin\",\n" +
 					"    \"user\" : 104\n" +
 					"  }\n" +
 					"]"))

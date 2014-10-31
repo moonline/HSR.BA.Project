@@ -22,9 +22,9 @@ public class UserLogicTest extends AbstractDatabaseTest {
 		final JsonNode json = Json.toJson(user);
 		//Verification
 		assertThat(json.get("name").asText()).isEqualTo("A");
-		assertThat(json.get("password_hash")).isNull();
+		assertThat(json.get("passwordHash")).isNull();
 		assertThat(json.get("salt")).isNull();
-		assertThat(json.size()).isEqualTo(getUserObjectFieldCount() - 2); // "-2" for password_hash and salt
+		assertThat(json.size()).isEqualTo(getUserObjectFieldCount() - 2); // "-2" for passwordHash and salt
 	}
 
 	private int getUserObjectFieldCount() {

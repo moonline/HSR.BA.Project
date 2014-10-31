@@ -20,9 +20,9 @@ public class PPTAccountLogic {
 		USER_LOGIC = userLogic;
 	}
 
-	public PPTAccount getAuthentication(User user, String authentication_id) {
-		if (user != null && authentication_id.matches("\\d+")) {
-			PPTAccount pptAccount = PPT_ACCOUNT_DAO.readById(Long.parseLong(authentication_id));
+	public PPTAccount getAuthentication(User user, String authenticationId) {
+		if (user != null && authenticationId.matches("\\d+")) {
+			PPTAccount pptAccount = PPT_ACCOUNT_DAO.readById(Long.parseLong(authenticationId));
 			if (pptAccount != null && pptAccount.getUser().getId().equals(user.getId())) {
 				return pptAccount;
 			}
