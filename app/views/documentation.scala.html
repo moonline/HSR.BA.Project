@@ -13,12 +13,22 @@
     A response with status code 401 (Unauthorized) is returned, when authentication information are required but are not provided.
 </p>
 
+<h2>Index</h2>
+@for((aClass,methods) <- classesAndMethods) {
+    <h3>@logics.getHumanFriendlyClassName(aClass)</h3>
+    <ul>
+    @for(method <- methods) {
+        <li><a href='#method.call.method@logics.getRequestUrl(method, false, "id")'>@method.call.method @logics.getRequestUrl(method, false, "<id>")</a> (@method.queryDescription)</li>
+    }
+    </ul>
+}
+
 <h1>Methods</h1>
 
 @for((aClass,methods) <- classesAndMethods) {
     <h2>@logics.getHumanFriendlyClassName(aClass)</h2>
     @for(method <- methods) {
-        <h3>@method.call.method @logics.getRequestUrl(method, false, "<id>")</h3>
+        <h3><a name="authentication">Authentication</a><a name='method.call.method@logics.getRequestUrl(method, false, "id")'>@method.call.method @logics.getRequestUrl(method, false, "<id>")</a></h3>
 
         @if(method.queryDescription != null) {
             <p>@method.queryDescription</p>
