@@ -1,4 +1,4 @@
-package logics.tasks;
+package logics.ppt;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import models.user.PPTAccount;

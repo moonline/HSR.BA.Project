@@ -6,7 +6,7 @@ import logics.docs.QueryDescription;
 import logics.docs.QueryExamples;
 import logics.docs.QueryParameters;
 import logics.docs.QueryResponses;
-import logics.tasks.PPTTaskLogic;
+import logics.ppt.PPTTaskLogic;
 import play.data.Form;
 import play.db.jpa.Transactional;
 import play.libs.F;
