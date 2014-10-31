@@ -12,7 +12,10 @@ Requirements for development
 * JDK Version 1.8.0_25 or later
 * Typescript compiler
   1. Install [Node.js](http://nodejs.org/)
-  2. Install Typescript compiler with `sudo npm install -g typescript`
+  	* Linux: `sudo apt-get install nodejs`
+  	* Windows / Mac OS X: [http://nodejs.org/download/]
+  2. Install Typescript compiler
+  	* Linux/Mac OS X:  `sudo npm install -g typescript`
 * Firefox to run client tests
   1. Install [Firefox](https://www.mozilla.org/)
 * This project
@@ -45,9 +48,17 @@ Environment test VM's
 
 There are some virtual environments you can use to test EEPPI:
 
-- ADRepo installation: /test/integration/ADRepo
-- CDAR installation: /test/integration/CDAR
-- Redmine/Jira installation: /test/integration/PPT
+- ADRepo Installation: /test/integration/ADRepo
+- CDAR Installation: /test/integration/CDAR
+- Redmine/Jira Installation: /test/integration/PPT
+	* Please copy your Jira License to /test/integration/PPT before start the environment
+
+
+There is a vagrant environment containing EEPPI, ADRepo and Jira you can use to test EEPPI fully integrated:
+- /project/vagrant/
+	* Please copy your Jira License to /test/integration/PPT before starting the environment
+
+
 
 
 # Requirements
