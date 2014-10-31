@@ -14,12 +14,20 @@ POST	/user/register				controllers.user.UserController.register()
 POST	/user/changePassword		controllers.user.UserController.changePassword()
 POST	/ppt/sendToPPT				controllers.ppt.ProjectPlanningToolController.sendToPPT()
 GET		/dks/getFromDKS				controllers.dks.DecisionKnowledgeSystemController.getFromDKS(url: String)
+
 POST	/user/pptAccount			controllers.user.PPTAccountController.create()
 GET		/user/pptAccount			controllers.user.PPTAccountController.readAll()
 GET		/user/pptAccount/$id<[0-9]+>	controllers.user.PPTAccountController.readOne(id: Long)
 POST	/user/pptAccount/$id<[0-9]+>	controllers.user.PPTAccountController.update(id: Long)
 DELETE	/user/pptAccount/$id<[0-9]+>	controllers.user.PPTAccountController.delete(id: Long)
 POST	/user/pptAccount/$id<[0-9]+>/delete	controllers.user.PPTAccountController.delete(id: Long)
+
+POST	/taskTemplate				controllers.task.TaskTemplateController.create()
+GET		/taskTemplate				controllers.task.TaskTemplateController.readAll()
+GET		/taskTemplate/$id<[0-9]+>	controllers.task.TaskTemplateController.read(id: Long)
+POST	/taskTemplate/$id<[0-9]+>	controllers.task.TaskTemplateController.update(id: Long)
+DELETE	/taskTemplate/$id<[0-9]+>	controllers.task.TaskTemplateController.delete(id: Long)
+POST	/taskTemplate/$id<[0-9]+>/delete	controllers.task.TaskTemplateController.delete(id: Long)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /public/*file               controllers.Assets.at(path="/public", file)

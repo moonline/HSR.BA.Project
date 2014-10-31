@@ -178,7 +178,7 @@ public class DocumentationLogic {
 		if (method.queryParameters == null) {
 			numberOfParameters = 0;
 		} else {
-			numberOfParameters = calculateNumberOfRegularParameters(method.queryParameters, parameterValues);
+			numberOfParameters = calculateNumberOfRegularParameters(method, parameterValues);
 		}
 		if (numberOfParameters == 0) {
 			return null;
@@ -201,15 +201,15 @@ public class DocumentationLogic {
 		return queryParameter.replaceFirst("REFERENCE_[^_]+_", "");
 	}
 
-	private int calculateNumberOfRegularParameters(QueryParameters.Parameter[] parameters, String[] examples) {
+	private int calculateNumberOfRegularParameters(MethodDocumentation method, String[] examples) {
 		int numberOfParameters = 0;
-		for (QueryParameters.Parameter parameter : parameters) {
+		for (QueryParameters.Parameter parameter : method.queryParameters) {
 			if (!parameter.isId()) {
 				numberOfParameters++;
 			}
 		}
 		if (numberOfParameters != examples.length) {
-			Logger.error(StringUtils.join(parameters, ", ") + " has a non matching amount of example parameters (" + examples.length + ")");
+			Logger.error(method.call.url() + " (" + method.call.method() + ") has a non matching amount of example parameters (" + examples.length + ")");
 		}
 		return Math.min(numberOfParameters, examples.length);
 	}
