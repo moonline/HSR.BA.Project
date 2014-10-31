@@ -6,7 +6,11 @@ import play.data.validation.Constraints;
 
 public class TaskTemplateLogic {
 
-	public static final TaskTemplateDAO TASK_TEMPLATE_DAO = new TaskTemplateDAO();
+	private final TaskTemplateDAO TASK_TEMPLATE_DAO;
+
+	public TaskTemplateLogic(TaskTemplateDAO taskTemplateDao) {
+		TASK_TEMPLATE_DAO = taskTemplateDao;
+	}
 
 	public TaskTemplate create(CreateTaskTemplateForm form) {
 		TaskTemplate taskTemplate = new TaskTemplate();

@@ -19,7 +19,11 @@ public @interface GuaranteeAuthenticatedUser {
 	 */
 	public class Authenticator extends Action.Simple {
 
-		private static final UserLogic USER_LOGIC = new UserLogic();
+		private final UserLogic USER_LOGIC;
+
+		public Authenticator(UserLogic userLogic) {
+			USER_LOGIC = userLogic;
+		}
 
 		@Override
 		public F.Promise<Result> call(final Http.Context ctx) throws Throwable {
@@ -30,7 +34,7 @@ public @interface GuaranteeAuthenticatedUser {
 			}
 		}
 
-		private static F.Promise<Result> denyAccess(Http.Context ctx) {
+		private F.Promise<Result> denyAccess(Http.Context ctx) {
 			return F.Promise.promise(() -> {
 				if (isBasicAuthenticationEnabled(ctx)) {
 					ctx.response().setHeader("WWW-Authenticate", "Basic realm=\"" + "" /*  <-- you could provide a description for this site here */ + "\"");

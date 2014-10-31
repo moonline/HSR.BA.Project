@@ -12,8 +12,13 @@ import play.mvc.Http;
 
 public class PPTAccountLogic {
 
-	public static final PPTAccountDAO PPT_ACCOUNT_DAO = new PPTAccountDAO();
-	public static final UserLogic USER_LOGIC = new UserLogic();
+	private final PPTAccountDAO PPT_ACCOUNT_DAO;
+	private final UserLogic USER_LOGIC;
+
+	public PPTAccountLogic(PPTAccountDAO pptAccountDao, UserLogic userLogic) {
+		PPT_ACCOUNT_DAO = pptAccountDao;
+		USER_LOGIC = userLogic;
+	}
 
 	public PPTAccount getAuthentication(User user, String authentication_id) {
 		if (user != null && authentication_id.matches("\\d+")) {

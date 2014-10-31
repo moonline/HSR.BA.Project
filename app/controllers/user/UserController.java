@@ -21,7 +21,11 @@ import static logics.docs.QueryResponses.Response;
 
 public class UserController extends Controller {
 
-	public static final UserLogic USER_LOGIC = new UserLogic();
+	private final UserLogic USER_LOGIC;
+
+	public UserController(UserLogic userLogic) {
+		USER_LOGIC = userLogic;
+	}
 
 	@Transactional(readOnly = true)
 	@QueryParameters({
@@ -37,7 +41,7 @@ public class UserController extends Controller {
 			@Example(parameters = {"demo", "demo"}, response = @Example.Response(status = OK, content = "{\"id\":1,\"name\":\"demo\"}")),
 			@Example(parameters = {"demo", "invalid password"})
 	})
-	public static Result login() {
+	public Result login() {
 		DynamicForm requestData = Form.form().bindFromRequest();
 		String name = requestData.get("name");
 		String password = requestData.get("password");
@@ -54,7 +58,7 @@ public class UserController extends Controller {
 	@QueryDescription("Does log out the currently logged in user by removing the cookie.")
 	@QueryResponses(@Response(status = OK, description = "Is always returned, and the login cookie is being removed."))
 	@QueryExamples(@Example(parameters = {}))
-	public static Result logout() {
+	public Result logout() {
 		USER_LOGIC.logoutUser(session());
 		return ok();
 	}
@@ -71,7 +75,7 @@ public class UserController extends Controller {
 					"}"))
 	})
 	@Transactional(readOnly = true)
-	public static Result login_status() {
+	public Result login_status() {
 		final User user = USER_LOGIC.getLoggedInUser(ctx());
 		if (user == null) {
 			return ok(new ObjectNode(null));
@@ -94,7 +98,7 @@ public class UserController extends Controller {
 			@Example(parameters = {"New Username 1", "1234", "1234"}),
 			@Example(parameters = {"New Username 2", "1234", "another password"})
 	})
-	public static Result register() {
+	public Result register() {
 		DynamicForm requestData = Form.form().bindFromRequest();
 		String name = requestData.get("name");
 		String password = requestData.get("password");
@@ -122,7 +126,7 @@ public class UserController extends Controller {
 			@Example(parameters = {"demo", "1234", "1234"}, response = @Example.Response(status = OK, content = "")),
 			@Example(parameters = {"demo", "1234", "another password"})
 	})
-	public static Result changePassword() {
+	public Result changePassword() {
 		User user = USER_LOGIC.getLoggedInUser(ctx());
 		DynamicForm requestData = Form.form().bindFromRequest();
 		String old_password = requestData.get("old_password");

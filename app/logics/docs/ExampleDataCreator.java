@@ -20,30 +20,31 @@ import java.util.Set;
 
 public class ExampleDataCreator {
 
-	public static final UserLogic USER_LOGIC = new UserLogic();
-	public static final UserDAO USER_DAO = new UserDAO();
-	public static final PPTAccountDAO PPT_ACCOUNT_DAO = new PPTAccountDAO();
+	private final UserDAO USER_DAO;
+	private final PPTAccountDAO PPT_ACCOUNT_DAO;
 
 	private Set<String> cache = new HashSet<>();
 
 	public final String USER_NAME;
 
-	public static final String USER_PASSWORD = "ZvGjYpyJdU";
+	public final String USER_PASSWORD = "ZvGjYpyJdU";
 
 	public final Long USER_ID;
 
-	public ExampleDataCreator() {
+	public ExampleDataCreator(UserLogic userLogic, UserDAO userDao, PPTAccountDAO pptAccountDao) {
 		int i = 0;
 		User user;
 		String username;
+		USER_DAO = userDao;
+		PPT_ACCOUNT_DAO = pptAccountDao;
 		do {
 			username = "user" + i;
 			user = USER_DAO.readByName(username);
 			if (user == null) {
-				user = USER_LOGIC.createUser(username, USER_PASSWORD);
+				user = userLogic.createUser(username, USER_PASSWORD);
 				JPA.em().flush();
 			}
-		} while (!USER_LOGIC.passwordCorrect(user, USER_PASSWORD));
+		} while (!userLogic.passwordCorrect(user, USER_PASSWORD));
 		USER_NAME = username;
 		USER_ID = user.getId();
 	}

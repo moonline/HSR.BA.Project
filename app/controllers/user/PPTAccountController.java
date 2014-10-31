@@ -19,7 +19,11 @@ import static logics.docs.QueryResponses.Response;
 
 public class PPTAccountController extends Controller {
 
-	public static final PPTAccountLogic PPT_ACCOUNT_LOGIC = new PPTAccountLogic();
+	private final PPTAccountLogic PPT_ACCOUNT_LOGIC;
+
+	public PPTAccountController(PPTAccountLogic pptAccountLogic) {
+		PPT_ACCOUNT_LOGIC = pptAccountLogic;
+	}
 
 	@Transactional()
 	@GuaranteeAuthenticatedUser
@@ -38,7 +42,7 @@ public class PPTAccountController extends Controller {
 			@Example(parameters = {"9999", "no url", "name", "1234"}),
 			@Example(parameters = {"REFERENCE_PPT_5", "http.jira.example.com", "admin", "12345678"})
 	})
-	public static Result create() {
+	public Result create() {
 		Form<PPTAccountLogic.CreatePPTAccountForm> form = Form.form(PPTAccountLogic.CreatePPTAccountForm.class).bindFromRequest();
 		if (form.hasErrors()) {
 			return badRequest(form.errorsAsJson());
@@ -70,7 +74,7 @@ public class PPTAccountController extends Controller {
 					"  }\n" +
 					"]"))
 	})
-	public static Result readAll() {
+	public Result readAll() {
 		return ok(PPT_ACCOUNT_LOGIC.getAllForLoggedInUser(ctx()));
 	}
 
@@ -88,7 +92,7 @@ public class PPTAccountController extends Controller {
 			@Example(id = "9999", parameters = {}),
 			@Example(id = "REFERENCE_PPTACCOUNT_3", parameters = {})
 	})
-	public static Result readOne(long id) {
+	public Result readOne(long id) {
 		PPTAccount pptAccount = PPT_ACCOUNT_LOGIC.getForLoggedInUser(ctx(), id);
 		if (pptAccount == null) {
 			return notFound("The account " + id + " could not be found for the logged in user.");
@@ -116,7 +120,7 @@ public class PPTAccountController extends Controller {
 			@Example(id = "REFERENCE_PPTACCOUNT_3", parameters = {"9999", "no url", "ozander", "pMuE2ekiDa"}),
 			@Example(id = "REFERENCE_PPTACCOUNT_3", parameters = {"1", "http://jira.example.com", "tbucher", "7YqupNxN9v"})
 	})
-	public static Result update(long id) {
+	public Result update(long id) {
 		PPTAccount pptAccount = PPT_ACCOUNT_LOGIC.getForLoggedInUser(ctx(), id);
 		if (pptAccount == null) {
 			return notFound("The account " + id + " could not be found for the logged in user.");
@@ -143,7 +147,7 @@ public class PPTAccountController extends Controller {
 			@Example(id = "9999", parameters = {}),
 			@Example(id = "REFERENCE_PPTACCOUNT_7", isDataCacheable = false, parameters = {})
 	})
-	public static Result delete(long id) {
+	public Result delete(long id) {
 		PPTAccount pptAccount = PPT_ACCOUNT_LOGIC.getForLoggedInUser(ctx(), id);
 		if (pptAccount == null) {
 			return notFound("The account " + id + " could not be found for the logged in user.");

@@ -31,14 +31,13 @@ import static play.mvc.Http.Context.Implicit.ctx;
 
 public class DocumentationLogic {
 
-	private static final Comparator<Class> classComparator = (o1, o2) -> o1.getCanonicalName().compareTo(o2.getCanonicalName());
 	public static final int MAGIC_CONSTANT_PARAMETER_IDENTIFICATION = 42;
 
 	/**
 	 * Gets all methods in all controllers (see getAllControllerClasses()) which is implicitly a list of all public API endpoints
 	 */
 	public Map<Class<? extends Controller>, List<MethodDocumentation>> getAllAPICalls() {
-		Map<Class<? extends Controller>, List<MethodDocumentation>> classesAndMethods = new TreeMap<>(classComparator);
+		Map<Class<? extends Controller>, List<MethodDocumentation>> classesAndMethods = new TreeMap<>((Comparator<Class>) (o1, o2) -> o1.getCanonicalName().compareTo(o2.getCanonicalName()));
 		//For each Controller
 		for (Class<? extends Controller> aClass : getAllControllerClasses()) {
 			Object routesObject = getRouteObject(aClass);
@@ -164,7 +163,7 @@ public class DocumentationLogic {
 			url.setQueryString(queryString);
 		}
 		if (example.provideAuthentication()) {
-			url.setAuth(exampleDataCreator.USER_NAME, ExampleDataCreator.USER_PASSWORD);
+			url.setAuth(exampleDataCreator.USER_NAME, exampleDataCreator.USER_PASSWORD);
 			url.setQueryParameter("basicAuth", "true");
 		}
 		F.Promise<WSResponse> promise = url.execute(method.call.method());

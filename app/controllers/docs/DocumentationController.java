@@ -1,7 +1,10 @@
 package controllers.docs;
 
+import daos.user.PPTAccountDAO;
+import daos.user.UserDAO;
 import logics.docs.DocumentationLogic;
 import logics.docs.ExampleDataCreator;
+import logics.user.UserLogic;
 import play.db.jpa.JPA;
 import play.libs.F;
 import play.mvc.Controller;
@@ -15,15 +18,25 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class DocumentationController extends Controller {
 
-	public static final DocumentationLogic DOCUMENTATION_LOGIC = new DocumentationLogic();
+	private final DocumentationLogic DOCUMENTATION_LOGIC;
+	private final UserLogic USER_LOGIC;
+	private final UserDAO USER_DAO;
+	private final PPTAccountDAO PPT_ACCOUNT_DAO;
 
-	private static ExampleDataCreator exampleDataCreator;
+	private ExampleDataCreator exampleDataCreator;
 
-	public static F.Promise<Result> getAPIDocumentation() {
+	public DocumentationController(DocumentationLogic documentationLogic, UserLogic userLogic, UserDAO userDao, PPTAccountDAO pptAccountDao) {
+		DOCUMENTATION_LOGIC = documentationLogic;
+		USER_LOGIC = userLogic;
+		USER_DAO = userDao;
+		PPT_ACCOUNT_DAO = pptAccountDao;
+	}
+
+	public F.Promise<Result> getAPIDocumentation() {
 		Map<Class<? extends Controller>, List<DocumentationLogic.MethodDocumentation>> allAPICalls = DOCUMENTATION_LOGIC.getAllAPICalls();
 		//Prepare example data with first transaction
 		return F.Promise.delayed(() -> JPA.withTransaction(() -> {
-			DocumentationController.getExampleDataCreator();
+			getExampleDataCreator();
 			DOCUMENTATION_LOGIC.createCallExampleData(allAPICalls.values(), exampleDataCreator);
 			return exampleDataCreator;
 		}), 10, SECONDS)
@@ -31,9 +44,9 @@ public class DocumentationController extends Controller {
 				.map(exampleDataCreator -> JPA.withTransaction(() -> ok(documentation.render(allAPICalls, DOCUMENTATION_LOGIC, exampleDataCreator))));
 	}
 
-	private static ExampleDataCreator getExampleDataCreator() {
+	private ExampleDataCreator getExampleDataCreator() {
 		if (exampleDataCreator == null) {
-			exampleDataCreator = new ExampleDataCreator();
+			exampleDataCreator = new ExampleDataCreator(USER_LOGIC, USER_DAO, PPT_ACCOUNT_DAO);
 		}
 		return exampleDataCreator;
 	}

@@ -19,8 +19,13 @@ import static logics.docs.QueryResponses.Response;
 
 public class TaskTemplateController extends Controller {
 
-	public static final TaskTemplateLogic TASK_TEMPLATE_LOGIC = new TaskTemplateLogic();
-	public static final TaskTemplateDAO TASK_TEMPLATE_DAO = new TaskTemplateDAO();
+	private final TaskTemplateLogic TASK_TEMPLATE_LOGIC;
+	private final TaskTemplateDAO TASK_TEMPLATE_DAO;
+
+	public TaskTemplateController(TaskTemplateLogic taskTemplateLogic, TaskTemplateDAO taskTemplateDao) {
+		TASK_TEMPLATE_LOGIC = taskTemplateLogic;
+		TASK_TEMPLATE_DAO = taskTemplateDao;
+	}
 
 	@Transactional()
 	@GuaranteeAuthenticatedUser()
@@ -35,7 +40,7 @@ public class TaskTemplateController extends Controller {
 	@QueryExamples({
 			@Example(parameters = {"A new Task Template"})
 	})
-	public static Result create() {
+	public Result create() {
 		Form<TaskTemplateLogic.CreateTaskTemplateForm> form = Form.form(TaskTemplateLogic.CreateTaskTemplateForm.class).bindFromRequest();
 		if (form.hasErrors()) {
 			return badRequest(form.errorsAsJson());
@@ -55,7 +60,7 @@ public class TaskTemplateController extends Controller {
 			@Example(id = "9999", parameters = {}),
 			@Example(id = "REFERENCE_TASKTEMPLATE_8", parameters = {})
 	})
-	public static Result read(long id) {
+	public Result read(long id) {
 		TaskTemplate taskTemplate = TASK_TEMPLATE_DAO.readById(id);
 		if (taskTemplate == null) {
 			return notFound();
@@ -72,7 +77,7 @@ public class TaskTemplateController extends Controller {
 	@QueryExamples({
 			@Example(parameters = {})
 	})
-	public static Result readAll() {
+	public Result readAll() {
 		return ok(Json.toJson(TASK_TEMPLATE_DAO.readAll()));
 	}
 
@@ -91,7 +96,7 @@ public class TaskTemplateController extends Controller {
 			@Example(id = "9999", parameters = {"My beautiful task template"}),
 			@Example(id = "REFERENCE_TASKTEMPLATE_8", parameters = {"My example Task Template"})
 	})
-	public static Result update(long id) {
+	public Result update(long id) {
 		TaskTemplate taskTemplate = TASK_TEMPLATE_DAO.readById(id);
 		if (taskTemplate == null) {
 			return notFound();
@@ -116,7 +121,7 @@ public class TaskTemplateController extends Controller {
 			@Example(id = "9999", parameters = {}),
 			@Example(id = "REFERENCE_TASKTEMPLATE_13", parameters = {}, isDataCacheable = false)
 	})
-	public static Result delete(long id) {
+	public Result delete(long id) {
 		TaskTemplate taskTemplate = TASK_TEMPLATE_DAO.readById(id);
 		if (taskTemplate == null) {
 			return notFound();
