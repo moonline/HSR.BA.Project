@@ -55,6 +55,12 @@ public class UserControllerTest extends AbstractControllerTest {
 	}
 
 	@Test
+	public void testLoginWithBadUser() throws Throwable {
+		Result result = callPostAction(controllers.user.routes.ref.UserController.login(), postData("name", "Hansli wos ned ged", "password", "0000"));
+		assertThat(status(result)).isEqualTo(BAD_REQUEST);
+	}
+
+	@Test
 	public void testLogoutSuccessful() throws Throwable {
 		//Setup
 		User user = AbstractTestDataCreator.createUserWithTransaction("Hanss", "1234");
