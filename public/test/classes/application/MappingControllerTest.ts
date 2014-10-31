@@ -17,7 +17,7 @@ module test {
 	}
 }
 
-module test {
+module test.application {
 	export function MappingControllerTest() {
 		describe("Mapping controller class suite", function() {
 			var http, httpBackend, rootScope, persistenceService;
@@ -28,12 +28,12 @@ module test {
 				rootScope = $rootScope;
 
 				persistenceService = {
-					taskTemplateRepository: new core.TaskTemplateRepository($http),
-					taskPropertyRepository: new core.TaskPropertyRepository($http),
-					decisionRepository: new dks.DecisionRepository($http),
-					mappingRepository: new core.MappingRepository($http),
-					decisionKnowledgeRepository: new dks.DecisionKnowledgeSystemRepository($http),
-					problemRepository: new dks.ProblemRepository($http)
+					taskTemplateRepository: new app.domain.repository.core.TaskTemplateRepository($http),
+					taskPropertyRepository: new app.domain.repository.core.TaskPropertyRepository($http),
+					decisionRepository: new app.domain.repository.dks.DecisionRepository($http),
+					mappingRepository: new app.domain.repository.core.MappingRepository($http),
+					decisionKnowledgeRepository: new app.domain.repository.dks.DecisionKnowledgeSystemRepository($http),
+					problemRepository: new app.domain.repository.dks.ProblemRepository($http)
 				};
 				persistenceService.decisionKnowledgeRepository.resources['all'] = '/dks/decisionKnowledgeSystem';
 				persistenceService.taskTemplateRepository.resources['all'] = '/taskTemplate';
@@ -128,10 +128,10 @@ module test {
 				]});
 
 				var scope = rootScope.$new();
-				var controller: core.MappingController = new core.MappingController(scope, location, http, persistenceService);
+				var controller: app.application.MappingController = new app.application.MappingController(scope, location, http, persistenceService);
 				httpBackend.flush();
 
-				var dkSystem = new dks.DecisionKnowledgeSystem("http://localhost:9940"); dkSystem.id = 1;
+				var dkSystem = new app.domain.model.dks.DecisionKnowledgeSystem("http://localhost:9940"); dkSystem.id = 1;
 				expect(scope.currentDks).toEqual(dkSystem);
 
 				expect(scope.problems.length).toEqual(1);

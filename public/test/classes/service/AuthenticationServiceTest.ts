@@ -10,7 +10,7 @@ module test {
 	}
 }
 
-module test {
+module test.service {
 	export function AuthenticationServiceTest() {
 		describe("Authentication service test suite", function() {
 			var http, httpBackend, q;
@@ -25,7 +25,7 @@ module test {
 			describe("Status", function() {
 				it("Not logged in", function() {
 					httpBackend.when("GET", '/user/login-status').respond({});
-					var authentivationService: core.AuthenticationService = new core.AuthenticationService(http, q);
+					var authentivationService: app.service.AuthenticationService = new app.service.AuthenticationService(http, q);
 
 					expect(authentivationService.isLoggedIn).toEqual(false);
 					expect(authentivationService.currentUser).toEqual(null);
@@ -45,7 +45,7 @@ module test {
 				it("Successful login & successful logout", function() {
 					var testUserData: any = { "id": 5, "name": "peter" };
 					var testUser = (function(){
-						var user: core.User = new core.User(testUserData.name);
+						var user: app.domain.model.core.User = new app.domain.model.core.User(testUserData.name);
 						user.id = testUserData.id;
 						return user;
 					})();
@@ -55,7 +55,7 @@ module test {
 					httpBackend.when("POST", '/user/logout').respond(200);
 
 					var returnValue = {};
-					var authentivationService: core.AuthenticationService = new core.AuthenticationService(http, q);
+					var authentivationService: app.service.AuthenticationService = new app.service.AuthenticationService(http, q);
 					authentivationService.login(testUserData.name, "pwd", function(status, user) {
 						returnValue = { "status": status, "user": user };
 					});
@@ -76,7 +76,7 @@ module test {
 				it("Successful login & failed logout", function() {
 					var testUserData: any = { "id": 5, "name": "peter" };
 					var testUser = (function(){
-						var user: core.User = new core.User(testUserData.name);
+						var user: app.domain.model.core.User = new app.domain.model.core.User(testUserData.name);
 						user.id = testUserData.id;
 						return user;
 					})();
@@ -86,7 +86,7 @@ module test {
 					httpBackend.when("POST", '/user/logout').respond(403);
 
 					var returnValue = {};
-					var authentivationService: core.AuthenticationService = new core.AuthenticationService(http, q);
+					var authentivationService: app.service.AuthenticationService = new app.service.AuthenticationService(http, q);
 					authentivationService.login(testUserData.name, "pwd", function(status, user) {
 						returnValue = { "status": status, "user": user };
 					});
@@ -111,7 +111,7 @@ module test {
 					httpBackend.when("POST", '/user/login').respond(403);
 
 					var returnValue = {};
-					var authentivationService: core.AuthenticationService = new core.AuthenticationService(http, q);
+					var authentivationService: app.service.AuthenticationService = new app.service.AuthenticationService(http, q);
 					authentivationService.login(testUserData.name, "pwd", function(status, user) {
 						returnValue = { "status": status, "user": user };
 					});
@@ -128,7 +128,7 @@ module test {
 				it("Successful registration", function() {
 					var testUserData: any = { "id": 5, "name": "peter" };
 					var testUser = (function(){
-						var user: core.User = new core.User(testUserData.name);
+						var user: app.domain.model.core.User = new app.domain.model.core.User(testUserData.name);
 						user.id = testUserData.id;
 						return user;
 					})();
@@ -137,7 +137,7 @@ module test {
 					httpBackend.when("POST", '/user/register').respond(testUserData);
 
 					var returnValue = {};
-					var authentivationService: core.AuthenticationService = new core.AuthenticationService(http, q);
+					var authentivationService: app.service.AuthenticationService = new app.service.AuthenticationService(http, q);
 					authentivationService.register(testUserData.name, "pwd", "pwd", function(status, user) {
 						returnValue = { "status": status, "user": user };
 					});
@@ -150,12 +150,12 @@ module test {
 					httpBackend.when("POST", '/user/register').respond({});
 
 					var returnValue = {};
-					var authentivationService: core.AuthenticationService = new core.AuthenticationService(http, q);
+					var authentivationService: app.service.AuthenticationService = new app.service.AuthenticationService(http, q);
 					authentivationService.register("peter", "pwd", "pwd", function(status, user) {
 						returnValue = { "status": status, "user": user };
 					});
 					httpBackend.flush();
-					expect(returnValue).toEqual({ status: true, user: core.ObjectFactory.createFromJson(core.User,{}) });
+					expect(returnValue).toEqual({ status: true, user: app.domain.factory.ObjectFactory.createFromJson(app.domain.model.core.User,{}) });
 				});
 
 				it("Failed registration", function() {
@@ -163,7 +163,7 @@ module test {
 					httpBackend.when("POST", '/user/register').respond(403);
 
 					var returnValue = {};
-					var authentivationService: core.AuthenticationService = new core.AuthenticationService(http, q);
+					var authentivationService: app.service.AuthenticationService = new app.service.AuthenticationService(http, q);
 					authentivationService.register("peter", "pwd", "pwd", function(status, user) {
 						returnValue = { "status": status, "user": user };
 					});
@@ -178,7 +178,7 @@ module test {
 					httpBackend.when("POST", '/user/changePassword').respond({});
 
 					var returnValue = {};
-					var authentivationService: core.AuthenticationService = new core.AuthenticationService(http, q);
+					var authentivationService: app.service.AuthenticationService = new app.service.AuthenticationService(http, q);
 					authentivationService.changePassword("oldPwd", "pwd", "pwd", function(status) {
 						returnValue = status;
 					});
@@ -191,7 +191,7 @@ module test {
 					httpBackend.when("POST", '/user/changePassword').respond(403);
 
 					var returnValue = {};
-					var authentivationService: core.AuthenticationService = new core.AuthenticationService(http, q);
+					var authentivationService: app.service.AuthenticationService = new app.service.AuthenticationService(http, q);
 					authentivationService.changePassword("dontKnowOldOwd", "pwd", "pwd", function(status) {
 						returnValue = status;
 					});

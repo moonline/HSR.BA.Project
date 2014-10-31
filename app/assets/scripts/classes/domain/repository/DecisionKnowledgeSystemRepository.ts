@@ -4,11 +4,11 @@
 /// <reference path='../../domain/model/DecisionKnowledgeSystem.ts' />
 /// <reference path='../../domain/factory/ObjectFactory.ts' />
 
-module dks {
-	export class DecisionKnowledgeSystemRepository extends core.Repository<DecisionKnowledgeSystem> {
+module app.domain.repository.dks {
+	export class DecisionKnowledgeSystemRepository extends app.domain.repository.core.Repository<app.domain.model.dks.DecisionKnowledgeSystem> {
 		constructor(httpService) {
 			super(httpService);
-			this.type = DecisionKnowledgeSystem;
+			this.type = app.domain.model.dks.DecisionKnowledgeSystem;
 			this.resources = {
 				'all': configuration.paths.decisionKnowledgeSystem.list
 			};

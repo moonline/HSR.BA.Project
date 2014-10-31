@@ -2,33 +2,33 @@
 /// <reference path='../../domain/repository/PersistentEntity.ts' />
 /// <reference path='../../domain/factory/FactoryConfiguration.ts' />
 
-module core {
+module app.domain.model.core {
     'use strict';
 
-    export class TaskTemplate implements core.PersistentEntity {
-		public static factoryConfiguration: core.FactoryConfiguration = {
+    export class TaskTemplate implements app.domain.repository.core.PersistentEntity {
+		public static factoryConfiguration: app.domain.factory.FactoryConfiguration = {
 			constructorArguments: [
 				{ name: "name", type: String, subType: null },
-				{ name: "properties", type: Array, subType: core.TaskPropertyValue }
+				{ name: "properties", type: Array, subType: app.domain.model.core.TaskPropertyValue }
 			],
 			publicProperties: [{ name: "id", type: Number, subType: null }]
 		};
 
 		public id;
         public name:string;
-        private theProperties: TaskPropertyValue[];
+        private theProperties: app.domain.model.core.TaskPropertyValue[];
 
-        constructor(name: string, properties: TaskPropertyValue[] = []) {
+        constructor(name: string, properties: app.domain.model.core.TaskPropertyValue[] = []) {
 			this.id = Math.round(Math.random()*1000000);
 			this.name = name;
             this.theProperties = properties;
         }
 
-        get properties():TaskPropertyValue[] {
+        get properties(): app.domain.model.core.TaskPropertyValue[] {
             return this.theProperties;
         }
 
-		public getPropertieValuesByProperty(): {[index: string]: TaskPropertyValue } {
+		public getPropertieValuesByProperty(): {[index: string]: app.domain.model.core.TaskPropertyValue } {
 			var propertyValues: {[index: string]: TaskPropertyValue } = {};
 			this.theProperties.forEach(function(propertyValue){
 				propertyValues[propertyValue.property.name] = propertyValue;
@@ -36,7 +36,7 @@ module core {
 			return propertyValues;
 		}
 
-        public addProperty(property: TaskPropertyValue) {
+        public addProperty(property: app.domain.model.core.TaskPropertyValue) {
             this.theProperties.push(property);
         }
     }

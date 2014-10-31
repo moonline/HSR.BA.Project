@@ -3,11 +3,11 @@
 /// <reference path='Repository.ts' />
 /// <reference path='../../domain/model/Problem.ts' />
 
-module dks {
-	export class ProblemRepository extends core.Repository<Problem> {
+module app.domain.repository.dks {
+	export class ProblemRepository extends app.domain.repository.core.Repository<app.domain.model.dks.Problem> {
 		constructor(httpService) {
 			super(httpService);
-			this.type = Problem;
+			this.type = app.domain.model.dks.Problem;
 			this.resources = {
 				'all': configuration.paths.problem.list
 			};

@@ -1,7 +1,7 @@
 /// <reference path='../domain/model/User.ts' />
 /// <reference path='../service/AuthenticationService.ts' />
 
-module core {
+module app.application {
 	'use strict';
 
 	enum Status {
@@ -10,7 +10,7 @@ module core {
 
 	export class RegisterController {
 		$scope: any;
-		authenticationService: AuthenticationService;
+		authenticationService: app.service.AuthenticationService;
 
 		constructor($scope, $location, $http, authenticationService) {
 			this.$scope = $scope;

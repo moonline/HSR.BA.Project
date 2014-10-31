@@ -4,27 +4,27 @@
 
 /// <reference path='TaskTemplate.ts' />
 
-module core {
-	export class Mapping implements core.PersistentEntity {
-		public static factoryConfiguration: core.FactoryConfiguration = {
+module app.domain.model.core {
+	export class Mapping implements app.domain.repository.core.PersistentEntity {
+		public static factoryConfiguration: app.domain.factory.FactoryConfiguration = {
 			constructorArguments: [
-				{ name: "decision", type: dks.Decision, subType: null },
-				{ name: "taskTemplates", type: Array, subType: core.TaskTemplate }
+				{ name: "decision", type: app.domain.model.dks.Decision, subType: null },
+				{ name: "taskTemplates", type: Array, subType: app.domain.model.core.TaskTemplate }
 			],
 			publicProperties: [{ name: "id", type: Number, subType: null }]
 		};
 
 		public id: number;
-		public decision: dks.Decision;
-		public taskTemplates: core.TaskTemplate[];
+		public decision: app.domain.model.dks.Decision;
+		public taskTemplates: app.domain.model.core.TaskTemplate[];
 
- 		constructor(decision: dks.Decision, taskTemplates: core.TaskTemplate[] = []) {
+ 		constructor(decision: app.domain.model.dks.Decision, taskTemplates: app.domain.model.core.TaskTemplate[] = []) {
 			this.id = Math.round(Math.random()*1000000);
 			this.decision = decision;
 			this.taskTemplates = taskTemplates;
 		}
 
-		public addTaskTemplate(taskTemplate: core.TaskTemplate): void {
+		public addTaskTemplate(taskTemplate: app.domain.model.core.TaskTemplate): void {
 			this.taskTemplates.push(taskTemplate);
 		}
 	}

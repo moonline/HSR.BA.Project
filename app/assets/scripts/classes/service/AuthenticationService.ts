@@ -4,13 +4,13 @@
 
 /// <reference path='../../classes/domain/factory/ObjectFactory.ts' />
 
-module core {
+module app.service {
 	export class AuthenticationService {
 		private resources: { [index: string]: string } = {};
 		private httpService;
 		private isUserLoggedIn: boolean = false;
-		private loggedInUser: User = null;
-		private ready;
+		private loggedInUser: app.domain.model.core.User = null;
+		private ready: { resolve: (user: app.domain.model.core.User) => any; reject: () => any; promise: any; };
 
 		constructor(httpService, $q) {
 			this.ready = $q.defer();
@@ -22,7 +22,7 @@ module core {
 				'register': configuration.paths.user.register,
 				'changePassword': configuration.paths.user.changePassword
 			};
-			this.loginStatus(function(user:User) {
+			this.loginStatus(function(user:app.domain.model.core.User) {
 				if(user != null) {
 					console.log(user);
 					this.ready.resolve(this.loggedInUser);
@@ -32,12 +32,12 @@ module core {
 			}.bind(this));
 		}
 
-		public login(username: string, password: string, callback: (success: boolean, item: User) => void = (s,i) => {}): void {
+		public login(username: string, password: string, callback: (success: boolean, item: app.domain.model.core.User) => void = (s,i) => {}): void {
 			this.httpService.post(
 				this.resources['login'],
 				{ "name": username, "password": password }
 			).success(function(data, status, headers, config) {
-				var user: User = ObjectFactory.createFromJson(User,data);
+				var user: app.domain.model.core.User = app.domain.factory.ObjectFactory.createFromJson(app.domain.model.core.User,data);
 				this.loggedInUser = user;
 				this.isUserLoggedIn = true;
 				callback(true, user);
@@ -58,21 +58,21 @@ module core {
 			}.bind(this));
 		}
 
-		public register(username: string, password: string, passwordRepeat: string, callback: (success: boolean, item: User) => void = (s,i) => {}): void {
+		public register(username: string, password: string, passwordRepeat: string, callback: (success: boolean, item: app.domain.model.core.User) => void = (s,i) => {}): void {
 			this.httpService.post(
 				this.resources['register'],
 				{ "name": username, "password": password, "password_repeat": passwordRepeat }
 			).success(function(data, status, headers, config) {
-					callback(true, ObjectFactory.createFromJson(User,data));
+					callback(true, app.domain.factory.ObjectFactory.createFromJson(app.domain.model.core.User,data));
 			}.bind(this)).error(function(data, status, headers, config) {
 					callback(false, null);
 			}.bind(this));
 		}
 
-		public loginStatus(callback: (item: User) => void = (i) => {}): void {
+		public loginStatus(callback: (item: app.domain.model.core.User) => void = (i) => {}): void {
 			this.httpService.get(this.resources['status']).success(function(data) {
-				if(data != null && data != {} && User.isCompatibleObject(data)) {
-					var user: User = ObjectFactory.createFromJson(User,data);
+				if(data != null && data != {} && app.domain.model.core.User.isCompatibleObject(data)) {
+					var user: app.domain.model.core.User = app.domain.factory.ObjectFactory.createFromJson(app.domain.model.core.User,data);
 					this.loggedInUser = user;
 					this.isUserLoggedIn = true;
 					callback(user);
@@ -97,7 +97,7 @@ module core {
 			return this.isUserLoggedIn;
 		}
 
-		get currentUser(): User {
+		get currentUser(): app.domain.model.core.User {
 			return this.loggedInUser;
 		}
 

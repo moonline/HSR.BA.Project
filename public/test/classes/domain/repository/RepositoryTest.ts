@@ -7,10 +7,10 @@
 
 module test {
 	export module helper {
-		export class DummyRepository extends core.Repository<Dummy> {
+		export class DummyRepository extends app.domain.repository.core.Repository<test.helper.Dummy> {
 			constructor(httpService) {
 				super(httpService);
-				this.type = Dummy;
+				this.type = test.helper.Dummy;
 				this.resources = {
 					'all': '/data/api/dummy/list.json'
 				};
@@ -19,15 +19,15 @@ module test {
 	}
 }
 
-module test {
+module test.domain.repository {
 	export function RepositoryTest() {
 		describe("Repository class suite", function() {
 
 			it("create a 'Dummy' object from JSON", function() {
-				var dummy: test.helper.Dummy = new helper.Dummy("dummy1");
+				var dummy: test.helper.Dummy = new test.helper.Dummy("dummy1");
 				var data: any = { "id": dummy.id, "name": "dummy1" };
 
-				expect(core.ObjectFactory.createFromJson(helper.Dummy,data)).toEqual(dummy);
+				expect(app.domain.factory.ObjectFactory.createFromJson(test.helper.Dummy,data)).toEqual(dummy);
 			});
 
 			it("get Dummies using repository.findAll()",angular.mock.inject(function($httpBackend, $http) {
@@ -46,14 +46,14 @@ module test {
 						}
 					]
 				});
-				var repository: helper.DummyRepository = new helper.DummyRepository($http);
-				var dummies: helper.Dummy[];
+				var repository: test.helper.DummyRepository = new test.helper.DummyRepository($http);
+				var dummies: test.helper.Dummy[];
 
-				repository.findAll(function(items: helper.Dummy[]) {
+				repository.findAll(function(items: test.helper.Dummy[]) {
 					dummies = items;
 				});
 				$httpBackend.flush();
-				expect(dummies).toEqual([helper.Dummy.createDummy(1,"DummyObject1"), helper.Dummy.createDummy(2,"DummyObject2")]);
+				expect(dummies).toEqual([test.helper.Dummy.createDummy(1,"DummyObject1"), test.helper.Dummy.createDummy(2,"DummyObject2")]);
 			}));
 
 			it("get Dummy using repository.findOneBy()",angular.mock.inject(function($httpBackend, $http) {
@@ -72,14 +72,14 @@ module test {
 						}
 					]
 				});
-				var repository: helper.DummyRepository = new helper.DummyRepository($http);
-				var dummy: helper.Dummy;
+				var repository: test.helper.DummyRepository = new test.helper.DummyRepository($http);
+				var dummy: test.helper.Dummy;
 
-				repository.findOneBy('name', "DummyObject2", function(item: helper.Dummy) {
+				repository.findOneBy('name', "DummyObject2", function(item: test.helper.Dummy) {
 					dummy = item;
 				});
 				$httpBackend.flush();
-				expect(dummy).toEqual(helper.Dummy.createDummy(2,"DummyObject2"));
+				expect(dummy).toEqual(test.helper.Dummy.createDummy(2,"DummyObject2"));
 			}));
 
 			it("using alternative items property name for data",angular.mock.inject(function($httpBackend, $http) {
@@ -98,15 +98,15 @@ module test {
 						}
 					]
 				});
-				var repository: helper.DummyRepository = new helper.DummyRepository($http);
+				var repository: test.helper.DummyRepository = new test.helper.DummyRepository($http);
 				repository.dataList = 'dummies';
-				var dummies: helper.Dummy[];
+				var dummies: test.helper.Dummy[];
 
-				repository.findAll(function(items: helper.Dummy[]) {
+				repository.findAll(function(items: test.helper.Dummy[]) {
 					dummies = items;
 				});
 				$httpBackend.flush();
-				expect(dummies).toEqual([helper.Dummy.createDummy(1,"DummyObject1"), helper.Dummy.createDummy(2,"DummyObject2")]);
+				expect(dummies).toEqual([test.helper.Dummy.createDummy(1,"DummyObject1"), test.helper.Dummy.createDummy(2,"DummyObject2")]);
 			}));
 
 			it("filter loaded data",angular.mock.inject(function($httpBackend, $http) {
@@ -125,15 +125,15 @@ module test {
 						}
 					]
 				});
-				var repository: helper.DummyRepository = new helper.DummyRepository($http);
+				var repository: test.helper.DummyRepository = new test.helper.DummyRepository($http);
 				repository.filter = function(element) { return element.id == 2; };
-				var dummies: helper.Dummy[];
+				var dummies: test.helper.Dummy[];
 
-				repository.findAll(function(items: helper.Dummy[]) {
+				repository.findAll(function(items: test.helper.Dummy[]) {
 					dummies = items;
 				});
 				$httpBackend.flush();
-				expect(dummies).toEqual([helper.Dummy.createDummy(2,"DummyObject2")]);
+				expect(dummies).toEqual([test.helper.Dummy.createDummy(2,"DummyObject2")]);
 			}));
 
 			it("remote host call",angular.mock.inject(function($httpBackend, $http) {
@@ -152,15 +152,15 @@ module test {
 						}
 					]
 				});
-				var repository: helper.DummyRepository = new helper.DummyRepository($http);
+				var repository: test.helper.DummyRepository = new test.helper.DummyRepository($http);
 				repository.host = 'http://www.eeppi.ch';
-				var dummies: helper.Dummy[];
+				var dummies: test.helper.Dummy[];
 
-				repository.findAll(function(items: helper.Dummy[]) {
+				repository.findAll(function(items: test.helper.Dummy[]) {
 					dummies = items;
 				});
 				$httpBackend.flush();
-				expect(dummies).toEqual([helper.Dummy.createDummy(1,"DummyObject1"), helper.Dummy.createDummy(2,"DummyObject2")]);
+				expect(dummies).toEqual([test.helper.Dummy.createDummy(1,"DummyObject1"), test.helper.Dummy.createDummy(2,"DummyObject2")]);
 			}));
 
 			it("remote host call unsing local proxy",angular.mock.inject(function($httpBackend, $http) {
@@ -180,16 +180,16 @@ module test {
 						}
 					]
 				});
-				var repository: helper.DummyRepository = new helper.DummyRepository($http);
+				var repository: test.helper.DummyRepository = new test.helper.DummyRepository($http);
 				repository.host = 'http://www.eeppi.ch';
 				repository.proxy = '/dks/getFromDKS?url={target}';
-				var dummies: helper.Dummy[];
+				var dummies: test.helper.Dummy[];
 
-				repository.findAll(function(items: helper.Dummy[]) {
+				repository.findAll(function(items: test.helper.Dummy[]) {
 					dummies = items;
 				});
 				$httpBackend.flush();
-				expect(dummies).toEqual([helper.Dummy.createDummy(1,"DummyObject1"), helper.Dummy.createDummy(2,"DummyObject2")]);
+				expect(dummies).toEqual([test.helper.Dummy.createDummy(1,"DummyObject1"), test.helper.Dummy.createDummy(2,"DummyObject2")]);
 			}));
 		});
 	}

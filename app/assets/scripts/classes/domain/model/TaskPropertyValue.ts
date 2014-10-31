@@ -3,9 +3,9 @@
 
 /// <reference path='../../domain/model/TaskProperty.ts' />
 
-module core {
-    export class TaskPropertyValue implements core.PersistentEntity {
-		public static factoryConfiguration: core.FactoryConfiguration = {
+module app.domain.model.core {
+    export class TaskPropertyValue implements app.domain.repository.core.PersistentEntity {
+		public static factoryConfiguration: app.domain.factory.FactoryConfiguration = {
 			constructorArguments: [
 				{ name: "property", type: TaskProperty, subType: null },
 				{ name: "value", type: String, subType: null }
@@ -14,10 +14,10 @@ module core {
 		};
 
 		public id: number;
-		public property: TaskProperty;
+		public property: app.domain.model.core.TaskProperty;
         public value: string;
 
-        constructor(property: TaskProperty, value: string) {
+        constructor(property: app.domain.model.core.TaskProperty, value: string) {
 			this.id = Math.round(Math.random()*1000000);
 			this.property = property;
 			this.value = value;

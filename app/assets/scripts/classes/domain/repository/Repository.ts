@@ -1,8 +1,8 @@
 /// <reference path='PersistentEntity.ts' />
 /// <reference path='../../../classes/domain/factory/ObjectFactory.ts' />
 
-module core {
-	export class Repository<T extends PersistentEntity> {
+module app.domain.repository.core {
+	export class Repository<T extends app.domain.repository.core.PersistentEntity> {
 		// TypeScript generics does not allow to call a static method on type T, so we need the class as property
 		type: any = null;
 		itemCache: T[];
@@ -44,7 +44,7 @@ module core {
 					if(data && data[dataList]) {
 						data[dataList].forEach(function(element){
 							if(filter(element)) {
-								items.push(ObjectFactory.createFromJson(type,element));
+								items.push(app.domain.factory.ObjectFactory.createFromJson(type,element));
 							}
 						});
 						[].push.apply(cache, items);

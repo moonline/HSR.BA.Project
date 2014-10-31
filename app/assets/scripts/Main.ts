@@ -15,12 +15,12 @@
 /// <reference path='classes/service/AuthenticationService.ts' />
 
 
-module core {
+module app {
     'use strict';
 
-    var app = angular.module('MainModule', ['ngRoute']);
+    var application = angular.module('MainModule', ['ngRoute']);
 
-    app.config(function($routeProvider) {
+	application.config(function($routeProvider) {
 		$routeProvider.when('/mapping', {
 			templateUrl: '/public/views/templates/mappingView.html',
 			controller: 'mappingController',
@@ -49,34 +49,34 @@ module core {
             redirectTo:'/'
         });
     });
-	app.config(function ( $httpProvider) {
+	application.config(function ( $httpProvider) {
 		delete $httpProvider.defaults.headers.common['X-Requested-With'];
 	});
 
-	app.run(['$rootScope', '$location', 'authenticationService', function ($rootScope, $location, authenticationService) {
+	application.run(['$rootScope', '$location', 'authenticationService', function ($rootScope, $location, authenticationService) {
 		// access denied for view? redirect to registration view
 		$rootScope.$on("$routeChangeError", function(event, current, previous, eventObj) {
 			$location.path("/register");
 		});
 	}]);
 
-	app.controller('mappingController', ['$scope', '$location', '$http', 'persistenceService', MappingController]);
-	app.controller('transmissionController', ['$scope', '$location', 'persistenceService', '$http', TransmissionController]);
-	app.controller('registerController', ['$scope', '$location', '$http', 'authenticationService', RegisterController]);
+	application.controller('mappingController', ['$scope', '$location', '$http', 'persistenceService', app.application.MappingController]);
+	application.controller('transmissionController', ['$scope', '$location', 'persistenceService', '$http', app.application.TransmissionController]);
+	application.controller('registerController', ['$scope', '$location', '$http', 'authenticationService', app.application.RegisterController]);
 
-    app.service('persistenceService', ['$http', function($http) {
+	application.service('persistenceService', ['$http', function($http) {
 		return {
-            taskTemplateRepository: new core.TaskTemplateRepository($http),
-			taskPropertyRepository: new core.TaskPropertyRepository($http),
-			decisionRepository: new dks.DecisionRepository($http),
-			mappingRepository: new core.MappingRepository($http),
-			decisionKnowledgeRepository: new dks.DecisionKnowledgeSystemRepository($http),
-			problemRepository: new dks.ProblemRepository($http)
+            taskTemplateRepository: new app.domain.repository.core.TaskTemplateRepository($http),
+			taskPropertyRepository: new app.domain.repository.core.TaskPropertyRepository($http),
+			decisionRepository: new app.domain.repository.dks.DecisionRepository($http),
+			mappingRepository: new app.domain.repository.core.MappingRepository($http),
+			decisionKnowledgeRepository: new app.domain.repository.dks.DecisionKnowledgeSystemRepository($http),
+			problemRepository: new app.domain.repository.dks.ProblemRepository($http)
         };
     }]);
 
-	app.service('authenticationService', ['$http', '$rootScope', '$q', function($http, $rootScope, $q) {
-		var authenticationService: AuthenticationService = new AuthenticationService($http, $q);
+	application.service('authenticationService', ['$http', '$rootScope', '$q', function($http, $rootScope, $q) {
+		var authenticationService: app.service.AuthenticationService = new app.service.AuthenticationService($http, $q);
 		$rootScope.authenticator = authenticationService;
 		return authenticationService;
 	}]);

@@ -1,5 +1,5 @@
 
-module core {
+module app.domain.factory {
 	export class Empty{} // used for createObject
 
 	export class ObjectFactory {

@@ -7,18 +7,18 @@
 module test {
 	describe("Domain test suite", function() {
 		describe("Repository test suite", function() {
-			RepositoryTest();
+			test.domain.repository.RepositoryTest();
 		});
 		describe("Factory test suite", function() {
-			ObjectFactoryTest();
+			test.domain.factory.ObjectFactoryTest();
 		});
 	});
 
 	describe("Application test suite", function() {
-		MappingControllerTest();
+		test.application.MappingControllerTest();
 	});
 
 	describe("Service test suite", function() {
-		AuthenticationServiceTest();
+		test.service.AuthenticationServiceTest();
 	});
 }

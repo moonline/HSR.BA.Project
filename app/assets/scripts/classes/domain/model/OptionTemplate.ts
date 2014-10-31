@@ -2,9 +2,9 @@
 /// <reference path='../../domain/repository/PersistentEntity.ts' />
 /// <reference path='../../domain/factory/FactoryConfiguration.ts' />
 
-module dks {
-	export class OptionTemplate implements Node, core.PersistentEntity {
-		public static factoryConfiguration: core.FactoryConfiguration = {
+module app.domain.model.dks {
+	export class OptionTemplate implements app.domain.model.dks.Node, app.domain.repository.core.PersistentEntity {
+		public static factoryConfiguration: app.domain.factory.FactoryConfiguration = {
 			constructorArguments: [{ name: "name", type: String, subType: null }],
 			publicProperties: [{ name: "id", type: Number, subType: null }]
 		};

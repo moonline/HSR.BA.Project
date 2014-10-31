@@ -9,7 +9,7 @@
 /// <reference path='../domain/repository/ProblemRepository.ts' />
 /// <reference path='../domain/repository/MappingRepository.ts' />
 
-module core {
+module app.application {
 	'use strict';
 
 	export class MappingController {
@@ -26,11 +26,11 @@ module core {
 				$scope.taskProperties = taskProperties;
 			});
 
-			var problemRepository: dks.ProblemRepository = persistenceService['problemRepository'];
-			var mappingRepository: MappingRepository = persistenceService['mappingRepository'];
+			var problemRepository: app.domain.repository.dks.ProblemRepository = persistenceService['problemRepository'];
+			var mappingRepository: app.domain.repository.core.MappingRepository = persistenceService['mappingRepository'];
 
 			persistenceService['decisionKnowledgeRepository'].findAll(function(items) {
-				$scope.currentDks = <dks.DecisionKnowledgeSystem>items[0];
+				$scope.currentDks = <app.domain.model.dks.DecisionKnowledgeSystem>items[0];
 
 				problemRepository.host = $scope.currentDks.address;
 				problemRepository.findAll(function(items) {
@@ -57,22 +57,22 @@ module core {
 				$scope.currentTaskTemplate = taskTemplate;
 			};
 			$scope.createNewTaskTemplate = function() {
-				var newTaskTemplate = new core.TaskTemplate('');
+				var newTaskTemplate: app.domain.model.core.TaskTemplate = new app.domain.model.core.TaskTemplate('');
 				taskTemplateRepository.add(newTaskTemplate);
 				$scope.currentTaskTemplate = newTaskTemplate;
 			};
-			$scope.addPropertyValue = function(property: TaskProperty) {
+			$scope.addPropertyValue = function(property: app.domain.model.core.TaskProperty) {
 				if($scope.currentTaskTemplate) {
-					var taskPropertyValue: TaskPropertyValue = new TaskPropertyValue(property, '');
-					(<TaskTemplate>$scope.currentTaskTemplate).addProperty(taskPropertyValue);
+					var taskPropertyValue: app.domain.model.core.TaskPropertyValue = new app.domain.model.core.TaskPropertyValue(property, '');
+					(<app.domain.model.core.TaskTemplate>$scope.currentTaskTemplate).addProperty(taskPropertyValue);
 				}
 			};
 
-			$scope.mapTaskTemplate = function(taskTemplate: TaskTemplate) {
+			$scope.mapTaskTemplate = function(taskTemplate: app.domain.model.core.TaskTemplate) {
 				if($scope.currentMapping) {
 					$scope.currentMapping.addTaskTemplate(taskTemplate);
 				} else if($scope.currentDecision) {
-					var mapping: Mapping = new Mapping($scope.currentDecision);
+					var mapping: app.domain.model.core.Mapping = new app.domain.model.core.Mapping($scope.currentDecision);
 					mapping.addTaskTemplate(taskTemplate);
 					mappingRepository.add(mapping, function(item){});
 					$scope.currentMapping = mapping;
