@@ -1,4 +1,4 @@
-package docs;
+package logics.docs;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -12,7 +12,15 @@ public @interface QueryExamples {
 	Example[] value();
 
 	public @interface Example {
+		String id() default "";
+
 		String[] parameters();
+
+		String description() default "";
+
+		boolean provideAuthentication() default true;
+
+		boolean isDataCacheable() default true;
 
 		Response response() default @Response(status = 0, content = "");
 

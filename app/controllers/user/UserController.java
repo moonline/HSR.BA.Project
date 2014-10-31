@@ -2,10 +2,10 @@ package controllers.user;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import controllers.GuaranteeAuthenticatedUser;
-import docs.QueryDescription;
-import docs.QueryExamples;
-import docs.QueryParameters;
-import docs.QueryResponses;
+import logics.docs.QueryDescription;
+import logics.docs.QueryExamples;
+import logics.docs.QueryParameters;
+import logics.docs.QueryResponses;
 import logics.user.UserLogic;
 import models.user.User;
 import play.data.DynamicForm;
@@ -15,9 +15,9 @@ import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 
-import static docs.QueryExamples.Example;
-import static docs.QueryParameters.Parameter;
-import static docs.QueryResponses.Response;
+import static logics.docs.QueryExamples.Example;
+import static logics.docs.QueryParameters.Parameter;
+import static logics.docs.QueryResponses.Response;
 
 public class UserController extends Controller {
 
@@ -34,7 +34,7 @@ public class UserController extends Controller {
 			@Response(status = OK, description = "If the user could be logged in, and a cookie is set.")
 	})
 	@QueryExamples({
-			@Example(parameters = {"demo", "demo"}),
+			@Example(parameters = {"demo", "demo"}, response = @Example.Response(status = OK, content = "{\"id\":1,\"name\":\"demo\"}")),
 			@Example(parameters = {"demo", "invalid password"})
 	})
 	public static Result login() {

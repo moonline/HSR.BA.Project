@@ -40,7 +40,7 @@ public class PPTAccountLogic {
 	public PPTAccount getForLoggedInUser(Http.Context context, Long id) {
 		User user = USER_LOGIC.getLoggedInUser(context);
 		PPTAccount pptAccount = PPT_ACCOUNT_DAO.readById(id);
-		return pptAccount.getUser().equals(user) ? pptAccount : null;
+		return (pptAccount != null && pptAccount.getUser().equals(user)) ? pptAccount : null;
 	}
 
 	public PPTAccount update(PPTAccount account, UpdatePPTAccountForm updateData) {
