@@ -5,8 +5,8 @@ import daos.user.UserDAO;
 import models.user.User;
 import org.jetbrains.annotations.NotNull;
 import play.mvc.Http;
-import sun.misc.BASE64Decoder;
 
+import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -63,7 +63,7 @@ public class UserLogic {
 		authHeader = authHeader.substring(6);
 		String[] credentials;
 		try {
-			credentials = new String(new BASE64Decoder().decodeBuffer(authHeader), "UTF-8").split(":");
+			credentials = new String(DatatypeConverter.parseBase64Binary(authHeader), "UTF-8").split(":");
 		} catch (IOException e) {
 			Logger.getAnonymousLogger().fine("Could not decode authentication header " + authHeader);
 			return null;
