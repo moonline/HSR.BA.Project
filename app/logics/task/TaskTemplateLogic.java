@@ -15,6 +15,7 @@ public class TaskTemplateLogic {
 
 	public TaskTemplate update(TaskTemplate taskTemplate, CreateTaskTemplateForm form) {
 		taskTemplate.setName(form.name);
+		taskTemplate.setParent(form.parent);
 		return TASK_TEMPLATE_DAO.persist(taskTemplate);
 	}
 
@@ -33,5 +34,14 @@ public class TaskTemplateLogic {
 	public static class CreateTaskTemplateForm {
 		@Constraints.Required
 		public String name;
+
+		public TaskTemplate parent;
+
+		public String validate() {
+			if (parent != null && parent.getParent() != null) {
+				return "Can not create sub-sub-task (two layers).";
+			}
+			return null;
+		}
 	}
 }

@@ -47,10 +47,19 @@ public abstract class AbstractTestDataCreator {
 		em.flush();
 	}
 
-	public static TaskTemplate createTaskTemplateWithTransaction(String name) {
+	public static TaskTemplate createTaskTemplateWithTransaction(String name) throws Throwable {
+		return JPA.withTransaction(() -> createTaskTemplate(name));
+	}
+
+	public static TaskTemplate createTaskTemplate(String name) {
+		return createTaskTemplate(name, null);
+	}
+
+	public static TaskTemplate createTaskTemplate(String name, TaskTemplate parent) {
 		TaskTemplate taskTemplate = new TaskTemplate();
 		taskTemplate.setName(name);
-		persistAndFlushInTransaction(taskTemplate);
+		taskTemplate.setParent(parent);
+		persistAndFlush(taskTemplate);
 		return taskTemplate;
 	}
 }

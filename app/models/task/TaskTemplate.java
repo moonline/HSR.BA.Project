@@ -1,6 +1,7 @@
 package models.task;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -16,7 +17,7 @@ public class TaskTemplate {
 	@ElementCollection
 	@CollectionTable(name = "Node", joinColumns = @JoinColumn(name = "tasktemplate_id"))
 	@Column(name = "dksnode")
-	private List<String> dksNode;
+	private List<String> dksNode = new ArrayList<>();
 
 	@ManyToOne
 	private TaskTemplate parent; //todo, guarantee parent has no parent and new parent hast no children
@@ -33,5 +34,17 @@ public class TaskTemplate {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public TaskTemplate getParent() {
+		return parent;
+	}
+
+	public void setParent(TaskTemplate parent) {
+		this.parent = parent;
+	}
+
+	public List<String> getDksNode() {
+		return dksNode;
 	}
 }

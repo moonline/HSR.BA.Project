@@ -48,10 +48,14 @@ public class TaskTemplateControllerTest extends AbstractControllerTest {
 		//Verification
 		assertThat(status(result)).isEqualTo(OK);
 		assertCheckJsonResponse(result, Json.parse("[ { \"id\" : " + taskTemplate1.getId() + ",\n" +
-				"      \"name\" : \"My Task Template X\"\n" +
+				"      \"name\" : \"My Task Template X\",\n" +
+				"      \"parent\" : null,\n" +
+				"      \"dksNode\" : []\n" +
 				"    },\n" +
 				"    { \"id\" : " + taskTemplate2.getId() + ",\n" +
-				"      \"name\" : \"My Task Template Y\"\n" +
+				"      \"name\" : \"My Task Template Y\",\n" +
+				"      \"parent\" : null,\n" +
+				"      \"dksNode\" : []\n" +
 				"    }\n" +
 				"  ]"));
 	}
@@ -66,7 +70,9 @@ public class TaskTemplateControllerTest extends AbstractControllerTest {
 		//Verification
 		assertThat(status(result)).isEqualTo(OK);
 		assertCheckJsonResponse(result, Json.parse("{ \"id\" : " + taskTemplate.getId() + ",\n" +
-				"      \"name\" : \"My Task Template Z\"\n" +
+				"      \"name\" : \"My Task Template Z\",\n" +
+				"      \"parent\" : null,\n" +
+				"      \"dksNode\" : []\n" +
 				"    }"));
 	}
 
@@ -79,7 +85,7 @@ public class TaskTemplateControllerTest extends AbstractControllerTest {
 	}
 
 	@Test
-	public void testUpdatePPTAccountWorking() throws Throwable {
+	public void testUpdateTaskTemplateWorking() throws Throwable {
 		//Setup
 		TaskTemplate taskTemplate = AbstractTestDataCreator.createTaskTemplateWithTransaction("My Task Template Q");
 		String newName = "My Task Template Kuh";
@@ -88,14 +94,16 @@ public class TaskTemplateControllerTest extends AbstractControllerTest {
 		//Verification
 		assertThat(status(result)).isEqualTo(OK);
 		assertCheckJsonResponse(result, Json.parse("{ \"id\" : " + taskTemplate.getId() + ",\n" +
-				"      \"name\" : \"" + newName + "\"" +
+				"      \"name\" : \"" + newName + "\"," +
+				"      \"parent\" : null,\n" +
+				"      \"dksNode\" : []\n" +
 				"    }"));
 		TaskTemplate taskTemplateInDB = JPA.withTransaction(() -> TASK_TEMPLATE_DAO.readById(taskTemplate.getId()));
 		assertThat(taskTemplateInDB.getName()).isEqualTo(newName);
 	}
 
 	@Test
-	public void testDeletePPTAccount() throws Throwable {
+	public void testDeleteTaskTemplate() throws Throwable {
 		//Setup
 		Long taskTemplate = AbstractTestDataCreator.createTaskTemplateWithTransaction("My Task Template A").getId();
 		//Test
@@ -103,6 +111,50 @@ public class TaskTemplateControllerTest extends AbstractControllerTest {
 		//Verification
 		assertThat(status(result)).isEqualTo(NO_CONTENT);
 		assertThat(JPA.withTransaction(() -> TASK_TEMPLATE_DAO.readById(taskTemplate))).isNull();
+	}
+
+	@Test
+	public void testMakeSubTaskTemplate() throws Throwable {
+		//Setup
+		TaskTemplate parent = AbstractTestDataCreator.createTaskTemplateWithTransaction("Paaaarent");
+		TaskTemplate child = AbstractTestDataCreator.createTaskTemplateWithTransaction("Child");
+		//Test
+		Result result = callActionWithUser(routes.ref.TaskTemplateController.update(child.getId()), postData(
+				"name", "Child",
+				"parent", parent.getId() + ""));
+		//Verification
+		assertThat(status(result)).isEqualTo(OK);
+		assertCheckJsonResponse(result, Json.parse("{ \"id\" : " + child.getId() + ",\n" +
+				"      \"name\" : \"Child\",\n" +
+				"      \"parent\" : {" +
+				"         \"id\" : " + parent.getId() + "," +
+				"         \"name\" : \"Paaaarent\"," +
+				"         \"parent\" : null," +
+				"         \"dksNode\" : []" +
+				"      }," +
+				"      \"dksNode\" : []\n" +
+				"    }"));
+		TaskTemplate childInDB = JPA.withTransaction(() -> TASK_TEMPLATE_DAO.readById(child.getId()));
+		assertThat(childInDB.getName()).isEqualTo("Child");
+		assertThat(childInDB.getParent().getId()).isEqualTo(parent.getId());
+	}
+
+	@Test
+	public void testCannotMakeSubSubTaskTemplate() throws Throwable {
+		//Setup
+		TaskTemplate middle = JPA.withTransaction(() -> {
+			TaskTemplate parent = AbstractTestDataCreator.createTaskTemplate("Parent");
+			return AbstractTestDataCreator.createTaskTemplate("Middle", parent);
+		});
+		TaskTemplate child = AbstractTestDataCreator.createTaskTemplateWithTransaction("Child");
+		//Test
+		Result result = callActionWithUser(routes.ref.TaskTemplateController.update(child.getId()), postData(
+				"name", "Child",
+				"parent", middle.getId() + ""));
+		//Verification
+		assertThat(status(result)).isEqualTo(BAD_REQUEST);
+		TaskTemplate childInDB = JPA.withTransaction(() -> TASK_TEMPLATE_DAO.readById(child.getId()));
+		assertThat(childInDB.getParent()).isNull();
 	}
 
 }
