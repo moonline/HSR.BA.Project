@@ -2,10 +2,10 @@ package controllers.user;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import controllers.GuaranteeAuthenticatedUser;
-import docs.QueryDescription;
-import docs.QueryExamples;
-import docs.QueryParameters;
-import docs.QueryResponses;
+import logics.docs.QueryDescription;
+import logics.docs.QueryExamples;
+import logics.docs.QueryParameters;
+import logics.docs.QueryResponses;
 import logics.user.UserLogic;
 import models.user.User;
 import play.data.DynamicForm;
@@ -15,9 +15,9 @@ import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 
-import static docs.QueryExamples.Example;
-import static docs.QueryParameters.Parameter;
-import static docs.QueryResponses.Response;
+import static logics.docs.QueryExamples.Example;
+import static logics.docs.QueryParameters.Parameter;
+import static logics.docs.QueryResponses.Response;
 
 public class UserController extends Controller {
 

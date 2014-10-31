@@ -1,4 +1,4 @@
-@(classesAndMethods: Map[Class[_ <: Controller], List[docs.DocumentationLogic.MethodDocumentation]], logics: docs.DocumentationLogic, exampleDataCreator: docs.ExampleDataCreator)
+@(classesAndMethods: Map[Class[_ <: Controller], List[logics.docs.DocumentationLogic.MethodDocumentation]], logic: logics.docs.DocumentationLogic, exampleDataCreator: logics.docs.ExampleDataCreator)
 
 @main("API documentation") {
 
@@ -15,10 +15,10 @@
 
 <h2>Index</h2>
 @for((aClass,methods) <- classesAndMethods) {
-    <h3>@logics.getHumanFriendlyClassName(aClass)</h3>
+    <h3>@logic.getHumanFriendlyClassName(aClass)</h3>
     <ul>
     @for(method <- methods) {
-        <li><a href='#method.call.method@logics.getRequestUrl(method, false, "id")'>@method.call.method @logics.getRequestUrl(method, false, "<id>")</a> (@method.queryDescription)</li>
+        <li><a href='#method.call.method@logic.getRequestUrl(method, false, "id")'>@method.call.method @logic.getRequestUrl(method, false, "<id>")</a> (@method.queryDescription)</li>
     }
     </ul>
 }
@@ -26,9 +26,9 @@
 <h1>Methods</h1>
 
 @for((aClass,methods) <- classesAndMethods) {
-    <h2>@logics.getHumanFriendlyClassName(aClass)</h2>
+    <h2>@logic.getHumanFriendlyClassName(aClass)</h2>
     @for(method <- methods) {
-        <h3><a name="authentication">Authentication</a><a name='method.call.method@logics.getRequestUrl(method, false, "id")'>@method.call.method @logics.getRequestUrl(method, false, "<id>")</a></h3>
+        <h3><a name="authentication">Authentication</a><a name='method.call.method@logic.getRequestUrl(method, false, "id")'>@method.call.method @logic.getRequestUrl(method, false, "<id>")</a></h3>
 
         @if(method.queryDescription != null) {
             <p>@method.queryDescription</p>
@@ -79,8 +79,8 @@
         @if(method.queryExamples != null) {
             @for((example, index) <- method.queryExamples.zipWithIndex) {
                 <h4>Example @{index+1}</h4>
-				<pre class="prettyprint"><code class="language-bash">@logics.getCurlRequestString(method, example)</code></pre>
-                @defining(logics.getResponseString(method, example, exampleDataCreator)) { response=>
+				<pre class="prettyprint"><code class="language-bash">@logic.getCurlRequestString(method, example)</code></pre>
+                @defining(logic.getResponseString(method, example, exampleDataCreator)) { response=>
                     The previous command
                     @if(response.isRealSimulation){
                         <strong title="This response was calculated live on generation of this documentation.">did</strong>

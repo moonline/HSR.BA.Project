@@ -1,4 +1,4 @@
-package docs;
+package logics.docs;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,16 +7,12 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface QueryParameters {
+public @interface QueryResponses {
 
-	Parameter[] value();
+	Response[] value();
 
-	public @interface Parameter {
-		String name();
-
-		boolean isId() default false;
-
-		Class format() default String.class; //aka type, but "type" is a reserved word
+	public @interface Response {
+		int status() default 0;
 
 		String description();
 	}

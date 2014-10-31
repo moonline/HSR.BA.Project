@@ -1,7 +1,7 @@
 package logic.docs;
 
-import docs.DocumentationLogic;
-import docs.QueryParameters;
+import logics.docs.DocumentationLogic;
+import logics.docs.QueryParameters;
 import org.junit.Test;
 import test.AbstractDatabaseTest;
 

@@ -1,4 +1,4 @@
-package docs;
+package logics.docs;
 
 import daos.AbstractDAO;
 import daos.ppt.ProjectPlanningToolDAO;

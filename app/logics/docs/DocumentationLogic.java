@@ -1,4 +1,4 @@
-package docs;
+package logics.docs;
 
 import controllers.GuaranteeAuthenticatedUser;
 import org.apache.commons.lang3.NotImplementedException;
@@ -112,9 +112,9 @@ public class DocumentationLogic {
 		classLoadersList.add(ClasspathHelper.staticClassLoader());
 
 		Reflections reflections = new Reflections(new ConfigurationBuilder()
-				.setScanners(new SubTypesScanner(false /* don't exclude Object.class */), new ResourcesScanner())
+				.setScanners(new SubTypesScanner(), new ResourcesScanner())
 				.setUrls(ClasspathHelper.forClassLoader(classLoadersList.toArray(new ClassLoader[classLoadersList.size()])))
-				.filterInputsBy(new FilterBuilder().include(FilterBuilder.prefix("controllers"))));
+				.filterInputsBy(new FilterBuilder().include(FilterBuilder.prefix("controllers")).exclude(FilterBuilder.prefix("controllers.docs"))));
 		return reflections.getSubTypesOf(Controller.class);
 	}
 

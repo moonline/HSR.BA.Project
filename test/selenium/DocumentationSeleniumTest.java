@@ -1,6 +1,6 @@
 package selenium;
 
-import docs.routes;
+import controllers.docs.routes;
 import org.junit.Test;
 
 import static org.fest.assertions.Assertions.assertThat;

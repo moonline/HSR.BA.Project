@@ -1,5 +1,7 @@
-package docs;
+package controllers.docs;
 
+import logics.docs.DocumentationLogic;
+import logics.docs.ExampleDataCreator;
 import play.db.jpa.JPA;
 import play.libs.F;
 import play.mvc.Controller;
