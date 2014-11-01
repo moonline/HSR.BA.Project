@@ -1,8 +1,8 @@
 package controllers.user;
 
 import controllers.AbstractControllerTest;
+import controllers.AuthenticationChecker;
 import daos.user.UserDAO;
-import logics.user.UserLogic;
 import models.user.User;
 import org.fest.assertions.MapAssert;
 import org.junit.Test;
@@ -39,7 +39,7 @@ public class UserControllerTest extends AbstractControllerTest {
 
 	private void verifyLoggedIn(User user, Result result, boolean expectedLogedIn) {
 		MapAssert session = assertThat(session(result));
-		MapAssert.Entry userToken = MapAssert.entry(UserLogic.SESSION_USER_IDENTIFIER, user.getId() + "");
+		MapAssert.Entry userToken = MapAssert.entry(AuthenticationChecker.SESSION_USER_IDENTIFIER, user.getId() + "");
 		if (!expectedLogedIn) {
 			session.excludes(userToken);
 		} else {

@@ -1,13 +1,9 @@
 package logics.user;
 
-import controllers.GuaranteeAuthenticatedUser;
 import daos.user.UserDAO;
 import models.user.User;
 import org.jetbrains.annotations.NotNull;
-import play.mvc.Http;
 
-import javax.xml.bind.DatatypeConverter;
-import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -17,7 +13,6 @@ import java.util.logging.Logger;
 public class UserLogic {
 
 	private final UserDAO USER_DAO;
-	public static final String SESSION_USER_IDENTIFIER = "user";
 	private final SecureRandom SECURE_RANDOM;
 
 	public UserLogic(UserDAO userDao, SecureRandom secureRandom) {
@@ -25,61 +20,12 @@ public class UserLogic {
 		SECURE_RANDOM = secureRandom;
 	}
 
-	public User loginUser(String name, String password, Http.Session session) {
+	public User readUser(String name, String password) {
 		User user = USER_DAO.readByName(name);
 		if (!passwordCorrect(user, password)) {
-			return null;
-		}
-		session.put(SESSION_USER_IDENTIFIER, user.getId() + "");
-		return user;
-	}
-
-	public void logoutUser(Http.Session session) {
-		session.remove(SESSION_USER_IDENTIFIER);
-	}
-
-	public User getLoggedInUser(Http.Context context) {
-		if (GuaranteeAuthenticatedUser.Authenticator.isBasicAuthenticationEnabled(context)) {
-			return getLoggedInUserByHttpBasicAuth(context);
-		} else {
-			return getLoggedInUserByCookie(context);
-		}
-	}
-
-	private User getLoggedInUserByCookie(Http.Context context) {
-		String userIdString = context.session().get(SESSION_USER_IDENTIFIER);
-		if (userIdString == null || !userIdString.matches("\\d+")) {
-			return null;
-		}
-		Long userId = Long.valueOf(userIdString);
-		return USER_DAO.readById(userId);
-	}
-
-	private User getLoggedInUserByHttpBasicAuth(Http.Context context) {
-		String authHeader = context.request().getHeader("authorization");
-		if (authHeader == null) {
-			return null;
-		}
-		authHeader = authHeader.substring(6);
-		String[] credentials;
-		try {
-			credentials = new String(DatatypeConverter.parseBase64Binary(authHeader), "UTF-8").split(":");
-		} catch (IOException e) {
-			Logger.getAnonymousLogger().fine("Could not decode authentication header " + authHeader);
-			return null;
-		}
-		if (credentials.length != 2) {
-			return null;
-		}
-		User user = USER_DAO.readByName(credentials[0]);
-		if (user == null || !passwordCorrect(user, credentials[1])) {
-			return null;
+			user = null;
 		}
 		return user;
-	}
-
-	public boolean isUserLoggedIn(Http.Context context) {
-		return getLoggedInUser(context) != null;
 	}
 
 	public boolean changePassword(User user, String oldPassword, String newPassword) {
@@ -120,5 +66,4 @@ public class UserLogic {
 		}
 		return out;
 	}
-
 }

@@ -1,7 +1,7 @@
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import controllers.GuaranteeAuthenticatedUser;
+import controllers.AuthenticationChecker;
 import controllers.dks.DecisionKnowledgeSystemController;
 import controllers.docs.DocumentationController;
 import controllers.ppt.ProjectPlanningToolController;
@@ -52,7 +52,8 @@ public class Global extends GlobalSettings {
 	private final DocumentationLogic DOCUMENTATION_LOGIC = new DocumentationLogic();
 	private final TaskTemplateLogic TASK_TEMPLATE_LOGIC = new TaskTemplateLogic(TASK_TEMPLATE_DAO);
 	private final UserLogic USER_LOGIC = new UserLogic(USER_DAO, new SecureRandom());
-	private final PPTAccountLogic PPT_ACCOUNT_LOGIC = new PPTAccountLogic(PPT_ACCOUNT_DAO, USER_LOGIC);
+	private final PPTAccountLogic PPT_ACCOUNT_LOGIC = new PPTAccountLogic(PPT_ACCOUNT_DAO);
+	private final AuthenticationChecker AUTHENTICATION_CHECKER = new AuthenticationChecker(USER_DAO, USER_LOGIC);
 
 	private final Map<Class, Object> CONTROLLERS = new HashMap<>();
 
@@ -72,7 +73,7 @@ public class Global extends GlobalSettings {
 		Formatters.register(PPTAccount.class, new Formatters.SimpleFormatter<PPTAccount>() {
 			@Override
 			public PPTAccount parse(String authenticationId, Locale l) throws ParseException {
-				PPTAccount authentication = PPT_ACCOUNT_LOGIC.getAuthentication(USER_LOGIC.getLoggedInUser(ctx()), authenticationId);
+				PPTAccount authentication = PPT_ACCOUNT_LOGIC.getAuthentication(AUTHENTICATION_CHECKER.getLoggedInUser(ctx()), authenticationId);
 				if (authentication == null) {
 					throw new ParseException("No valid input", 0);
 				}
@@ -133,12 +134,12 @@ public class Global extends GlobalSettings {
 
 	private void initializeControllersRequiringParameters() {
 		CONTROLLERS.put(DocumentationController.class, new DocumentationController(DOCUMENTATION_LOGIC, new ExampleDataCreator(USER_LOGIC, USER_DAO, PPT_ACCOUNT_DAO)));
-		CONTROLLERS.put(PPTAccountController.class, new PPTAccountController(PPT_ACCOUNT_LOGIC));
-		CONTROLLERS.put(UserController.class, new UserController(USER_LOGIC));
+		CONTROLLERS.put(PPTAccountController.class, new PPTAccountController(PPT_ACCOUNT_DAO, PPT_ACCOUNT_LOGIC, AUTHENTICATION_CHECKER));
+		CONTROLLERS.put(UserController.class, new UserController(USER_LOGIC, AUTHENTICATION_CHECKER));
 		CONTROLLERS.put(TaskTemplateController.class, new TaskTemplateController(TASK_TEMPLATE_LOGIC, TASK_TEMPLATE_DAO));
 		CONTROLLERS.put(ProjectPlanningToolController.class, new ProjectPlanningToolController(PPT_TASK_LOGIC));
 		CONTROLLERS.put(DecisionKnowledgeSystemController.class, new DecisionKnowledgeSystemController(DKS_LOGIC));
-		CONTROLLERS.put(GuaranteeAuthenticatedUser.Authenticator.class, new GuaranteeAuthenticatedUser.Authenticator(USER_LOGIC));
+		CONTROLLERS.put(AuthenticationChecker.Authenticator.class, AUTHENTICATION_CHECKER.new Authenticator());
 	}
 
 	@Override

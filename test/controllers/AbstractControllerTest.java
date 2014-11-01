@@ -1,7 +1,6 @@
 package controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import logics.user.UserLogic;
 import models.user.User;
 import play.api.mvc.HandlerRef;
 import play.libs.Json;
@@ -31,7 +30,7 @@ public abstract class AbstractControllerTest extends AbstractDatabaseTest {
 
 	protected static Result callActionWithUser(HandlerRef<?> target, User user, Map<String, String> postData) {
 		FakeRequest fakeRequest = new FakeRequest().withFormUrlEncodedBody(postData);
-		fakeRequest = fakeRequest.withSession(UserLogic.SESSION_USER_IDENTIFIER, user.getId() + "");
+		fakeRequest = fakeRequest.withSession(AuthenticationChecker.SESSION_USER_IDENTIFIER, user.getId() + "");
 		return callAction(target, fakeRequest);
 	}
 

@@ -1,6 +1,8 @@
 package controllers.user;
 
+import controllers.AuthenticationChecker;
 import controllers.GuaranteeAuthenticatedUser;
+import daos.user.PPTAccountDAO;
 import logics.docs.QueryDescription;
 import logics.docs.QueryExamples;
 import logics.docs.QueryParameters;
@@ -19,10 +21,14 @@ import static logics.docs.QueryResponses.Response;
 
 public class PPTAccountController extends Controller {
 
+	private final PPTAccountDAO PPT_ACCOUNT_DAO;
 	private final PPTAccountLogic PPT_ACCOUNT_LOGIC;
+	private final AuthenticationChecker AUTHENTICATION_CHECKER;
 
-	public PPTAccountController(PPTAccountLogic pptAccountLogic) {
+	public PPTAccountController(PPTAccountDAO pptAccountDao, PPTAccountLogic pptAccountLogic, AuthenticationChecker authenticationChecker) {
+		PPT_ACCOUNT_DAO = pptAccountDao;
 		PPT_ACCOUNT_LOGIC = pptAccountLogic;
+		AUTHENTICATION_CHECKER = authenticationChecker;
 	}
 
 	@Transactional()
@@ -47,7 +53,7 @@ public class PPTAccountController extends Controller {
 		if (form.hasErrors()) {
 			return badRequest(form.errorsAsJson());
 		}
-		return ok(Json.toJson(PPT_ACCOUNT_LOGIC.createPPTAccount(ctx(), form.get())));
+		return ok(Json.toJson(PPT_ACCOUNT_LOGIC.createPPTAccount(form.get(), AUTHENTICATION_CHECKER.getLoggedInUser(ctx()))));
 	}
 
 	@Transactional(readOnly = true)
@@ -75,7 +81,7 @@ public class PPTAccountController extends Controller {
 					"]"))
 	})
 	public Result readAll() {
-		return ok(Json.toJson(PPT_ACCOUNT_LOGIC.getAllForLoggedInUser(ctx())));
+		return ok(Json.toJson(PPT_ACCOUNT_DAO.readByUser(AUTHENTICATION_CHECKER.getLoggedInUser(ctx()))));
 	}
 
 	@Transactional(readOnly = true)
@@ -93,7 +99,7 @@ public class PPTAccountController extends Controller {
 			@Example(id = "REFERENCE_PPTACCOUNT_3", parameters = {})
 	})
 	public Result readOne(long id) {
-		PPTAccount pptAccount = PPT_ACCOUNT_LOGIC.getForLoggedInUser(ctx(), id);
+		PPTAccount pptAccount = PPT_ACCOUNT_LOGIC.getForUser(id, AUTHENTICATION_CHECKER.getLoggedInUser(ctx()));
 		if (pptAccount == null) {
 			return notFound("The account " + id + " could not be found for the logged in user.");
 		}
@@ -121,7 +127,7 @@ public class PPTAccountController extends Controller {
 			@Example(id = "REFERENCE_PPTACCOUNT_3", parameters = {"1", "http://jira.example.com", "tbucher", "7YqupNxN9v"})
 	})
 	public Result update(long id) {
-		PPTAccount pptAccount = PPT_ACCOUNT_LOGIC.getForLoggedInUser(ctx(), id);
+		PPTAccount pptAccount = PPT_ACCOUNT_LOGIC.getForUser(id, AUTHENTICATION_CHECKER.getLoggedInUser(ctx()));
 		if (pptAccount == null) {
 			return notFound("The account " + id + " could not be found for the logged in user.");
 		}
@@ -148,7 +154,7 @@ public class PPTAccountController extends Controller {
 			@Example(id = "REFERENCE_PPTACCOUNT_7", isDataCacheable = false, parameters = {})
 	})
 	public Result delete(long id) {
-		PPTAccount pptAccount = PPT_ACCOUNT_LOGIC.getForLoggedInUser(ctx(), id);
+		PPTAccount pptAccount = PPT_ACCOUNT_LOGIC.getForUser(id, AUTHENTICATION_CHECKER.getLoggedInUser(ctx()));
 		if (pptAccount == null) {
 			return notFound("The account " + id + " could not be found for the logged in user.");
 		}

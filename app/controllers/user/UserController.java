@@ -1,6 +1,7 @@
 package controllers.user;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import controllers.AuthenticationChecker;
 import controllers.GuaranteeAuthenticatedUser;
 import logics.docs.QueryDescription;
 import logics.docs.QueryExamples;
@@ -22,9 +23,11 @@ import static logics.docs.QueryResponses.Response;
 public class UserController extends Controller {
 
 	private final UserLogic USER_LOGIC;
+	private final AuthenticationChecker AUTHENTICATION_CHECKER;
 
-	public UserController(UserLogic userLogic) {
+	public UserController(UserLogic userLogic, AuthenticationChecker authenticationChecker) {
 		USER_LOGIC = userLogic;
+		AUTHENTICATION_CHECKER = authenticationChecker;
 	}
 
 	@Transactional(readOnly = true)
@@ -48,7 +51,7 @@ public class UserController extends Controller {
 		if (name == null || password == null) {
 			return badRequest("Missing login data");
 		}
-		final User user = USER_LOGIC.loginUser(name, password, session());
+		final User user = AUTHENTICATION_CHECKER.loginUser(name, password, session());
 		if (user == null) {
 			return badRequest("Username or Password wrong");
 		}
@@ -59,7 +62,7 @@ public class UserController extends Controller {
 	@QueryResponses(@Response(status = NO_CONTENT, description = "Is always returned, and the login cookie is being removed."))
 	@QueryExamples(@Example(parameters = {}))
 	public Result logout() {
-		USER_LOGIC.logoutUser(session());
+		session().remove(AuthenticationChecker.SESSION_USER_IDENTIFIER);
 		return noContent();
 	}
 
@@ -76,7 +79,7 @@ public class UserController extends Controller {
 	})
 	@Transactional(readOnly = true)
 	public Result loginStatus() {
-		final User user = USER_LOGIC.getLoggedInUser(ctx());
+		final User user = AUTHENTICATION_CHECKER.getLoggedInUser(ctx());
 		if (user == null) {
 			return ok(new ObjectNode(null));
 		} else {
@@ -127,7 +130,7 @@ public class UserController extends Controller {
 			@Example(parameters = {"demo", "1234", "another password"})
 	})
 	public Result changePassword() {
-		User user = USER_LOGIC.getLoggedInUser(ctx());
+		User user = AUTHENTICATION_CHECKER.getLoggedInUser(ctx());
 		DynamicForm requestData = Form.form().bindFromRequest();
 		String oldPassword = requestData.get("oldPassword");
 		String newPassword = requestData.get("newPassword");

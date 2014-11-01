@@ -6,18 +6,13 @@ import models.user.PPTAccount;
 import models.user.User;
 import org.jetbrains.annotations.NotNull;
 import play.data.validation.Constraints;
-import play.mvc.Http;
-
-import java.util.List;
 
 public class PPTAccountLogic {
 
 	private final PPTAccountDAO PPT_ACCOUNT_DAO;
-	private final UserLogic USER_LOGIC;
 
-	public PPTAccountLogic(PPTAccountDAO pptAccountDao, UserLogic userLogic) {
+	public PPTAccountLogic(PPTAccountDAO pptAccountDao) {
 		PPT_ACCOUNT_DAO = pptAccountDao;
-		USER_LOGIC = userLogic;
 	}
 
 	public PPTAccount getAuthentication(User user, String authenticationId) {
@@ -31,19 +26,13 @@ public class PPTAccountLogic {
 	}
 
 	@NotNull
-	public PPTAccount createPPTAccount(Http.Context context, CreatePPTAccountForm form) {
+	public PPTAccount createPPTAccount(CreatePPTAccountForm form, User loggedInUser) {
 		PPTAccount account = new PPTAccount();
-		account.setUser(USER_LOGIC.getLoggedInUser(context));
+		account.setUser(loggedInUser);
 		return update(account, form);
 	}
 
-	public List<PPTAccount> getAllForLoggedInUser(Http.Context context) {
-		User user = USER_LOGIC.getLoggedInUser(context);
-		return PPT_ACCOUNT_DAO.readByUser(user);
-	}
-
-	public PPTAccount getForLoggedInUser(Http.Context context, Long id) {
-		User user = USER_LOGIC.getLoggedInUser(context);
+	public PPTAccount getForUser(Long id, User user) {
 		PPTAccount pptAccount = PPT_ACCOUNT_DAO.readById(id);
 		return (pptAccount != null && pptAccount.getUser().equals(user)) ? pptAccount : null;
 	}
