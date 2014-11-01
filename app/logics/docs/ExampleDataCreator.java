@@ -48,14 +48,14 @@ public class ExampleDataCreator {
 						user = userLogic.createUser(new UserLogic.RegisterForm(username, USER_PASSWORD));
 						JPA.em().flush();
 					}
-				} while (!userLogic.passwordCorrect(user, USER_PASSWORD));
+				} while (!userLogic.isPasswordCorrect(user, USER_PASSWORD));
 				USER_NAME = username;
 				USER_ID = user.getId();
 			}
 		});
 	}
 
-	public void createObject(String reference, boolean canBeCached) {
+	public void createExampleObject(String reference, boolean canBeCached) {
 		ExampleObjectCreator objectCreator;
 		String[] referenceParts = reference.split("_");
 		switch (referenceParts[1]) {
@@ -119,43 +119,36 @@ public class ExampleDataCreator {
 	private static class ExampleObjectCreator<T> {
 		private final String className;
 		private final AbstractDAO<T> dao;
-		private final Function0<Long> createNewFunction;
-		private final Function<T, Boolean> isExistingAndExpectedFunction;
+		private final CreateNewObjectFunctionInterface<Long> createNewObjectFunction;
+		private final CheckIsExistingAndExpectedFunctionInterface<T, Boolean> isExistingAndExpectedFunction;
 
-		public ExampleObjectCreator(String className, AbstractDAO<T> dao, Function0<Long> createNewFunction, Function<T, Boolean> isExistingAndExpectedFunction) {
+		public ExampleObjectCreator(String className, AbstractDAO<T> dao, CreateNewObjectFunctionInterface<Long> createNewObjectFunction, CheckIsExistingAndExpectedFunctionInterface<T, Boolean> isExistingAndExpectedFunction) {
 			this.className = className;
 			this.dao = dao;
-			this.createNewFunction = createNewFunction;
+			this.createNewObjectFunction = createNewObjectFunction;
 			this.isExistingAndExpectedFunction = isExistingAndExpectedFunction;
 		}
 
 		public void create(long id) {
 			T existingPPTAccount = dao.readById(id);
 			if (existingPPTAccount == null) {
-				Long currentId = createNewFunction.apply();
+				Long currentId = createNewObjectFunction.createNew();
 				JPA.em().createQuery("update " + className + " p set p.id=:new where p.id=:old").setParameter("old", currentId).setParameter("new", id).executeUpdate();
 			} else {
-				if (!isExistingAndExpectedFunction.apply(existingPPTAccount)) {
+				if (!isExistingAndExpectedFunction.check(existingPPTAccount)) {
 					Logger.error("Could not create Example Data " + className + " with ID " + id + ", because it already exists. The problem is, this existing object is exposed to every use as example of the documentation: " + existingPPTAccount);
 				}
 			}
 		}
 	}
 
-	/**
-	 * A Function with no arguments.
-	 */
-	public static interface Function0<R> {
-		public R apply();
+	public static interface CreateNewObjectFunctionInterface<R> {
+		public R createNew();
 	}
 
-	/**
-	 * A Function with a single argument.
-	 */
-	public static interface Function<A, R> {
-		public R apply(A a);
+	public static interface CheckIsExistingAndExpectedFunctionInterface<A, R> {
+		public R check(A a);
 	}
-
 
 	private void persist(Object... objectsToPersist) {
 		EntityManager em = JPA.em();

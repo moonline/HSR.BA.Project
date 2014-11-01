@@ -57,7 +57,8 @@ public class DocumentationLogic {
 	}
 
 	/**
-	 * Gets the first part of the Play internal routing (the one, that corresponds to the given _class_)
+	 * Gets the first part of the Play internal routing (the one, that corresponds to the given _class_).
+	 * For example for the controllers.user.UserController (Class) the controller.user.routes.UserController (Field/Object) is returned.
 	 */
 	private Object getRouteObject(Class<? extends Controller> controllerClass) {
 		Class<?> routesClass = Reflections.forName(controllerClass.getPackage().getName() + ".routes");
@@ -71,7 +72,8 @@ public class DocumentationLogic {
 	}
 
 	/**
-	 * Gets the second part of the Play internal routing (the one, that corresponds to the given _method_)
+	 * Gets the second part of the Play internal routing (the one, that corresponds to the given _method_).
+	 * For example for controller.user.routes.UserController (Object) and controllers.user.UserController#login() the call controllers.user.routes.UserController.login() is returned.
 	 */
 	private Call getCallObject(Object routesObject, Method method) {
 		try {
@@ -84,6 +86,10 @@ public class DocumentationLogic {
 
 	}
 
+	/**
+	 * For a list of classes (parameter types) a list of instances of this class is returned.
+	 * And for later identification of this instances, they have always the value of MAGIC_CONSTANT_PARAMETER_IDENTIFICATION.
+	 */
 	private Object[] getExampleParams(Class<?>[] parameterTypes) {
 		ArrayList<Object> params = new ArrayList<>();
 		for (Class<?> parameterType : parameterTypes) {
@@ -103,7 +109,7 @@ public class DocumentationLogic {
 	}
 
 	/**
-	 * Uses reflection to get all controller classes (extending Controller and in package controllers)
+	 * Uses reflection to get all API-controller classes (extending Controller and in package controllers but not in package controllers.docs).
 	 */
 	private Set<Class<? extends Controller>> getAllControllerClasses() {
 		List<ClassLoader> classLoadersList = new LinkedList<>();
@@ -117,6 +123,9 @@ public class DocumentationLogic {
 		return reflections.getSubTypesOf(Controller.class);
 	}
 
+	/**
+	 * Transforms Controller names (from e.g. TaskTemplateController to "Task Template")
+	 */
 	public String getHumanFriendlyClassName(Class<? extends Controller> c) {
 		String name = c.getSimpleName(); //class name
 		name = name.replaceFirst("Controller$", "");//...without "Controller"
@@ -147,6 +156,10 @@ public class DocumentationLogic {
 		return url.replaceAll(MAGIC_CONSTANT_PARAMETER_IDENTIFICATION + "", id);
 	}
 
+	/**
+	 * Returns a response for a call example of the API.
+	 * This is either the response data in the description of the method (if there is one) or the result of an executed call with the given example data.
+	 */
 	public SimpleResponse getResponseString(MethodDocumentation method, QueryExamples.Example example, ExampleDataCreator exampleDataCreator) {
 		QueryExamples.Example.Response exampleResponse = example.response();
 		if (exampleResponse.status() > 0) {
@@ -196,10 +209,17 @@ public class DocumentationLogic {
 		}
 	}
 
+	/**
+	 * Some query parameters need to be backed up by real data and they are reference with REFERENCE_TYPE_ID.
+	 * This method strips the ID out of this string.
+	 */
 	private String getRealQueryParameter(String queryParameter) {
 		return queryParameter.replaceFirst("REFERENCE_[^_]+_", "");
 	}
 
+	/**
+	 * @return The number of parameters that are no ID.
+	 */
 	private int calculateNumberOfRegularParameters(MethodDocumentation method, String[] examples) {
 		int numberOfParameters = 0;
 		for (QueryParameters.Parameter parameter : method.queryParameters) {
@@ -213,12 +233,16 @@ public class DocumentationLogic {
 		return Math.min(numberOfParameters, examples.length);
 	}
 
+	/**
+	 * Some query parameters need to be backed up by real data and they are reference with REFERENCE_TYPE_ID.
+	 * This method creates the data that is referenced in the given methods.
+	 */
 	public void createCallExampleData(Collection<List<MethodDocumentation>> allAPIMethods, ExampleDataCreator exampleDataCreator) {
 		for (List<MethodDocumentation> apiMethods : allAPIMethods) {
 			for (MethodDocumentation apiMethod : apiMethods) {
 				for (QueryExamples.Example queryExample : apiMethod.queryExamples) {
 					if (queryExample.id().startsWith("REFERENCE_")) {
-						exampleDataCreator.createObject("REFERENCE_PPTACCOUNT_3", queryExample.isDataCacheable());
+						exampleDataCreator.createExampleObject("REFERENCE_PPTACCOUNT_3", queryExample.isDataCacheable());
 					}
 				}
 			}

@@ -41,7 +41,7 @@ public class TaskTemplateController extends Controller {
 			@Example(parameters = {"A new Task Template"})
 	})
 	public Result create() {
-		Form<TaskTemplateLogic.CreateTaskTemplateForm> form = Form.form(TaskTemplateLogic.CreateTaskTemplateForm.class).bindFromRequest();
+		Form<TaskTemplateLogic.TaskTemplateForm> form = Form.form(TaskTemplateLogic.TaskTemplateForm.class).bindFromRequest();
 		if (form.hasErrors()) {
 			return badRequest(form.errorsAsJson());
 		}
@@ -101,7 +101,7 @@ public class TaskTemplateController extends Controller {
 		if (taskTemplate == null) {
 			return notFound();
 		}
-		Form<TaskTemplateLogic.CreateTaskTemplateForm> form = Form.form(TaskTemplateLogic.CreateTaskTemplateForm.class).bindFromRequest();
+		Form<TaskTemplateLogic.TaskTemplateForm> form = Form.form(TaskTemplateLogic.TaskTemplateForm.class).bindFromRequest();
 		if (form.hasErrors()) {
 			return badRequest(form.errorsAsJson());
 		}

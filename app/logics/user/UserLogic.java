@@ -23,14 +23,14 @@ public class UserLogic {
 
 	public User readUser(String name, String password) {
 		User user = USER_DAO.readByName(name);
-		if (!passwordCorrect(user, password)) {
+		if (!isPasswordCorrect(user, password)) {
 			user = null;
 		}
 		return user;
 	}
 
 	public boolean changePassword(User user, ChangePasswordForm form) {
-		if (!passwordCorrect(user, form.oldPassword)) {
+		if (!isPasswordCorrect(user, form.oldPassword)) {
 			return false;
 		} else {
 			user.setPasswordHash(calculatePasswordHash(user, form.newPassword));
@@ -48,7 +48,7 @@ public class UserLogic {
 		return user;
 	}
 
-	public boolean passwordCorrect(User user, String password) {
+	public boolean isPasswordCorrect(User user, String password) {
 		return user != null && Arrays.equals(user.getPasswordHash(), calculatePasswordHash(user, password));
 	}
 

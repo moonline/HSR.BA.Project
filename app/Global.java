@@ -72,12 +72,14 @@ public class Global extends GlobalSettings {
 	private void registerFormatters() {
 		Formatters.register(PPTAccount.class, new Formatters.SimpleFormatter<PPTAccount>() {
 			@Override
-			public PPTAccount parse(String authenticationId, Locale l) throws ParseException {
-				PPTAccount authentication = PPT_ACCOUNT_LOGIC.getAuthentication(AUTHENTICATION_CHECKER.getLoggedInUser(ctx()), authenticationId);
-				if (authentication == null) {
-					throw new ParseException("No valid input", 0);
+			public PPTAccount parse(String accountId, Locale l) throws ParseException {
+				if (accountId.matches("\\d+")) {
+					PPTAccount authentication = PPT_ACCOUNT_LOGIC.read(AUTHENTICATION_CHECKER.getLoggedInUser(ctx()), Long.parseLong(accountId));
+					if (authentication != null) {
+						return authentication;
+					}
 				}
-				return authentication;
+				throw new ParseException("No valid input", 0);
 			}
 
 			@Override

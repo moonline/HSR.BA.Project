@@ -15,9 +15,9 @@ public class PPTAccountLogic {
 		PPT_ACCOUNT_DAO = pptAccountDao;
 	}
 
-	public PPTAccount getAuthentication(User user, String authenticationId) {
-		if (user != null && authenticationId.matches("\\d+")) {
-			PPTAccount pptAccount = PPT_ACCOUNT_DAO.readById(Long.parseLong(authenticationId));
+	public PPTAccount read(User user, long accountId) {
+		if (user != null) {
+			PPTAccount pptAccount = PPT_ACCOUNT_DAO.readById(accountId);
 			if (pptAccount != null && pptAccount.getUser().getId().equals(user.getId())) {
 				return pptAccount;
 			}
@@ -26,15 +26,10 @@ public class PPTAccountLogic {
 	}
 
 	@NotNull
-	public PPTAccount createPPTAccount(CreatePPTAccountForm form, User loggedInUser) {
+	public PPTAccount create(CreatePPTAccountForm form, User loggedInUser) {
 		PPTAccount account = new PPTAccount();
 		account.setUser(loggedInUser);
 		return update(account, form);
-	}
-
-	public PPTAccount getForUser(Long id, User user) {
-		PPTAccount pptAccount = PPT_ACCOUNT_DAO.readById(id);
-		return (pptAccount != null && pptAccount.getUser().equals(user)) ? pptAccount : null;
 	}
 
 	public PPTAccount update(PPTAccount account, UpdatePPTAccountForm updateData) {

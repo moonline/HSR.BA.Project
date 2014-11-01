@@ -60,7 +60,7 @@ public class AuthenticationChecker {
 			return null;
 		}
 		User user = USER_DAO.readByName(credentials[0]);
-		if (user == null || !USER_LOGIC.passwordCorrect(user, credentials[1])) {
+		if (user == null || !USER_LOGIC.isPasswordCorrect(user, credentials[1])) {
 			return null;
 		}
 		return user;

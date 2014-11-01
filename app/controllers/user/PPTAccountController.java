@@ -53,7 +53,7 @@ public class PPTAccountController extends Controller {
 		if (form.hasErrors()) {
 			return badRequest(form.errorsAsJson());
 		}
-		return ok(Json.toJson(PPT_ACCOUNT_LOGIC.createPPTAccount(form.get(), AUTHENTICATION_CHECKER.getLoggedInUser(ctx()))));
+		return ok(Json.toJson(PPT_ACCOUNT_LOGIC.create(form.get(), AUTHENTICATION_CHECKER.getLoggedInUser(ctx()))));
 	}
 
 	@Transactional(readOnly = true)
@@ -87,7 +87,7 @@ public class PPTAccountController extends Controller {
 	@Transactional(readOnly = true)
 	@GuaranteeAuthenticatedUser
 	@QueryParameters({
-			@Parameter(name = "id", isId = true, description = "The id of the login information")
+			@Parameter(name = "id", isId = true, format = Long.class, description = "The id of the login information")
 	})
 	@QueryDescription("Returns one login information (but the password) for the currently logged in user for Project Planning Tools.")
 	@QueryResponses({
@@ -99,7 +99,7 @@ public class PPTAccountController extends Controller {
 			@Example(id = "REFERENCE_PPTACCOUNT_3", parameters = {})
 	})
 	public Result readOne(long id) {
-		PPTAccount pptAccount = PPT_ACCOUNT_LOGIC.getForUser(id, AUTHENTICATION_CHECKER.getLoggedInUser(ctx()));
+		PPTAccount pptAccount = PPT_ACCOUNT_LOGIC.read(AUTHENTICATION_CHECKER.getLoggedInUser(ctx()), id);
 		if (pptAccount == null) {
 			return notFound("The account " + id + " could not be found for the logged in user.");
 		}
@@ -109,7 +109,7 @@ public class PPTAccountController extends Controller {
 	@Transactional()
 	@GuaranteeAuthenticatedUser
 	@QueryParameters({
-			@Parameter(name = "id", isId = true, description = "The id of the login information to update"),
+			@Parameter(name = "id", isId = true, format = Long.class, description = "The id of the login information to update"),
 			@Parameter(name = "ppt", description = "a reference (ID) to the Project Planning Tool"),
 			@Parameter(name = "url", description = "the URL to the Project Planning Tool"),
 			@Parameter(name = "pptUsername", description = "the username for the user for the Project Planning Tool"),
@@ -127,7 +127,7 @@ public class PPTAccountController extends Controller {
 			@Example(id = "REFERENCE_PPTACCOUNT_3", parameters = {"1", "http://jira.example.com", "tbucher", "7YqupNxN9v"})
 	})
 	public Result update(long id) {
-		PPTAccount pptAccount = PPT_ACCOUNT_LOGIC.getForUser(id, AUTHENTICATION_CHECKER.getLoggedInUser(ctx()));
+		PPTAccount pptAccount = PPT_ACCOUNT_LOGIC.read(AUTHENTICATION_CHECKER.getLoggedInUser(ctx()), id);
 		if (pptAccount == null) {
 			return notFound("The account " + id + " could not be found for the logged in user.");
 		}
@@ -142,7 +142,7 @@ public class PPTAccountController extends Controller {
 	@Transactional()
 	@GuaranteeAuthenticatedUser
 	@QueryParameters({
-			@Parameter(name = "id", isId = true, description = "The id of the login information to update")
+			@Parameter(name = "id", isId = true, format = Long.class, description = "The id of the login information to update")
 	})
 	@QueryDescription("Deletes login information for a Project Planning Tool on the server.")
 	@QueryResponses({
@@ -154,7 +154,7 @@ public class PPTAccountController extends Controller {
 			@Example(id = "REFERENCE_PPTACCOUNT_7", isDataCacheable = false, parameters = {})
 	})
 	public Result delete(long id) {
-		PPTAccount pptAccount = PPT_ACCOUNT_LOGIC.getForUser(id, AUTHENTICATION_CHECKER.getLoggedInUser(ctx()));
+		PPTAccount pptAccount = PPT_ACCOUNT_LOGIC.read(AUTHENTICATION_CHECKER.getLoggedInUser(ctx()), id);
 		if (pptAccount == null) {
 			return notFound("The account " + id + " could not be found for the logged in user.");
 		}
