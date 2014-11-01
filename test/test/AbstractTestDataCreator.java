@@ -1,5 +1,6 @@
 package test;
 
+import daos.user.UserDAO;
 import logics.user.UserLogic;
 import models.ppt.ProjectPlanningTool;
 import models.task.TaskTemplate;
@@ -8,6 +9,7 @@ import models.user.User;
 import play.db.jpa.JPA;
 
 import javax.persistence.EntityManager;
+import java.security.SecureRandom;
 
 public abstract class AbstractTestDataCreator {
 
@@ -17,7 +19,7 @@ public abstract class AbstractTestDataCreator {
 	}
 
 	public static User createUser(String name, String password) {
-		return new UserLogic().createUser(name, password);
+		return new UserLogic(new UserDAO(), new SecureRandom()).createUser(new UserLogic.RegisterForm(name, password));
 	}
 
 	public static PPTAccount createPPTAccountWithTransaction(User user, String pptUrl, String pptUsername, String pptPassword) {

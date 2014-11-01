@@ -1,100 +1,54 @@
 package logics.user;
 
-import controllers.GuaranteeAuthenticatedUser;
 import daos.user.UserDAO;
 import models.user.User;
 import org.jetbrains.annotations.NotNull;
-import play.mvc.Http;
-import sun.misc.BASE64Decoder;
+import play.data.validation.Constraints;
 
-import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.logging.Logger;
 
 public class UserLogic {
 
-	public static final UserDAO USER_DAO = new UserDAO();
-	public static final String SESSION_USER_IDENTIFIER = "user";
+	private final UserDAO USER_DAO;
+	private final SecureRandom SECURE_RANDOM;
 
-	public User loginUser(String name, String password, Http.Session session) {
+	public UserLogic(UserDAO userDao, SecureRandom secureRandom) {
+		USER_DAO = userDao;
+		SECURE_RANDOM = secureRandom;
+	}
+
+	public User readUser(String name, String password) {
 		User user = USER_DAO.readByName(name);
-		if (!passwordCorrect(user, password)) {
-			return null;
-		}
-		session.put(SESSION_USER_IDENTIFIER, user.getId() + "");
-		return user;
-	}
-
-	public void logoutUser(Http.Session session) {
-		session.remove(SESSION_USER_IDENTIFIER);
-	}
-
-	public User getLoggedInUser(Http.Context context) {
-		if (GuaranteeAuthenticatedUser.Authenticator.isBasicAuthenticationEnabled(context)) {
-			return getLoggedInUserByHttpBasicAuth(context);
-		} else {
-			return getLoggedInUserByCookie(context);
-		}
-	}
-
-	private User getLoggedInUserByCookie(Http.Context context) {
-		String userIdString = context.session().get(SESSION_USER_IDENTIFIER);
-		if (userIdString == null || !userIdString.matches("\\d+")) {
-			return null;
-		}
-		Long userId = Long.valueOf(userIdString);
-		return USER_DAO.readById(userId);
-	}
-
-	private User getLoggedInUserByHttpBasicAuth(Http.Context context) {
-		String authHeader = context.request().getHeader("authorization");
-		if (authHeader == null) {
-			return null;
-		}
-		authHeader = authHeader.substring(6);
-		String[] credentials;
-		try {
-			credentials = new String(new BASE64Decoder().decodeBuffer(authHeader), "UTF-8").split(":");
-		} catch (IOException e) {
-			Logger.getAnonymousLogger().fine("Could not decode authentication header " + authHeader);
-			return null;
-		}
-		if (credentials.length != 2) {
-			return null;
-		}
-		User user = USER_DAO.readByName(credentials[0]);
-		if (user == null || !passwordCorrect(user, credentials[1])) {
-			return null;
+		if (!isPasswordCorrect(user, password)) {
+			user = null;
 		}
 		return user;
 	}
 
-	public boolean isUserLoggedIn(Http.Context context) {
-		return getLoggedInUser(context) != null;
-	}
-
-	public boolean changePassword(User user, String old_password, String new_password) {
-		if (!passwordCorrect(user, old_password)) {
+	public boolean changePassword(User user, ChangePasswordForm form) {
+		if (!isPasswordCorrect(user, form.oldPassword)) {
 			return false;
 		} else {
-			user.setPasswordHash(calculatePasswordHash(user, new_password));
+			user.setPasswordHash(calculatePasswordHash(user, form.newPassword));
 			return true;
 		}
 	}
 
 	@NotNull
-	public User createUser(String name, String password) {
+	public User createUser(RegisterForm form) {
 		User user = new User();
-		user.setName(name);
-		user.initSalt();
-		user.setPasswordHash(calculatePasswordHash(user, password));
+		user.setName(form.name);
+		user.initSalt(SECURE_RANDOM);
+		user.setPasswordHash(calculatePasswordHash(user, form.password));
 		USER_DAO.persist(user);
 		return user;
 	}
 
-	public boolean passwordCorrect(User user, String password) {
+	public boolean isPasswordCorrect(User user, String password) {
 		return user != null && Arrays.equals(user.getPasswordHash(), calculatePasswordHash(user, password));
 	}
 
@@ -112,6 +66,58 @@ public class UserLogic {
 			Logger.getAnonymousLogger().severe("Could not find Hash-algorithm 'SHA'!");
 		}
 		return out;
+	}
+
+	/**
+	 * @return null if the password is valid, an error message otherwise
+	 */
+	private static String validatePassword(String password1, String password2) {
+		if (password1 == null || password2 == null) {
+			return "Missing new password";
+		} else if (!password1.equals(password2)) {
+			return "The two passwords do not match";
+		}
+		return null;
+	}
+
+	public static class LoginForm {
+		@Constraints.Required
+		public String name;
+		@Constraints.Required
+		public String password;
+	}
+
+	public static class RegisterForm extends LoginForm {
+		@Constraints.Required
+		public String passwordRepeat;
+
+		@SuppressWarnings("UnusedDeclaration") //Used by play for validation
+		public RegisterForm() {
+		}
+
+		public RegisterForm(String name, String password) {
+			this.name = name;
+			this.password = password;
+		}
+
+		@SuppressWarnings("UnusedDeclaration") //Used by play for validation
+		public String validate() {
+			return validatePassword(password, passwordRepeat);
+		}
+	}
+
+	public static class ChangePasswordForm {
+		@Constraints.Required
+		public String oldPassword;
+		@Constraints.Required
+		public String newPassword;
+		@Constraints.Required
+		public String newPasswordRepeat;
+
+		@SuppressWarnings("UnusedDeclaration") //Used by play for validation
+		public String validate() {
+			return validatePassword(newPassword, newPasswordRepeat);
+		}
 	}
 
 }

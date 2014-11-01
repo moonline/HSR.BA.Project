@@ -6,14 +6,18 @@ import play.data.validation.Constraints;
 
 public class TaskTemplateLogic {
 
-	public static final TaskTemplateDAO TASK_TEMPLATE_DAO = new TaskTemplateDAO();
+	private final TaskTemplateDAO TASK_TEMPLATE_DAO;
 
-	public TaskTemplate create(CreateTaskTemplateForm form) {
+	public TaskTemplateLogic(TaskTemplateDAO taskTemplateDao) {
+		TASK_TEMPLATE_DAO = taskTemplateDao;
+	}
+
+	public TaskTemplate create(TaskTemplateForm form) {
 		TaskTemplate taskTemplate = new TaskTemplate();
 		return update(taskTemplate, form);
 	}
 
-	public TaskTemplate update(TaskTemplate taskTemplate, CreateTaskTemplateForm form) {
+	public TaskTemplate update(TaskTemplate taskTemplate, TaskTemplateForm form) {
 		taskTemplate.setName(form.name);
 		taskTemplate.setParent(form.parent);
 		return TASK_TEMPLATE_DAO.persist(taskTemplate);
@@ -31,7 +35,7 @@ public class TaskTemplateLogic {
 		return TASK_TEMPLATE_DAO.readChildren(taskTemplate).isEmpty();
 	}
 
-	public static class CreateTaskTemplateForm {
+	public static class TaskTemplateForm {
 		@Constraints.Required
 		public String name;
 
