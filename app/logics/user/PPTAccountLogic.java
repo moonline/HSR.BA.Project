@@ -1,14 +1,14 @@
 package logics.user;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import daos.user.PPTAccountDAO;
 import models.ppt.ProjectPlanningTool;
 import models.user.PPTAccount;
 import models.user.User;
 import org.jetbrains.annotations.NotNull;
 import play.data.validation.Constraints;
-import play.libs.Json;
 import play.mvc.Http;
+
+import java.util.List;
 
 public class PPTAccountLogic {
 
@@ -37,9 +37,9 @@ public class PPTAccountLogic {
 		return update(account, form);
 	}
 
-	public JsonNode getAllForLoggedInUser(Http.Context context) {
+	public List<PPTAccount> getAllForLoggedInUser(Http.Context context) {
 		User user = USER_LOGIC.getLoggedInUser(context);
-		return Json.toJson(PPT_ACCOUNT_DAO.readByUser(user));
+		return PPT_ACCOUNT_DAO.readByUser(user);
 	}
 
 	public PPTAccount getForLoggedInUser(Http.Context context, Long id) {

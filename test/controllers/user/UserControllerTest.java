@@ -67,7 +67,7 @@ public class UserControllerTest extends AbstractControllerTest {
 		//Test
 		Result result = callActionWithUser(controllers.user.routes.ref.UserController.logout(), user);
 		//Verification
-		assertThat(status(result)).isEqualTo(OK);
+		assertThat(status(result)).isEqualTo(NO_CONTENT);
 		verifyLoggedIn(user, result, false);
 	}
 

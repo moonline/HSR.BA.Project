@@ -56,11 +56,11 @@ public class UserController extends Controller {
 	}
 
 	@QueryDescription("Does log out the currently logged in user by removing the cookie.")
-	@QueryResponses(@Response(status = OK, description = "Is always returned, and the login cookie is being removed."))
+	@QueryResponses(@Response(status = NO_CONTENT, description = "Is always returned, and the login cookie is being removed."))
 	@QueryExamples(@Example(parameters = {}))
 	public Result logout() {
 		USER_LOGIC.logoutUser(session());
-		return ok();
+		return noContent();
 	}
 
 	@QueryDescription("Returns the login status for the currently logged in user and a Json representation of it.")

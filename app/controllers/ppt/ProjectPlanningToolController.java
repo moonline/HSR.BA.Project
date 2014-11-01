@@ -59,7 +59,7 @@ public class ProjectPlanningToolController extends Controller {
 	public F.Promise<Result> sendToPPT() {
 		Form<PPTTaskLogic.CreatePPTTaskForm> form = Form.form(PPTTaskLogic.CreatePPTTaskForm.class).bindFromRequest();
 		if (form.hasErrors()) {
-			return F.Promise.promise(() -> badRequest(form.errorsAsJson()));
+			return F.Promise.pure(badRequest(form.errorsAsJson()));
 		}
 		return F.Promise.promise(() ->
 						PPT_TASK_LOGIC.createPPTTask(form.get())

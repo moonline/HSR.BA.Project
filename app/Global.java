@@ -14,6 +14,7 @@ import daos.user.PPTAccountDAO;
 import daos.user.UserDAO;
 import logics.dks.DecisionKnowledgeSystemLogic;
 import logics.docs.DocumentationLogic;
+import logics.docs.ExampleDataCreator;
 import logics.ppt.PPTTaskLogic;
 import logics.task.TaskTemplateLogic;
 import logics.user.PPTAccountLogic;
@@ -86,13 +87,13 @@ public class Global extends GlobalSettings {
 		});
 		Formatters.register(JsonNode.class, new Formatters.SimpleFormatter<JsonNode>() {
 			@Override
-			public JsonNode parse(String json, Locale l) throws ParseException {
-				return Json.parse(json);
+			public JsonNode parse(String string, Locale l) throws ParseException {
+				return Json.toJson(string);
 			}
 
 			@Override
 			public String print(JsonNode json, Locale l) {
-				return json.asText();
+				return Json.stringify(json);
 			}
 
 		});
@@ -131,7 +132,7 @@ public class Global extends GlobalSettings {
 	}
 
 	private void initializeControllersRequiringParameters() {
-		CONTROLLERS.put(DocumentationController.class, new DocumentationController(DOCUMENTATION_LOGIC, USER_LOGIC, USER_DAO, PPT_ACCOUNT_DAO));
+		CONTROLLERS.put(DocumentationController.class, new DocumentationController(DOCUMENTATION_LOGIC, new ExampleDataCreator(USER_LOGIC, USER_DAO, PPT_ACCOUNT_DAO)));
 		CONTROLLERS.put(PPTAccountController.class, new PPTAccountController(PPT_ACCOUNT_LOGIC));
 		CONTROLLERS.put(UserController.class, new UserController(USER_LOGIC));
 		CONTROLLERS.put(TaskTemplateController.class, new TaskTemplateController(TASK_TEMPLATE_LOGIC, TASK_TEMPLATE_DAO));

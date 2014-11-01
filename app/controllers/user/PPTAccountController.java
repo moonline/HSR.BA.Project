@@ -75,7 +75,7 @@ public class PPTAccountController extends Controller {
 					"]"))
 	})
 	public Result readAll() {
-		return ok(PPT_ACCOUNT_LOGIC.getAllForLoggedInUser(ctx()));
+		return ok(Json.toJson(PPT_ACCOUNT_LOGIC.getAllForLoggedInUser(ctx())));
 	}
 
 	@Transactional(readOnly = true)

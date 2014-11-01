@@ -13,6 +13,7 @@ import models.user.User;
 import org.apache.commons.lang3.NotImplementedException;
 import play.Logger;
 import play.db.jpa.JPA;
+import play.libs.F;
 
 import javax.persistence.EntityManager;
 import java.util.HashSet;
@@ -25,28 +26,33 @@ public class ExampleDataCreator {
 
 	private Set<String> cache = new HashSet<>();
 
-	public final String USER_NAME;
+	public String USER_NAME;
 
 	public final String USER_PASSWORD = "ZvGjYpyJdU";
 
-	public final Long USER_ID;
+	public Long USER_ID;
 
 	public ExampleDataCreator(UserLogic userLogic, UserDAO userDao, PPTAccountDAO pptAccountDao) {
-		int i = 0;
-		User user;
-		String username;
 		USER_DAO = userDao;
 		PPT_ACCOUNT_DAO = pptAccountDao;
-		do {
-			username = "user" + i;
-			user = USER_DAO.readByName(username);
-			if (user == null) {
-				user = userLogic.createUser(username, USER_PASSWORD);
-				JPA.em().flush();
+		JPA.withTransaction(new F.Callback0() {
+			@Override
+			public void invoke() throws Throwable {
+				int i = 0;
+				User user;
+				String username;
+				do {
+					username = "user" + i;
+					user = USER_DAO.readByName(username);
+					if (user == null) {
+						user = userLogic.createUser(username, USER_PASSWORD);
+						JPA.em().flush();
+					}
+				} while (!userLogic.passwordCorrect(user, USER_PASSWORD));
+				USER_NAME = username;
+				USER_ID = user.getId();
 			}
-		} while (!userLogic.passwordCorrect(user, USER_PASSWORD));
-		USER_NAME = username;
-		USER_ID = user.getId();
+		});
 	}
 
 	public void createObject(String reference, boolean canBeCached) {
