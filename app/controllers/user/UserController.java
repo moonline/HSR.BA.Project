@@ -9,7 +9,6 @@ import logics.docs.QueryParameters;
 import logics.docs.QueryResponses;
 import logics.user.UserLogic;
 import models.user.User;
-import play.data.DynamicForm;
 import play.data.Form;
 import play.db.jpa.Transactional;
 import play.libs.Json;
@@ -42,16 +41,15 @@ public class UserController extends Controller {
 	})
 	@QueryExamples({
 			@Example(parameters = {"demo", "demo"}, response = @Example.Response(status = OK, content = "{\"id\":1,\"name\":\"demo\"}")),
-			@Example(parameters = {"demo", "invalid password"})
+			@Example(parameters = {"demo", "invalid password"}),
+			@Example(parameters = {"demo", ""})
 	})
 	public Result login() {
-		DynamicForm requestData = Form.form().bindFromRequest();
-		String name = requestData.get("name");
-		String password = requestData.get("password");
-		if (name == null || password == null) {
-			return badRequest("Missing login data");
+		Form<UserLogic.LoginForm> form = Form.form(UserLogic.LoginForm.class).bindFromRequest();
+		if (form.hasErrors()) {
+			return badRequest(form.errorsAsJson());
 		}
-		final User user = AUTHENTICATION_CHECKER.loginUser(name, password, session());
+		final User user = AUTHENTICATION_CHECKER.loginUser(form.get(), session());
 		if (user == null) {
 			return badRequest("Username or Password wrong");
 		}
@@ -102,16 +100,11 @@ public class UserController extends Controller {
 			@Example(parameters = {"New Username 2", "1234", "another password"})
 	})
 	public Result register() {
-		DynamicForm requestData = Form.form().bindFromRequest();
-		String name = requestData.get("name");
-		String password = requestData.get("password");
-		String passwordRepeat = requestData.get("passwordRepeat");
-		if (name == null || password == null) {
-			return badRequest("Missing registration data");
-		} else if (!password.equals(passwordRepeat)) {
-			return badRequest("The two passwords do not match");
+		Form<UserLogic.RegisterForm> form = Form.form(UserLogic.RegisterForm.class).bindFromRequest();
+		if (form.hasErrors()) {
+			return badRequest(form.errorsAsJson());
 		}
-		return ok(Json.toJson(USER_LOGIC.createUser(name, password)));
+		return ok(Json.toJson(USER_LOGIC.createUser(form.get())));
 	}
 
 	@Transactional()
@@ -130,17 +123,12 @@ public class UserController extends Controller {
 			@Example(parameters = {"demo", "1234", "another password"})
 	})
 	public Result changePassword() {
-		User user = AUTHENTICATION_CHECKER.getLoggedInUser(ctx());
-		DynamicForm requestData = Form.form().bindFromRequest();
-		String oldPassword = requestData.get("oldPassword");
-		String newPassword = requestData.get("newPassword");
-		String newPasswordRepeat = requestData.get("newPasswordRepeat");
-		if (newPassword == null || newPasswordRepeat == null) {
-			return badRequest("Missing new password");
-		} else if (!newPassword.equals(newPasswordRepeat)) {
-			return badRequest("The two passwords do not match");
+		Form<UserLogic.ChangePasswordForm> form = Form.form(UserLogic.ChangePasswordForm.class).bindFromRequest();
+		if (form.hasErrors()) {
+			return badRequest(form.errorsAsJson());
 		}
-		if (USER_LOGIC.changePassword(user, oldPassword, newPassword)) {
+		User user = AUTHENTICATION_CHECKER.getLoggedInUser(ctx());
+		if (USER_LOGIC.changePassword(user, form.get())) {
 			return ok();
 		} else {
 			return badRequest("Could not change password");

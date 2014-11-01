@@ -19,7 +19,7 @@ public abstract class AbstractTestDataCreator {
 	}
 
 	public static User createUser(String name, String password) {
-		return new UserLogic(new UserDAO(), new SecureRandom()).createUser(name, password);
+		return new UserLogic(new UserDAO(), new SecureRandom()).createUser(new UserLogic.RegisterForm(name, password));
 	}
 
 	public static PPTAccount createPPTAccountWithTransaction(User user, String pptUrl, String pptUsername, String pptPassword) {

@@ -23,8 +23,8 @@ public class AuthenticationChecker {
 		USER_LOGIC = userLogic;
 	}
 
-	public User loginUser(String name, String password, Http.Session session) {
-		User user = USER_LOGIC.readUser(name, password);
+	public User loginUser(UserLogic.LoginForm loginForm, Http.Session session) {
+		User user = USER_LOGIC.readUser(loginForm.name, loginForm.password);
 		if (user != null) {
 			session.put(SESSION_USER_IDENTIFIER, user.getId() + "");
 		}

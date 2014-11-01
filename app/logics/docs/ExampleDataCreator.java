@@ -45,7 +45,7 @@ public class ExampleDataCreator {
 					username = "user" + i;
 					user = USER_DAO.readByName(username);
 					if (user == null) {
-						user = userLogic.createUser(username, USER_PASSWORD);
+						user = userLogic.createUser(new UserLogic.RegisterForm(username, USER_PASSWORD));
 						JPA.em().flush();
 					}
 				} while (!userLogic.passwordCorrect(user, USER_PASSWORD));
