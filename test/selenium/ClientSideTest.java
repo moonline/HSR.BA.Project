@@ -1,6 +1,5 @@
 package selenium;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.regex.Matcher;
@@ -11,7 +10,6 @@ import static org.fest.assertions.Assertions.assertThat;
 
 public class ClientSideTest extends AbstractSeleniumTest {
 
-	@Ignore // TODO: http://jira.eeppi.ch/browse/BA-109
 	@Test
 	public void exampleTest() {
 		//Test
