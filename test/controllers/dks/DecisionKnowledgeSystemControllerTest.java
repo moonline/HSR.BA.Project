@@ -43,7 +43,7 @@ public class DecisionKnowledgeSystemControllerTest extends AbstractControllerTes
 		when(WS.url(url)).thenReturn(wsURL);
 
 		//Test
-		Result result = callAction(controllers.dks.routes.ref.DecisionKnowledgeSystemController.getFromDKS(url));
+		Result result = callActionWithUser(controllers.dks.routes.ref.DecisionKnowledgeSystemController.getFromDKS(url));
 
 		//Verification
 		assertThat(status(result)).isEqualTo(resultStatus);
@@ -56,7 +56,7 @@ public class DecisionKnowledgeSystemControllerTest extends AbstractControllerTes
 	@Test
 	public void testGetFromDKSWithNotRespondingTarget() throws Throwable {
 		//Test
-		Result result = callAction(controllers.dks.routes.ref.DecisionKnowledgeSystemController.getFromDKS("http://localhost:9876/myPath"));
+		Result result = callActionWithUser(controllers.dks.routes.ref.DecisionKnowledgeSystemController.getFromDKS("http://localhost:9876/myPath"));
 		//Verification
 		assertThat(status(result)).isEqualTo(BAD_REQUEST);
 	}

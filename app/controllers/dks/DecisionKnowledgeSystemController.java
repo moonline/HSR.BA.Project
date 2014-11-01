@@ -1,10 +1,12 @@
 package controllers.dks;
 
+import controllers.GuaranteeAuthenticatedUser;
 import logics.docs.QueryDescription;
 import logics.docs.QueryExamples;
 import logics.docs.QueryParameters;
 import logics.docs.QueryResponses;
 import logics.dks.DecisionKnowledgeSystemLogic;
+import play.db.jpa.Transactional;
 import play.libs.F;
 import play.mvc.Controller;
 import play.mvc.Result;
@@ -21,6 +23,8 @@ public class DecisionKnowledgeSystemController extends Controller {
 		DKS_LOGIC = dksLogic;
 	}
 
+	@Transactional
+	@GuaranteeAuthenticatedUser
 	@QueryParameters({
 			@Parameter(name = "url", isId = true, description = "The full URL of the remote server to GET from.")
 	})
