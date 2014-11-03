@@ -8,9 +8,8 @@ module app.domain.repository.dks {
 		constructor(httpService) {
 			super(httpService);
 			this.type = app.domain.model.dks.Decision;
-			this.resources = {
-				'all': configuration.paths.decision.list
-			};
+			this.resources = configuration.paths.decision;
+
 			this.filter = function(element) { return element.type === "ProblemOccurrence"; };
 			this.dataList = 'elements';
 			this.proxy = configuration.paths.dks.remoteProxy;

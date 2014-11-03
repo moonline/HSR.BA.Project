@@ -4,32 +4,31 @@ module configuration {
 			remoteProxy: '/dks/getFromDKS?url={target}'
 		},
 		problem: {
-			//list: '/public/temporaryDevelopmentData/dks/element.json'
-			list: '/element'
+			list: { method: 'GET', url: '/element' }
 		},
 		decision: {
-			list: '/element'
+			list: { method: 'GET', url: '/element' }
 		},
 		decisionKnowledgeSystem: {
-			list: '/public/temporaryDevelopmentData/dks/decisionKnowledgeSystem.json'
+			list: { method: 'GET', url: '/public/temporaryDevelopmentData/dks/decisionKnowledgeSystem.json' }
 		},
 		mapping: {
-			list: '/public/temporaryDevelopmentData/eeppi/mapping/list.json'
+			list: { method: 'GET', url: '/public/temporaryDevelopmentData/eeppi/mapping/list.json' }
 		},
 		taskTemplate: {
-			list: '/taskTemplate',
-			detail: '/taskTemplate/{id}',
-			create: '/taskTemplate'
+			list: { method: 'GET', url: '/taskTemplate' },
+			detail: { method: 'GET', url: '/taskTemplate/{id}' },
+			create: { method: 'POST', url: '/taskTemplate' }
 		},
 		taskProperty: {
-			list: '/public/temporaryDevelopmentData/eeppi/taskProperty.json'
+			list: { method: 'GET', url: '/public/temporaryDevelopmentData/eeppi/taskProperty.json' }
 		},
 		user: {
-			'login':'/user/login',
-			'logout':'/user/logout',
-			'status': '/user/loginStatus',
-			'register': '/user/register',
-			'changePassword': '/user/changePassword'
+			login: { method: 'POST', url: '/user/login' },
+			logout: { method: 'POST', url: '/user/logout' },
+			status: { method: 'GET', url: '/user/loginStatus' },
+			register: { method: 'POST', url: '/user/register' },
+			changePassword: { method: 'POST', url: '/user/changePassword' }
 		}
 	}
 }

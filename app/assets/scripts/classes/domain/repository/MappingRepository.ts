@@ -8,9 +8,7 @@ module app.domain.repository.core {
 		constructor(httpService) {
 			super(httpService);
 			this.type = app.domain.model.core.Mapping;
-			this.resources = {
-				'all': configuration.paths.mapping.list
-			};
+			this.resources = configuration.paths.mapping;
 		}
 	}
 }

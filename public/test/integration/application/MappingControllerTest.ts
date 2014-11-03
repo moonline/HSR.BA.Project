@@ -29,20 +29,20 @@ module test.integration.application {
 					decisionKnowledgeRepository: new app.domain.repository.dks.DecisionKnowledgeSystemRepository($http),
 					problemRepository: new app.domain.repository.dks.ProblemRepository($http)
 				};
-				persistenceService.decisionKnowledgeRepository.resources['all'] = '/dks/decisionKnowledgeSystem';
-				persistenceService.taskTemplateRepository.resources['all'] = '/taskTemplate';
-				persistenceService.taskPropertyRepository.resources['all'] = '/taskProperty';
-				persistenceService.mappingRepository.resources['all'] = '/mapping';
+				persistenceService.decisionKnowledgeRepository.resources['list']['url'] = '/dks/decisionKnowledgeSystem';
+				persistenceService.taskTemplateRepository.resources['list']['url'] = '/taskTemplate';
+				persistenceService.taskPropertyRepository.resources['list']['url'] = '/taskProperty';
+				persistenceService.mappingRepository.resources['list']['url'] = '/mapping';
 			}));
 
 			it("load problems and decisions from remote dks using dks sources", function() {
 				// for this test taskTemplates and taskProperties are not relevant, so it works with an empty result
-				httpBackend.when("GET", '/taskTemplate').respond({});
-				httpBackend.when("GET", '/taskProperty').respond({});
-				httpBackend.when("GET", '/mapping').respond({});
+				httpBackend.expectGET('/taskTemplate').respond({});
+				httpBackend.expectGET('/taskProperty').respond({});
+				httpBackend.when('GET','/mapping').respond({});
 
 
-				httpBackend.when("GET", '/dks/decisionKnowledgeSystem').respond({
+				httpBackend.when('GET','/dks/decisionKnowledgeSystem').respond({
 					"items": [
 						{
 							"id": 1,
@@ -50,7 +50,7 @@ module test.integration.application {
 						}
 					]
 				});
-				httpBackend.when("GET", '/dks/getFromDKS?url='+encodeURIComponent('http://localhost:9940/element')).respond({
+				httpBackend.when('GET','/dks/getFromDKS?url='+encodeURIComponent('http://localhost:9940/element')).respond({
 					"startAt": 0, "maxResults": 2147483647, "length": 9, "elements": [
 					{
 						"type": "OptionTemplate",

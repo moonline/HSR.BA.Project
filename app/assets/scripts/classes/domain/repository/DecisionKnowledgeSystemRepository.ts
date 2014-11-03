@@ -9,9 +9,7 @@ module app.domain.repository.dks {
 		constructor(httpService) {
 			super(httpService);
 			this.type = app.domain.model.dks.DecisionKnowledgeSystem;
-			this.resources = {
-				'all': configuration.paths.decisionKnowledgeSystem.list
-			};
+			this.resources = configuration.paths.decisionKnowledgeSystem;
 		}
 	}
 }

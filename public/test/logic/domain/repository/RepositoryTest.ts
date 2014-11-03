@@ -11,8 +11,8 @@ module test {
 				super(httpService);
 				this.type = test.helper.Dummy;
 				this.resources = {
-					'all': '/data/api/dummy/list.json',
-					'create': '/data/api/dummy/create'
+					list: { method: 'GET', url: '/dummy' },
+					create: { method: 'POST', url: '/dummy' }
 				};
 			}
 		}
@@ -24,7 +24,7 @@ module test.logic.domain.repository {
 		describe("Repository class suite", function() {
 
 			it("get Dummies using repository.findAll()",angular.mock.inject(function($httpBackend, $http) {
-				$httpBackend.when("GET", '/data/api/dummy/list.json').respond({
+				$httpBackend.expectGET('/dummy').respond({
 					"items": [
 						{ "id": 1, "name": "DummyObject1" },
 						{ "id": 2, "name": "DummyObject2" }
@@ -41,7 +41,7 @@ module test.logic.domain.repository {
 			}));
 
 			it("get Dummies using repository.findAll() with local caching",angular.mock.inject(function($httpBackend, $http) {
-				$httpBackend.expectGET('/data/api/dummy/list.json').respond({
+				$httpBackend.expectGET('/dummy').respond({
 					"items": [
 						{ "id": 1, "name": "DummyObject1" },
 						{ "id": 2, "name": "DummyObject2" }
@@ -67,7 +67,7 @@ module test.logic.domain.repository {
 
 
 				$httpBackend.resetExpectations();
-				$httpBackend.expectGET('/data/api/dummy/list.json').respond({
+				$httpBackend.expectGET('/dummy').respond({
 					"items": [
 						{ "id": 4564565, "name": "Dummy of Donald Duck" },
 						{ "id": 8875346, "name": "Dummy of Dagobert Duck" },
@@ -91,7 +91,7 @@ module test.logic.domain.repository {
 
 			it("get Dummy using repository.findOneBy()",angular.mock.inject(function($httpBackend, $http) {
 				// Crappy passThrough() not working :-(
-				$httpBackend.when("GET", '/data/api/dummy/list.json').respond({
+				$httpBackend.expectGET('/dummy').respond({
 					"items": [
 						{
 							"id": 1,
@@ -117,7 +117,7 @@ module test.logic.domain.repository {
 
 			it("using alternative items property name for data",angular.mock.inject(function($httpBackend, $http) {
 				// Crappy passThrough() not working :-(
-				$httpBackend.when("GET", '/data/api/dummy/list.json').respond({
+				$httpBackend.expectGET('/dummy').respond({
 					"dummies": [
 						{
 							"id": 1,
@@ -144,7 +144,7 @@ module test.logic.domain.repository {
 
 			it("filter loaded data",angular.mock.inject(function($httpBackend, $http) {
 				// Crappy passThrough() not working :-(
-				$httpBackend.when("GET", '/data/api/dummy/list.json').respond({
+				$httpBackend.expectGET('/dummy').respond({
 					"items": [
 						{
 							"id": 1,
@@ -171,7 +171,7 @@ module test.logic.domain.repository {
 
 			it("remote host call",angular.mock.inject(function($httpBackend, $http) {
 				// Crappy passThrough() not working :-(
-				$httpBackend.when("GET", 'http://www.eeppi.ch/data/api/dummy/list.json').respond({
+				$httpBackend.expectGET('http://www.eeppi.ch/dummy').respond({
 					"items": [
 						{
 							"id": 1,
@@ -198,8 +198,8 @@ module test.logic.domain.repository {
 
 			it("remote host call unsing local proxy",angular.mock.inject(function($httpBackend, $http) {
 				// Crappy passThrough() not working :-(
-				var url = '/dks/getFromDKS?url='+encodeURIComponent('http://www.eeppi.ch/data/api/dummy/list.json');
-				$httpBackend.when("GET", url).respond({
+				var url = '/dks/getFromDKS?url='+encodeURIComponent('http://www.eeppi.ch/dummy');
+				$httpBackend.expectGET(url).respond({
 					"items": [
 						{
 							"id": 1,
@@ -226,7 +226,7 @@ module test.logic.domain.repository {
 			}));
 
 			it("Add a dummy",angular.mock.inject(function($httpBackend, $http) {
-				$httpBackend.expectPOST('/data/api/dummy/create').respond({
+				$httpBackend.expectPOST('/dummy').respond({
 					"id":50, "name":"Dummy of Daisy Duck"
 				});
 				var repository: test.helper.DummyRepository = new test.helper.DummyRepository($http);

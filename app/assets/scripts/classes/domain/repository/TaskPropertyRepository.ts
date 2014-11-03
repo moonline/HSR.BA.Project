@@ -8,9 +8,7 @@ module app.domain.repository.core {
 		constructor(httpService) {
 			super(httpService);
 			this.type = app.domain.model.core.TaskProperty;
-			this.resources = {
-				'all': configuration.paths.taskProperty.list
-			};
+			this.resources = configuration.paths.taskProperty;
 		}
 	}
 }

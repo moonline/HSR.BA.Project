@@ -14,7 +14,7 @@ module app.domain.repository.core {
 		public filter: (element: any) => boolean = function(element) { return true; };
 
 		httpService;
-		resources: { [index: string]: string } = {};
+		resources: any; // TODO// { [index: string]: any } = {};
 
 		constructor(httpService) {
 			this.httpService = httpService;
@@ -23,24 +23,25 @@ module app.domain.repository.core {
 
 		private getResourcePath(resource: string) {
 			if(this.proxy != null && this.proxy.indexOf("{target}") > -1) {
-				return this.proxy.replace("{target}", encodeURIComponent(this.host+this.resources[resource]));
+				return this.proxy.replace("{target}", encodeURIComponent(this.host+this.resources[resource]['url']));
 			} else {
-				return this.host+this.resources[resource];
+				return this.host+this.resources[resource]['url'];
 			}
 		}
 
 		public findAll(callback: (items: T[]) => void, doCache = false): void {
 			var cache: T[] = this.itemCache;
-			var filterFunction = this.filter;
-			var type = this.type;
-			var dataListName: string = this.dataList;
 
 			if(doCache) {
 				callback(cache);
 			} else {
-				var method: string = 'get';
+				var filterFunction = this.filter;
+				var type = this.type;
+				var dataListName: string = this.dataList;
+				var method: string = this.resources['list']['method'].toLowerCase();
+				var url: string = this.getResourcePath('list');
 
-				this.httpService[method](this.getResourcePath('all')).success(function(data){
+				this.httpService[method](url).success(function(data){
 					var items: T[] = [];
 					if(data && data[dataListName]) {
 						data[dataListName].forEach(function(element){
@@ -68,14 +69,15 @@ module app.domain.repository.core {
 		 * the callback returns 'true, theObject' on success otherwise 'false, null'
 		 */
 		public add(item: T, callback: (success: boolean, item: T) => void): void {
-			var method: string = 'post';
+			var method: string = this.resources['create']['method'].toLowerCase();
+			var url: string = this.getResourcePath('create');
 			var type = this.type;
 			var cache = this.itemCache;
 
 			if(!this.resources['create']) {
 				throw new Error("Please configure a 'create' resource for the" +this.type.name+" repository.");
 			} else {
-				this.httpService[method](this.getResourcePath('create'), JSON.stringify(item))
+				this.httpService[method](url, JSON.stringify(item))
 					.success(function(data, status, headers, config) {
 						var newObject: T = app.domain.factory.ObjectFactory.createFromJson(type, data);
 						cache.push(newObject);
@@ -92,9 +94,9 @@ module app.domain.repository.core {
 		 * but update cache because user would like to get to get the newest data.
 		 */
 		public findOneById(id: number, callback: (item: T) => void, doCache:boolean = false): void {
+			var method: string = this.resources['detail']['method'].toLowerCase();
 			var path:string = this.getResourcePath('one').replace('{id}', id.toString());
 			var type = this.type;
-			var method: string = 'get';
 			var cache = this.itemCache;
 
 			if(!this.resources['one']) {

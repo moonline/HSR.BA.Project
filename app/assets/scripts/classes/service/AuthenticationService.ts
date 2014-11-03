@@ -6,7 +6,7 @@
 
 module app.service {
 	export class AuthenticationService {
-		private resources: { [index: string]: string } = {};
+		private resources: any; //TODO { [index: string]: any } = {};
 		private httpService;
 		private isUserLoggedIn: boolean = false;
 		private loggedInUser: app.domain.model.core.User = null;
@@ -15,13 +15,8 @@ module app.service {
 		constructor(httpService, $q) {
 			this.ready = $q.defer();
 			this.httpService = httpService;
-			this.resources = {
-				'login': configuration.paths.user.login,
-				'logout': configuration.paths.user.logout,
-				'status': configuration.paths.user.status,
-				'register': configuration.paths.user.register,
-				'changePassword': configuration.paths.user.changePassword
-			};
+			this.resources = configuration.paths.user;
+
 			this.loginStatus(function(user:app.domain.model.core.User) {
 				if(user != null) {
 					this.ready.resolve(this.loggedInUser);
@@ -32,8 +27,11 @@ module app.service {
 		}
 
 		public login(username: string, password: string, callback: (success: boolean, item: app.domain.model.core.User) => void = (s,i) => {}): void {
-			this.httpService.post(
-				this.resources['login'],
+			var method: string = this.resources['login']['method'].toLowerCase();
+			var url: string = this.resources['login']['url'];
+
+			this.httpService[method](
+				url,
 				{ "name": username, "password": password }
 			).success(function(data, status, headers, config) {
 				var user: app.domain.model.core.User = app.domain.factory.ObjectFactory.createFromJson(app.domain.model.core.User,data);
@@ -46,20 +44,25 @@ module app.service {
 		}
 
 		public logout(callback: (success: boolean) => void = (s) => {}) {
-			this.httpService.post(
-				this.resources['logout'], {}
-			).success(function(data, status, headers, config){
-				this.loggedInUser = null;
-				this.isUserLoggedIn = false;
-				callback(true);
-			}.bind(this)).error(function(data, status, headers, config) {
-				callback(false);
-			}.bind(this));
+			var method: string = this.resources['logout']['method'].toLowerCase();
+			var url: string = this.resources['logout']['url'];
+
+			this.httpService[method](url, {})
+				.success(function(data, status, headers, config){
+					this.loggedInUser = null;
+					this.isUserLoggedIn = false;
+					callback(true);
+				}.bind(this)).error(function(data, status, headers, config) {
+					callback(false);
+				}.bind(this));
 		}
 
 		public register(username: string, password: string, passwordRepeat: string, callback: (success: boolean, item: app.domain.model.core.User) => void = (s,i) => {}): void {
-			this.httpService.post(
-				this.resources['register'],
+			var method: string = this.resources['register']['method'].toLowerCase();
+			var url: string = this.resources['register']['url'];
+
+			this.httpService[method](
+				url,
 				{ "name": username, "password": password, "passwordRepeat": passwordRepeat }
 			).success(function(data, status, headers, config) {
 					callback(true, app.domain.factory.ObjectFactory.createFromJson(app.domain.model.core.User,data));
@@ -69,7 +72,10 @@ module app.service {
 		}
 
 		public loginStatus(callback: (item: app.domain.model.core.User) => void = (i) => {}): void {
-			this.httpService.get(this.resources['status']).success(function(data) {
+			var method: string = this.resources['status']['method'].toLowerCase();
+			var url: string = this.resources['status']['url'];
+
+			this.httpService[method](url).success(function(data) {
 				if(data != null && data != {} && app.domain.model.core.User.isCompatibleObject(data)) {
 					var user: app.domain.model.core.User = app.domain.factory.ObjectFactory.createFromJson(app.domain.model.core.User,data);
 					this.loggedInUser = user;
@@ -82,8 +88,11 @@ module app.service {
 		}
 
 		public changePassword(oldPassword: string, newPassword: string, newPasswordRepeat: string, callback: (success: boolean) => void = (s) => {}) {
-			this.httpService.post(
-				this.resources['changePassword'],
+			var method: string = this.resources['changePassword']['method'].toLowerCase();
+			var url: string = this.resources['changePassword']['url'];
+
+			this.httpService[method](
+				url,
 				{ "oldPassword": oldPassword, "newPassword": newPassword, "newPasswordRepeat": newPasswordRepeat }
 			).success(function(data, status, headers, config){
 					callback(true);

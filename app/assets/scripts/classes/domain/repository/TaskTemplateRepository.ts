@@ -8,11 +8,7 @@ module app.domain.repository.core {
 		constructor(httpService) {
 			super(httpService);
 			this.type = app.domain.model.core.TaskTemplate;
-			this.resources = {
-				'all': configuration.paths.taskTemplate.list,
-				'one': configuration.paths.taskTemplate.detail,
-				'create': configuration.paths.taskTemplate.create
-			};
+			this.resources = configuration.paths.taskTemplate;
 		}
     }
 }
