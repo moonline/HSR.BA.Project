@@ -13,6 +13,19 @@
     A response with status code 401 (Unauthorized) is returned, when authentication information are required but are not provided.
 </p>
 
+<h2>Parameters</h2>
+<p>
+    All method parameters can be passed in two ways:
+    <ul>
+        <li>Normal POST-data (this is also used in this documentation):
+            <pre class="prettyprint"><code class="language-bash">curl --request POST --data "theKey=theValue&theKey2=theValue2" http://localhost:9000/...</code></pre>
+        </li>
+        <li>As a JSON-object as binary data:
+            <pre class="prettyprint"><code class="language-bash">curl -H 'Content-Type: application/json;charset=UTF-8' --data-binary '{"theKey":"theValue","theKey2":"theValue2"}' http://localhost:9000/...</code></pre>
+        </li>
+    </ul>
+</p>
+
 <h2>Index</h2>
 @for((aClass,methods) <- classesAndMethods) {
     <h3>@logic.getHumanFriendlyClassName(aClass)</h3>
