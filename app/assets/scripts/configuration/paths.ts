@@ -27,7 +27,7 @@ module configuration {
 		user: {
 			'login':'/user/login',
 			'logout':'/user/logout',
-			'status': '/user/login-status',
+			'status': '/user/loginStatus',
 			'register': '/user/register',
 			'changePassword': '/user/changePassword'
 		}

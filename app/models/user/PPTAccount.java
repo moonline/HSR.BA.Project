@@ -60,15 +60,15 @@ public class PPTAccount {
 		return pptUsername;
 	}
 
-	public void setPptUsername(String ppt_username) {
-		this.pptUsername = ppt_username;
+	public void setPptUsername(String pptUsername) {
+		this.pptUsername = pptUsername;
 	}
 
 	public String getPptPassword() {
 		return pptPassword;
 	}
 
-	public void setPptPassword(String ppt_password) {
-		this.pptPassword = ppt_password;
+	public void setPptPassword(String pptPassword) {
+		this.pptPassword = pptPassword;
 	}
 }

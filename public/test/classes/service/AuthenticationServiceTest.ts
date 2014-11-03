@@ -24,7 +24,7 @@ module test.service {
 
 			describe("Status", function() {
 				it("Not logged in", function() {
-					httpBackend.when("GET", '/user/login-status').respond({});
+					httpBackend.when("GET", '/user/loginStatus').respond({});
 					var authentivationService: app.service.AuthenticationService = new app.service.AuthenticationService(http, q);
 
 					expect(authentivationService.isLoggedIn).toEqual(false);
@@ -50,7 +50,7 @@ module test.service {
 						return user;
 					})();
 
-					httpBackend.when("GET", '/user/login-status').respond({});
+					httpBackend.when("GET", '/user/loginStatus').respond({});
 					httpBackend.when("POST", '/user/login').respond(testUserData);
 					httpBackend.when("POST", '/user/logout').respond(200);
 
@@ -81,7 +81,7 @@ module test.service {
 						return user;
 					})();
 
-					httpBackend.when("GET", '/user/login-status').respond({});
+					httpBackend.when("GET", '/user/loginStatus').respond({});
 					httpBackend.when("POST", '/user/login').respond(testUserData);
 					httpBackend.when("POST", '/user/logout').respond(403);
 
@@ -107,7 +107,7 @@ module test.service {
 				it("Failed login", function() {
 					var testUserData: any = { "id": 5, "name": "peter" };
 
-					httpBackend.when("GET", '/user/login-status').respond({});
+					httpBackend.when("GET", '/user/loginStatus').respond({});
 					httpBackend.when("POST", '/user/login').respond(403);
 
 					var returnValue = {};
@@ -133,7 +133,7 @@ module test.service {
 						return user;
 					})();
 
-					httpBackend.when("GET", '/user/login-status').respond({});
+					httpBackend.when("GET", '/user/loginStatus').respond({});
 					httpBackend.when("POST", '/user/register').respond(testUserData);
 
 					var returnValue = {};
@@ -146,7 +146,7 @@ module test.service {
 				});
 
 				it("Malformed data returned", function() {
-					httpBackend.when("GET", '/user/login-status').respond({});
+					httpBackend.when("GET", '/user/loginStatus').respond({});
 					httpBackend.when("POST", '/user/register').respond({});
 
 					var returnValue = {};
@@ -159,7 +159,7 @@ module test.service {
 				});
 
 				it("Failed registration", function() {
-					httpBackend.when("GET", '/user/login-status').respond({});
+					httpBackend.when("GET", '/user/loginStatus').respond({});
 					httpBackend.when("POST", '/user/register').respond(403);
 
 					var returnValue = {};
@@ -174,7 +174,7 @@ module test.service {
 
 			describe("Password change", function() {
 				it("Successful password change", function() {
-					httpBackend.when("GET", '/user/login-status').respond({});
+					httpBackend.when("GET", '/user/loginStatus').respond({});
 					httpBackend.when("POST", '/user/changePassword').respond({});
 
 					var returnValue = {};
@@ -187,7 +187,7 @@ module test.service {
 				});
 
 				it("Failed password change", function() {
-					httpBackend.when("GET", '/user/login-status').respond({});
+					httpBackend.when("GET", '/user/loginStatus').respond({});
 					httpBackend.when("POST", '/user/changePassword').respond(403);
 
 					var returnValue = {};

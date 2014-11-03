@@ -1,10 +1,12 @@
 package controllers.dks;
 
+import controllers.GuaranteeAuthenticatedUser;
 import logics.docs.QueryDescription;
 import logics.docs.QueryExamples;
 import logics.docs.QueryParameters;
 import logics.docs.QueryResponses;
 import logics.dks.DecisionKnowledgeSystemLogic;
+import play.db.jpa.Transactional;
 import play.libs.F;
 import play.mvc.Controller;
 import play.mvc.Result;
@@ -15,8 +17,14 @@ import static logics.docs.QueryResponses.Response;
 
 public class DecisionKnowledgeSystemController extends Controller {
 
-	public static final DecisionKnowledgeSystemLogic DKS_LOGIC = new DecisionKnowledgeSystemLogic();
+	private final DecisionKnowledgeSystemLogic DKS_LOGIC;
 
+	public DecisionKnowledgeSystemController(DecisionKnowledgeSystemLogic dksLogic) {
+		DKS_LOGIC = dksLogic;
+	}
+
+	@Transactional
+	@GuaranteeAuthenticatedUser
 	@QueryParameters({
 			@Parameter(name = "url", isId = true, description = "The full URL of the remote server to GET from.")
 	})
@@ -29,7 +37,7 @@ public class DecisionKnowledgeSystemController extends Controller {
 			@Example(id = "http://headers.jsontest.com/", parameters = {}),
 			@Example(id = "hatetepe?__no-valid-url", parameters = {})
 	})
-	public static F.Promise<Result> getFromDKS(String url) {
+	public F.Promise<Result> getFromDKS(String url) {
 		//noinspection RedundantCast
 		return F.Promise.promise(() ->
 						DKS_LOGIC.getFromDKS(url)

@@ -19,7 +19,11 @@ import static logics.docs.QueryResponses.Response;
 
 public class ProjectPlanningToolController extends Controller {
 
-	public static final PPTTaskLogic PPT_TASK_LOGIC = new PPTTaskLogic();
+	private final PPTTaskLogic PPT_TASK_LOGIC;
+
+	public ProjectPlanningToolController(PPTTaskLogic pptTaskLogic) {
+		PPT_TASK_LOGIC = pptTaskLogic;
+	}
 
 	@Transactional(readOnly = true)
 	@GuaranteeAuthenticatedUser()
@@ -52,10 +56,10 @@ public class ProjectPlanningToolController extends Controller {
 			"}")),
 			@Example(parameters = {"not a number", "not a path", "no Json"})
 	})
-	public static F.Promise<Result> sendToPPT() {
+	public F.Promise<Result> sendToPPT() {
 		Form<PPTTaskLogic.CreatePPTTaskForm> form = Form.form(PPTTaskLogic.CreatePPTTaskForm.class).bindFromRequest();
 		if (form.hasErrors()) {
-			return F.Promise.promise(() -> badRequest(form.errorsAsJson()));
+			return F.Promise.pure(badRequest(form.errorsAsJson()));
 		}
 		return F.Promise.promise(() ->
 						PPT_TASK_LOGIC.createPPTTask(form.get())

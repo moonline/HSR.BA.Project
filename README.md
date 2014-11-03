@@ -9,7 +9,7 @@ The description for the API is generated at runtime and can then be found under 
 Requirements for development
 ----------------------------
 
-* JDK Version 1.8.0_25 or later
+* JDK Version 1.8.0_25
 * Typescript compiler
   1. Install [Node.js](http://nodejs.org/)
   	* Linux: `sudo apt-get install nodejs`
@@ -18,6 +18,7 @@ Requirements for development
   	* Linux/Mac OS X:  `sudo npm install -g typescript`
 * Firefox to run client tests
   1. Install [Firefox](https://www.mozilla.org/)
+* [Play Framework](https://www.playframework.com/documentation/2.3.6/Installing) 2.3.6
 * This project
 
 

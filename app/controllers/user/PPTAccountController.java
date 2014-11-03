@@ -1,6 +1,8 @@
 package controllers.user;
 
+import controllers.AuthenticationChecker;
 import controllers.GuaranteeAuthenticatedUser;
+import daos.user.PPTAccountDAO;
 import logics.docs.QueryDescription;
 import logics.docs.QueryExamples;
 import logics.docs.QueryParameters;
@@ -19,7 +21,15 @@ import static logics.docs.QueryResponses.Response;
 
 public class PPTAccountController extends Controller {
 
-	public static final PPTAccountLogic PPT_ACCOUNT_LOGIC = new PPTAccountLogic();
+	private final PPTAccountDAO PPT_ACCOUNT_DAO;
+	private final PPTAccountLogic PPT_ACCOUNT_LOGIC;
+	private final AuthenticationChecker AUTHENTICATION_CHECKER;
+
+	public PPTAccountController(PPTAccountDAO pptAccountDao, PPTAccountLogic pptAccountLogic, AuthenticationChecker authenticationChecker) {
+		PPT_ACCOUNT_DAO = pptAccountDao;
+		PPT_ACCOUNT_LOGIC = pptAccountLogic;
+		AUTHENTICATION_CHECKER = authenticationChecker;
+	}
 
 	@Transactional()
 	@GuaranteeAuthenticatedUser
@@ -38,12 +48,12 @@ public class PPTAccountController extends Controller {
 			@Example(parameters = {"9999", "no url", "name", "1234"}),
 			@Example(parameters = {"REFERENCE_PPT_5", "http.jira.example.com", "admin", "12345678"})
 	})
-	public static Result create() {
+	public Result create() {
 		Form<PPTAccountLogic.CreatePPTAccountForm> form = Form.form(PPTAccountLogic.CreatePPTAccountForm.class).bindFromRequest();
 		if (form.hasErrors()) {
 			return badRequest(form.errorsAsJson());
 		}
-		return ok(Json.toJson(PPT_ACCOUNT_LOGIC.createPPTAccount(ctx(), form.get())));
+		return ok(Json.toJson(PPT_ACCOUNT_LOGIC.create(form.get(), AUTHENTICATION_CHECKER.getLoggedInUser(ctx()))));
 	}
 
 	@Transactional(readOnly = true)
@@ -57,7 +67,7 @@ public class PPTAccountController extends Controller {
 			@Example(parameters = {}, description = "now with stored login information for the user", response = @Example.Response(status = OK, content = "[ { \"id\" : 103,\n" +
 					"    \"ppt\" : null,\n" +
 					"    \"pptUrl\" : \"http://example1.com\",\n" +
-					"    \"ppt_username\" : \"admin\",\n" +
+					"    \"pptUsername\" : \"admin\",\n" +
 					"    \"user\" : { \"id\" : 104,\n" +
 					"        \"name\" : \"User 9\"\n" +
 					"      }\n" +
@@ -65,19 +75,19 @@ public class PPTAccountController extends Controller {
 					"  { \"id\" : 104,\n" +
 					"    \"ppt\" : null,\n" +
 					"    \"pptUrl\" : \"http://example2.com\",\n" +
-					"    \"ppt_username\" : \"admin\",\n" +
+					"    \"pptUsername\" : \"admin\",\n" +
 					"    \"user\" : 104\n" +
 					"  }\n" +
 					"]"))
 	})
-	public static Result readAll() {
-		return ok(PPT_ACCOUNT_LOGIC.getAllForLoggedInUser(ctx()));
+	public Result readAll() {
+		return ok(Json.toJson(PPT_ACCOUNT_DAO.readByUser(AUTHENTICATION_CHECKER.getLoggedInUser(ctx()))));
 	}
 
 	@Transactional(readOnly = true)
 	@GuaranteeAuthenticatedUser
 	@QueryParameters({
-			@Parameter(name = "id", isId = true, description = "The id of the login information")
+			@Parameter(name = "id", isId = true, format = Long.class, description = "The id of the login information")
 	})
 	@QueryDescription("Returns one login information (but the password) for the currently logged in user for Project Planning Tools.")
 	@QueryResponses({
@@ -88,8 +98,8 @@ public class PPTAccountController extends Controller {
 			@Example(id = "9999", parameters = {}),
 			@Example(id = "REFERENCE_PPTACCOUNT_3", parameters = {})
 	})
-	public static Result readOne(long id) {
-		PPTAccount pptAccount = PPT_ACCOUNT_LOGIC.getForLoggedInUser(ctx(), id);
+	public Result readOne(long id) {
+		PPTAccount pptAccount = PPT_ACCOUNT_LOGIC.read(AUTHENTICATION_CHECKER.getLoggedInUser(ctx()), id);
 		if (pptAccount == null) {
 			return notFound("The account " + id + " could not be found for the logged in user.");
 		}
@@ -99,7 +109,7 @@ public class PPTAccountController extends Controller {
 	@Transactional()
 	@GuaranteeAuthenticatedUser
 	@QueryParameters({
-			@Parameter(name = "id", isId = true, description = "The id of the login information to update"),
+			@Parameter(name = "id", isId = true, format = Long.class, description = "The id of the login information to update"),
 			@Parameter(name = "ppt", description = "a reference (ID) to the Project Planning Tool"),
 			@Parameter(name = "url", description = "the URL to the Project Planning Tool"),
 			@Parameter(name = "pptUsername", description = "the username for the user for the Project Planning Tool"),
@@ -116,8 +126,8 @@ public class PPTAccountController extends Controller {
 			@Example(id = "REFERENCE_PPTACCOUNT_3", parameters = {"9999", "no url", "ozander", "pMuE2ekiDa"}),
 			@Example(id = "REFERENCE_PPTACCOUNT_3", parameters = {"1", "http://jira.example.com", "tbucher", "7YqupNxN9v"})
 	})
-	public static Result update(long id) {
-		PPTAccount pptAccount = PPT_ACCOUNT_LOGIC.getForLoggedInUser(ctx(), id);
+	public Result update(long id) {
+		PPTAccount pptAccount = PPT_ACCOUNT_LOGIC.read(AUTHENTICATION_CHECKER.getLoggedInUser(ctx()), id);
 		if (pptAccount == null) {
 			return notFound("The account " + id + " could not be found for the logged in user.");
 		}
@@ -132,7 +142,7 @@ public class PPTAccountController extends Controller {
 	@Transactional()
 	@GuaranteeAuthenticatedUser
 	@QueryParameters({
-			@Parameter(name = "id", isId = true, description = "The id of the login information to update")
+			@Parameter(name = "id", isId = true, format = Long.class, description = "The id of the login information to update")
 	})
 	@QueryDescription("Deletes login information for a Project Planning Tool on the server.")
 	@QueryResponses({
@@ -143,8 +153,8 @@ public class PPTAccountController extends Controller {
 			@Example(id = "9999", parameters = {}),
 			@Example(id = "REFERENCE_PPTACCOUNT_7", isDataCacheable = false, parameters = {})
 	})
-	public static Result delete(long id) {
-		PPTAccount pptAccount = PPT_ACCOUNT_LOGIC.getForLoggedInUser(ctx(), id);
+	public Result delete(long id) {
+		PPTAccount pptAccount = PPT_ACCOUNT_LOGIC.read(AUTHENTICATION_CHECKER.getLoggedInUser(ctx()), id);
 		if (pptAccount == null) {
 			return notFound("The account " + id + " could not be found for the logged in user.");
 		}

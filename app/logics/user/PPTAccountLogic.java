@@ -1,23 +1,23 @@
 package logics.user;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import daos.user.PPTAccountDAO;
 import models.ppt.ProjectPlanningTool;
 import models.user.PPTAccount;
 import models.user.User;
 import org.jetbrains.annotations.NotNull;
 import play.data.validation.Constraints;
-import play.libs.Json;
-import play.mvc.Http;
 
 public class PPTAccountLogic {
 
-	public static final PPTAccountDAO PPT_ACCOUNT_DAO = new PPTAccountDAO();
-	public static final UserLogic USER_LOGIC = new UserLogic();
+	private final PPTAccountDAO PPT_ACCOUNT_DAO;
 
-	public PPTAccount getAuthentication(User user, String authentication_id) {
-		if (user != null && authentication_id.matches("\\d+")) {
-			PPTAccount pptAccount = PPT_ACCOUNT_DAO.readById(Long.parseLong(authentication_id));
+	public PPTAccountLogic(PPTAccountDAO pptAccountDao) {
+		PPT_ACCOUNT_DAO = pptAccountDao;
+	}
+
+	public PPTAccount read(User user, long accountId) {
+		if (user != null) {
+			PPTAccount pptAccount = PPT_ACCOUNT_DAO.readById(accountId);
 			if (pptAccount != null && pptAccount.getUser().getId().equals(user.getId())) {
 				return pptAccount;
 			}
@@ -26,21 +26,10 @@ public class PPTAccountLogic {
 	}
 
 	@NotNull
-	public PPTAccount createPPTAccount(Http.Context context, CreatePPTAccountForm form) {
+	public PPTAccount create(CreatePPTAccountForm form, User loggedInUser) {
 		PPTAccount account = new PPTAccount();
-		account.setUser(USER_LOGIC.getLoggedInUser(context));
+		account.setUser(loggedInUser);
 		return update(account, form);
-	}
-
-	public JsonNode getAllForLoggedInUser(Http.Context context) {
-		User user = USER_LOGIC.getLoggedInUser(context);
-		return Json.toJson(PPT_ACCOUNT_DAO.readByUser(user));
-	}
-
-	public PPTAccount getForLoggedInUser(Http.Context context, Long id) {
-		User user = USER_LOGIC.getLoggedInUser(context);
-		PPTAccount pptAccount = PPT_ACCOUNT_DAO.readById(id);
-		return (pptAccount != null && pptAccount.getUser().equals(user)) ? pptAccount : null;
 	}
 
 	public PPTAccount update(PPTAccount account, UpdatePPTAccountForm updateData) {

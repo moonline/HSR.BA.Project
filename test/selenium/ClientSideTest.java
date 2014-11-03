@@ -1,6 +1,5 @@
 package selenium;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.regex.Matcher;
@@ -11,7 +10,6 @@ import static org.fest.assertions.Assertions.assertThat;
 
 public class ClientSideTest extends AbstractSeleniumTest {
 
-	@Ignore // TODO: http://jira.eeppi.ch/browse/BA-109
 	@Test
 	public void exampleTest() {
 		//Test
@@ -22,7 +20,7 @@ public class ClientSideTest extends AbstractSeleniumTest {
 		assertThat(pageSource).doesNotContain("No specs found");
 		assertThat(pageSource).contains(" 0 failures");
 		assertThat(pageSource).doesNotContain("pending specs");
-		assertThat(getNumberOfClientTests(pageSource)).isGreaterThan(15);
+		assertThat(getNumberOfClientTests(pageSource)).isGreaterThan(15); //15 is greater than zero, so tests are being run
 	}
 
 	private int getNumberOfClientTests(String pageSource) {
