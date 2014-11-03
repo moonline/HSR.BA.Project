@@ -12,7 +12,8 @@ module test {
 				super(httpService);
 				this.type = test.helper.Dummy;
 				this.resources = {
-					'all': '/data/api/dummy/list.json'
+					'all': '/data/api/dummy/list.json',
+					'create': '/data/api/dummy/create'
 				};
 			}
 		}
@@ -230,6 +231,21 @@ module test.domain.repository {
 				});
 				$httpBackend.flush();
 				expect(dummies).toEqual([test.helper.Dummy.createDummy(1,"DummyObject1"), test.helper.Dummy.createDummy(2,"DummyObject2")]);
+			}));
+
+			it("Add a dummy",angular.mock.inject(function($httpBackend, $http) {
+				$httpBackend.expectPOST('/data/api/dummy/create').respond({
+					"id":50, "name":"Dummy of Daisy Duck"
+				});
+				var repository: test.helper.DummyRepository = new test.helper.DummyRepository($http);
+				var dummy = test.helper.Dummy.createDummy(null,"Dummy of Daisy Duck");
+
+				var status;
+				repository.add(dummy, function(state, item){ status = { status: state, dummy: item }; });
+
+				$httpBackend.flush();
+				expect(status.status).toEqual(true);
+				expect(status.dummy).toEqual(test.helper.Dummy.createDummy(50,"Dummy of Daisy Duck"));
 			}));
 		});
 	}

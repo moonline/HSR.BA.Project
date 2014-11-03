@@ -65,60 +65,57 @@ module app.domain.repository.core {
 		/**
 		 * add item
 		 *
-		 * if create resource is not defined, add element to the item cache,
-		 * but return null to signal failed persistence
-		 *
-		 * @param item
-		 * @param callback
+		 * the callback returns 'true, theObject' on success otherwise 'false, null'
 		 */
-		public add(item: T, callback: (item: T) => void): void {
+		public add(item: T, callback: (success: boolean, item: T) => void): void {
 			var method: string = 'post';
+			var type = this.type;
 
-			if(this.resources['create']) {
+			if(!this.resources['create']) {
+				throw new Error("Please configure a 'create' resource for the" +this.type.name+" repository.");
+			} else {
 				this.httpService[method](this.getResourcePath('create'), JSON.stringify(item))
 					.success(function(data, status, headers, config) {
-						callback(item);
+						callback(true, app.domain.factory.ObjectFactory.createFromJson(type, data));
 					})
 					.error(function(data, status, headers, config) {
-						callback(null);
+						callback(false, null);
 					});
-			} else {
-				this.itemCache.push(item);
-				// TODO: return null
-				callback(item);
 			}
 		}
 
 		/**
 		 * search by id on remote resource. Do not search in cache
 		 * but update cache because user would like to get to get the newest data.
-		 *
-		 * @param id
-		 * @param callback
 		 */
-		public findOneById(id: number, callback: (item: T) => void): void {
+		public findOneById(id: number, callback: (item: T) => void, doCache:boolean = false): void {
 			var path:string = this.getResourcePath('one').replace('{id}', id.toString());
 			var type = this.type;
 			var method: string = 'get';
+			var cache = this.itemCache;
 
-			if(this.resources['one']) {
-				this.httpService[method](path).success(function(data){
-					if(data && this.filter(data)) {
-						var object = app.domain.factory.ObjectFactory.createFromJson(type, data);
-						var itemCachePos: number = this.itemCache.indexOf(object);
-
-						if(itemCachePos >= 0) {
-							this.itemCache[itemCachePos] = object;
-						} else {
-							this.itemCache.push(object);
-						}
-						callback(object);
-					} else {
-						callback(null);
-					}
-				}.bind(this));
+			if(!this.resources['one']) {
+				throw new Error("Please configure a 'detail' resource for the "+this.type+" repository.");
 			} else {
-				this.findOneBy('id', id, callback);
+				if(doCache) {
+					this.findOneBy('id', id, callback, doCache);
+				} else {
+					this.httpService[method](path).success(function(data){
+						if(data && this.filter(data)) {
+							var object = app.domain.factory.ObjectFactory.createFromJson(type, data);
+							var itemCachePos: number = cache.indexOf(object);
+
+							if(itemCachePos >= 0) {
+								cache[itemCachePos] = object;
+							} else {
+								cache.push(object);
+							}
+							callback(object);
+						} else {
+							callback(null);
+						}
+					});
+				}
 			}
 		}
 
@@ -131,12 +128,8 @@ module app.domain.repository.core {
 		/**
 		 * search in local cache for item because loading all elements
 		 * only to filter occours a lot of trafic
-		 *
-		 * @param propertyName
-		 * @param property
-		 * @param callback
 		 */
-		public findOneBy(propertyName: string, property: any, callback: (item: T) => void): void {
+		public findOneBy(propertyName: string, property: any, callback: (item: T) => void, doCache: boolean = false): void {
 			this.findAll(function(items) {
 				var foundItem: T = null;
 				items.forEach(function(item){
@@ -145,7 +138,7 @@ module app.domain.repository.core {
 					}
 				});
 				callback(foundItem);
-			});
+			}, doCache);
 		}
 	}
 }
