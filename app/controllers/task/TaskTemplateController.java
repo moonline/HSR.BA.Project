@@ -63,7 +63,7 @@ public class TaskTemplateController extends Controller {
 	public Result read(long id) {
 		TaskTemplate taskTemplate = TASK_TEMPLATE_DAO.readById(id);
 		if (taskTemplate == null) {
-			return notFound("Could not find Task Template with it " + id);
+			return notFound("Could not find Task Template with id " + id);
 		}
 		return ok(Json.toJson(taskTemplate));
 	}
@@ -124,7 +124,7 @@ public class TaskTemplateController extends Controller {
 	public Result delete(long id) {
 		TaskTemplate taskTemplate = TASK_TEMPLATE_DAO.readById(id);
 		if (taskTemplate == null) {
-			return notFound("Could not find Task Template with it " + id);
+			return notFound("Could not find Task Template with id " + id);
 		}
 		if (TASK_TEMPLATE_LOGIC.delete(taskTemplate)) {
 			return noContent();
