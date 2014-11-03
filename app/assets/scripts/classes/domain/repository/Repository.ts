@@ -45,8 +45,6 @@ module app.domain.repository.core {
 					if(data && data[dataListName]) {
 						data[dataListName].forEach(function(element){
 							if(filterFunction(element)) {
-
-								console.log(element);
 								items.push(app.domain.factory.ObjectFactory.createFromJson(type,element));
 							}
 						});
@@ -56,6 +54,8 @@ module app.domain.repository.core {
 						items.forEach(function(item){
 							cache.push(item);
 						});
+					} else {
+						console.warn("No data or data in false format returned. specified dataListProperty: '"+dataListName+"', data: ",data);
 					}
 					callback(cache);
 				});
@@ -70,13 +70,16 @@ module app.domain.repository.core {
 		public add(item: T, callback: (success: boolean, item: T) => void): void {
 			var method: string = 'post';
 			var type = this.type;
+			var cache = this.itemCache;
 
 			if(!this.resources['create']) {
 				throw new Error("Please configure a 'create' resource for the" +this.type.name+" repository.");
 			} else {
 				this.httpService[method](this.getResourcePath('create'), JSON.stringify(item))
 					.success(function(data, status, headers, config) {
-						callback(true, app.domain.factory.ObjectFactory.createFromJson(type, data));
+						var newObject: T = app.domain.factory.ObjectFactory.createFromJson(type, data);
+						cache.push(newObject);
+						callback(true, newObject);
 					})
 					.error(function(data, status, headers, config) {
 						callback(false, null);

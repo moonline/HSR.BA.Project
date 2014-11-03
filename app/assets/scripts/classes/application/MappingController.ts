@@ -58,15 +58,16 @@ module app.application {
 			$scope.setCurrentTaskTemplate = function(taskTemplate) {
 				$scope.currentTaskTemplate = taskTemplate;
 			};
-			$scope.createNewTaskTemplate = function() {
-				var newTaskTemplate: app.domain.model.core.TaskTemplate = new app.domain.model.core.TaskTemplate('');
-				taskTemplateRepository.add(newTaskTemplate);
-				$scope.currentTaskTemplate = newTaskTemplate;
+			$scope.createNewTaskTemplate = function(name: string) {
+				var newTaskTemplate: app.domain.model.core.TaskTemplate = new app.domain.model.core.TaskTemplate(name);
+				taskTemplateRepository.add(newTaskTemplate, function(status, item) {
+					if(status) { $scope.currentTaskTemplate = item; }
+				});
 			};
 			$scope.addPropertyValue = function(property: app.domain.model.core.TaskProperty) {
 				if($scope.currentTaskTemplate) {
 					var taskPropertyValue: app.domain.model.core.TaskPropertyValue = new app.domain.model.core.TaskPropertyValue(property, '');
-					(<app.domain.model.core.TaskTemplate>$scope.currentTaskTemplate).addProperty(taskPropertyValue);
+					//(<app.domain.model.core.TaskTemplate>$scope.currentTaskTemplate).addProperty(taskPropertyValue);
 				}
 			};
 
