@@ -24,6 +24,10 @@ public class TaskTemplate {
 
 	private String name;
 
+	@OneToMany(cascade = CascadeType.PERSIST)
+	@JoinColumn(name = "task_id", nullable = false)
+	private List<TaskPropertyValue> properties = new ArrayList<>();
+
 	public Long getId() {
 		return id;
 	}
@@ -47,4 +51,17 @@ public class TaskTemplate {
 	public List<String> getDksNode() {
 		return dksNode;
 	}
+
+	public List<TaskPropertyValue> getProperties() {
+		return properties;
+	}
+
+	public void addProperty(TaskPropertyValue property) {
+		this.properties.add(property);
+	}
+
+	public void removeProperty(TaskPropertyValue property) {
+		this.properties.remove(property);
+	}
+
 }
