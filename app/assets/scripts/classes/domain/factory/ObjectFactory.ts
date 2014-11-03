@@ -29,7 +29,7 @@ module app.domain.factory {
 
 				return domainObject;
 			} else {
-				throw new Error("No factory configuration defined for entity!");
+				throw new Error("No factory configuration defined for class "+type.name+"!");
 			}
 		}
 

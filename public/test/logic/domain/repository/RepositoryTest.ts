@@ -3,7 +3,6 @@
 /// <reference path='../../../../../app/assets/scripts/classes/domain/model/Node.ts' />
 /// <reference path='../../../../../app/assets/scripts/classes/domain/repository/PersistentEntity.ts' />
 /// <reference path='../../../../../app/assets/scripts/classes/domain/repository/Repository.ts' />
-/// <reference path='../../../../../app/assets/scripts/classes/domain/factory/ObjectFactory.ts' />
 
 module test {
 	export module helper {
@@ -20,16 +19,9 @@ module test {
 	}
 }
 
-module test.domain.repository {
+module test.logic.domain.repository {
 	export function RepositoryTest() {
 		describe("Repository class suite", function() {
-
-			it("create a 'Dummy' object from JSON", function() {
-				var dummy: test.helper.Dummy = new test.helper.Dummy("dummy1");
-				var data: any = { "id": dummy.id, "name": "dummy1" };
-
-				expect(app.domain.factory.ObjectFactory.createFromJson(test.helper.Dummy,data)).toEqual(dummy);
-			});
 
 			it("get Dummies using repository.findAll()",angular.mock.inject(function($httpBackend, $http) {
 				$httpBackend.when("GET", '/data/api/dummy/list.json').respond({

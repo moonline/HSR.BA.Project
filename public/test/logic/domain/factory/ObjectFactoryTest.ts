@@ -2,11 +2,8 @@
 
 /// <reference path='../../../../../app/assets/scripts/classes/domain/factory/ObjectFactory.ts' />
 
-module test {
-	export module helper {
-	}
-}
-module test.domain.factory {
+
+module test.logic.domain.factory {
 	export function ObjectFactoryTest() {
 		describe("ObjectFactory class suite", function() {
 
@@ -21,7 +18,7 @@ module test.domain.factory {
 				var testObjectData: any = { "id": 5, "name": "peter" };
 
 				expect(function() { app.domain.factory.ObjectFactory.createFromJson(test.helper.CLO,testObjectData); }).
-					toThrow(new Error("No factory configuration defined for entity!"));
+					toThrow(new Error("No factory configuration defined for class CLO!"));
 			});
 
 			it("don't overwrite property with not found data", function(){
@@ -52,6 +49,13 @@ module test.domain.factory {
 				expect(app.domain.factory.ObjectFactory.createFromJson(test.helper.DummyContainer, dummyData)).toEqual(dummyContainer);
 			});
 
+			it("call factory with empty object", function() {
+				var result = app.domain.factory.ObjectFactory.createFromJson(test.helper.Dummy,{});
+				var nullDummy: test.helper.Dummy = new test.helper.Dummy(null);
+				// id is created ramdoom, so get it from created dummy
+				nullDummy.id = result.id;
+				expect(result).toEqual(nullDummy);
+			})
 		});
 	}
 }

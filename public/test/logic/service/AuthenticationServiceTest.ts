@@ -3,14 +3,12 @@
 /// <reference path='../../../../app/assets/scripts/classes/domain/model/User.ts' />
 /// <reference path='../../../../app/assets/scripts/classes/service/AuthenticationService.ts' />
 
-/// <reference path='../../../../app/assets/scripts/classes/domain/factory/ObjectFactory.ts' />
-
 module test {
 	export module helper {
 	}
 }
 
-module test.service {
+module test.logic.service {
 	export function AuthenticationServiceTest() {
 		describe("Authentication service test suite", function() {
 			var http, httpBackend, q;
@@ -154,8 +152,10 @@ module test.service {
 					authentivationService.register("peter", "pwd", "pwd", function(status, user) {
 						returnValue = { "status": status, "user": user };
 					});
+
+					var nullUser: app.domain.model.core.User = new app.domain.model.core.User(null);
 					httpBackend.flush();
-					expect(returnValue).toEqual({ status: true, user: app.domain.factory.ObjectFactory.createFromJson(app.domain.model.core.User,{}) });
+					expect(returnValue).toEqual({ status: true, user: nullUser });
 				});
 
 				it("Failed registration", function() {

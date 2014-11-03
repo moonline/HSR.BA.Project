@@ -1,4 +1,4 @@
-/// <reference path='../../../../public/test/includes.ts' />
+/// <reference path='../../includes.ts' />
 
 /// <reference path='../../../../app/assets/scripts/classes/domain/repository/TaskTemplateRepository.ts' />
 /// <reference path='../../../../app/assets/scripts/classes/domain/repository/TaskPropertyRepository.ts' />
@@ -11,13 +11,7 @@
 
 /// <reference path='../../../../app/assets/scripts/classes/domain/model/DecisionKnowledgeSystem.ts' />
 
-module test {
-	export module helper {
-
-	}
-}
-
-module test.application {
+module test.integration.application {
 	export function MappingControllerTest() {
 		describe("Mapping controller class suite", function() {
 			var http, httpBackend, rootScope, persistenceService;
