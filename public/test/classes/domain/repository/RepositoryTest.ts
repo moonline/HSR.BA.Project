@@ -31,19 +31,10 @@ module test.domain.repository {
 			});
 
 			it("get Dummies using repository.findAll()",angular.mock.inject(function($httpBackend, $http) {
-				// Crappy passThrough() not working :-(
 				$httpBackend.when("GET", '/data/api/dummy/list.json').respond({
 					"items": [
-						{
-							"id": 1,
-							"name": "DummyObject1"
-
-						},
-						{
-							"id": 2,
-							"name": "DummyObject2"
-
-						}
+						{ "id": 1, "name": "DummyObject1" },
+						{ "id": 2, "name": "DummyObject2" }
 					]
 				});
 				var repository: test.helper.DummyRepository = new test.helper.DummyRepository($http);
@@ -54,6 +45,55 @@ module test.domain.repository {
 				});
 				$httpBackend.flush();
 				expect(dummies).toEqual([test.helper.Dummy.createDummy(1,"DummyObject1"), test.helper.Dummy.createDummy(2,"DummyObject2")]);
+			}));
+
+			it("get Dummies using repository.findAll() with local caching",angular.mock.inject(function($httpBackend, $http) {
+				$httpBackend.expectGET('/data/api/dummy/list.json').respond({
+					"items": [
+						{ "id": 1, "name": "DummyObject1" },
+						{ "id": 2, "name": "DummyObject2" }
+					]
+				});
+				var repository: test.helper.DummyRepository = new test.helper.DummyRepository($http);
+				var dummies: test.helper.Dummy[];
+
+				repository.findAll(function(items: test.helper.Dummy[]) {
+					dummies = items;
+				});
+				$httpBackend.flush();
+				expect(dummies).toEqual([test.helper.Dummy.createDummy(1,"DummyObject1"), test.helper.Dummy.createDummy(2,"DummyObject2")]);
+
+
+				var dummies2: test.helper.Dummy[];
+				repository.findAll(function(items: test.helper.Dummy[]) {
+					dummies2 = items;
+				}, true);
+
+				$httpBackend.verifyNoOutstandingRequest();
+				expect(dummies2).toEqual([test.helper.Dummy.createDummy(1,"DummyObject1"), test.helper.Dummy.createDummy(2,"DummyObject2")]);
+
+
+				$httpBackend.resetExpectations();
+				$httpBackend.expectGET('/data/api/dummy/list.json').respond({
+					"items": [
+						{ "id": 4564565, "name": "Dummy of Donald Duck" },
+						{ "id": 8875346, "name": "Dummy of Dagobert Duck" },
+						{ "id": 223325, "name": "Dummy of Daisy Duck" }
+					]
+				});
+
+				var duckDummies: test.helper.Dummy[];
+				repository.findAll(function(items: test.helper.Dummy[]) {
+					duckDummies = items;
+				});
+
+				$httpBackend.flush();
+
+				expect(duckDummies).toEqual([
+					test.helper.Dummy.createDummy(4564565,"Dummy of Donald Duck"),
+					test.helper.Dummy.createDummy(8875346,"Dummy of Dagobert Duck"),
+					test.helper.Dummy.createDummy(223325,"Dummy of Daisy Duck")
+				]);
 			}));
 
 			it("get Dummy using repository.findOneBy()",angular.mock.inject(function($httpBackend, $http) {

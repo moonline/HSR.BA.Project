@@ -17,7 +17,9 @@ module configuration {
 			list: '/public/temporaryDevelopmentData/eeppi/mapping/list.json'
 		},
 		taskTemplate: {
-			list: '/public/temporaryDevelopmentData/eeppi/tasktemplate/list.json'
+			list: '/taskTemplate',
+			detail: '/taskTemplate/{id}',
+			create: '/taskTemplate'
 		},
 		taskProperty: {
 			list: '/public/temporaryDevelopmentData/eeppi/taskProperty.json'

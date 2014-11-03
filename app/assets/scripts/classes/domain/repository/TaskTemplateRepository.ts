@@ -9,7 +9,9 @@ module app.domain.repository.core {
 			super(httpService);
 			this.type = app.domain.model.core.TaskTemplate;
 			this.resources = {
-				'all': configuration.paths.taskTemplate.list
+				'all': configuration.paths.taskTemplate.list,
+				'one': configuration.paths.taskTemplate.detail,
+				'create': configuration.paths.taskTemplate.create
 			};
 		}
     }
