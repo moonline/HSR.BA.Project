@@ -242,7 +242,12 @@ public class DocumentationLogic {
 			for (MethodDocumentation apiMethod : apiMethods) {
 				for (QueryExamples.Example queryExample : apiMethod.queryExamples) {
 					if (queryExample.id().startsWith("REFERENCE_")) {
-						exampleDataCreator.createExampleObject("REFERENCE_PPTACCOUNT_3", queryExample.isDataCacheable());
+						exampleDataCreator.createExampleObject(queryExample.id(), queryExample.isDataCacheable());
+					}
+					for (String parameter : queryExample.parameters()) {
+						if (parameter.startsWith("REFERENCE_")) {
+							exampleDataCreator.createExampleObject(parameter, queryExample.isDataCacheable());
+						}
 					}
 				}
 			}

@@ -3,6 +3,7 @@ package controllers.task;
 import controllers.AbstractControllerTest;
 import daos.task.TaskPropertyValueDAO;
 import daos.task.TaskTemplateDAO;
+import models.task.TaskProperty;
 import models.task.TaskPropertyValue;
 import models.task.TaskTemplate;
 import models.user.User;
@@ -193,6 +194,34 @@ public class TaskTemplateControllerTest extends AbstractControllerTest {
 		assertThat(status(result)).isEqualTo(BAD_REQUEST);
 		TaskTemplate childInDB = JPA.withTransaction(() -> TASK_TEMPLATE_DAO.readById(child.getId()));
 		assertThat(childInDB.getParent()).isNull();
+	}
+
+	@Test
+	public void testAddPropertyWorking() throws Throwable {
+		//Setup
+		JPA.withTransaction(TASK_PROPERTY_VALUE_DAO::removeAll);
+		TaskTemplate taskTemplate = AbstractTestDataCreator.createTaskTemplateWithTransaction("My Task Template R");
+		TaskProperty taskProperty = AbstractTestDataCreator.createTaskPropertyWithTransaction("My Property");
+		String value = "My Value";
+		//Test
+		Result result = callActionWithUser(routes.ref.TaskTemplateController.addProperty(taskTemplate.getId()), postData("property", taskProperty.getId() + "", "value", value));
+		//Verification
+		assertThat(status(result)).isEqualTo(OK);
+		TaskPropertyValue taskPropertyValue = JPA.withTransaction(() -> TASK_PROPERTY_VALUE_DAO.readAll().get(0));
+		assertThat(taskPropertyValue.getValue()).isEqualTo(value);
+		assertCheckJsonResponse(result, Json.parse("{ \"id\" : " + taskTemplate.getId() + ",\n" +
+				"      \"name\" : \"My Task Template R\"," +
+				"      \"parent\" : null,\n" +
+				"      \"properties\" : [" +
+				"		{\"id\":" + taskPropertyValue.getId() + "," +
+				"			\"property\":{" +
+				"				\"id\":" + taskProperty.getId() + "," +
+				"				\"name\":\"My Property\"" +
+				"			}," +
+				"			\"value\":\"My Value\"" +
+				"		}],\n" +
+				"      \"dksNode\" : []\n" +
+				"    }"));
 	}
 
 }

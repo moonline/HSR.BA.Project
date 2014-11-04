@@ -3,7 +3,6 @@ package controllers.docs;
 import logics.docs.DocumentationLogic;
 import logics.docs.ExampleDataCreator;
 import play.db.jpa.JPA;
-import play.db.jpa.Transactional;
 import play.mvc.Controller;
 import play.mvc.Result;
 import views.html.documentation;
@@ -22,12 +21,10 @@ public class DocumentationController extends Controller {
 		EXAMPLE_DATA_CREATOR = exampleDataCreator;
 	}
 
-	@Transactional
-	public Result getAPIDocumentation() {
-		Map<Class<? extends Controller>, List<DocumentationLogic.MethodDocumentation>> allAPICalls = DOCUMENTATION_LOGIC.getAllAPICalls();
-		DOCUMENTATION_LOGIC.createCallExampleData(allAPICalls.values(), EXAMPLE_DATA_CREATOR);
-		JPA.em().flush();
-		return ok(documentation.render(allAPICalls, DOCUMENTATION_LOGIC, EXAMPLE_DATA_CREATOR));
+	public Result getAPIDocumentation() throws Throwable {
+		final Map<Class<? extends Controller>, List<DocumentationLogic.MethodDocumentation>> allAPICalls = DOCUMENTATION_LOGIC.getAllAPICalls();
+		JPA.withTransaction(() -> DOCUMENTATION_LOGIC.createCallExampleData(allAPICalls.values(), EXAMPLE_DATA_CREATOR));
+		return JPA.withTransaction("default", true, () -> ok(documentation.render(allAPICalls, DOCUMENTATION_LOGIC, EXAMPLE_DATA_CREATOR)));
 	}
 
 }

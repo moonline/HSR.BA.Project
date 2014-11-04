@@ -150,13 +150,13 @@ public class ExampleDataCreator {
 		}
 
 		public void create(long id) {
-			T existingPPTAccount = dao.readById(id);
-			if (existingPPTAccount == null) {
+			T existingEntity = dao.readById(id);
+			if (existingEntity == null) {
 				Long currentId = createNewObjectFunction.createNew();
 				JPA.em().createQuery("update " + className + " p set p.id=:new where p.id=:old").setParameter("old", currentId).setParameter("new", id).executeUpdate();
 			} else {
-				if (!isExistingAndExpectedFunction.check(existingPPTAccount)) {
-					Logger.error("Could not create Example Data " + className + " with ID " + id + ", because it already exists. The problem is, this existing object is exposed to every use as example of the documentation: " + existingPPTAccount);
+				if (!isExistingAndExpectedFunction.check(existingEntity)) {
+					Logger.error("Could not create Example Data " + className + " with ID " + id + ", because it already exists. The problem is, this existing object is exposed to every use as example of the documentation: " + existingEntity);
 				}
 			}
 		}

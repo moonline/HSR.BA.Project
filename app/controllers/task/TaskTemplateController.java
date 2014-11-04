@@ -133,4 +133,33 @@ public class TaskTemplateController extends Controller {
 		}
 	}
 
+	@Transactional()
+	@GuaranteeAuthenticatedUser()
+	@QueryParameters({@QueryParameters.Parameter(name = "id", isId = true, format = Long.class, description = "The id of the Task Template"),
+			@QueryParameters.Parameter(name = "property", description = "The id of the Task Property"),
+			@QueryParameters.Parameter(name = "value", description = "The value of the Property")
+	})
+	@QueryDescription("Adds a new property to an existing Task Template.")
+	@QueryResponses({
+			@Response(status = NOT_FOUND, description = "If no Task Template or Task Property with the given ID exists"),
+			@Response(status = BAD_REQUEST, description = "If the request parameter contain errors."),
+			@Response(status = OK, description = "The Task Template containing the new Property is returned")
+	})
+	@QueryExamples({
+			@Example(id = "9999", parameters = {"8888", "My beautiful task template"}),
+			@Example(id = "REFERENCE_TASKTEMPLATE_25", parameters = {"REFERENCE_TASKPROPERTY_27", "My example Task Template"})
+	})
+	public Result addProperty(long id) {
+		TaskTemplate taskTemplate = TASK_TEMPLATE_DAO.readById(id);
+		if (taskTemplate == null) {
+			return notFound();
+		}
+		Form<TaskTemplateLogic.TaskPropertyForm> form = Form.form(TaskTemplateLogic.TaskPropertyForm.class).bindFromRequest();
+		if (form.hasErrors()) {
+			return badRequest(form.errorsAsJson());
+		}
+		return ok(Json.toJson(TASK_TEMPLATE_LOGIC.addProperty(taskTemplate, form.get())));
+	}
+
+
 }

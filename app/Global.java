@@ -24,6 +24,7 @@ import logics.task.TaskTemplateLogic;
 import logics.user.PPTAccountLogic;
 import logics.user.UserLogic;
 import models.ppt.ProjectPlanningTool;
+import models.task.TaskProperty;
 import models.task.TaskTemplate;
 import models.user.PPTAccount;
 import play.Application;
@@ -57,7 +58,7 @@ public class Global extends GlobalSettings {
 	private final DecisionKnowledgeSystemLogic DKS_LOGIC = new DecisionKnowledgeSystemLogic();
 	private final PPTTaskLogic PPT_TASK_LOGIC = new PPTTaskLogic();
 	private final DocumentationLogic DOCUMENTATION_LOGIC = new DocumentationLogic();
-	private final TaskTemplateLogic TASK_TEMPLATE_LOGIC = new TaskTemplateLogic(TASK_TEMPLATE_DAO);
+	private final TaskTemplateLogic TASK_TEMPLATE_LOGIC = new TaskTemplateLogic(TASK_TEMPLATE_DAO, TASK_PROPERTY_VALUE_DAO);
 	private final UserLogic USER_LOGIC = new UserLogic(USER_DAO, new SecureRandom());
 	private final PPTAccountLogic PPT_ACCOUNT_LOGIC = new PPTAccountLogic(PPT_ACCOUNT_DAO);
 	private final AuthenticationChecker AUTHENTICATION_CHECKER = new AuthenticationChecker(USER_DAO, USER_LOGIC);
@@ -73,6 +74,7 @@ public class Global extends GlobalSettings {
 	}
 
 	private void registerJsonObjectMappers() {
+//		Json.setObjectMapper(new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT).enable(SerializationFeature.WRAP_ROOT_VALUE));
 		Json.setObjectMapper(new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT));
 	}
 
@@ -127,6 +129,17 @@ public class Global extends GlobalSettings {
 			@Override
 			public String print(TaskTemplate taskTemplate, Locale locale) {
 				return taskTemplate.getId() + "";
+			}
+		});
+		Formatters.register(TaskProperty.class, new Formatters.SimpleFormatter<TaskProperty>() {
+			@Override
+			public TaskProperty parse(String text, Locale locale) throws ParseException {
+				return TASK_PROPERTY_DAO.readById(Long.parseLong(text));
+			}
+
+			@Override
+			public String print(TaskProperty taskProperty, Locale locale) {
+				return taskProperty.getId() + "";
 			}
 		});
 	}
