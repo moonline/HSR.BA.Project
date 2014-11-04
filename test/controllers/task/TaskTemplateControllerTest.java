@@ -254,4 +254,26 @@ public class TaskTemplateControllerTest extends AbstractControllerTest {
 				"    }"));
 	}
 
+	@Test
+	public void testDeletePropertyWorking() throws Throwable {
+		//Setup
+		TaskPropertyValue taskPropertyValue = JPA.withTransaction(() -> {
+			TASK_PROPERTY_VALUE_DAO.removeAll();
+			TaskTemplate taskTemplate = AbstractTestDataCreator.createTaskTemplate("Task Template V");
+			return AbstractTestDataCreator.createTaskPropertyValue("Task Value VI", "Task Property VII", taskTemplate);
+		});
+		//Test
+		Result result = callActionWithUser(routes.ref.TaskTemplateController.deleteProperty(taskPropertyValue.getId(), taskPropertyValue.getTaskTemplate().getId()));
+		//Verification
+		assertThat(status(result)).isEqualTo(OK);
+		TaskPropertyValue taskPropertyValueInDB = JPA.withTransaction(() -> TASK_PROPERTY_VALUE_DAO.readById(taskPropertyValue.getId()));
+		assertThat(taskPropertyValueInDB).isNull();
+		assertCheckJsonResponse(result, Json.parse("{ \"id\" : " + taskPropertyValue.getTaskTemplate().getId() + ",\n" +
+				"      \"name\" : \"Task Template V\"," +
+				"      \"parent\" : null,\n" +
+				"      \"properties\" : [],\n" +
+				"      \"dksNode\" : []\n" +
+				"    }"));
+	}
+
 }

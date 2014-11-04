@@ -195,5 +195,27 @@ public class TaskTemplateController extends Controller {
 		return ok(Json.toJson(TASK_TEMPLATE_LOGIC.updateProperty(taskPropertyValue, form.get())));
 	}
 
+	@Transactional()
+	@GuaranteeAuthenticatedUser()
+	@QueryParameters({
+			@QueryParameters.Parameter(name = "id", isId = true, format = Long.class, description = "The id of the Task Template Value"),
+			@QueryParameters.Parameter(name = "taskTemplate", isId = true, format = Long.class, description = "The id of the Task Template")
+	})
+	@QueryDescription("Deletes a task property value.")
+	@QueryResponses({
+			@Response(status = NOT_FOUND, description = "If no Task Template or Task Property Value with the given ID exists"),
+			@Response(status = OK, description = "The Task Template containing the removed Property is returned")
+	})
+	@QueryExamples({
+			@Example(id = {"9999", "7777"}, parameters = {}),
+			@Example(id = {"REFERENCE_TASKPROPERTYVALUE_30", "REFERENCE_TASKTEMPLATE_31"}, isDataCacheable = false, parameters = {})
+	})
+	public Result deleteProperty(long id, long taskTemplate) {
+		TaskPropertyValue taskPropertyValue = TASK_PROPERTY_VALUE_DAO.readById(id);
+		if (taskPropertyValue == null || taskPropertyValue.getTaskTemplate().getId() != taskTemplate) {
+			return notFound();
+		}
+		return ok(Json.toJson(TASK_TEMPLATE_LOGIC.removeProperty(taskPropertyValue)));
+	}
 
 }

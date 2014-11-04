@@ -58,6 +58,14 @@ public class TaskTemplateLogic {
 		return taskPropertyValue.getTaskTemplate();
 	}
 
+	public TaskTemplate removeProperty(TaskPropertyValue taskPropertyValue) {
+		TaskTemplate taskTemplate = taskPropertyValue.getTaskTemplate();
+		TASK_PROPERTY_VALUE_DAO.remove(taskPropertyValue);
+		TASK_PROPERTY_VALUE_DAO.flush();
+		JPA.em().refresh(taskTemplate);
+		return taskTemplate;
+	}
+
 	public static class TaskTemplateForm {
 		@Constraints.Required
 		public String name;
