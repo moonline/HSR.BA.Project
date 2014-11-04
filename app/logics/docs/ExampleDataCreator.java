@@ -2,11 +2,15 @@ package logics.docs;
 
 import daos.AbstractDAO;
 import daos.ppt.ProjectPlanningToolDAO;
+import daos.task.TaskPropertyDAO;
+import daos.task.TaskPropertyValueDAO;
 import daos.task.TaskTemplateDAO;
 import daos.user.PPTAccountDAO;
 import daos.user.UserDAO;
 import logics.user.UserLogic;
 import models.ppt.ProjectPlanningTool;
+import models.task.TaskProperty;
+import models.task.TaskPropertyValue;
 import models.task.TaskTemplate;
 import models.user.PPTAccount;
 import models.user.User;
@@ -23,6 +27,10 @@ public class ExampleDataCreator {
 
 	private final UserDAO USER_DAO;
 	private final PPTAccountDAO PPT_ACCOUNT_DAO;
+	private final ProjectPlanningToolDAO PROJECT_PLANNING_TOOL_DAO;
+	private final TaskTemplateDAO TASK_TEMPLATE_DAO;
+	private final TaskPropertyDAO TASK_PROPERTY_DAO;
+	private final TaskPropertyValueDAO TASK_PROPERTY_VALUE_DAO;
 
 	private Set<String> cache = new HashSet<>();
 
@@ -32,7 +40,7 @@ public class ExampleDataCreator {
 
 	public Long USER_ID;
 
-	public ExampleDataCreator(UserLogic userLogic, UserDAO userDao, PPTAccountDAO pptAccountDao) {
+	public ExampleDataCreator(UserLogic userLogic, UserDAO userDao, PPTAccountDAO pptAccountDao, ProjectPlanningToolDAO projectPlanningToolDao, TaskTemplateDAO taskTemplateDao, TaskPropertyDAO taskPropertyDao, TaskPropertyValueDAO taskPropertyValueDao) {
 		USER_DAO = userDao;
 		PPT_ACCOUNT_DAO = pptAccountDao;
 		JPA.withTransaction(new F.Callback0() {
@@ -53,6 +61,10 @@ public class ExampleDataCreator {
 				USER_ID = user.getId();
 			}
 		});
+		PROJECT_PLANNING_TOOL_DAO = projectPlanningToolDao;
+		TASK_TEMPLATE_DAO = taskTemplateDao;
+		TASK_PROPERTY_DAO = taskPropertyDao;
+		TASK_PROPERTY_VALUE_DAO = taskPropertyValueDao;
 	}
 
 	public void createExampleObject(String reference, boolean canBeCached) {
@@ -89,7 +101,7 @@ public class ExampleDataCreator {
 			case "PPT":
 				String pptName = "Example Jira";
 				objectCreator = new ExampleObjectCreator<>("ProjectPlanningTool",
-						new ProjectPlanningToolDAO(),
+						PROJECT_PLANNING_TOOL_DAO,
 						() -> {
 							ProjectPlanningTool ppt = new ProjectPlanningTool();
 							ppt.setName(pptName);
@@ -101,7 +113,7 @@ public class ExampleDataCreator {
 			case "TASKTEMPLATE":
 				String ttName = "My example Task Template";
 				objectCreator = new ExampleObjectCreator<>("TaskTemplate",
-						new TaskTemplateDAO(),
+						TASK_TEMPLATE_DAO,
 						() -> {
 							TaskTemplate taskTemplate = new TaskTemplate();
 							taskTemplate.setName(ttName);
@@ -109,6 +121,36 @@ public class ExampleDataCreator {
 							return taskTemplate.getId();
 						},
 						existingTaskTemplate -> existingTaskTemplate.getName().equals(ttName));
+				break;
+			case "TASKPROPERTY":
+				String tpName = "My example Task Property";
+				objectCreator = new ExampleObjectCreator<>("TaskProperty",
+						TASK_PROPERTY_DAO,
+						() -> {
+							TaskProperty taskProperty = new TaskProperty();
+							taskProperty.setName(tpName);
+							persist(taskProperty);
+							return taskProperty.getId();
+						},
+						existingTaskProperty -> existingTaskProperty.getName().equals(tpName));
+				break;
+			case "TASKPROPERTYVALUE":
+				String tpValue = "My example Value";
+				objectCreator = new ExampleObjectCreator<>("TaskPropertyValue",
+						TASK_PROPERTY_VALUE_DAO,
+						() -> {
+							TaskProperty taskProperty = new TaskProperty();
+							taskProperty.setName("My example Task Property 2");
+							TaskTemplate taskTemplate = new TaskTemplate();
+							taskTemplate.setName("My example Task Template 2");
+							TaskPropertyValue taskPropertyValue = new TaskPropertyValue();
+							taskPropertyValue.setValue(tpValue);
+							taskPropertyValue.setProperty(taskProperty);
+							taskPropertyValue.setTaskTemplate(taskTemplate);
+							persist(taskProperty, taskTemplate, taskPropertyValue);
+							return taskPropertyValue.getId();
+						},
+						existingTaskPropertyValue -> existingTaskPropertyValue.getValue().equals(tpValue));
 				break;
 			default:
 				throw new NotImplementedException("Example-object-creation not implemented for " + referenceParts[1]);
@@ -130,13 +172,13 @@ public class ExampleDataCreator {
 		}
 
 		public void create(long id) {
-			T existingPPTAccount = dao.readById(id);
-			if (existingPPTAccount == null) {
+			T existingEntity = dao.readById(id);
+			if (existingEntity == null) {
 				Long currentId = createNewObjectFunction.createNew();
 				JPA.em().createQuery("update " + className + " p set p.id=:new where p.id=:old").setParameter("old", currentId).setParameter("new", id).executeUpdate();
 			} else {
-				if (!isExistingAndExpectedFunction.check(existingPPTAccount)) {
-					Logger.error("Could not create Example Data " + className + " with ID " + id + ", because it already exists. The problem is, this existing object is exposed to every use as example of the documentation: " + existingPPTAccount);
+				if (!isExistingAndExpectedFunction.check(existingEntity)) {
+					Logger.error("Could not create Example Data " + className + " with ID " + id + ", because it already exists. The problem is, this existing object is exposed to every use as example of the documentation: " + existingEntity);
 				}
 			}
 		}

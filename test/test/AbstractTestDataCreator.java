@@ -3,6 +3,8 @@ package test;
 import daos.user.UserDAO;
 import logics.user.UserLogic;
 import models.ppt.ProjectPlanningTool;
+import models.task.TaskProperty;
+import models.task.TaskPropertyValue;
 import models.task.TaskTemplate;
 import models.user.PPTAccount;
 import models.user.User;
@@ -63,5 +65,29 @@ public abstract class AbstractTestDataCreator {
 		taskTemplate.setParent(parent);
 		persistAndFlush(taskTemplate);
 		return taskTemplate;
+	}
+
+	public static TaskProperty createTaskPropertyWithTransaction(String name) throws Throwable {
+		return JPA.withTransaction(() -> createTaskProperty(name));
+	}
+
+	public static TaskProperty createTaskProperty(String name) {
+		TaskProperty taskProperty = new TaskProperty();
+		taskProperty.setName(name);
+		persistAndFlush(taskProperty);
+		return taskProperty;
+	}
+
+	public static TaskPropertyValue createTaskPropertyValue(String value, TaskProperty property, TaskTemplate taskTemplate) {
+		TaskPropertyValue taskPropertyValue = new TaskPropertyValue();
+		taskPropertyValue.setValue(value);
+		taskPropertyValue.setProperty(property);
+		taskPropertyValue.setTaskTemplate(taskTemplate);
+		persistAndFlush(taskPropertyValue);
+		return taskPropertyValue;
+	}
+
+	public static TaskPropertyValue createTaskPropertyValue(String value, String property, TaskTemplate taskTemplate) {
+		return createTaskPropertyValue(value, createTaskProperty(property), taskTemplate);
 	}
 }

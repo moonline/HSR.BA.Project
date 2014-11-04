@@ -12,7 +12,7 @@ public @interface QueryExamples {
 	Example[] value();
 
 	public @interface Example {
-		String id() default "";
+		String[] id() default "";
 
 		String[] parameters();
 

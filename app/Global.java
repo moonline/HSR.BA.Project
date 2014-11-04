@@ -5,10 +5,13 @@ import controllers.AuthenticationChecker;
 import controllers.dks.DecisionKnowledgeSystemController;
 import controllers.docs.DocumentationController;
 import controllers.ppt.ProjectPlanningToolController;
+import controllers.task.TaskPropertyController;
 import controllers.task.TaskTemplateController;
 import controllers.user.PPTAccountController;
 import controllers.user.UserController;
 import daos.ppt.ProjectPlanningToolDAO;
+import daos.task.TaskPropertyDAO;
+import daos.task.TaskPropertyValueDAO;
 import daos.task.TaskTemplateDAO;
 import daos.user.PPTAccountDAO;
 import daos.user.UserDAO;
@@ -16,10 +19,12 @@ import logics.dks.DecisionKnowledgeSystemLogic;
 import logics.docs.DocumentationLogic;
 import logics.docs.ExampleDataCreator;
 import logics.ppt.PPTTaskLogic;
+import logics.task.TaskPropertyLogic;
 import logics.task.TaskTemplateLogic;
 import logics.user.PPTAccountLogic;
 import logics.user.UserLogic;
 import models.ppt.ProjectPlanningTool;
+import models.task.TaskProperty;
 import models.task.TaskTemplate;
 import models.user.PPTAccount;
 import play.Application;
@@ -42,15 +47,18 @@ import static play.mvc.Results.notFound;
 @SuppressWarnings("UnusedDeclaration")
 public class Global extends GlobalSettings {
 
+	public static final TaskPropertyDAO TASK_PROPERTY_DAO = new TaskPropertyDAO();
+	public static final TaskPropertyValueDAO TASK_PROPERTY_VALUE_DAO = new TaskPropertyValueDAO();
 	private final ProjectPlanningToolDAO PROJECT_PLANNING_TOOL_DAO = new ProjectPlanningToolDAO();
 	private final TaskTemplateDAO TASK_TEMPLATE_DAO = new TaskTemplateDAO();
 	private final UserDAO USER_DAO = new UserDAO();
 	private final PPTAccountDAO PPT_ACCOUNT_DAO = new PPTAccountDAO();
 
+	public static final TaskPropertyLogic TASK_PROPERTY_LOGIC = new TaskPropertyLogic(TASK_PROPERTY_DAO, TASK_PROPERTY_VALUE_DAO);
 	private final DecisionKnowledgeSystemLogic DKS_LOGIC = new DecisionKnowledgeSystemLogic();
 	private final PPTTaskLogic PPT_TASK_LOGIC = new PPTTaskLogic();
 	private final DocumentationLogic DOCUMENTATION_LOGIC = new DocumentationLogic();
-	private final TaskTemplateLogic TASK_TEMPLATE_LOGIC = new TaskTemplateLogic(TASK_TEMPLATE_DAO);
+	private final TaskTemplateLogic TASK_TEMPLATE_LOGIC = new TaskTemplateLogic(TASK_TEMPLATE_DAO, TASK_PROPERTY_VALUE_DAO);
 	private final UserLogic USER_LOGIC = new UserLogic(USER_DAO, new SecureRandom());
 	private final PPTAccountLogic PPT_ACCOUNT_LOGIC = new PPTAccountLogic(PPT_ACCOUNT_DAO);
 	private final AuthenticationChecker AUTHENTICATION_CHECKER = new AuthenticationChecker(USER_DAO, USER_LOGIC);
@@ -66,6 +74,7 @@ public class Global extends GlobalSettings {
 	}
 
 	private void registerJsonObjectMappers() {
+//		Json.setObjectMapper(new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT).enable(SerializationFeature.WRAP_ROOT_VALUE));
 		Json.setObjectMapper(new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT));
 	}
 
@@ -122,6 +131,17 @@ public class Global extends GlobalSettings {
 				return taskTemplate.getId() + "";
 			}
 		});
+		Formatters.register(TaskProperty.class, new Formatters.SimpleFormatter<TaskProperty>() {
+			@Override
+			public TaskProperty parse(String text, Locale locale) throws ParseException {
+				return TASK_PROPERTY_DAO.readById(Long.parseLong(text));
+			}
+
+			@Override
+			public String print(TaskProperty taskProperty, Locale locale) {
+				return taskProperty.getId() + "";
+			}
+		});
 	}
 
 	@Override
@@ -135,13 +155,14 @@ public class Global extends GlobalSettings {
 	}
 
 	private void initializeControllersRequiringParameters() {
-		CONTROLLERS.put(DocumentationController.class, new DocumentationController(DOCUMENTATION_LOGIC, new ExampleDataCreator(USER_LOGIC, USER_DAO, PPT_ACCOUNT_DAO)));
+		CONTROLLERS.put(DocumentationController.class, new DocumentationController(DOCUMENTATION_LOGIC, new ExampleDataCreator(USER_LOGIC, USER_DAO, PPT_ACCOUNT_DAO, PROJECT_PLANNING_TOOL_DAO, TASK_TEMPLATE_DAO, TASK_PROPERTY_DAO, TASK_PROPERTY_VALUE_DAO)));
 		CONTROLLERS.put(PPTAccountController.class, new PPTAccountController(PPT_ACCOUNT_DAO, PPT_ACCOUNT_LOGIC, AUTHENTICATION_CHECKER));
 		CONTROLLERS.put(UserController.class, new UserController(USER_LOGIC, AUTHENTICATION_CHECKER));
-		CONTROLLERS.put(TaskTemplateController.class, new TaskTemplateController(TASK_TEMPLATE_LOGIC, TASK_TEMPLATE_DAO));
+		CONTROLLERS.put(TaskTemplateController.class, new TaskTemplateController(TASK_TEMPLATE_LOGIC, TASK_TEMPLATE_DAO, TASK_PROPERTY_VALUE_DAO));
 		CONTROLLERS.put(ProjectPlanningToolController.class, new ProjectPlanningToolController(PPT_TASK_LOGIC));
 		CONTROLLERS.put(DecisionKnowledgeSystemController.class, new DecisionKnowledgeSystemController(DKS_LOGIC));
 		CONTROLLERS.put(AuthenticationChecker.Authenticator.class, AUTHENTICATION_CHECKER.new Authenticator());
+		CONTROLLERS.put(TaskPropertyController.class, new TaskPropertyController(TASK_PROPERTY_LOGIC, TASK_PROPERTY_DAO));
 	}
 
 	@Override
