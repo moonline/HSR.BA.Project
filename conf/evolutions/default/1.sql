@@ -39,8 +39,8 @@ create table tasktproperty (
 create table tasktpropertyvalue (
     id bigint not null,
     value varchar(255),
-    property_id bigint,
-    task_id bigint not null,
+    property_id bigint not null,
+    tasktemplate_id bigint not null,
     primary key (id)
 );
 
@@ -65,8 +65,8 @@ alter table tasktpropertyvalue
     foreign key (property_id)
     references tasktproperty;
 alter table tasktpropertyvalue
-    add constraint fk_n3ls1jyldy00fkugyi407jf9t
-    foreign key (task_id)
+    add constraint fk_omhmbrbajale7h2ncxv1f045t
+    foreign key (tasktemplate_id)
     references tasktemplate;
 
 create sequence ppt_seq;

@@ -78,12 +78,16 @@ public abstract class AbstractTestDataCreator {
 		return taskProperty;
 	}
 
-	public static TaskPropertyValue createTaskPropertyValue(String value, TaskProperty property, TaskTemplate task) {
+	public static TaskPropertyValue createTaskPropertyValue(String value, TaskProperty property, TaskTemplate taskTemplate) {
 		TaskPropertyValue taskPropertyValue = new TaskPropertyValue();
 		taskPropertyValue.setValue(value);
 		taskPropertyValue.setProperty(property);
-		task.addProperty(taskPropertyValue);
+		taskPropertyValue.setTaskTemplate(taskTemplate);
 		persistAndFlush(taskPropertyValue);
 		return taskPropertyValue;
+	}
+
+	public static TaskPropertyValue createTaskPropertyValue(String value, String property, TaskTemplate taskTemplate) {
+		return createTaskPropertyValue(value, createTaskProperty(property), taskTemplate);
 	}
 }

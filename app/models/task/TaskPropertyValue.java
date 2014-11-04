@@ -1,5 +1,7 @@
 package models.task;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 
 @Entity
@@ -13,7 +15,13 @@ public class TaskPropertyValue {
 	private Long id;
 
 	@ManyToOne
+	@JoinColumn(nullable = false)
 	private TaskProperty property;
+
+	@ManyToOne
+	@JoinColumn(nullable = false)
+	@JsonBackReference
+	private TaskTemplate taskTemplate;
 
 	private String value;
 
@@ -27,6 +35,14 @@ public class TaskPropertyValue {
 
 	public void setProperty(TaskProperty property) {
 		this.property = property;
+	}
+
+	public TaskTemplate getTaskTemplate() {
+		return taskTemplate;
+	}
+
+	public void setTaskTemplate(TaskTemplate taskTemplate) {
+		this.taskTemplate = taskTemplate;
 	}
 
 	public String getValue() {

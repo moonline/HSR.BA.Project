@@ -1,5 +1,7 @@
 package models.task;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,12 +22,12 @@ public class TaskTemplate {
 	private List<String> dksNode = new ArrayList<>();
 
 	@ManyToOne
-	private TaskTemplate parent; //todo, guarantee parent has no parent and new parent hast no children
+	private TaskTemplate parent;
 
 	private String name;
 
-	@OneToMany(cascade = CascadeType.PERSIST)
-	@JoinColumn(name = "task_id", nullable = false)
+	@OneToMany(cascade = CascadeType.PERSIST, mappedBy = "taskTemplate")
+	@JsonManagedReference
 	private List<TaskPropertyValue> properties = new ArrayList<>();
 
 	public Long getId() {

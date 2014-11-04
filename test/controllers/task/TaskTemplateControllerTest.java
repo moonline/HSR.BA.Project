@@ -1,7 +1,9 @@
 package controllers.task;
 
 import controllers.AbstractControllerTest;
+import daos.task.TaskPropertyValueDAO;
 import daos.task.TaskTemplateDAO;
+import models.task.TaskPropertyValue;
 import models.task.TaskTemplate;
 import models.user.User;
 import org.junit.Test;
@@ -20,10 +22,12 @@ import static test.AbstractTestDataCreator.createUserWithTransaction;
 public class TaskTemplateControllerTest extends AbstractControllerTest {
 
 	public static final TaskTemplateDAO TASK_TEMPLATE_DAO = new TaskTemplateDAO();
+	public static final TaskPropertyValueDAO TASK_PROPERTY_VALUE_DAO = new TaskPropertyValueDAO();
 
 	@Test
 	public void testCreateTaskTemplateWorking() throws Throwable {
 		//Setup
+		JPA.withTransaction(TASK_PROPERTY_VALUE_DAO::removeAll);
 		JPA.withTransaction(TASK_TEMPLATE_DAO::removeAll);
 		User user = createUserWithTransaction("User 9p", "123");
 		//Test
@@ -40,6 +44,7 @@ public class TaskTemplateControllerTest extends AbstractControllerTest {
 	@Test
 	public void testReadAllTaskTemplates() throws Throwable {
 		//Setup
+		JPA.withTransaction(TASK_PROPERTY_VALUE_DAO::removeAll);
 		JPA.withTransaction(TASK_TEMPLATE_DAO::removeAll);
 		TaskTemplate taskTemplate1 = AbstractTestDataCreator.createTaskTemplateWithTransaction("My Task Template X");
 		TaskTemplate taskTemplate2 = AbstractTestDataCreator.createTaskTemplateWithTransaction("My Task Template Y");
@@ -75,6 +80,33 @@ public class TaskTemplateControllerTest extends AbstractControllerTest {
 				"      \"name\" : \"My Task Template Z\",\n" +
 				"      \"parent\" : null,\n" +
 				"      \"properties\" : [],\n" +
+				"      \"dksNode\" : []\n" +
+				"    }"));
+	}
+
+	@Test
+	public void testReadOneTaskTemplateWithProperties() throws Throwable {
+		//Setup
+		TaskPropertyValue taskPropertyValue = JPA.withTransaction(() -> {
+			TaskTemplate taskTemplate = AbstractTestDataCreator.createTaskTemplate("My Task Template Z");
+			return AbstractTestDataCreator.createTaskPropertyValue("property value", "property name", taskTemplate);
+		});
+		Long taskTemplate = taskPropertyValue.getTaskTemplate().getId();
+		//Test
+		Result result = callActionWithUser(routes.ref.TaskTemplateController.read(taskTemplate));
+		//Verification
+		assertThat(status(result)).isEqualTo(OK);
+		assertCheckJsonResponse(result, Json.parse("{ \"id\" : " + taskTemplate + ",\n" +
+				"      \"name\" : \"My Task Template Z\",\n" +
+				"      \"parent\" : null,\n" +
+				"      \"properties\" : [" +
+				"		{\"id\":" + taskPropertyValue.getId() + "," +
+				"			\"property\":{" +
+				"				\"id\":" + taskPropertyValue.getProperty().getId() + "," +
+				"				\"name\":\"property name\"" +
+				"			}," +
+				"			\"value\":\"property value\"" +
+				"		}],\n" +
 				"      \"dksNode\" : []\n" +
 				"    }"));
 	}
