@@ -3,12 +3,14 @@ package logics.docs;
 import daos.AbstractDAO;
 import daos.ppt.ProjectPlanningToolDAO;
 import daos.task.TaskPropertyDAO;
+import daos.task.TaskPropertyValueDAO;
 import daos.task.TaskTemplateDAO;
 import daos.user.PPTAccountDAO;
 import daos.user.UserDAO;
 import logics.user.UserLogic;
 import models.ppt.ProjectPlanningTool;
 import models.task.TaskProperty;
+import models.task.TaskPropertyValue;
 import models.task.TaskTemplate;
 import models.user.PPTAccount;
 import models.user.User;
@@ -28,6 +30,7 @@ public class ExampleDataCreator {
 	private final ProjectPlanningToolDAO PROJECT_PLANNING_TOOL_DAO;
 	private final TaskTemplateDAO TASK_TEMPLATE_DAO;
 	private final TaskPropertyDAO TASK_PROPERTY_DAO;
+	private final TaskPropertyValueDAO TASK_PROPERTY_VALUE_DAO;
 
 	private Set<String> cache = new HashSet<>();
 
@@ -37,7 +40,7 @@ public class ExampleDataCreator {
 
 	public Long USER_ID;
 
-	public ExampleDataCreator(UserLogic userLogic, UserDAO userDao, PPTAccountDAO pptAccountDao, ProjectPlanningToolDAO projectPlanningToolDao, TaskTemplateDAO taskTemplateDao, TaskPropertyDAO taskPropertyDao) {
+	public ExampleDataCreator(UserLogic userLogic, UserDAO userDao, PPTAccountDAO pptAccountDao, ProjectPlanningToolDAO projectPlanningToolDao, TaskTemplateDAO taskTemplateDao, TaskPropertyDAO taskPropertyDao, TaskPropertyValueDAO taskPropertyValueDao) {
 		USER_DAO = userDao;
 		PPT_ACCOUNT_DAO = pptAccountDao;
 		JPA.withTransaction(new F.Callback0() {
@@ -61,6 +64,7 @@ public class ExampleDataCreator {
 		PROJECT_PLANNING_TOOL_DAO = projectPlanningToolDao;
 		TASK_TEMPLATE_DAO = taskTemplateDao;
 		TASK_PROPERTY_DAO = taskPropertyDao;
+		TASK_PROPERTY_VALUE_DAO = taskPropertyValueDao;
 	}
 
 	public void createExampleObject(String reference, boolean canBeCached) {
@@ -129,6 +133,18 @@ public class ExampleDataCreator {
 							return taskProperty.getId();
 						},
 						existingTaskProperty -> existingTaskProperty.getName().equals(tpName));
+				break;
+			case "TASKPROPERTYVALUE":
+				String tpValue = "My example Value";
+				objectCreator = new ExampleObjectCreator<>("TaskPropertyValue",
+						TASK_PROPERTY_VALUE_DAO,
+						() -> {
+							TaskPropertyValue taskPropertyValue = new TaskPropertyValue();
+							taskPropertyValue.setValue(tpValue);
+							persist(taskPropertyValue);
+							return taskPropertyValue.getId();
+						},
+						existingTaskPropertyValue -> existingTaskPropertyValue.getValue().equals(tpValue));
 				break;
 			default:
 				throw new NotImplementedException("Example-object-creation not implemented for " + referenceParts[1]);

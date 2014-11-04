@@ -155,10 +155,10 @@ public class Global extends GlobalSettings {
 	}
 
 	private void initializeControllersRequiringParameters() {
-		CONTROLLERS.put(DocumentationController.class, new DocumentationController(DOCUMENTATION_LOGIC, new ExampleDataCreator(USER_LOGIC, USER_DAO, PPT_ACCOUNT_DAO, PROJECT_PLANNING_TOOL_DAO, TASK_TEMPLATE_DAO, TASK_PROPERTY_DAO)));
+		CONTROLLERS.put(DocumentationController.class, new DocumentationController(DOCUMENTATION_LOGIC, new ExampleDataCreator(USER_LOGIC, USER_DAO, PPT_ACCOUNT_DAO, PROJECT_PLANNING_TOOL_DAO, TASK_TEMPLATE_DAO, TASK_PROPERTY_DAO, TASK_PROPERTY_VALUE_DAO)));
 		CONTROLLERS.put(PPTAccountController.class, new PPTAccountController(PPT_ACCOUNT_DAO, PPT_ACCOUNT_LOGIC, AUTHENTICATION_CHECKER));
 		CONTROLLERS.put(UserController.class, new UserController(USER_LOGIC, AUTHENTICATION_CHECKER));
-		CONTROLLERS.put(TaskTemplateController.class, new TaskTemplateController(TASK_TEMPLATE_LOGIC, TASK_TEMPLATE_DAO));
+		CONTROLLERS.put(TaskTemplateController.class, new TaskTemplateController(TASK_TEMPLATE_LOGIC, TASK_TEMPLATE_DAO, TASK_PROPERTY_VALUE_DAO));
 		CONTROLLERS.put(ProjectPlanningToolController.class, new ProjectPlanningToolController(PPT_TASK_LOGIC));
 		CONTROLLERS.put(DecisionKnowledgeSystemController.class, new DecisionKnowledgeSystemController(DKS_LOGIC));
 		CONTROLLERS.put(AuthenticationChecker.Authenticator.class, AUTHENTICATION_CHECKER.new Authenticator());

@@ -224,4 +224,34 @@ public class TaskTemplateControllerTest extends AbstractControllerTest {
 				"    }"));
 	}
 
+	@Test
+	public void testUpdatePropertyWorking() throws Throwable {
+		//Setup
+		TaskPropertyValue taskPropertyValue = JPA.withTransaction(() -> {
+			TASK_PROPERTY_VALUE_DAO.removeAll();
+			TaskTemplate taskTemplate = AbstractTestDataCreator.createTaskTemplate("Task Template I");
+			return AbstractTestDataCreator.createTaskPropertyValue("Task Value II", "Task Property III", taskTemplate);
+		});
+		String newValue = "Task Value IV";
+		//Test
+		Result result = callActionWithUser(routes.ref.TaskTemplateController.updateProperty(taskPropertyValue.getId(), taskPropertyValue.getTaskTemplate().getId()), postData("property", taskPropertyValue.getProperty().getId() + "", "value", newValue));
+		//Verification
+		assertThat(status(result)).isEqualTo(OK);
+		TaskPropertyValue taskPropertyValueInDB = JPA.withTransaction(() -> TASK_PROPERTY_VALUE_DAO.readById(taskPropertyValue.getId()));
+		assertThat(taskPropertyValueInDB.getValue()).isEqualTo(newValue);
+		assertCheckJsonResponse(result, Json.parse("{ \"id\" : " + taskPropertyValue.getTaskTemplate().getId() + ",\n" +
+				"      \"name\" : \"Task Template I\"," +
+				"      \"parent\" : null,\n" +
+				"      \"properties\" : [" +
+				"		{\"id\":" + taskPropertyValue.getId() + "," +
+				"			\"property\":{" +
+				"				\"id\":" + taskPropertyValue.getProperty().getId() + "," +
+				"				\"name\":\"Task Property III\"" +
+				"			}," +
+				"			\"value\":\"Task Value IV\"" +
+				"		}],\n" +
+				"      \"dksNode\" : []\n" +
+				"    }"));
+	}
+
 }

@@ -52,6 +52,12 @@ public class TaskTemplateLogic {
 		return taskTemplate;
 	}
 
+	public TaskTemplate updateProperty(TaskPropertyValue taskPropertyValue, TaskPropertyForm taskPropertyForm) {
+		taskPropertyValue.setValue(taskPropertyForm.value);
+		taskPropertyValue.setProperty(taskPropertyForm.property);
+		return taskPropertyValue.getTaskTemplate();
+	}
+
 	public static class TaskTemplateForm {
 		@Constraints.Required
 		public String name;

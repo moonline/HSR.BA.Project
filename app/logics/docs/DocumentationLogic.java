@@ -142,18 +142,49 @@ public class DocumentationLogic {
 		if (queryString != null) {
 			request.append(" --data \"").append(queryString).append("\"");
 		}
-		request.append(" ").append(getRequestUrl(method, true, getRealQueryParameter(example.id())));
+		request.append(" ").append(getRequestUrl(method, true, example.id()));
 		return request.toString();
 	}
 
-	public String getRequestUrl(MethodDocumentation method, boolean asAbsolute, String id) {
+	public String getRequestUrl(MethodDocumentation method, boolean asAbsolute, String[] ids) {
 		String url;
 		if (asAbsolute) {
 			url = method.call.absoluteURL(ctx().request());
 		} else {
 			url = method.call.url();
 		}
-		return url.replaceAll(MAGIC_CONSTANT_PARAMETER_IDENTIFICATION + "", id);
+		for (String id : ids) {
+			url = url.replaceFirst(MAGIC_CONSTANT_PARAMETER_IDENTIFICATION + "", getRealQueryParameter(id));
+		}
+		return url;
+	}
+
+	public String[] getIds(QueryParameters.Parameter[] queryParameters) {
+		List<String> ids = new ArrayList<>();
+		if (queryParameters != null) {
+			for (QueryParameters.Parameter queryParameter : queryParameters) {
+				if (queryParameter.isId()) {
+					ids.add(queryParameter.name());
+				}
+			}
+		}
+		return ids.toArray(new String[ids.size()]);
+	}
+
+	/**
+	 * @param wrapper A String of which the array elements are created, "x" is replaced with the parameters name.
+	 * @return A list of all IDs formatted with the wrapper.
+	 */
+	public String[] getIdsWrapped(QueryParameters.Parameter[] queryParameters, String wrapper) {
+		List<String> ids = new ArrayList<>();
+		if (queryParameters != null) {
+			for (QueryParameters.Parameter queryParameter : queryParameters) {
+				if (queryParameter.isId()) {
+					ids.add(wrapper.replaceAll("x", queryParameter.name()));
+				}
+			}
+		}
+		return ids.toArray(new String[ids.size()]);
 	}
 
 	/**
@@ -170,7 +201,7 @@ public class DocumentationLogic {
 	}
 
 	private SimpleResponse simulateRequest(MethodDocumentation method, QueryExamples.Example example, ExampleDataCreator exampleDataCreator) {
-		WSRequestHolder url = WS.url(getRequestUrl(method, true, getRealQueryParameter(example.id())));
+		WSRequestHolder url = WS.url(getRequestUrl(method, true, example.id()));
 		String queryString = calculateQueryString(method, example.parameters());
 		if (queryString != null) {
 			url.setQueryString(queryString);
@@ -241,8 +272,10 @@ public class DocumentationLogic {
 		for (List<MethodDocumentation> apiMethods : allAPIMethods) {
 			for (MethodDocumentation apiMethod : apiMethods) {
 				for (QueryExamples.Example queryExample : apiMethod.queryExamples) {
-					if (queryExample.id().startsWith("REFERENCE_")) {
-						exampleDataCreator.createExampleObject(queryExample.id(), queryExample.isDataCacheable());
+					for (String id : queryExample.id()) {
+						if (id.startsWith("REFERENCE_")) {
+							exampleDataCreator.createExampleObject(id, queryExample.isDataCacheable());
+						}
 					}
 					for (String parameter : queryExample.parameters()) {
 						if (parameter.startsWith("REFERENCE_")) {

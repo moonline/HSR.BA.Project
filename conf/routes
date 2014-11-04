@@ -29,6 +29,7 @@ POST	/taskTemplate/$id<[0-9]+>	@controllers.task.TaskTemplateController.update(i
 DELETE	/taskTemplate/$id<[0-9]+>	@controllers.task.TaskTemplateController.delete(id: Long)
 POST	/taskTemplate/$id<[0-9]+>/delete	@controllers.task.TaskTemplateController.delete(id: Long)
 POST	/taskTemplate/$id<[0-9]+>/addProperty	@controllers.task.TaskTemplateController.addProperty(id: Long)
+POST	/taskTemplate/$taskTemplate<[0-9]+>/properties/$id<[0-9]+>	@controllers.task.TaskTemplateController.updateProperty(id: Long, taskTemplate: Long)
 
 POST	/taskProperty				@controllers.task.TaskPropertyController.create()
 GET		/taskProperty				@controllers.task.TaskPropertyController.readAll()

@@ -1,12 +1,14 @@
 package controllers.task;
 
 import controllers.GuaranteeAuthenticatedUser;
+import daos.task.TaskPropertyValueDAO;
 import daos.task.TaskTemplateDAO;
 import logics.docs.QueryDescription;
 import logics.docs.QueryExamples;
 import logics.docs.QueryParameters;
 import logics.docs.QueryResponses;
 import logics.task.TaskTemplateLogic;
+import models.task.TaskPropertyValue;
 import models.task.TaskTemplate;
 import play.data.Form;
 import play.db.jpa.Transactional;
@@ -21,10 +23,12 @@ public class TaskTemplateController extends Controller {
 
 	private final TaskTemplateLogic TASK_TEMPLATE_LOGIC;
 	private final TaskTemplateDAO TASK_TEMPLATE_DAO;
+	private final TaskPropertyValueDAO TASK_PROPERTY_VALUE_DAO;
 
-	public TaskTemplateController(TaskTemplateLogic taskTemplateLogic, TaskTemplateDAO taskTemplateDao) {
+	public TaskTemplateController(TaskTemplateLogic taskTemplateLogic, TaskTemplateDAO taskTemplateDao, TaskPropertyValueDAO taskPropertyValueDao) {
 		TASK_TEMPLATE_LOGIC = taskTemplateLogic;
 		TASK_TEMPLATE_DAO = taskTemplateDao;
+		TASK_PROPERTY_VALUE_DAO = taskPropertyValueDao;
 	}
 
 	@Transactional()
@@ -141,13 +145,13 @@ public class TaskTemplateController extends Controller {
 	})
 	@QueryDescription("Adds a new property to an existing Task Template.")
 	@QueryResponses({
-			@Response(status = NOT_FOUND, description = "If no Task Template or Task Property with the given ID exists"),
-			@Response(status = BAD_REQUEST, description = "If the request parameter contain errors."),
+			@Response(status = NOT_FOUND, description = "If no Task Template with the given ID exists"),
+			@Response(status = BAD_REQUEST, description = "If the request parameters contain errors."),
 			@Response(status = OK, description = "The Task Template containing the new Property is returned")
 	})
 	@QueryExamples({
-			@Example(id = "9999", parameters = {"8888", "My beautiful task template"}),
-			@Example(id = "REFERENCE_TASKTEMPLATE_25", parameters = {"REFERENCE_TASKPROPERTY_27", "My example Task Template"})
+			@Example(id = "9999", parameters = {"8888", "My beautiful task value"}),
+			@Example(id = "REFERENCE_TASKTEMPLATE_25", parameters = {"REFERENCE_TASKPROPERTY_27", "My example Task Value"})
 	})
 	public Result addProperty(long id) {
 		TaskTemplate taskTemplate = TASK_TEMPLATE_DAO.readById(id);
@@ -159,6 +163,36 @@ public class TaskTemplateController extends Controller {
 			return badRequest(form.errorsAsJson());
 		}
 		return ok(Json.toJson(TASK_TEMPLATE_LOGIC.addProperty(taskTemplate, form.get())));
+	}
+
+	@Transactional()
+	@GuaranteeAuthenticatedUser()
+	@QueryParameters({
+			@QueryParameters.Parameter(name = "id", isId = true, format = Long.class, description = "The id of the Task Template Value"),
+			@QueryParameters.Parameter(name = "taskTemplate", isId = true, format = Long.class, description = "The id of the Task Template"),
+			@QueryParameters.Parameter(name = "property", description = "The id of the Task Property"),
+			@QueryParameters.Parameter(name = "value", description = "The value of the Property")
+	})
+	@QueryDescription("Updates a task property value.")
+	@QueryResponses({
+			@Response(status = NOT_FOUND, description = "If no Task Template or Task Property Value with the given ID exists"),
+			@Response(status = BAD_REQUEST, description = "If the request parameters contain errors."),
+			@Response(status = OK, description = "The Task Template containing the updated Property is returned")
+	})
+	@QueryExamples({
+			@Example(id = {"9999", "7777"}, parameters = {"8888", "My beautiful task template"}),
+			@Example(id = {"REFERENCE_TASKPROPERTYVALUE_29", "REFERENCE_TASKTEMPLATE_25"}, parameters = {"REFERENCE_TASKPROPERTY_27", "My example Value"})
+	})
+	public Result updateProperty(long id, long taskTemplate) {
+		TaskPropertyValue taskPropertyValue = TASK_PROPERTY_VALUE_DAO.readById(id);
+		if (taskPropertyValue == null || taskPropertyValue.getTaskTemplate().getId() != taskTemplate) {
+			return notFound();
+		}
+		Form<TaskTemplateLogic.TaskPropertyForm> form = Form.form(TaskTemplateLogic.TaskPropertyForm.class).bindFromRequest();
+		if (form.hasErrors()) {
+			return badRequest(form.errorsAsJson());
+		}
+		return ok(Json.toJson(TASK_TEMPLATE_LOGIC.updateProperty(taskPropertyValue, form.get())));
 	}
 
 
