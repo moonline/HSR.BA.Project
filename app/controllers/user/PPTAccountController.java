@@ -124,7 +124,7 @@ public class PPTAccountController extends Controller {
 	@QueryExamples({
 			@Example(id = "9999", parameters = {"1", "no url", "name", "1234"}),
 			@Example(id = "REFERENCE_PPTACCOUNT_3", parameters = {"9999", "no url", "ozander", "pMuE2ekiDa"}),
-			@Example(id = "REFERENCE_PPTACCOUNT_3", parameters = {"1", "http://jira.example.com", "tbucher", "7YqupNxN9v"})
+			@Example(id = "REFERENCE_PPTACCOUNT_3", parameters = {"1", "https://ppt.example.com", "tbucher", "7YqupNxN9v"})
 	})
 	public Result update(long id) {
 		PPTAccount pptAccount = PPT_ACCOUNT_LOGIC.read(AUTHENTICATION_CHECKER.getLoggedInUser(ctx()), id);

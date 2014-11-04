@@ -139,9 +139,15 @@ public class ExampleDataCreator {
 				objectCreator = new ExampleObjectCreator<>("TaskPropertyValue",
 						TASK_PROPERTY_VALUE_DAO,
 						() -> {
+							TaskProperty taskProperty = new TaskProperty();
+							taskProperty.setName("My example Task Property 2");
+							TaskTemplate taskTemplate = new TaskTemplate();
+							taskTemplate.setName("My example Task Template 2");
 							TaskPropertyValue taskPropertyValue = new TaskPropertyValue();
 							taskPropertyValue.setValue(tpValue);
-							persist(taskPropertyValue);
+							taskPropertyValue.setProperty(taskProperty);
+							taskPropertyValue.setTaskTemplate(taskTemplate);
+							persist(taskProperty, taskTemplate, taskPropertyValue);
 							return taskPropertyValue.getId();
 						},
 						existingTaskPropertyValue -> existingTaskPropertyValue.getValue().equals(tpValue));
