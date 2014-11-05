@@ -1,5 +1,8 @@
 package test;
 
+import daos.task.TaskPropertyDAO;
+import daos.task.TaskPropertyValueDAO;
+import daos.task.TaskTemplateDAO;
 import daos.user.UserDAO;
 import logics.user.UserLogic;
 import models.ppt.ProjectPlanningTool;
@@ -89,5 +92,17 @@ public abstract class AbstractTestDataCreator {
 
 	public static TaskPropertyValue createTaskPropertyValue(String value, String property, TaskTemplate taskTemplate) {
 		return createTaskPropertyValue(value, createTaskProperty(property), taskTemplate);
+	}
+
+	public static void removeAllTaskRelatedEntities() {
+		new TaskPropertyValueDAO().removeAll();
+		new TaskPropertyDAO().removeAll();
+		TaskTemplateDAO taskTemplateDAO = new TaskTemplateDAO();
+		for (TaskTemplate taskTemplate : taskTemplateDAO.readAll()) {
+			taskTemplate.getDksNode().clear();
+			taskTemplateDAO.persist(taskTemplate);
+		}
+		taskTemplateDAO.flush();
+		taskTemplateDAO.removeAll();
 	}
 }

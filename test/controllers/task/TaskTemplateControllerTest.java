@@ -28,8 +28,7 @@ public class TaskTemplateControllerTest extends AbstractControllerTest {
 	@Test
 	public void testCreateTaskTemplateWorking() throws Throwable {
 		//Setup
-		JPA.withTransaction(TASK_PROPERTY_VALUE_DAO::removeAll);
-		JPA.withTransaction(TASK_TEMPLATE_DAO::removeAll);
+		JPA.withTransaction(AbstractTestDataCreator::removeAllTaskRelatedEntities);
 		User user = createUserWithTransaction("User 9p", "123");
 		//Test
 		Result result = callActionWithUser(routes.ref.TaskTemplateController.create(), user, postData("name", "My beautiful task"));
@@ -45,8 +44,7 @@ public class TaskTemplateControllerTest extends AbstractControllerTest {
 	@Test
 	public void testReadAllTaskTemplates() throws Throwable {
 		//Setup
-		JPA.withTransaction(TASK_PROPERTY_VALUE_DAO::removeAll);
-		JPA.withTransaction(TASK_TEMPLATE_DAO::removeAll);
+		JPA.withTransaction(AbstractTestDataCreator::removeAllTaskRelatedEntities);
 		TaskTemplate taskTemplate1 = AbstractTestDataCreator.createTaskTemplateWithTransaction("My Task Template X");
 		TaskTemplate taskTemplate2 = AbstractTestDataCreator.createTaskTemplateWithTransaction("My Task Template Y");
 		//Test
@@ -199,7 +197,7 @@ public class TaskTemplateControllerTest extends AbstractControllerTest {
 	@Test
 	public void testAddPropertyWorking() throws Throwable {
 		//Setup
-		JPA.withTransaction(TASK_PROPERTY_VALUE_DAO::removeAll);
+		JPA.withTransaction(AbstractTestDataCreator::removeAllTaskRelatedEntities);
 		TaskTemplate taskTemplate = AbstractTestDataCreator.createTaskTemplateWithTransaction("My Task Template R");
 		TaskProperty taskProperty = AbstractTestDataCreator.createTaskPropertyWithTransaction("My Property");
 		String value = "My Value";
@@ -228,7 +226,7 @@ public class TaskTemplateControllerTest extends AbstractControllerTest {
 	public void testUpdatePropertyWorking() throws Throwable {
 		//Setup
 		TaskPropertyValue taskPropertyValue = JPA.withTransaction(() -> {
-			TASK_PROPERTY_VALUE_DAO.removeAll();
+			AbstractTestDataCreator.removeAllTaskRelatedEntities();
 			TaskTemplate taskTemplate = AbstractTestDataCreator.createTaskTemplate("Task Template I");
 			return AbstractTestDataCreator.createTaskPropertyValue("Task Value II", "Task Property III", taskTemplate);
 		});
@@ -258,7 +256,7 @@ public class TaskTemplateControllerTest extends AbstractControllerTest {
 	public void testDeletePropertyWorking() throws Throwable {
 		//Setup
 		TaskPropertyValue taskPropertyValue = JPA.withTransaction(() -> {
-			TASK_PROPERTY_VALUE_DAO.removeAll();
+			AbstractTestDataCreator.removeAllTaskRelatedEntities();
 			TaskTemplate taskTemplate = AbstractTestDataCreator.createTaskTemplate("Task Template V");
 			return AbstractTestDataCreator.createTaskPropertyValue("Task Value VI", "Task Property VII", taskTemplate);
 		});

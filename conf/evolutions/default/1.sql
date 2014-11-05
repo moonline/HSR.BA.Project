@@ -25,22 +25,22 @@ create table pptaccount (
     user_id bigint,
     primary key (id)
 );
-create table tasktemplate (
-    id bigint not null,
-    name varchar(255),
-    parent_id bigint,
-    primary key (id)
-);
-create table tasktproperty (
+create table taskproperty (
     id bigint not null,
     name varchar(255),
     primary key (id)
 );
-create table tasktpropertyvalue (
+create table taskpropertyvalue (
     id bigint not null,
     value varchar(255),
     property_id bigint not null,
     tasktemplate_id bigint not null,
+    primary key (id)
+);
+create table tasktemplate (
+    id bigint not null,
+    name varchar(255),
+    parent_id bigint,
     primary key (id)
 );
 
@@ -56,24 +56,24 @@ alter table pptaccount
     add constraint fk_jpo3oot8ssbfu986lj40tefbh
     foreign key (user_id)
     references person;
+alter table taskpropertyvalue
+    add constraint fk_5rv22d7ar67c7y51v2fseaums
+    foreign key (property_id)
+    references taskproperty;
+alter table taskpropertyvalue
+    add constraint fk_qdojmdoqofuu3c1i05el8dhpq
+    foreign key (tasktemplate_id)
+    references tasktemplate;
 alter table tasktemplate
     add constraint fk_2wtpsk3lq7w8v5y6ldc4pboar
     foreign key (parent_id)
     references tasktemplate;
-alter table tasktpropertyvalue
-    add constraint fk_jv3iwliq641cqy69vm7sx9ptt
-    foreign key (property_id)
-    references tasktproperty;
-alter table tasktpropertyvalue
-    add constraint fk_omhmbrbajale7h2ncxv1f045t
-    foreign key (tasktemplate_id)
-    references tasktemplate;
 
 create sequence ppt_seq;
 create sequence pptaccount_seq;
+create sequence taskproperty_seq;
+create sequence taskpropertyvalue_seq;
 create sequence tasktemplate_seq;
-create sequence tasktproperty_seq;
-create sequence tasktpropertyvalue_seq;
 create sequence user_seq;
 
 # --- !Downs
@@ -84,15 +84,15 @@ drop table if exists node;
 drop table if exists person;
 drop table if exists ppt;
 drop table if exists pptaccount;
+drop table if exists taskproperty;
+drop table if exists taskpropertyvalue;
 drop table if exists tasktemplate;
-drop table if exists tasktproperty;
-drop table if exists tasktpropertyvalue;
 
 SET REFERENTIAL_INTEGRITY TRUE;
 
 drop sequence ppt_seq;
 drop sequence pptaccount_seq;
+drop sequence taskproperty_seq;
+drop sequence taskpropertyvalue_seq;
 drop sequence tasktemplate_seq;
-drop sequence tasktproperty_seq;
-drop sequence tasktpropertyvalue_seq;
 drop sequence user_seq;

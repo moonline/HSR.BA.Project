@@ -2,7 +2,6 @@ package controllers.task;
 
 import controllers.AbstractControllerTest;
 import daos.task.TaskPropertyDAO;
-import daos.task.TaskPropertyValueDAO;
 import models.task.TaskProperty;
 import org.junit.Test;
 import play.db.jpa.JPA;
@@ -19,13 +18,11 @@ import static play.test.Helpers.status;
 public class TaskPropertyControllerTest extends AbstractControllerTest {
 
 	public static final TaskPropertyDAO TASK_PROPERTY_DAO = new TaskPropertyDAO();
-	public static final TaskPropertyValueDAO TASK_PROPERTY_VALUE_DAO = new TaskPropertyValueDAO();
 
 	@Test
 	public void testCreateTaskPropertyWorking() throws Throwable {
 		//Setup
-		JPA.withTransaction(TASK_PROPERTY_VALUE_DAO::removeAll);
-		JPA.withTransaction(TASK_PROPERTY_DAO::removeAll);
+		JPA.withTransaction(AbstractTestDataCreator::removeAllTaskRelatedEntities);
 		//Test
 		Result result = callActionWithUser(routes.ref.TaskPropertyController.create(), postData("name", "My beautiful property"));
 		//Verification
@@ -40,7 +37,7 @@ public class TaskPropertyControllerTest extends AbstractControllerTest {
 	@Test
 	public void testReadAllTaskProperties() throws Throwable {
 		//Setup
-		JPA.withTransaction(TASK_PROPERTY_DAO::removeAll);
+		JPA.withTransaction(AbstractTestDataCreator::removeAllTaskRelatedEntities);
 		TaskProperty taskProperty1 = AbstractTestDataCreator.createTaskPropertyWithTransaction("My Task Property X");
 		TaskProperty taskProperty2 = AbstractTestDataCreator.createTaskPropertyWithTransaction("My Task Property Y");
 		//Test
