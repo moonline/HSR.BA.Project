@@ -1,5 +1,6 @@
 package logics.docs;
 
+import controllers.AbstractController;
 import controllers.GuaranteeAuthenticatedUser;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
@@ -109,9 +110,9 @@ public class DocumentationLogic {
 	}
 
 	/**
-	 * Uses reflection to get all API-controller classes (extending Controller and in package controllers but not in package controllers.docs).
+	 * Uses reflection to get all API-controller classes (extending AbstractController and in package controllers but not in package controllers.docs).
 	 */
-	private Set<Class<? extends Controller>> getAllControllerClasses() {
+	private Set<Class<? extends AbstractController>> getAllControllerClasses() {
 		List<ClassLoader> classLoadersList = new LinkedList<>();
 		classLoadersList.add(ClasspathHelper.contextClassLoader());
 		classLoadersList.add(ClasspathHelper.staticClassLoader());
@@ -120,7 +121,7 @@ public class DocumentationLogic {
 				.setScanners(new SubTypesScanner(), new ResourcesScanner())
 				.setUrls(ClasspathHelper.forClassLoader(classLoadersList.toArray(new ClassLoader[classLoadersList.size()])))
 				.filterInputsBy(new FilterBuilder().include(FilterBuilder.prefix("controllers")).exclude(FilterBuilder.prefix("controllers.docs"))));
-		return reflections.getSubTypesOf(Controller.class);
+		return reflections.getSubTypesOf(AbstractController.class);
 	}
 
 	/**

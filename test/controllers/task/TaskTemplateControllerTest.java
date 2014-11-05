@@ -53,7 +53,7 @@ public class TaskTemplateControllerTest extends AbstractControllerTest {
 		Result result = callActionWithUser(routes.ref.TaskTemplateController.readAll());
 		//Verification
 		assertThat(status(result)).isEqualTo(OK);
-		assertCheckJsonResponse(result, Json.parse("[ { \"id\" : " + taskTemplate1.getId() + ",\n" +
+		assertCheckJsonResponse(result, Json.parse("{\"items\":[ { \"id\" : " + taskTemplate1.getId() + ",\n" +
 				"      \"name\" : \"My Task Template X\",\n" +
 				"      \"parent\" : null,\n" +
 				"      \"properties\" : [],\n" +
@@ -65,7 +65,7 @@ public class TaskTemplateControllerTest extends AbstractControllerTest {
 				"      \"properties\" : [],\n" +
 				"      \"dksNode\" : []\n" +
 				"    }\n" +
-				"  ]"));
+				"  ]}"));
 	}
 
 

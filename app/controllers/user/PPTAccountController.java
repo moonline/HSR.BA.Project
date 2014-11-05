@@ -1,5 +1,6 @@
 package controllers.user;
 
+import controllers.AbstractController;
 import controllers.AuthenticationChecker;
 import controllers.GuaranteeAuthenticatedUser;
 import daos.user.PPTAccountDAO;
@@ -11,15 +12,13 @@ import logics.user.PPTAccountLogic;
 import models.user.PPTAccount;
 import play.data.Form;
 import play.db.jpa.Transactional;
-import play.libs.Json;
-import play.mvc.Controller;
 import play.mvc.Result;
 
 import static logics.docs.QueryExamples.Example;
 import static logics.docs.QueryParameters.Parameter;
 import static logics.docs.QueryResponses.Response;
 
-public class PPTAccountController extends Controller {
+public class PPTAccountController extends AbstractController {
 
 	private final PPTAccountDAO PPT_ACCOUNT_DAO;
 	private final PPTAccountLogic PPT_ACCOUNT_LOGIC;
@@ -53,7 +52,7 @@ public class PPTAccountController extends Controller {
 		if (form.hasErrors()) {
 			return badRequest(form.errorsAsJson());
 		}
-		return ok(Json.toJson(PPT_ACCOUNT_LOGIC.create(form.get(), AUTHENTICATION_CHECKER.getLoggedInUser(ctx()))));
+		return ok(jsonify(PPT_ACCOUNT_LOGIC.create(form.get(), AUTHENTICATION_CHECKER.getLoggedInUser(ctx()))));
 	}
 
 	@Transactional(readOnly = true)
@@ -81,7 +80,7 @@ public class PPTAccountController extends Controller {
 					"]"))
 	})
 	public Result readAll() {
-		return ok(Json.toJson(PPT_ACCOUNT_DAO.readByUser(AUTHENTICATION_CHECKER.getLoggedInUser(ctx()))));
+		return ok(jsonify(PPT_ACCOUNT_DAO.readByUser(AUTHENTICATION_CHECKER.getLoggedInUser(ctx()))));
 	}
 
 	@Transactional(readOnly = true)
@@ -103,7 +102,7 @@ public class PPTAccountController extends Controller {
 		if (pptAccount == null) {
 			return notFound("The account " + id + " could not be found for the logged in user.");
 		}
-		return ok(Json.toJson(pptAccount));
+		return ok(jsonify(pptAccount));
 	}
 
 	@Transactional()
@@ -136,7 +135,7 @@ public class PPTAccountController extends Controller {
 			return badRequest(form.errorsAsJson());
 		}
 		PPT_ACCOUNT_LOGIC.update(pptAccount, form.get());
-		return ok(Json.toJson(pptAccount));
+		return ok(jsonify(pptAccount));
 	}
 
 	@Transactional()

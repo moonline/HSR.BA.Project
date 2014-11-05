@@ -47,13 +47,13 @@ public class TaskPropertyControllerTest extends AbstractControllerTest {
 		Result result = callActionWithUser(routes.ref.TaskPropertyController.readAll());
 		//Verification
 		assertThat(status(result)).isEqualTo(OK);
-		assertCheckJsonResponse(result, Json.parse("[ { \"id\" : " + taskProperty1.getId() + ",\n" +
+		assertCheckJsonResponse(result, Json.parse("{\"items\":[ { \"id\" : " + taskProperty1.getId() + ",\n" +
 				"      \"name\" : \"My Task Property X\"\n" +
 				"    },\n" +
 				"    { \"id\" : " + taskProperty2.getId() + ",\n" +
 				"      \"name\" : \"My Task Property Y\"\n" +
 				"    }\n" +
-				"  ]"));
+				"  ]}"));
 	}
 
 

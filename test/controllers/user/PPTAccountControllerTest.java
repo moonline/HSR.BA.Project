@@ -86,7 +86,7 @@ public class PPTAccountControllerTest extends AbstractControllerTest {
 		Result result = callActionWithUser(routes.ref.PPTAccountController.readAll(), user);
 		//Verification
 		assertThat(status(result)).isEqualTo(OK);
-		assertCheckJsonResponse(result, Json.parse("[ { \"id\" : " + account1.getId() + ",\n" +
+		assertCheckJsonResponse(result, Json.parse("{\"items\":[ { \"id\" : " + account1.getId() + ",\n" +
 				"      \"ppt\" : null,\n" +
 				"      \"pptUrl\" : \"http://example1.com\",\n" +
 				"      \"user\" : { \"id\" : " + user.getId() + ",\n" +
@@ -100,7 +100,7 @@ public class PPTAccountControllerTest extends AbstractControllerTest {
 				"      \"user\" : " + user.getId() + ",\n" +
 				"      \"pptUsername\" : \"admin\"\n" +
 				"    }\n" +
-				"  ]"));
+				"  ]}"));
 	}
 
 

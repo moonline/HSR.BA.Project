@@ -1,5 +1,6 @@
 package controllers.task;
 
+import controllers.AbstractController;
 import controllers.GuaranteeAuthenticatedUser;
 import daos.task.TaskPropertyValueDAO;
 import daos.task.TaskTemplateDAO;
@@ -12,14 +13,12 @@ import models.task.TaskPropertyValue;
 import models.task.TaskTemplate;
 import play.data.Form;
 import play.db.jpa.Transactional;
-import play.libs.Json;
-import play.mvc.Controller;
 import play.mvc.Result;
 
 import static logics.docs.QueryExamples.Example;
 import static logics.docs.QueryResponses.Response;
 
-public class TaskTemplateController extends Controller {
+public class TaskTemplateController extends AbstractController {
 
 	private final TaskTemplateLogic TASK_TEMPLATE_LOGIC;
 	private final TaskTemplateDAO TASK_TEMPLATE_DAO;
@@ -49,7 +48,7 @@ public class TaskTemplateController extends Controller {
 		if (form.hasErrors()) {
 			return badRequest(form.errorsAsJson());
 		}
-		return ok(Json.toJson(TASK_TEMPLATE_LOGIC.create(form.get())));
+		return ok(jsonify(TASK_TEMPLATE_LOGIC.create(form.get())));
 	}
 
 	@Transactional(readOnly = true)
@@ -69,7 +68,7 @@ public class TaskTemplateController extends Controller {
 		if (taskTemplate == null) {
 			return notFound("Could not find Task Template with id " + id);
 		}
-		return ok(Json.toJson(taskTemplate));
+		return ok(jsonify(taskTemplate));
 	}
 
 	@Transactional(readOnly = true)
@@ -82,7 +81,7 @@ public class TaskTemplateController extends Controller {
 			@Example(parameters = {})
 	})
 	public Result readAll() {
-		return ok(Json.toJson(TASK_TEMPLATE_DAO.readAll()));
+		return ok(jsonify(TASK_TEMPLATE_DAO.readAll()));
 	}
 
 	@Transactional()
@@ -109,7 +108,7 @@ public class TaskTemplateController extends Controller {
 		if (form.hasErrors()) {
 			return badRequest(form.errorsAsJson());
 		}
-		return ok(Json.toJson(TASK_TEMPLATE_LOGIC.update(taskTemplate, form.get())));
+		return ok(jsonify(TASK_TEMPLATE_LOGIC.update(taskTemplate, form.get())));
 	}
 
 	@Transactional()
@@ -162,7 +161,7 @@ public class TaskTemplateController extends Controller {
 		if (form.hasErrors()) {
 			return badRequest(form.errorsAsJson());
 		}
-		return ok(Json.toJson(TASK_TEMPLATE_LOGIC.addProperty(taskTemplate, form.get())));
+		return ok(jsonify(TASK_TEMPLATE_LOGIC.addProperty(taskTemplate, form.get())));
 	}
 
 	@Transactional()
@@ -192,7 +191,7 @@ public class TaskTemplateController extends Controller {
 		if (form.hasErrors()) {
 			return badRequest(form.errorsAsJson());
 		}
-		return ok(Json.toJson(TASK_TEMPLATE_LOGIC.updateProperty(taskPropertyValue, form.get())));
+		return ok(jsonify(TASK_TEMPLATE_LOGIC.updateProperty(taskPropertyValue, form.get())));
 	}
 
 	@Transactional()
@@ -215,7 +214,7 @@ public class TaskTemplateController extends Controller {
 		if (taskPropertyValue == null || taskPropertyValue.getTaskTemplate().getId() != taskTemplate) {
 			return notFound();
 		}
-		return ok(Json.toJson(TASK_TEMPLATE_LOGIC.removeProperty(taskPropertyValue)));
+		return ok(jsonify(TASK_TEMPLATE_LOGIC.removeProperty(taskPropertyValue)));
 	}
 
 }

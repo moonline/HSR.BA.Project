@@ -1,6 +1,7 @@
 package controllers.ppt;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import controllers.AbstractController;
 import controllers.GuaranteeAuthenticatedUser;
 import logics.docs.QueryDescription;
 import logics.docs.QueryExamples;
@@ -10,14 +11,13 @@ import logics.ppt.PPTTaskLogic;
 import play.data.Form;
 import play.db.jpa.Transactional;
 import play.libs.F;
-import play.mvc.Controller;
 import play.mvc.Result;
 
 import static logics.docs.QueryExamples.Example;
 import static logics.docs.QueryParameters.Parameter;
 import static logics.docs.QueryResponses.Response;
 
-public class ProjectPlanningToolController extends Controller {
+public class ProjectPlanningToolController extends AbstractController {
 
 	private final PPTTaskLogic PPT_TASK_LOGIC;
 

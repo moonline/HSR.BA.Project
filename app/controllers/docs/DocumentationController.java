@@ -1,5 +1,6 @@
 package controllers.docs;
 
+import controllers.AbstractController;
 import logics.docs.DocumentationLogic;
 import logics.docs.ExampleDataCreator;
 import play.db.jpa.JPA;
@@ -10,7 +11,7 @@ import views.html.documentation;
 import java.util.List;
 import java.util.Map;
 
-public class DocumentationController extends Controller {
+public class DocumentationController extends AbstractController {
 
 	private final DocumentationLogic DOCUMENTATION_LOGIC;
 

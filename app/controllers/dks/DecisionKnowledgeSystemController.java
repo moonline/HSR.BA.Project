@@ -1,21 +1,21 @@
 package controllers.dks;
 
+import controllers.AbstractController;
 import controllers.GuaranteeAuthenticatedUser;
+import logics.dks.DecisionKnowledgeSystemLogic;
 import logics.docs.QueryDescription;
 import logics.docs.QueryExamples;
 import logics.docs.QueryParameters;
 import logics.docs.QueryResponses;
-import logics.dks.DecisionKnowledgeSystemLogic;
 import play.db.jpa.Transactional;
 import play.libs.F;
-import play.mvc.Controller;
 import play.mvc.Result;
 
 import static logics.docs.QueryExamples.Example;
 import static logics.docs.QueryParameters.Parameter;
 import static logics.docs.QueryResponses.Response;
 
-public class DecisionKnowledgeSystemController extends Controller {
+public class DecisionKnowledgeSystemController extends AbstractController {
 
 	private final DecisionKnowledgeSystemLogic DKS_LOGIC;
 

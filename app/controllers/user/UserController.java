@@ -1,6 +1,7 @@
 package controllers.user;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import controllers.AbstractController;
 import controllers.AuthenticationChecker;
 import controllers.GuaranteeAuthenticatedUser;
 import logics.docs.QueryDescription;
@@ -11,15 +12,13 @@ import logics.user.UserLogic;
 import models.user.User;
 import play.data.Form;
 import play.db.jpa.Transactional;
-import play.libs.Json;
-import play.mvc.Controller;
 import play.mvc.Result;
 
 import static logics.docs.QueryExamples.Example;
 import static logics.docs.QueryParameters.Parameter;
 import static logics.docs.QueryResponses.Response;
 
-public class UserController extends Controller {
+public class UserController extends AbstractController {
 
 	private final UserLogic USER_LOGIC;
 	private final AuthenticationChecker AUTHENTICATION_CHECKER;
@@ -53,7 +52,7 @@ public class UserController extends Controller {
 		if (user == null) {
 			return badRequest("Username or Password wrong");
 		}
-		return ok(Json.toJson(user));
+		return ok(jsonify(user));
 	}
 
 	@QueryDescription("Does log out the currently logged in user by removing the cookie.")
@@ -81,7 +80,7 @@ public class UserController extends Controller {
 		if (user == null) {
 			return ok(new ObjectNode(null));
 		} else {
-			return ok(Json.toJson(user));
+			return ok(jsonify(user));
 		}
 	}
 
@@ -104,7 +103,7 @@ public class UserController extends Controller {
 		if (form.hasErrors()) {
 			return badRequest(form.errorsAsJson());
 		}
-		return ok(Json.toJson(USER_LOGIC.createUser(form.get())));
+		return ok(jsonify(USER_LOGIC.createUser(form.get())));
 	}
 
 	@Transactional()

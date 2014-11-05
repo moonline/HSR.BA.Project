@@ -1,5 +1,6 @@
 package controllers.task;
 
+import controllers.AbstractController;
 import controllers.GuaranteeAuthenticatedUser;
 import daos.task.TaskPropertyDAO;
 import logics.docs.QueryDescription;
@@ -10,14 +11,12 @@ import logics.task.TaskPropertyLogic;
 import models.task.TaskProperty;
 import play.data.Form;
 import play.db.jpa.Transactional;
-import play.libs.Json;
-import play.mvc.Controller;
 import play.mvc.Result;
 
 import static logics.docs.QueryExamples.Example;
 import static logics.docs.QueryResponses.Response;
 
-public class TaskPropertyController extends Controller {
+public class TaskPropertyController extends AbstractController {
 
 	private final TaskPropertyLogic TASK_PROPERTY_LOGIC;
 	private final TaskPropertyDAO TASK_PROPERTY_DAO;
@@ -45,7 +44,7 @@ public class TaskPropertyController extends Controller {
 		if (form.hasErrors()) {
 			return badRequest(form.errorsAsJson());
 		}
-		return ok(Json.toJson(TASK_PROPERTY_LOGIC.create(form.get())));
+		return ok(jsonify(TASK_PROPERTY_LOGIC.create(form.get())));
 	}
 
 	@Transactional(readOnly = true)
@@ -65,7 +64,7 @@ public class TaskPropertyController extends Controller {
 		if (taskProperty == null) {
 			return notFound("Could not find Task Property with id " + id);
 		}
-		return ok(Json.toJson(taskProperty));
+		return ok(jsonify(taskProperty));
 	}
 
 	@Transactional(readOnly = true)
@@ -78,7 +77,7 @@ public class TaskPropertyController extends Controller {
 			@Example(parameters = {})
 	})
 	public Result readAll() {
-		return ok(Json.toJson(TASK_PROPERTY_DAO.readAll()));
+		return ok(jsonify(TASK_PROPERTY_DAO.readAll()));
 	}
 
 	@Transactional()
@@ -105,7 +104,7 @@ public class TaskPropertyController extends Controller {
 		if (form.hasErrors()) {
 			return badRequest(form.errorsAsJson());
 		}
-		return ok(Json.toJson(TASK_PROPERTY_LOGIC.update(taskProperty, form.get())));
+		return ok(jsonify(TASK_PROPERTY_LOGIC.update(taskProperty, form.get())));
 	}
 
 	@Transactional()
