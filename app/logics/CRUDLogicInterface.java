@@ -13,5 +13,9 @@ public interface CRUDLogicInterface<E extends AbstractEntity, C, U> {
 
 	E update(E entity, U updateForm);
 
-	boolean delete(E entity);
+	/**
+	 * @param entity The entity to delete
+	 * @return null (if the entity could be deleted) or an error message.
+	 */
+	String delete(E entity);
 }
