@@ -71,6 +71,11 @@ module app.application {
 				}
 			};
 
+			$scope.updateTaskTemplate = function() {
+				taskTemplateRepository.update($scope.currentTaskTemplate, function(status, item){});
+				taskTemplateRepository.updateProperties($scope.currentTaskTemplate, function(status){});
+			};
+
 			$scope.mapTaskTemplate = function(taskTemplate: app.domain.model.core.TaskTemplate) {
 				if($scope.currentMapping) {
 					$scope.currentMapping.addTaskTemplate(taskTemplate);

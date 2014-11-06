@@ -21,7 +21,7 @@ module app.domain.repository.core {
 			this.itemCache = [];
 		}
 
-		private getResourcePath(resource: string) {
+		public getResourcePath(resource: string) {
 			if(this.proxy != null && this.proxy.url.indexOf("{target}") > -1) {
 				return this.proxy.url.replace("{target}", encodeURIComponent(this.host+this.resources[resource]['url']));
 			} else {
