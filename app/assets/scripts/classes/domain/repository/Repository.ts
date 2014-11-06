@@ -145,5 +145,45 @@ module app.domain.repository.core {
 				callback(foundItem);
 			}, doCache);
 		}
+
+		public remove(item: T, callback: (success: boolean) => void): void {
+			if(!this.resources['remove']) {
+				throw new Error("Please configure a 'remove' resource for the" +this.type.name+" repository.");
+			}
+			var method: string = this.resources['remove']['method'].toLowerCase();
+			var url: string = this.getResourcePath('remove').replace('{id}', item.id.toString());
+			var type = this.type;
+			var cache = this.itemCache;
+
+			this.httpService[method](url, {})
+				.success(function(data, status, headers, config) {
+					callback(true);
+				})
+				.error(function(data, status, headers, config) {
+					callback(false);
+				});
+
+		}
+
+		public update(item: T, callback: (success: boolean, item: T) => void): void {
+			if(!this.resources['update']) {
+				throw new Error("Please configure a 'update' resource for the" +this.type.name+" repository.");
+			}
+			var method: string = this.resources['update']['method'].toLowerCase();
+			var url: string = this.getResourcePath('update').replace('{id}', item.id.toString());
+			var type = this.type;
+			var cache = this.itemCache;
+
+			this.httpService[method](url, JSON.stringify(item))
+				.success(function(data, status, headers, config) {
+					var newObject: T = app.domain.factory.ObjectFactory.createFromJson(type, data);
+					var cacheObjectIndex: number = cache.indexOf(item);
+					cache[cacheObjectIndex] = newObject;
+					callback(true, newObject);
+				})
+				.error(function(data, status, headers, config) {
+					callback(false, null);
+				});
+		}
 	}
 }
