@@ -2,10 +2,11 @@ package logics.task;
 
 import daos.task.TaskPropertyDAO;
 import daos.task.TaskPropertyValueDAO;
+import logics.CRUDLogicInterface;
 import models.task.TaskProperty;
 import play.data.validation.Constraints;
 
-public class TaskPropertyLogic {
+public class TaskPropertyLogic implements CRUDLogicInterface<TaskProperty, TaskPropertyLogic.TaskPropertyForm, TaskPropertyLogic.TaskPropertyForm> {
 
 	private final TaskPropertyDAO TASK_PROPERTY_DAO;
 	private final TaskPropertyValueDAO TASK_PROPERTY_VALUE_DAO;
@@ -15,19 +16,22 @@ public class TaskPropertyLogic {
 		TASK_PROPERTY_VALUE_DAO = taskPropertyValueDao;
 	}
 
-	public TaskProperty create(TaskPropertyForm form) {
+	@Override
+	public TaskProperty create(TaskPropertyForm createForm) {
 		TaskProperty taskProperty = new TaskProperty();
-		return update(taskProperty, form);
+		return update(taskProperty, createForm);
 	}
 
-	public TaskProperty update(TaskProperty taskProperty, TaskPropertyForm form) {
-		taskProperty.setName(form.name);
-		return TASK_PROPERTY_DAO.persist(taskProperty);
+	@Override
+	public TaskProperty update(TaskProperty entity, TaskPropertyForm updateForm) {
+		entity.setName(updateForm.name);
+		return TASK_PROPERTY_DAO.persist(entity);
 	}
 
-	public boolean delete(TaskProperty taskProperty) {
-		if (canBeDeleted(taskProperty)) {
-			TASK_PROPERTY_DAO.remove(taskProperty);
+	@Override
+	public boolean delete(TaskProperty entity) {
+		if (canBeDeleted(entity)) {
+			TASK_PROPERTY_DAO.remove(entity);
 			return true;
 		}
 		return false;
