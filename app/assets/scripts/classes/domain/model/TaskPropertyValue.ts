@@ -7,7 +7,7 @@ module app.domain.model.core {
     export class TaskPropertyValue implements app.domain.repository.core.PersistentEntity {
 		public static factoryConfiguration: app.domain.factory.FactoryConfiguration = {
 			constructorArguments: [
-				{ name: "property", type: TaskProperty, subType: null },
+				{ name: "property", type: app.domain.model.core.TaskProperty, subType: null },
 				{ name: "value", type: String, subType: null }
 			],
 			publicProperties: [{ name: "id", type: Number, subType: null }]

@@ -14,7 +14,7 @@ module app.domain.repository.core {
 		public filter: (element: any) => boolean = function(element) { return true; };
 
 		httpService;
-		resources: { [index: string]: { method: string; url: string; } } = <any>{};// = {};
+		resources: { [index: string]: { method: string; url: string; } } = <any>{};
 
 		constructor(httpService) {
 			this.httpService = httpService;

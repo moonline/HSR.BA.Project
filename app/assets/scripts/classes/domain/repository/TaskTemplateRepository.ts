@@ -19,6 +19,8 @@ module app.domain.repository.core {
 			var url: string = this.getResourcePath('updateProperty').replace('{id}', taskTemplate.id.toString());
 			var cache = this.itemCache;
 			var cachePos:number = cache.indexOf(taskTemplate);
+			var type = this.type;
+			var httpService = this.httpService;
 
 			// call callback after last update returned
 			var statusCollector = {
@@ -37,19 +39,26 @@ module app.domain.repository.core {
 				}
 			};
 
-			taskTemplate.properties.forEach(function(propertyValue, index) {
-				var propertyUrl: string = url.replace('{propertyId}', propertyValue.id.toString());
-
-				this.httpService[method](propertyUrl, { property: propertyValue.property.id, value: propertyValue.value })
-					.success(function(data, status, headers, config) {
-						var updatedTaskTemplate: app.domain.model.core.TaskTemplate = app.domain.factory.ObjectFactory.createFromJson(app.domain.model.core.TaskTemplate, data);
-						cache[cachePos] = updatedTaskTemplate;
-						statusCollector.callback(true);
-					})
-					.error(function(data, status, headers, config) {
-						statusCollector.callback(false);
-					});
-			}.bind(this));
+			// Angular mixes calls near at the same time up, so fire next call after return of last call
+			var recursivPropertyUpdate = function(index: number, collection: app.domain.model.core.TaskPropertyValue[]) {
+				if(index < collection.length) {
+					var propertyValue: app.domain.model.core.TaskPropertyValue = collection[index];
+					var propertyUrl: string = url.replace('{propertyId}', propertyValue.id.toString());
+					
+					httpService[method](propertyUrl, { property: propertyValue.property.id, value: propertyValue.value })
+						.success(function(data, status, headers, config) {
+							var updatedTaskTemplate: app.domain.model.core.TaskTemplate = app.domain.factory.ObjectFactory.createFromJson(type, data);
+							cache[cachePos] = updatedTaskTemplate;
+							recursivPropertyUpdate(index+1, collection);
+							statusCollector.callback(true);
+						})
+						.error(function(data, status, headers, config) {
+							recursivPropertyUpdate(index+1, collection);
+							statusCollector.callback(false);
+						});
+				}
+			};
+			recursivPropertyUpdate(0,taskTemplate.properties);
 		}
     }
 }

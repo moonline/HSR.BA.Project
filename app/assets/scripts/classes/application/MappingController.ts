@@ -8,6 +8,8 @@
 
 /// <reference path='../domain/repository/ProblemRepository.ts' />
 /// <reference path='../domain/repository/MappingRepository.ts' />
+/// <reference path='../domain/repository/TaskTemplateRepository.ts' />
+/// <reference path='../domain/repository/TaskPropertyRepository.ts' />
 
 module app.application {
 	'use strict';
@@ -18,15 +20,20 @@ module app.application {
 		constructor($scope, $location, $http, persistenceService) {
 			var decisionRepository = persistenceService['decisionRepository'];
 
-			var taskTemplateRepository = persistenceService['taskTemplateRepository'];
+			// there is a problem if Angular fires two requests nearly at the same time.
+			// Sometimes Angular mixes up the two requests and return the false data from $http.get().
+			// So wait with the second request until the first terminated
+			// This seems to be a bug in Angular
+			var taskPropertyRepository = persistenceService['taskPropertyRepository'];
+			var taskTemplateRepository =  persistenceService['taskTemplateRepository'];
 			taskTemplateRepository.findAll(function(taskTemplates) {
 				$scope.taskTemplates = taskTemplates;
+
+				taskPropertyRepository.findAll(function(taskProperties) {
+					$scope.taskProperties = taskProperties;
+				});
 			});
 
-			var taskPropertyRepository = persistenceService['taskPropertyRepository'];
-			taskPropertyRepository.findAll(function(taskProperties) {
-				$scope.taskProperties = taskProperties;
-			});
 
 			var problemRepository: app.domain.repository.dks.ProblemRepository = persistenceService['problemRepository'];
 			var mappingRepository: app.domain.repository.core.MappingRepository = persistenceService['mappingRepository'];

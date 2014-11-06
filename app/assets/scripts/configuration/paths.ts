@@ -24,7 +24,11 @@ module configuration {
 			updateProperty: { method: 'POST', url: '/taskTemplate/{id}/properties/{propertyId}'}
 		},
 		taskProperty: {
-			list: { method: 'GET', url: '/public/temporaryDevelopmentData/eeppi/taskProperty.json' }
+			list: { method: 'GET', url: '/taskProperty' },
+			detail: { method: 'GET', url: '/taskProperty/{id}' },
+			create: { method: 'POST', url: '/taskProperty' },
+			update: { method: 'POST', url: '/taskProperty/{id}' },
+			remove: { method: 'POST', url: '/taskProperty/{id}/delete' }
 		},
 		user: {
 			login: { method: 'POST', url: '/user/login' },
