@@ -9,12 +9,12 @@ module app.domain.repository.core {
 
 		public host: string = '';
 		// proxy path with {target} to be replaced by the remote url
-		public proxy: string = null;
+		public proxy: { url: string; } = null;
 		public dataList: string = 'items';
 		public filter: (element: any) => boolean = function(element) { return true; };
 
 		httpService;
-		resources: any; // TODO// { [index: string]: any } = {};
+		resources: { [index: string]: { method: string; url: string; } } = <any>{};// = {};
 
 		constructor(httpService) {
 			this.httpService = httpService;
@@ -22,8 +22,8 @@ module app.domain.repository.core {
 		}
 
 		private getResourcePath(resource: string) {
-			if(this.proxy != null && this.proxy.indexOf("{target}") > -1) {
-				return this.proxy.replace("{target}", encodeURIComponent(this.host+this.resources[resource]['url']));
+			if(this.proxy != null && this.proxy.url.indexOf("{target}") > -1) {
+				return this.proxy.url.replace("{target}", encodeURIComponent(this.host+this.resources[resource]['url']));
 			} else {
 				return this.host+this.resources[resource]['url'];
 			}

@@ -1,7 +1,7 @@
 module configuration {
-	export var paths = {
+	export var paths:any = {
 		dks: {
-			remoteProxy: '/dks/getFromDKS?url={target}'
+			remoteProxy: { url: '/dks/getFromDKS?url={target}' }
 		},
 		problem: {
 			list: { method: 'GET', url: '/element' }
