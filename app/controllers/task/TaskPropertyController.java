@@ -2,12 +2,15 @@ package controllers.task;
 
 import controllers.AbstractCRUDController;
 import controllers.GuaranteeAuthenticatedUser;
+import daos.AbstractDAO;
 import daos.task.TaskPropertyDAO;
+import logics.CRUDLogicInterface;
 import logics.docs.QueryDescription;
 import logics.docs.QueryExamples;
 import logics.docs.QueryParameters;
 import logics.docs.QueryResponses;
 import logics.task.TaskPropertyLogic;
+import models.AbstractEntity;
 import models.task.TaskProperty;
 import play.data.Form;
 import play.db.jpa.Transactional;
@@ -65,31 +68,19 @@ public class TaskPropertyController extends AbstractCRUDController {
 		return readAll(TASK_PROPERTY_DAO);
 	}
 
+	@Override
 	@Transactional()
 	@GuaranteeAuthenticatedUser()
 	@QueryParameters({@QueryParameters.Parameter(name = "id", isId = true, format = Long.class, description = "The id of the Task Property to update"),
 			@QueryParameters.Parameter(name = "name", description = "The new name of the Task Property")
 	})
 	@QueryDescription("Updates an existing Task Property with new data.")
-	@QueryResponses({
-			@Response(status = NOT_FOUND, description = "If no Task Property with the given ID exists"),
-			@Response(status = BAD_REQUEST, description = "If the request parameter contain errors."),
-			@Response(status = OK, description = "The new created Task Property is returned")
-	})
 	@QueryExamples({
 			@Example(id = "9999", parameters = {"My beautiful task property"}),
 			@Example(id = "REFERENCE_TASKPROPERTY_8", parameters = {"My example Task Property"})
 	})
 	public Result update(long id) {
-		TaskProperty taskProperty = TASK_PROPERTY_DAO.readById(id);
-		if (taskProperty == null) {
-			return notFound();
-		}
-		Form<TaskPropertyLogic.TaskPropertyForm> form = Form.form(TaskPropertyLogic.TaskPropertyForm.class).bindFromRequest();
-		if (form.hasErrors()) {
-			return badRequest(form.errorsAsJson());
-		}
-		return ok(jsonify(TASK_PROPERTY_LOGIC.update(taskProperty, form.get())));
+		return update(TASK_PROPERTY_DAO, TASK_PROPERTY_LOGIC, TaskPropertyLogic.TaskPropertyForm.class, id);
 	}
 
 	@Transactional()
