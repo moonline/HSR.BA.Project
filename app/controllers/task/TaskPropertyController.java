@@ -27,16 +27,17 @@ public class TaskPropertyController extends AbstractCRUDController {
 	}
 
 	@Override
+	protected String getEntityName() {
+		return "Task Property";
+	}
+
+	@Override
 	@Transactional()
 	@GuaranteeAuthenticatedUser()
 	@QueryParameters({
 			@QueryParameters.Parameter(name = "name", description = "The name of the new Task Property")
 	})
 	@QueryDescription("Creates a new Task Property.")
-	@QueryResponses({
-			@Response(status = BAD_REQUEST, description = "If the request parameter contain errors."),
-			@Response(status = OK, description = "The new created Task Property is returned")
-	})
 	@QueryExamples({
 			@Example(parameters = {"A new Task Property"})
 	})
@@ -44,37 +45,24 @@ public class TaskPropertyController extends AbstractCRUDController {
 		return create(TASK_PROPERTY_LOGIC, TaskPropertyLogic.TaskPropertyForm.class);
 	}
 
+	@Override
 	@Transactional(readOnly = true)
 	@GuaranteeAuthenticatedUser()
-	@QueryParameters({@QueryParameters.Parameter(name = "id", isId = true, format = Long.class, description = "The id of the Task Property to get")})
 	@QueryDescription("Reads a Task Property.")
-	@QueryResponses({
-			@Response(status = NOT_FOUND, description = "If no Task Property with the given ID exists"),
-			@Response(status = OK, description = "If it's found, it's returned")
-	})
 	@QueryExamples({
 			@Example(id = "9999", parameters = {}),
 			@Example(id = "REFERENCE_TASKPROPERTY_13", parameters = {})
 	})
 	public Result read(long id) {
-		TaskProperty taskProperty = TASK_PROPERTY_DAO.readById(id);
-		if (taskProperty == null) {
-			return notFound("Could not find Task Property with id " + id);
-		}
-		return ok(jsonify(taskProperty));
+		return read(TASK_PROPERTY_DAO, id);
 	}
 
+	@Override
 	@Transactional(readOnly = true)
 	@GuaranteeAuthenticatedUser()
 	@QueryDescription("Reads all Task Properties.")
-	@QueryResponses({
-			@Response(status = OK, description = "If it's found, it's returned")
-	})
-	@QueryExamples({
-			@Example(parameters = {})
-	})
 	public Result readAll() {
-		return ok(jsonify(TASK_PROPERTY_DAO.readAll()));
+		return readAll(TASK_PROPERTY_DAO);
 	}
 
 	@Transactional()
