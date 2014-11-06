@@ -1,6 +1,6 @@
 package controllers.task;
 
-import controllers.AbstractController;
+import controllers.AbstractCRUDController;
 import controllers.GuaranteeAuthenticatedUser;
 import daos.task.TaskPropertyDAO;
 import logics.docs.QueryDescription;
@@ -16,7 +16,7 @@ import play.mvc.Result;
 import static logics.docs.QueryExamples.Example;
 import static logics.docs.QueryResponses.Response;
 
-public class TaskPropertyController extends AbstractController {
+public class TaskPropertyController extends AbstractCRUDController {
 
 	private final TaskPropertyLogic TASK_PROPERTY_LOGIC;
 	private final TaskPropertyDAO TASK_PROPERTY_DAO;
@@ -26,6 +26,7 @@ public class TaskPropertyController extends AbstractController {
 		TASK_PROPERTY_DAO = taskPropertyDao;
 	}
 
+	@Override
 	@Transactional()
 	@GuaranteeAuthenticatedUser()
 	@QueryParameters({
@@ -40,11 +41,7 @@ public class TaskPropertyController extends AbstractController {
 			@Example(parameters = {"A new Task Property"})
 	})
 	public Result create() {
-		Form<TaskPropertyLogic.TaskPropertyForm> form = Form.form(TaskPropertyLogic.TaskPropertyForm.class).bindFromRequest();
-		if (form.hasErrors()) {
-			return badRequest(form.errorsAsJson());
-		}
-		return ok(jsonify(TASK_PROPERTY_LOGIC.create(form.get())));
+		return create(TASK_PROPERTY_LOGIC, TaskPropertyLogic.TaskPropertyForm.class);
 	}
 
 	@Transactional(readOnly = true)

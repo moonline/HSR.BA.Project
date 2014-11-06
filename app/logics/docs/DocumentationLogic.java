@@ -341,12 +341,25 @@ public class DocumentationLogic {
 		}
 
 		private <A extends Annotation, Return> Return getAnnotationContent(Method method, Class<A> annotationClass, Function<A, Return> get) {
-			A[] annotation = method.getAnnotationsByType(annotationClass);
-			if (annotation.length > 0) {
-				return get.apply(annotation[0]);
-			} else {
-				return null;
-			}
+			A[] annotation;
+			boolean foundAnnotation;
+			Class<?> clazz = method.getDeclaringClass();
+			do {
+				annotation = method.getAnnotationsByType(annotationClass);
+				foundAnnotation = annotation.length > 0;
+				if (!foundAnnotation) {
+					clazz = clazz.getSuperclass();
+					if (clazz == null) {
+						return null;
+					} else {
+						try {
+							method = clazz.getMethod(method.getName(), method.getParameterTypes());
+						} catch (NoSuchMethodException ignored) {//there is no super method
+						}
+					}
+				}
+			} while (!foundAnnotation);
+			return get.apply(annotation[0]);
 		}
 
 	}
