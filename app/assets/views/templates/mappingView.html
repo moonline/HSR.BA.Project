@@ -1,19 +1,39 @@
 <div class="main" data-region="center" data-layout="flow" data-flow-direction="row" data-align="start">
 	<div class="column1 area" data-layout="flow" data-flow-direction="column" data-scroll="true">
 		<div class="areaContent">
-			<h2>Problems & Decisions ({{currentDks.address}})</h2>
+			<h2>Problem templates ({{currentDks.address}})</h2>
 			<h3>Problems ({{problems.length}})</h3>
 			<ul data-type="list">
-				<li data-ng-repeat="problem in problems" data-ng-state="{{problem == currentDecision && 'selected' || '' }}" data-ng-click="setCurrentDecision(problem)">
-					<strong>{{problem.name}}</strong> [{{problem.id}}]
+				<li data-ng-repeat="problem in problems" data-state="{{problem == currentDecision && 'selected' || '' }}"
+					data-ng-click="setCurrentDecision(problem)">{{problem.name}}
 				</li>
 			</ul>
-			<h3>Decisions ({{decisions.length}})</h3>
-			<ul data-type="list">
-				<li data-ng-repeat="decision in decisions" data-ng-click="setCurrentDecision(decision)">
-					<strong>{{decision.name}}</strong> [{{decision.id}}]
-				</li>
-			</ul>
+
+			<div class="decisionDetail" data-ng-if="currentDecision">
+				<h3><strong>{{currentDecision.name}}</strong> [{{currentDecision.id}}]</h3>
+				<dl>
+					<dt data-ng-if="currentDecision.notes">Notes</dt>
+					<dd data-ng-if="currentDecision.notes">{{currentDecision.notes}}</dd>
+					<dt>Path</dt>
+					<dd><span data-ng-repeat="pathSegment in currentDecision.path">
+						<span class="pathDivider" data-ng-if="!$first">/</span><span class="pathSegment">{{pathSegment}}</span></span>
+					</dd>
+					<dt data-ng-if="currentDecision.attributes.length > 0">Attributes</dt>
+					<dd data-ng-if="currentDecision.attributes.length > 0">
+						<ul>
+							<li data-ng-repeat="attribute in currentDecision.attributes">{{attribute.key}}: {{attribute.value}}</li>
+						</ul>
+					</dd>
+					<dt>Options</dt>
+					<dd>
+						<ul>
+							<li data-ng-repeat="option in currentDecision.options">
+								{{option.name}} [{{option.id}}]
+							</li>
+						</ul>
+					</dd>
+				</dl>
+			</div>
 		</div>
 	</div>
 
@@ -21,12 +41,6 @@
 		<div class="areaContent">
 			<div class="decisionDetail" data-ng-if="currentDecision">
 				<h2><strong>{{currentDecision.name}}</strong> [{{currentDecision.id}}]</h2>
-				<h3>Options:</h3>
-				<ul>
-					<li data-ng-repeat="option in currentDecision.options">
-						{{option.name}} [{{option.id}}]
-					</li>
-				</ul>
 			</div>
 			<div class="mappingDetail" data-ng-if="currentMapping">
 				<h3>Task template mapping [{{currentMapping.id}}]</h3>
@@ -45,10 +59,11 @@
 
 			<h3>Existing templates ({{taskTemplates.length}})</h3>
 			<ul data-type="list">
-				<li data-ng-repeat="template in taskTemplates" data-ng-state="{{template == currentTaskTemplate && 'selected' || '' }}">
+				<li data-ng-repeat="template in taskTemplates" data-state="{{template == currentTaskTemplate && 'selected' || '' }}">
 					<button class="action update" data-ng-if="currentDecision" data-ng-click="mapTaskTemplate(template)" title="Map task template with decision">&lt; map</button>
-					<button title="Edit task template" class="action edit"
-						data-ng-click="setCurrentTaskTemplate(template)">&#x270E;</button> {{template.name}}
+					<span data-ng-click="setCurrentTaskTemplate(template)" title="Edit task template">
+						<button  class="action edit">&#x270E;</button> {{template.name}}
+					</span>
 				</li>
 			</ul>
 
