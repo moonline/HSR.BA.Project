@@ -1,6 +1,7 @@
 package logics.user;
 
 import daos.user.PPTAccountDAO;
+import logics.CRUDLogicInterface;
 import models.ppt.ProjectPlanningTool;
 import models.user.PPTAccount;
 import models.user.User;

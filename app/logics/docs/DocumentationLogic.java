@@ -1,5 +1,6 @@
 package logics.docs;
 
+import controllers.AbstractCRUDController;
 import controllers.AbstractController;
 import controllers.GuaranteeAuthenticatedUser;
 import org.apache.commons.lang3.NotImplementedException;
@@ -110,7 +111,7 @@ public class DocumentationLogic {
 	}
 
 	/**
-	 * Uses reflection to get all API-controller classes (extending AbstractController and in package controllers but not in package controllers.docs).
+	 * Uses reflection to get all API-controller classes (extending AbstractController and in package controllers but not in package controllers.docs and not AbstractCRUDController).
 	 */
 	private Set<Class<? extends AbstractController>> getAllControllerClasses() {
 		List<ClassLoader> classLoadersList = new LinkedList<>();
@@ -121,7 +122,9 @@ public class DocumentationLogic {
 				.setScanners(new SubTypesScanner(), new ResourcesScanner())
 				.setUrls(ClasspathHelper.forClassLoader(classLoadersList.toArray(new ClassLoader[classLoadersList.size()])))
 				.filterInputsBy(new FilterBuilder().include(FilterBuilder.prefix("controllers")).exclude(FilterBuilder.prefix("controllers.docs"))));
-		return reflections.getSubTypesOf(AbstractController.class);
+		Set<Class<? extends AbstractController>> classes = reflections.getSubTypesOf(AbstractController.class);
+		classes.remove(AbstractCRUDController.class);
+		return classes;
 	}
 
 	/**
@@ -341,12 +344,25 @@ public class DocumentationLogic {
 		}
 
 		private <A extends Annotation, Return> Return getAnnotationContent(Method method, Class<A> annotationClass, Function<A, Return> get) {
-			A[] annotation = method.getAnnotationsByType(annotationClass);
-			if (annotation.length > 0) {
-				return get.apply(annotation[0]);
-			} else {
-				return null;
-			}
+			A[] annotation;
+			boolean foundAnnotation;
+			Class<?> clazz = method.getDeclaringClass();
+			do {
+				annotation = method.getAnnotationsByType(annotationClass);
+				foundAnnotation = annotation.length > 0;
+				if (!foundAnnotation) {
+					clazz = clazz.getSuperclass();
+					if (clazz == null) {
+						return null;
+					} else {
+						try {
+							method = clazz.getMethod(method.getName(), method.getParameterTypes());
+						} catch (NoSuchMethodException ignored) {//there is no super method
+						}
+					}
+				}
+			} while (!foundAnnotation);
+			return get.apply(annotation[0]);
 		}
 
 	}

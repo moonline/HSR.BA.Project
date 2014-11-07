@@ -2,13 +2,14 @@ package logics.task;
 
 import daos.task.TaskPropertyValueDAO;
 import daos.task.TaskTemplateDAO;
+import logics.CRUDLogicInterface;
 import models.task.TaskProperty;
 import models.task.TaskPropertyValue;
 import models.task.TaskTemplate;
 import play.data.validation.Constraints;
 import play.db.jpa.JPA;
 
-public class TaskTemplateLogic {
+public class TaskTemplateLogic implements CRUDLogicInterface<TaskTemplate, TaskTemplateLogic.TaskTemplateForm, TaskTemplateLogic.TaskTemplateForm> {
 
 	private final TaskTemplateDAO TASK_TEMPLATE_DAO;
 	private final TaskPropertyValueDAO TASK_PROPERTY_VALUE_DAO;
@@ -29,12 +30,17 @@ public class TaskTemplateLogic {
 		return TASK_TEMPLATE_DAO.persist(taskTemplate);
 	}
 
-	public boolean delete(TaskTemplate taskTemplate) {
-		if (canBeDeleted(taskTemplate)) {
-			TASK_TEMPLATE_DAO.remove(taskTemplate);
-			return true;
+	/**
+	 * @param entity The entity to delete
+	 * @return null (if the entity could be deleted) or an error message.
+	 */
+	@Override
+	public String delete(TaskTemplate entity) {
+		if (canBeDeleted(entity)) {
+			TASK_TEMPLATE_DAO.remove(entity);
+			return null;
 		}
-		return false;
+		return "There is at least one child task template for this.";
 	}
 
 	private boolean canBeDeleted(TaskTemplate taskTemplate) {

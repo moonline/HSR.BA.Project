@@ -35,6 +35,7 @@ public class UserLogicTest extends AbstractDatabaseTest {
 				size++;
 			}
 		}
+		size++; //for the id field which is in AbstractEntity.class
 		return size;
 	}
 

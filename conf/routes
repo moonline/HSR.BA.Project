@@ -17,7 +17,7 @@ GET		/dks/getFromDKS				@controllers.dks.DecisionKnowledgeSystemController.getFr
 
 POST	/user/pptAccount			@controllers.user.PPTAccountController.create()
 GET		/user/pptAccount			@controllers.user.PPTAccountController.readAll()
-GET		/user/pptAccount/$id<[0-9]+>	@controllers.user.PPTAccountController.readOne(id: Long)
+GET		/user/pptAccount/$id<[0-9]+>	@controllers.user.PPTAccountController.read(id: Long)
 POST	/user/pptAccount/$id<[0-9]+>	@controllers.user.PPTAccountController.update(id: Long)
 DELETE	/user/pptAccount/$id<[0-9]+>	@controllers.user.PPTAccountController.delete(id: Long)
 POST	/user/pptAccount/$id<[0-9]+>/delete	@controllers.user.PPTAccountController.delete(id: Long)
@@ -31,6 +31,13 @@ POST	/taskTemplate/$id<[0-9]+>/delete	@controllers.task.TaskTemplateController.d
 POST	/taskTemplate/$id<[0-9]+>/addProperty	@controllers.task.TaskTemplateController.addProperty(id: Long)
 POST	/taskTemplate/$taskTemplate<[0-9]+>/properties/$id<[0-9]+>	@controllers.task.TaskTemplateController.updateProperty(id: Long, taskTemplate: Long)
 POST	/taskTemplate/$taskTemplate<[0-9]+>/properties/$id<[0-9]+>/delete	@controllers.task.TaskTemplateController.deleteProperty(id: Long, taskTemplate: Long)
+
+POST	/mapping				@controllers.dks.DecisionKnowledgeSystemMappingController.create()
+GET		/mapping				@controllers.dks.DecisionKnowledgeSystemMappingController.readAll()
+GET		/mapping/$id<[0-9]+>	@controllers.dks.DecisionKnowledgeSystemMappingController.read(id: Long)
+POST	/mapping/$id<[0-9]+>	@controllers.dks.DecisionKnowledgeSystemMappingController.update(id: Long)
+DELETE	/mapping/$id<[0-9]+>	@controllers.dks.DecisionKnowledgeSystemMappingController.delete(id: Long)
+POST	/mapping/$id<[0-9]+>/delete	@controllers.dks.DecisionKnowledgeSystemMappingController.delete(id: Long)
 
 POST	/taskProperty				@controllers.task.TaskPropertyController.create()
 GET		/taskProperty				@controllers.task.TaskPropertyController.readAll()
