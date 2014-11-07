@@ -21,7 +21,7 @@
 					<dt data-ng-if="currentDecision.attributes.length > 0">Attributes</dt>
 					<dd data-ng-if="currentDecision.attributes.length > 0">
 						<ul>
-							<li data-ng-repeat="attribute in currentDecision.attributes">{{attribute.key}}: {{attribute.value}}</li>
+							<li data-ng-repeat="(key, value) in currentDecision.attributes">{{key}}: {{value}}</li>
 						</ul>
 					</dd>
 					<dt>Options</dt>
