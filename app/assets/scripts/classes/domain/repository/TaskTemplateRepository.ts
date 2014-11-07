@@ -78,5 +78,23 @@ module app.domain.repository.core {
 					callback(false, null);
 				});
 		}
+
+		public removePropertyValue(taskTemplate: app.domain.model.core.TaskTemplate, propertyValue: app.domain.model.core.TaskPropertyValue, callback: (status: boolean, item: app.domain.model.core.TaskTemplate) => void) {
+			var method: string = this.resources['removeProperty']['method'].toLowerCase();
+			var url: string = this.getResourcePath('removeProperty').replace('{id}', taskTemplate.id.toString()).replace('{propertyValueId}', propertyValue.id.toString());
+			var cache = this.itemCache;
+			var type = this.type;
+			var cachePos:number = cache.indexOf(taskTemplate);
+
+			this.httpService[method](url, {})
+				.success(function(data, status, headers, config) {
+					var updatedTaskTemplate: app.domain.model.core.TaskTemplate = app.domain.factory.ObjectFactory.createFromJson(type, data);
+					cache[cachePos] = updatedTaskTemplate;
+					callback(true, updatedTaskTemplate);
+				})
+				.error(function(data, status, headers, config) {
+					callback(false, null);
+				});
+		}
     }
 }

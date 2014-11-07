@@ -44,5 +44,13 @@ module app.domain.model.core {
     	public addProperty(property: app.domain.model.core.TaskPropertyValue) {
             this.properties.push(property);
         }
+
+		public removeProperty(property: app.domain.model.core.TaskPropertyValue) {
+			for(var pi in this.properties) {
+				if(this.properties[pi].id == property.id) {
+					this.properties.splice(pi,1);
+				}
+			}
+		}
     }
 }

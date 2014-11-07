@@ -46,9 +46,9 @@
 			<h3>Existing templates ({{taskTemplates.length}})</h3>
 			<ul data-type="list">
 				<li data-ng-repeat="template in taskTemplates" data-ng-state="{{template == currentTaskTemplate && 'selected' || '' }}">
-					<button data-ng-if="currentDecision" data-ng-click="mapTaskTemplate(template)">&lt; map</button>&nbsp;
-					<strong data-ng-click="setCurrentTaskTemplate(template)">
-						<button>&#x270E;</button>&nbsp;
+					<button class="action update" data-ng-if="currentDecision" data-ng-click="mapTaskTemplate(template)" title="Map task template with decision">&lt; map</button>&nbsp;
+					<strong data-ng-click="setCurrentTaskTemplate(template)" title="Edit task template">
+						<button class="action edit">&#x270E;</button>&nbsp;
 						{{template.name}}
 					</strong> [{{template.id}}]<br />
 				</li>
@@ -58,7 +58,10 @@
 			<form>
 				<div class="formLine">
 					<input type="text" name="createTaskTemplateName" data-ng-model="createTaskTemplateName" placeholder="name" />
-					<button data-ng-click="createNewTaskTemplate(createTaskTemplateName); createTaskTemplateName = '';">(+) add Template</button>
+					<button class="action create" data-ng-click="createNewTaskTemplate(createTaskTemplateName); createTaskTemplateName = '';"
+						title="Create a new task template">
+						<span class="icon">&#x2b;</span> create
+					</button>
 				</div>
 			</form>
 			<h3>Task template [{{currentTaskTemplate.id}}]</h3>
@@ -66,13 +69,18 @@
 				<div class="formLine" data-ng-if="currentTaskTemplate.properties.length < taskProperties.length">
 					<select data-ng-model="newTaskProperty" data-ng-options="taskProperty.name for taskProperty in taskProperties | filter:notYetUsed()" ></select>
 					<input type="text" data-ng-model="newTaskPropertyValue" placeholder="value"/>
-					<button data-ng-click="addPropertyValue(newTaskProperty, newTaskPropertyValue); newTaskPropertyValue = '';">add property</button>
+					<button class="action create" data-ng-click="addPropertyValue(newTaskProperty, newTaskPropertyValue); newTaskPropertyValue = '';"
+						title="Add property">
+						<span class="icon">&#x2b;</span> add
+					</button>
 				</div>
 				<div class="formLine">
 					<label>Name</label>
 					<input type="text" data-ng-model="currentTaskTemplate.name" />
 				</div>
 				<div data-ng-repeat="propertyValue in currentTaskTemplate.properties">
+					<button class="action remove" data-ng-click="removePropertyValue(propertyValue)"
+							title="Remove property"><span class="icon">&#x232b;</span></button>
 					<label>{{propertyValue.property.name}}</label>
 					<input data-ng-model="propertyValue.value" />
 				</div>

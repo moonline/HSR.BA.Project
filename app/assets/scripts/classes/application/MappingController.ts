@@ -89,6 +89,12 @@ module app.application {
 					taskTemplateRepository.addPropertyValue($scope.currentTaskTemplate, taskPropertyValue, function(status, item){});
 				}
 			};
+			$scope.removePropertyValue = function(propertyValue: app.domain.model.core.TaskPropertyValue) {
+				if($scope.currentTaskTemplate) {
+					$scope.currentTaskTemplate.removeProperty(propertyValue);
+					taskTemplateRepository.removePropertyValue($scope.currentTaskTemplate, propertyValue, function(success, taskTemplate){});
+				}
+			};
 
 			$scope.updateTaskTemplate = function() {
 				taskTemplateRepository.update($scope.currentTaskTemplate, function(status, item){});

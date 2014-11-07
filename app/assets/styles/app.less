@@ -41,6 +41,22 @@ a {
 	&:hover { color: white; }
 }
 
+.icon {
+	font-weight: bold; font-size: 1.2rem; margin-right: 0.5rem;
+}
+
+/* actions */
+button.action {
+	padding: 0.2rem; line-height: 1em;
+	background: silver; background: linear-gradient(gainsboro, silver); border: none; color: black;
+	border-radius: 0.2rem;
+
+	&.create { background: green; background: linear-gradient(lightgreen, green); color: white; }
+	&.edit { background: orange; background: linear-gradient(yellow, orange); color: white; }
+	&.update { background: cornflowerblue; background: linear-gradient(deepskyblue, cornflowerblue);color: white; }
+	&.remove, &.warning { background: maroon; background: linear-gradient(red, maroon); color: white; }
+}
+
 
 /* forms */
 label { width: 10rem; display: inline-block; }
