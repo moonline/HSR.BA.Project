@@ -1,5 +1,6 @@
 package test;
 
+import daos.dks.DKSMappingDAO;
 import daos.task.TaskPropertyDAO;
 import daos.task.TaskPropertyValueDAO;
 import daos.task.TaskTemplateDAO;
@@ -97,12 +98,7 @@ public abstract class AbstractTestDataCreator {
 	public static void removeAllTaskRelatedEntities() {
 		new TaskPropertyValueDAO().removeAll();
 		new TaskPropertyDAO().removeAll();
-		TaskTemplateDAO taskTemplateDAO = new TaskTemplateDAO();
-		for (TaskTemplate taskTemplate : taskTemplateDAO.readAll()) {
-			taskTemplate.getDksNode().clear();
-			taskTemplateDAO.persist(taskTemplate);
-		}
-		taskTemplateDAO.flush();
-		taskTemplateDAO.removeAll();
+		new DKSMappingDAO().removeAll();
+		new TaskTemplateDAO().removeAll();
 	}
 }

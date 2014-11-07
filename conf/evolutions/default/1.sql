@@ -1,8 +1,10 @@
 # --- !Ups
 
-create table node (
+create table dksmapping (
+    id bigint not null,
+    dksnode varchar(255) not null,
     tasktemplate_id bigint not null,
-    dksnode varchar(255)
+    primary key (id)
 );
 create table person (
     id bigint not null,
@@ -44,8 +46,8 @@ create table tasktemplate (
     primary key (id)
 );
 
-alter table node
-    add constraint fk_3916o7fta2h8s2j0wyquumqub
+alter table dksmapping
+    add constraint fk_p46gjuvoa8bfdl1x58lmmc8fg
     foreign key (tasktemplate_id)
     references tasktemplate;
 alter table pptaccount
@@ -69,18 +71,13 @@ alter table tasktemplate
     foreign key (parent_id)
     references tasktemplate;
 
-create sequence ppt_seq;
-create sequence pptaccount_seq;
-create sequence taskproperty_seq;
-create sequence taskpropertyvalue_seq;
-create sequence tasktemplate_seq;
-create sequence user_seq;
+create sequence entity_seq;
 
 # --- !Downs
 
 SET REFERENTIAL_INTEGRITY FALSE;
 
-drop table if exists node;
+drop table if exists dksmapping;
 drop table if exists person;
 drop table if exists ppt;
 drop table if exists pptaccount;
@@ -90,9 +87,4 @@ drop table if exists tasktemplate;
 
 SET REFERENTIAL_INTEGRITY TRUE;
 
-drop sequence ppt_seq;
-drop sequence pptaccount_seq;
-drop sequence taskproperty_seq;
-drop sequence taskpropertyvalue_seq;
-drop sequence tasktemplate_seq;
-drop sequence user_seq;
+drop sequence entity_seq;

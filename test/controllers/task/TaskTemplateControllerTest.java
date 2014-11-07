@@ -55,13 +55,13 @@ public class TaskTemplateControllerTest extends AbstractControllerTest {
 				"      \"name\" : \"My Task Template X\",\n" +
 				"      \"parent\" : null,\n" +
 				"      \"properties\" : [],\n" +
-				"      \"dksNode\" : []\n" +
+				"      \"dksMappings\" : []\n" +
 				"    },\n" +
 				"    { \"id\" : " + taskTemplate2.getId() + ",\n" +
 				"      \"name\" : \"My Task Template Y\",\n" +
 				"      \"parent\" : null,\n" +
 				"      \"properties\" : [],\n" +
-				"      \"dksNode\" : []\n" +
+				"      \"dksMappings\" : []\n" +
 				"    }\n" +
 				"  ]}"));
 	}
@@ -79,7 +79,7 @@ public class TaskTemplateControllerTest extends AbstractControllerTest {
 				"      \"name\" : \"My Task Template Z\",\n" +
 				"      \"parent\" : null,\n" +
 				"      \"properties\" : [],\n" +
-				"      \"dksNode\" : []\n" +
+				"      \"dksMappings\" : []\n" +
 				"    }"));
 	}
 
@@ -106,7 +106,7 @@ public class TaskTemplateControllerTest extends AbstractControllerTest {
 				"			}," +
 				"			\"value\":\"property value\"" +
 				"		}],\n" +
-				"      \"dksNode\" : []\n" +
+				"      \"dksMappings\" : []\n" +
 				"    }"));
 	}
 
@@ -131,7 +131,7 @@ public class TaskTemplateControllerTest extends AbstractControllerTest {
 				"      \"name\" : \"" + newName + "\"," +
 				"      \"parent\" : null,\n" +
 				"      \"properties\" : [],\n" +
-				"      \"dksNode\" : []\n" +
+				"      \"dksMappings\" : []\n" +
 				"    }"));
 		TaskTemplate taskTemplateInDB = JPA.withTransaction(() -> TASK_TEMPLATE_DAO.readById(taskTemplate.getId()));
 		assertThat(taskTemplateInDB.getName()).isEqualTo(newName);
@@ -166,10 +166,10 @@ public class TaskTemplateControllerTest extends AbstractControllerTest {
 				"         \"name\" : \"Paaaarent\"," +
 				"         \"parent\" : null," +
 				"         \"properties\" : [],\n" +
-				"         \"dksNode\" : []" +
+				"         \"dksMappings\" : []" +
 				"      }," +
 				"      \"properties\" : [],\n" +
-				"      \"dksNode\" : []\n" +
+				"      \"dksMappings\" : []\n" +
 				"    }"));
 		TaskTemplate childInDB = JPA.withTransaction(() -> TASK_TEMPLATE_DAO.readById(child.getId()));
 		assertThat(childInDB.getName()).isEqualTo("Child");
@@ -218,7 +218,7 @@ public class TaskTemplateControllerTest extends AbstractControllerTest {
 				"			}," +
 				"			\"value\":\"My Value\"" +
 				"		}],\n" +
-				"      \"dksNode\" : []\n" +
+				"      \"dksMappings\" : []\n" +
 				"    }"));
 	}
 
@@ -248,7 +248,7 @@ public class TaskTemplateControllerTest extends AbstractControllerTest {
 				"			}," +
 				"			\"value\":\"Task Value IV\"" +
 				"		}],\n" +
-				"      \"dksNode\" : []\n" +
+				"      \"dksMappings\" : []\n" +
 				"    }"));
 	}
 
@@ -270,7 +270,7 @@ public class TaskTemplateControllerTest extends AbstractControllerTest {
 				"      \"name\" : \"Task Template V\"," +
 				"      \"parent\" : null,\n" +
 				"      \"properties\" : [],\n" +
-				"      \"dksNode\" : []\n" +
+				"      \"dksMappings\" : []\n" +
 				"    }"));
 	}
 

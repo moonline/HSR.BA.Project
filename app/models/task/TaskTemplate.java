@@ -2,6 +2,7 @@ package models.task;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import models.AbstractEntity;
+import models.dks.DKSMapping;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -11,10 +12,9 @@ import java.util.List;
 @Table(name = "tasktemplate")
 public class TaskTemplate extends AbstractEntity {
 
-	@ElementCollection
-	@CollectionTable(name = "Node", joinColumns = @JoinColumn(name = "tasktemplate_id"))
-	@Column(name = "dksnode")
-	private List<String> dksNode = new ArrayList<>();
+	@OneToMany(cascade = CascadeType.PERSIST, mappedBy = "taskTemplate")
+	@JsonManagedReference
+	private List<DKSMapping> dksMappings = new ArrayList<>();
 
 	@ManyToOne
 	private TaskTemplate parent;
@@ -41,8 +41,8 @@ public class TaskTemplate extends AbstractEntity {
 		this.parent = parent;
 	}
 
-	public List<String> getDksNode() {
-		return dksNode;
+	public List<DKSMapping> getDksMappings() {
+		return dksMappings;
 	}
 
 	public List<TaskPropertyValue> getProperties() {

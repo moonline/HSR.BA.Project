@@ -1,38 +1,38 @@
 # --- !Ups
 
 -- Creating PPTs
-INSERT INTO PPT ( ID , NAME ) VALUES (nextval('ppt_seq'), 'Redmine'), (nextval('ppt_seq'), 'Jira');
+INSERT INTO PPT ( ID , NAME ) VALUES (nextval('entity_seq'), 'Redmine'), (nextval('entity_seq'), 'Jira');
 
 -- Creating Demo-User
-INSERT INTO PERSON ( ID , NAME , PASSWORDHASH , SALT ) VALUES (nextval('user_seq'), 'demo', 'aa3930e18d032220288660c7f43e9640e38e08b8', 'e0cf15d8f8651ec060313b6d7601e0afc458d5c8');
-INSERT INTO PPTACCOUNT ( ID , PPTURL , PPT_ID , PPTUSERNAME, PPTPASSWORD  , USER_ID) VALUES (nextval('pptaccount_seq'), 'http://localhost:9920', currval('ppt_seq'), 'admin', 'admin', currval('user_seq'));
+INSERT INTO PERSON ( ID , NAME , PASSWORDHASH , SALT ) VALUES (nextval('entity_seq'), 'demo', 'aa3930e18d032220288660c7f43e9640e38e08b8', 'e0cf15d8f8651ec060313b6d7601e0afc458d5c8');
+INSERT INTO PPTACCOUNT ( ID , PPTURL , PPT_ID , PPTUSERNAME, PPTPASSWORD  , USER_ID) VALUES (nextval('entity_seq'), 'http://localhost:9920', (SELECT id FROM PPT WHERE name='Redmine'), 'admin', 'admin', (SELECT id FROM PERSON WHERE name='demo'));
 
 -- Creating Task Properties
-INSERT INTO TASKPROPERTY (ID, NAME) VALUES (nextval('taskproperty_seq'), 'Assignee'), (nextval('taskproperty_seq'), 'Type'), (nextval('taskproperty_seq'), 'Description');
+INSERT INTO TASKPROPERTY (ID, NAME) VALUES (nextval('entity_seq'), 'Assignee'), (nextval('entity_seq'), 'Type'), (nextval('entity_seq'), 'Description');
 
 -- Createing Task Templates
-INSERT INTO TASKTEMPLATE (ID, NAME, PARENT_ID) VALUES (nextval('tasktemplate_seq'), 'Define criterions', null);
-INSERT INTO TASKPROPERTYVALUE(ID, "VALUE", PROPERTY_ID, TASKTEMPLATE_ID) VALUES (nextval('taskpropertyvalue_seq'),'Project Planner',(SELECT id FROM TASKPROPERTY WHERE name='Assignee'),currval('tasktemplate_seq'));
-INSERT INTO TASKPROPERTYVALUE(ID, "VALUE", PROPERTY_ID, TASKTEMPLATE_ID) VALUES (nextval('taskpropertyvalue_seq'),'Task',           (SELECT id FROM TASKPROPERTY WHERE name='Type'    ),currval('tasktemplate_seq'));
-INSERT INTO NODE(TASKTEMPLATE_ID, DKSNODE) VALUES (currval('tasktemplate_seq'),'3');
+INSERT INTO TASKTEMPLATE (ID, NAME, PARENT_ID) VALUES (nextval('entity_seq'), 'Define criterions', null);
+INSERT INTO TASKPROPERTYVALUE(ID, "VALUE", PROPERTY_ID, TASKTEMPLATE_ID) VALUES (nextval('entity_seq'),'Project Planner',(SELECT id FROM TASKPROPERTY WHERE name='Assignee'),(SELECT id FROM TASKTEMPLATE WHERE name='Define criterions'));
+INSERT INTO TASKPROPERTYVALUE(ID, "VALUE", PROPERTY_ID, TASKTEMPLATE_ID) VALUES (nextval('entity_seq'),'Task',           (SELECT id FROM TASKPROPERTY WHERE name='Type'    ),(SELECT id FROM TASKTEMPLATE WHERE name='Define criterions'));
+INSERT INTO DKSMAPPING(ID, TASKTEMPLATE_ID, DKSNODE) VALUES (nextval('entity_seq'), (SELECT id FROM TASKTEMPLATE WHERE name='Define criterions'),'3');
 
 
-INSERT INTO TASKTEMPLATE (ID, NAME, PARENT_ID) VALUES (nextval('tasktemplate_seq'), 'Rank criterions', null);
-INSERT INTO TASKPROPERTYVALUE(ID, "VALUE", PROPERTY_ID, TASKTEMPLATE_ID) VALUES (nextval('taskpropertyvalue_seq'),'Customer',       (SELECT id FROM TASKPROPERTY WHERE name='Assignee'),currval('tasktemplate_seq'));
-INSERT INTO TASKPROPERTYVALUE(ID, "VALUE", PROPERTY_ID, TASKTEMPLATE_ID) VALUES (nextval('taskpropertyvalue_seq'),'Task',           (SELECT id FROM TASKPROPERTY WHERE name='Type'    ),currval('tasktemplate_seq'));
-INSERT INTO NODE(TASKTEMPLATE_ID, DKSNODE) VALUES (currval('tasktemplate_seq'),'3'), (currval('tasktemplate_seq'),'6');
+INSERT INTO TASKTEMPLATE (ID, NAME, PARENT_ID) VALUES (nextval('entity_seq'), 'Rank criterions', null);
+INSERT INTO TASKPROPERTYVALUE(ID, "VALUE", PROPERTY_ID, TASKTEMPLATE_ID) VALUES (nextval('entity_seq'),'Customer',       (SELECT id FROM TASKPROPERTY WHERE name='Assignee'),(SELECT id FROM TASKTEMPLATE WHERE name='Rank criterions'));
+INSERT INTO TASKPROPERTYVALUE(ID, "VALUE", PROPERTY_ID, TASKTEMPLATE_ID) VALUES (nextval('entity_seq'),'Task',           (SELECT id FROM TASKPROPERTY WHERE name='Type'    ),(SELECT id FROM TASKTEMPLATE WHERE name='Rank criterions'));
+INSERT INTO DKSMAPPING(ID, TASKTEMPLATE_ID, DKSNODE) VALUES (nextval('entity_seq'), (SELECT id FROM TASKTEMPLATE WHERE name='Rank criterions'),'3'), (nextval('entity_seq'), (SELECT id FROM TASKTEMPLATE WHERE name='Rank criterions'),'6');
 
-INSERT INTO TASKTEMPLATE (ID, NAME, PARENT_ID) VALUES (nextval('tasktemplate_seq'), 'Define criterion values', null);
-INSERT INTO TASKPROPERTYVALUE(ID, "VALUE", PROPERTY_ID, TASKTEMPLATE_ID) VALUES (nextval('taskpropertyvalue_seq'),'Project Planner',(SELECT id FROM TASKPROPERTY WHERE name='Assignee'),currval('tasktemplate_seq'));
-INSERT INTO TASKPROPERTYVALUE(ID, "VALUE", PROPERTY_ID, TASKTEMPLATE_ID) VALUES (nextval('taskpropertyvalue_seq'),'Task',           (SELECT id FROM TASKPROPERTY WHERE name='Type'    ),currval('tasktemplate_seq'));
-INSERT INTO TASKPROPERTYVALUE(ID, "VALUE", PROPERTY_ID, TASKTEMPLATE_ID) VALUES (nextval('taskpropertyvalue_seq'),'Rank every item for every criterion.',           (SELECT id FROM TASKPROPERTY WHERE name='Description'),currval('tasktemplate_seq'));
-INSERT INTO NODE(TASKTEMPLATE_ID, DKSNODE) VALUES (currval('tasktemplate_seq'),'3');
+INSERT INTO TASKTEMPLATE (ID, NAME, PARENT_ID) VALUES (nextval('entity_seq'), 'Define criterion values', null);
+INSERT INTO TASKPROPERTYVALUE(ID, "VALUE", PROPERTY_ID, TASKTEMPLATE_ID) VALUES (nextval('entity_seq'),'Project Planner',(SELECT id FROM TASKPROPERTY WHERE name='Assignee'),(SELECT id FROM TASKTEMPLATE WHERE name='Define criterion values'));
+INSERT INTO TASKPROPERTYVALUE(ID, "VALUE", PROPERTY_ID, TASKTEMPLATE_ID) VALUES (nextval('entity_seq'),'Task',           (SELECT id FROM TASKPROPERTY WHERE name='Type'    ),(SELECT id FROM TASKTEMPLATE WHERE name='Define criterion values'));
+INSERT INTO TASKPROPERTYVALUE(ID, "VALUE", PROPERTY_ID, TASKTEMPLATE_ID) VALUES (nextval('entity_seq'),'Rank every item for every criterion.',           (SELECT id FROM TASKPROPERTY WHERE name='Description'),(SELECT id FROM TASKTEMPLATE WHERE name='Define criterion values'));
+INSERT INTO DKSMAPPING(ID, TASKTEMPLATE_ID, DKSNODE) VALUES (nextval('entity_seq'), (SELECT id FROM TASKTEMPLATE WHERE name='Define criterion values'),'3');
 
-INSERT INTO TASKTEMPLATE (ID, NAME, PARENT_ID) VALUES (nextval('tasktemplate_seq'), 'Hold decision meeting', null);
-INSERT INTO TASKPROPERTYVALUE(ID, "VALUE", PROPERTY_ID, TASKTEMPLATE_ID) VALUES (nextval('taskpropertyvalue_seq'),'Task',           (SELECT id FROM TASKPROPERTY WHERE name='Type'    ),currval('tasktemplate_seq'));
+INSERT INTO TASKTEMPLATE (ID, NAME, PARENT_ID) VALUES (nextval('entity_seq'), 'Hold decision meeting', null);
+INSERT INTO TASKPROPERTYVALUE(ID, "VALUE", PROPERTY_ID, TASKTEMPLATE_ID) VALUES (nextval('entity_seq'),'Task',           (SELECT id FROM TASKPROPERTY WHERE name='Type'    ),(SELECT id FROM TASKTEMPLATE WHERE name='Hold decision meeting'));
 
-INSERT INTO TASKTEMPLATE (ID, NAME, PARENT_ID) VALUES (nextval('tasktemplate_seq'), 'Invite to decision meeting', (SELECT id FROM TASKTEMPLATE WHERE name='Hold decision meeting'));
-INSERT INTO TASKPROPERTYVALUE(ID, "VALUE", PROPERTY_ID, TASKTEMPLATE_ID) VALUES (nextval('taskpropertyvalue_seq'),'Sub Task',       (SELECT id FROM TASKPROPERTY WHERE name='Type'    ),currval('tasktemplate_seq'));
+INSERT INTO TASKTEMPLATE (ID, NAME, PARENT_ID) VALUES (nextval('entity_seq'), 'Invite to decision meeting', (SELECT id FROM TASKTEMPLATE WHERE name='Hold decision meeting'));
+INSERT INTO TASKPROPERTYVALUE(ID, "VALUE", PROPERTY_ID, TASKTEMPLATE_ID) VALUES (nextval('entity_seq'),'Sub Task',       (SELECT id FROM TASKPROPERTY WHERE name='Type'    ),(SELECT id FROM TASKTEMPLATE WHERE name='Hold decision meeting'));
 
 
 # --- !Downs
@@ -42,5 +42,5 @@ delete from person where 1=1;
 delete from ppt where 1=1;
 delete from taskpropertyvalue;
 delete from taskproperty;
-delete from node;
+delete from dksmapping;
 delete from tasktemplate;
