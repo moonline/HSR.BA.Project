@@ -107,7 +107,7 @@ module app.application {
 				} else if($scope.currentDecision) {
 					var mapping: app.domain.model.core.Mapping = new app.domain.model.core.Mapping($scope.currentDecision);
 					mapping.addTaskTemplate(taskTemplate);
-					mappingRepository.add(mapping, function(item){});
+					//mappingRepository.add(mapping, function(item){});
 					$scope.currentMapping = mapping;
 				}
 			};
