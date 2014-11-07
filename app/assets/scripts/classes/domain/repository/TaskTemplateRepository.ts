@@ -44,7 +44,7 @@ module app.domain.repository.core {
 				if(index < collection.length) {
 					var propertyValue: app.domain.model.core.TaskPropertyValue = collection[index];
 					var propertyUrl: string = url.replace('{propertyId}', propertyValue.id.toString());
-					
+
 					httpService[method](propertyUrl, { property: propertyValue.property.id, value: propertyValue.value })
 						.success(function(data, status, headers, config) {
 							var updatedTaskTemplate: app.domain.model.core.TaskTemplate = app.domain.factory.ObjectFactory.createFromJson(type, data);
@@ -59,6 +59,24 @@ module app.domain.repository.core {
 				}
 			};
 			recursivPropertyUpdate(0,taskTemplate.properties);
+		}
+
+		public addPropertyValue(taskTemplate: app.domain.model.core.TaskTemplate, propertyValue: app.domain.model.core.TaskPropertyValue, callback: (status: boolean, item: app.domain.model.core.TaskTemplate) => void) {
+			var method: string = this.resources['addProperty']['method'].toLowerCase();
+			var url: string = this.getResourcePath('addProperty').replace('{id}', taskTemplate.id.toString());
+			var cache = this.itemCache;
+			var type = this.type;
+			var cachePos:number = cache.indexOf(taskTemplate);
+
+			this.httpService[method](url, { property: propertyValue.property.id, value: propertyValue.value })
+				.success(function(data, status, headers, config) {
+					var updatedTaskTemplate: app.domain.model.core.TaskTemplate = app.domain.factory.ObjectFactory.createFromJson(type, data);
+					cache[cachePos] = updatedTaskTemplate;
+					callback(true, updatedTaskTemplate);
+				})
+				.error(function(data, status, headers, config) {
+					callback(false, null);
+				});
 		}
     }
 }

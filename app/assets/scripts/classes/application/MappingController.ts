@@ -62,6 +62,17 @@ module app.application {
 			};
 
 			$scope.currentTaskTemplate = null;
+			// filter already used properties
+			$scope.notYetUsed = function() {
+				return function( item ) {
+					if($scope.currentTaskTemplate) {
+						return !$scope.currentTaskTemplate.hasProperty(item);
+					} else {
+						return true;
+					}
+				};
+			};
+
 			$scope.setCurrentTaskTemplate = function(taskTemplate) {
 				$scope.currentTaskTemplate = taskTemplate;
 			};
@@ -71,10 +82,11 @@ module app.application {
 					if(status) { $scope.currentTaskTemplate = item; }
 				});
 			};
-			$scope.addPropertyValue = function(property: app.domain.model.core.TaskProperty) {
+			$scope.addPropertyValue = function(property: app.domain.model.core.TaskProperty, value: string) {
 				if($scope.currentTaskTemplate) {
-					var taskPropertyValue: app.domain.model.core.TaskPropertyValue = new app.domain.model.core.TaskPropertyValue(property, '');
-					//(<app.domain.model.core.TaskTemplate>$scope.currentTaskTemplate).addProperty(taskPropertyValue);
+					var taskPropertyValue: app.domain.model.core.TaskPropertyValue = new app.domain.model.core.TaskPropertyValue(property, value);
+					(<app.domain.model.core.TaskTemplate>$scope.currentTaskTemplate).addProperty(taskPropertyValue);
+					taskTemplateRepository.addPropertyValue($scope.currentTaskTemplate, taskPropertyValue, function(status, item){});
 				}
 			};
 

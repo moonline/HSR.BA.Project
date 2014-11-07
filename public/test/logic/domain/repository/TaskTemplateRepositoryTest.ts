@@ -22,7 +22,6 @@ module test.logic.domain.repository {
 				var propertyType: app.domain.model.core.TaskProperty = new app.domain.model.core.TaskProperty("Type");
 				propertyType.id = 2;
 
-
 				var taskTemplate = new app.domain.model.core.TaskTemplate("Invite to decision meeting 2");
 				taskTemplate.id = 5;
 				taskTemplate.addProperty(new app.domain.model.core.TaskPropertyValue(propertyType, "Sub Task"));
@@ -33,6 +32,33 @@ module test.logic.domain.repository {
 
 				$httpBackend.flush();
 				expect(status).toEqual(true);
+			}));
+
+			it("Add TaskTemplate property", angular.mock.inject(function($httpBackend, $http) {
+				$httpBackend.expectPOST('/taskTemplate/5/addProperty').respond({
+					"id":5,"dksNode":[],"parent":null,"name":"Invite to decision meeting",
+					"properties":[
+						{"id":9,"property":{"id":2,"name":"Type"},"value":"Sub Task"}
+					]
+				});
+				var repository: app.domain.repository.core.TaskTemplateRepository = new app.domain.repository.core.TaskTemplateRepository($http);
+
+				var propertyType: app.domain.model.core.TaskProperty = new app.domain.model.core.TaskProperty("Type");
+				propertyType.id = 2;
+
+				var taskTemplate = new app.domain.model.core.TaskTemplate("Invite to decision meeting");
+				taskTemplate.id = 5;
+				var newPropertyValue = new app.domain.model.core.TaskPropertyValue(propertyType, "Sub Task");
+				newPropertyValue.id = 9;
+				taskTemplate.addProperty(newPropertyValue);
+
+				var status;
+				var updatedTaskTemplate;
+				repository.addPropertyValue(taskTemplate, newPropertyValue, function(state, taskTemplate){ status = state; updatedTaskTemplate = taskTemplate; });
+
+				$httpBackend.flush();
+				expect(status).toEqual(true);
+				expect(updatedTaskTemplate).toEqual(taskTemplate);
 			}));
 		});
 	}

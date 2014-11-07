@@ -21,7 +21,8 @@ module configuration {
 			create: { method: 'POST', url: '/taskTemplate' },
 			remove: { method: 'POST', url: '/taskTemplate/{id}/delete' },
 			update: { method: 'POST', url: '/taskTemplate/{id}' },
-			updateProperty: { method: 'POST', url: '/taskTemplate/{id}/properties/{propertyId}'}
+			updateProperty: { method: 'POST', url: '/taskTemplate/{id}/properties/{propertyId}'},
+			addProperty: { method: 'POST', url: '/taskTemplate/{id}/addProperty'}
 		},
 		taskProperty: {
 			list: { method: 'GET', url: '/taskProperty' },

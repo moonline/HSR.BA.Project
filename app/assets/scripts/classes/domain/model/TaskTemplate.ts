@@ -32,6 +32,15 @@ module app.domain.model.core {
 			return propertyValues;
 		}
 
+		public hasProperty(property: app.domain.model.core.TaskProperty) {
+			for(var pi in this.properties) {
+				if(this.properties[pi].property.id == property.id) {
+					return true;
+				}
+			}
+			return false;
+		}
+
     	public addProperty(property: app.domain.model.core.TaskPropertyValue) {
             this.properties.push(property);
         }

@@ -63,9 +63,10 @@
 			</form>
 			<h3>Task template [{{currentTaskTemplate.id}}]</h3>
 			<form data-ng-if="currentTaskTemplate">
-				<div class="formLine">
-					<select data-ng-model="currentTaskProperty" data-ng-options="taskProperty.name for taskProperty in taskProperties" ></select>
-					<button data-ng-click="addPropertyValue(currentTaskProperty)">add property</button>
+				<div class="formLine" data-ng-if="currentTaskTemplate.properties.length < taskProperties.length">
+					<select data-ng-model="newTaskProperty" data-ng-options="taskProperty.name for taskProperty in taskProperties | filter:notYetUsed()" ></select>
+					<input type="text" data-ng-model="newTaskPropertyValue" placeholder="value"/>
+					<button data-ng-click="addPropertyValue(newTaskProperty, newTaskPropertyValue); newTaskPropertyValue = '';">add property</button>
 				</div>
 				<div class="formLine">
 					<label>Name</label>
