@@ -87,7 +87,7 @@ public class DecisionKnowledgeSystemMappingController extends AbstractCRUDContro
 	@QueryDescription("Deletes a Mapping for a DKS Node and a Task Template.")
 	@QueryExamples({
 			@Example(id = "9999", parameters = {}),
-			@Example(id = "REFERENCE_TASKTEMPLATE_1000000000000000039", parameters = {}, isDataCacheable = false)
+			@Example(id = "REFERENCE_DKSMAPPING_1000000000000000039", parameters = {}, isDataCacheable = false)
 	})
 	public Result delete(long id) {
 		return delete(DKS_MAPPING_DAO, DKS_MAPPING_LOGIC, id);

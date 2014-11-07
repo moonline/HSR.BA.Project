@@ -7,7 +7,6 @@ import logics.docs.QueryParameters;
 import logics.docs.QueryResponses;
 import models.AbstractEntity;
 import play.data.Form;
-import play.mvc.Http;
 import play.mvc.Result;
 import play.mvc.Results;
 
@@ -53,7 +52,7 @@ public abstract class AbstractCRUDController extends AbstractController {
 	public abstract Result readAll();
 
 
-	protected Status readAll(AbstractDAO<? extends AbstractEntity> dao) {
+	protected Results.Status readAll(AbstractDAO<? extends AbstractEntity> dao) {
 		return ok(jsonify(dao.readAll()));
 	}
 
