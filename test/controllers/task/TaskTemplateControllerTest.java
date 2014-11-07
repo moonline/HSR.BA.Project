@@ -54,14 +54,12 @@ public class TaskTemplateControllerTest extends AbstractControllerTest {
 		assertCheckJsonResponse(result, Json.parse("{\"items\":[ { \"id\" : " + taskTemplate1.getId() + ",\n" +
 				"      \"name\" : \"My Task Template X\",\n" +
 				"      \"parent\" : null,\n" +
-				"      \"properties\" : [],\n" +
-				"      \"dksMappings\" : []\n" +
+				"      \"properties\" : []\n" +
 				"    },\n" +
 				"    { \"id\" : " + taskTemplate2.getId() + ",\n" +
 				"      \"name\" : \"My Task Template Y\",\n" +
 				"      \"parent\" : null,\n" +
-				"      \"properties\" : [],\n" +
-				"      \"dksMappings\" : []\n" +
+				"      \"properties\" : []\n" +
 				"    }\n" +
 				"  ]}"));
 	}
@@ -78,8 +76,7 @@ public class TaskTemplateControllerTest extends AbstractControllerTest {
 		assertCheckJsonResponse(result, Json.parse("{ \"id\" : " + taskTemplate.getId() + ",\n" +
 				"      \"name\" : \"My Task Template Z\",\n" +
 				"      \"parent\" : null,\n" +
-				"      \"properties\" : [],\n" +
-				"      \"dksMappings\" : []\n" +
+				"      \"properties\" : []\n" +
 				"    }"));
 	}
 
@@ -105,8 +102,7 @@ public class TaskTemplateControllerTest extends AbstractControllerTest {
 				"				\"name\":\"property name\"" +
 				"			}," +
 				"			\"value\":\"property value\"" +
-				"		}],\n" +
-				"      \"dksMappings\" : []\n" +
+				"		}]\n" +
 				"    }"));
 	}
 
@@ -130,8 +126,7 @@ public class TaskTemplateControllerTest extends AbstractControllerTest {
 		assertCheckJsonResponse(result, Json.parse("{ \"id\" : " + taskTemplate.getId() + ",\n" +
 				"      \"name\" : \"" + newName + "\"," +
 				"      \"parent\" : null,\n" +
-				"      \"properties\" : [],\n" +
-				"      \"dksMappings\" : []\n" +
+				"      \"properties\" : []\n" +
 				"    }"));
 		TaskTemplate taskTemplateInDB = JPA.withTransaction(() -> TASK_TEMPLATE_DAO.readById(taskTemplate.getId()));
 		assertThat(taskTemplateInDB.getName()).isEqualTo(newName);
@@ -165,11 +160,9 @@ public class TaskTemplateControllerTest extends AbstractControllerTest {
 				"         \"id\" : " + parent.getId() + "," +
 				"         \"name\" : \"Paaaarent\"," +
 				"         \"parent\" : null," +
-				"         \"properties\" : [],\n" +
-				"         \"dksMappings\" : []" +
+				"         \"properties\" : []" +
 				"      }," +
-				"      \"properties\" : [],\n" +
-				"      \"dksMappings\" : []\n" +
+				"      \"properties\" : []\n" +
 				"    }"));
 		TaskTemplate childInDB = JPA.withTransaction(() -> TASK_TEMPLATE_DAO.readById(child.getId()));
 		assertThat(childInDB.getName()).isEqualTo("Child");
@@ -217,8 +210,7 @@ public class TaskTemplateControllerTest extends AbstractControllerTest {
 				"				\"name\":\"My Property\"" +
 				"			}," +
 				"			\"value\":\"My Value\"" +
-				"		}],\n" +
-				"      \"dksMappings\" : []\n" +
+				"		}]\n" +
 				"    }"));
 	}
 
@@ -247,8 +239,7 @@ public class TaskTemplateControllerTest extends AbstractControllerTest {
 				"				\"name\":\"Task Property III\"" +
 				"			}," +
 				"			\"value\":\"Task Value IV\"" +
-				"		}],\n" +
-				"      \"dksMappings\" : []\n" +
+				"		}]\n" +
 				"    }"));
 	}
 
@@ -269,8 +260,7 @@ public class TaskTemplateControllerTest extends AbstractControllerTest {
 		assertCheckJsonResponse(result, Json.parse("{ \"id\" : " + taskPropertyValue.getTaskTemplate().getId() + ",\n" +
 				"      \"name\" : \"Task Template V\"," +
 				"      \"parent\" : null,\n" +
-				"      \"properties\" : [],\n" +
-				"      \"dksMappings\" : []\n" +
+				"      \"properties\" : []\n" +
 				"    }"));
 	}
 

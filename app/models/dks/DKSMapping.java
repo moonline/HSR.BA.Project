@@ -1,6 +1,6 @@
 package models.dks;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import models.AbstractEntity;
 import models.task.TaskTemplate;
 
@@ -12,7 +12,7 @@ public class DKSMapping extends AbstractEntity {
 
 	@ManyToOne
 	@JoinColumn(nullable = false)
-	@JsonBackReference
+	@JsonManagedReference
 	private TaskTemplate taskTemplate;
 
 	@Column(nullable = false)

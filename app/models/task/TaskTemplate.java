@@ -1,5 +1,6 @@
 package models.task;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import models.AbstractEntity;
 import models.dks.DKSMapping;
@@ -13,7 +14,7 @@ import java.util.List;
 public class TaskTemplate extends AbstractEntity {
 
 	@OneToMany(cascade = CascadeType.PERSIST, mappedBy = "taskTemplate")
-	@JsonManagedReference
+	@JsonBackReference
 	private List<DKSMapping> dksMappings = new ArrayList<>();
 
 	@ManyToOne

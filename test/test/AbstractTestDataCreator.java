@@ -6,6 +6,7 @@ import daos.task.TaskPropertyValueDAO;
 import daos.task.TaskTemplateDAO;
 import daos.user.UserDAO;
 import logics.user.UserLogic;
+import models.dks.DKSMapping;
 import models.ppt.ProjectPlanningTool;
 import models.task.TaskProperty;
 import models.task.TaskPropertyValue;
@@ -100,5 +101,13 @@ public abstract class AbstractTestDataCreator {
 		new TaskPropertyDAO().removeAll();
 		new DKSMappingDAO().removeAll();
 		new TaskTemplateDAO().removeAll();
+	}
+
+	public static DKSMapping createDKSMapping(TaskTemplate taskTemplate, String dksNode) {
+		DKSMapping dksMapping = new DKSMapping();
+		dksMapping.setTaskTemplate(taskTemplate);
+		dksMapping.setDksNode(dksNode);
+		persistAndFlush(dksMapping);
+		return dksMapping;
 	}
 }

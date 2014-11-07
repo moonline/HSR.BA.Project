@@ -32,6 +32,13 @@ POST	/taskTemplate/$id<[0-9]+>/addProperty	@controllers.task.TaskTemplateControl
 POST	/taskTemplate/$taskTemplate<[0-9]+>/properties/$id<[0-9]+>	@controllers.task.TaskTemplateController.updateProperty(id: Long, taskTemplate: Long)
 POST	/taskTemplate/$taskTemplate<[0-9]+>/properties/$id<[0-9]+>/delete	@controllers.task.TaskTemplateController.deleteProperty(id: Long, taskTemplate: Long)
 
+POST	/mapping				@controllers.dks.DecisionKnowledgeSystemMappingController.create()
+GET		/mapping				@controllers.dks.DecisionKnowledgeSystemMappingController.readAll()
+GET		/mapping/$id<[0-9]+>	@controllers.dks.DecisionKnowledgeSystemMappingController.read(id: Long)
+POST	/mapping/$id<[0-9]+>	@controllers.dks.DecisionKnowledgeSystemMappingController.update(id: Long)
+DELETE	/mapping/$id<[0-9]+>	@controllers.dks.DecisionKnowledgeSystemMappingController.delete(id: Long)
+POST	/mapping/$id<[0-9]+>/delete	@controllers.dks.DecisionKnowledgeSystemMappingController.delete(id: Long)
+
 POST	/taskProperty				@controllers.task.TaskPropertyController.create()
 GET		/taskProperty				@controllers.task.TaskPropertyController.readAll()
 GET		/taskProperty/$id<[0-9]+>	@controllers.task.TaskPropertyController.read(id: Long)
