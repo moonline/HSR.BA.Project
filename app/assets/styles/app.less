@@ -20,7 +20,14 @@ header { border-bottom: 0.25rem solid black; }
 	background: aliceblue; padding: 0.5rem; box-shadow: 0 0 0.25rem silver;
 	border-radius: 0.5rem; margin: 0.5rem;
 
-	h2 { .blueGradient; padding: 0.5rem; margin: -0.5rem -0.5rem 0.5rem -0.5rem; }
+	h2 {
+		.blueGradient; padding: 0.5rem; margin: 0.5rem -0.5rem 0.5rem -0.5rem;
+		&:first-of-type { margin-top: -0.5rem; }
+	}
+	h3 { margin-top: 1rem; }
+	ul li {
+		list-style-type: none	;
+	}
 }
 
 div.main { padding: 0.5rem; }
@@ -51,10 +58,12 @@ button.action {
 	background: silver; background: linear-gradient(gainsboro, silver); border: none; color: black;
 	border-radius: 0.2rem;
 
-	&.create { background: green; background: linear-gradient(lightgreen, green); color: white; }
+	&.create, &.save { background: green; background: linear-gradient(lightgreen, green); color: white; }
 	&.edit { background: orange; background: linear-gradient(yellow, orange); color: white; }
 	&.update { background: cornflowerblue; background: linear-gradient(deepskyblue, cornflowerblue);color: white; }
 	&.remove, &.warning { background: maroon; background: linear-gradient(red, maroon); color: white; }
+
+	&[disabled] { background: silver; background: linear-gradient(gainsboro, silver); border: none; color: gray; }
 }
 
 

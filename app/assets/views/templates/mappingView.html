@@ -48,8 +48,7 @@
 				<li data-ng-repeat="template in taskTemplates" data-ng-state="{{template == currentTaskTemplate && 'selected' || '' }}">
 					<button class="action update" data-ng-if="currentDecision" data-ng-click="mapTaskTemplate(template)" title="Map task template with decision">&lt; map</button>&nbsp;
 					<strong data-ng-click="setCurrentTaskTemplate(template)" title="Edit task template">
-						<button class="action edit">&#x270E;</button>&nbsp;
-						{{template.name}}
+						<button class="action edit">&#x270E;</button> {{template.name}}
 					</strong> [{{template.id}}]<br />
 				</li>
 			</ul>
@@ -60,18 +59,22 @@
 					<input type="text" name="createTaskTemplateName" data-ng-model="createTaskTemplateName" placeholder="name" />
 					<button class="action create" data-ng-click="createNewTaskTemplate(createTaskTemplateName); createTaskTemplateName = '';"
 						title="Create a new task template">
-						<span class="icon">&#x2b;</span> create
+						<span class="icon">&#x2b;</span>Create
 					</button>
 				</div>
 			</form>
-			<h3>Task template [{{currentTaskTemplate.id}}]</h3>
+
+
+			<h3 data-ng-if="currentTaskTemplate">{{currentTaskTemplate.name}} [{{currentTaskTemplate.id}}]</h3>
 			<form data-ng-if="currentTaskTemplate">
 				<div class="formLine" data-ng-if="currentTaskTemplate.properties.length < taskProperties.length">
-					<select data-ng-model="newTaskProperty" data-ng-options="taskProperty.name for taskProperty in taskProperties | filter:notYetUsed()" ></select>
-					<input type="text" data-ng-model="newTaskPropertyValue" placeholder="value"/>
-					<button class="action create" data-ng-click="addPropertyValue(newTaskProperty, newTaskPropertyValue); newTaskPropertyValue = '';"
-						title="Add property">
-						<span class="icon">&#x2b;</span> add
+					<select data-ng-model="newTaskProperty"
+						data-ng-options="taskProperty.name for taskProperty in taskProperties | filter:notYetUsed()" >
+					</select>
+					<input type="text" data-ng-disabled="!newTaskProperty" data-ng-model="newTaskPropertyValue" placeholder="value"/>
+					<button data-ng-disabled="!newTaskProperty" class="action create" title="Add property"
+							data-ng-click="addPropertyValue(newTaskProperty, newTaskPropertyValue); newTaskPropertyValue = '';">
+						<span class="icon">&#x2b;</span>Add
 					</button>
 				</div>
 				<div class="formLine">
@@ -84,7 +87,27 @@
 					<label>{{propertyValue.property.name}}</label>
 					<input data-ng-model="propertyValue.value" />
 				</div>
-				<button data-ng-click="updateTaskTemplate()">Save</button>
+				<button class="action update" data-ng-click="updateTaskTemplate()"><span class="icon">&#11015;</span>Save</button>
+			</form>
+
+
+			<h2>Manage Properties</h2>
+			<form>
+				<div class="formLine">
+					<input type="text" name="newTaskPropertyName" data-ng-model="newTaskPropertyName" placeholder="name" />
+					<button class="action create" data-ng-click="createTaskProperty(newTaskPropertyName); newTaskPropertyName = '';"
+							title="Create a new property">
+						<span class="icon">&#x2b;</span>Add
+					</button>
+				</div>
+				<div class="formLine">
+					<select data-ng-model="toRenameProperty" data-ng-options="taskProperty.name for taskProperty in taskProperties" ></select>
+					<input data-ng-disabled="!toRenameProperty" data-ng-model="propertyNewName" placeholder="New name" />
+					<button data-ng-disabled="!toRenameProperty" class="action update"
+						data-ng-click="renameTaskProperty(toRenameProperty, propertyNewName); propertyNewName = ''; toRenameProperty = null;">
+						<span class="icon">&#x270E;</span>rename
+					</button>
+				</div>
 			</form>
 		</div>
 	</div>
