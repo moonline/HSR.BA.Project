@@ -1,6 +1,7 @@
 /// <reference path='../../classes/application/RegisterController.ts' />
 /// <reference path='../../classes/application/MappingController.ts' />
 /// <reference path='../../classes/application/TransmissionController.ts' />
+/// <reference path='../../classes/application/AdminController.ts' />
 
 /// <reference path='../../classes/domain/model/User.ts' />
 
@@ -74,6 +75,16 @@ module app.mod {
 						}]
 					}
 				});
+				$routeProvider.when('/admin', {
+					templateUrl: '/public/views/templates/adminView.html',
+					controller: 'adminController',
+					resolve: {
+						auth: ["$q", "authenticationService", function($q, authenticationService) {
+							if(authenticationService.isLoggedIn) { return true; }
+							return authenticationService.readyPromise.then(function(user) {});
+						}]
+					}
+				});
 				$routeProvider.when('/register', {
 					templateUrl: '/public/views/templates/registerView.html',
 					controller: 'registerController'
@@ -88,6 +99,7 @@ module app.mod {
 			this.module.controller('mappingController', ['$scope', '$location', '$http', 'persistenceService', app.application.MappingController]);
 			this.module.controller('transmissionController', ['$scope', '$location', 'persistenceService', '$http', app.application.TransmissionController]);
 			this.module.controller('registerController', ['$scope', '$location', '$http', 'authenticationService', app.application.RegisterController]);
+			this.module.controller('adminController', ['$scope', '$location', '$http', 'authenticationService', app.application.AdminController]);
 
 		}
 

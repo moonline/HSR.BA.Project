@@ -29,15 +29,19 @@
 				</div>
 			</header>
 
+			<nav class="mainNavigation" data-type="toolbar" data-layout="flow" data-flow-direction="row">
+				<ul>
+					<li><span class="icon" data-icon="link"></span><a data-ng-if="authenticator.loggedInUser != null" href="#/mapping">Mapping</a></li>
+					<li><span class="icon" data-icon="transmit"></span><a data-ng-if="authenticator.loggedInUser != null" href="#/transmission">Transmit</a></li>
+					<li><span class="icon" data-icon="user"></span><a href="#/register">Account</a></li>
+					<li><span class="icon" data-icon="settings"></span><a data-ng-if="authenticator.loggedInUser != null" href="#/admin">Administration</a></li>
+				</ul>
+			</nav>
+
 			<section data-region="middle" data-ng-view></section>
 
 			<footer data-region="south">
 				<p>(C) EEPPI 2014</p>
-				<nav data-type="toolbar" data-layout="flow" data-flow-direction="row">
-					<a data-ng-if="authenticator.loggedInUser != null" href="#/mapping">Mapping</a>
-					<a data-ng-if="authenticator.loggedInUser != null" href="#/transmission">Transmit</a>
-					<a href="#/register">Register</a>
-				</nav>
 			</footer>
 		</div>
 
