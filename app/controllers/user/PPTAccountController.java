@@ -50,7 +50,7 @@ public class PPTAccountController extends AbstractCRUDController {
 	})
 	@QueryExamples({
 			@Example(parameters = {"9999", "no url", "name", "1234"}),
-			@Example(parameters = {"REFERENCE_PPT_5", "http.jira.example.com", "admin", "12345678"})
+			@Example(parameters = {"REFERENCE_PPT_1000000000000000005", "http.jira.example.com", "admin", "12345678"})
 	})
 	public Result create() {
 		Form<PPTAccountLogic.CreatePPTAccountForm> form = Form.form(PPTAccountLogic.CreatePPTAccountForm.class).bindFromRequest();
@@ -72,7 +72,7 @@ public class PPTAccountController extends AbstractCRUDController {
 	@QueryDescription("Returns one login information (but the password) for the currently logged in user for Project Planning Tools.")
 	@QueryExamples({
 			@Example(id = "9999", parameters = {}),
-			@Example(id = "REFERENCE_PPTACCOUNT_3", parameters = {})
+			@Example(id = "REFERENCE_PPTACCOUNT_1000000000000000003", parameters = {})
 	})
 	public Result read(long id) {
 		PPTAccount pptAccount = PPT_ACCOUNT_LOGIC.read(AUTHENTICATION_CHECKER.getLoggedInUser(ctx()), id);
@@ -94,8 +94,8 @@ public class PPTAccountController extends AbstractCRUDController {
 	@QueryDescription("Updates login information for a Project Planning Tool on the server.")
 	@QueryExamples({
 			@Example(id = "9999", parameters = {"1", "no url", "name", "1234"}),
-			@Example(id = "REFERENCE_PPTACCOUNT_3", parameters = {"9999", "no url", "ozander", "pMuE2ekiDa"}),
-			@Example(id = "REFERENCE_PPTACCOUNT_3", parameters = {"1", "https://ppt.example.com", "tbucher", "7YqupNxN9v"})
+			@Example(id = "REFERENCE_PPTACCOUNT_1000000000000000003", parameters = {"9999", "no url", "ozander", "pMuE2ekiDa"}),
+			@Example(id = "REFERENCE_PPTACCOUNT_1000000000000000003", parameters = {"1", "https://ppt.example.com", "tbucher", "7YqupNxN9v"})
 	})
 	public Result update(long id) {
 		PPTAccount pptAccount = PPT_ACCOUNT_LOGIC.read(AUTHENTICATION_CHECKER.getLoggedInUser(ctx()), id);
@@ -119,7 +119,7 @@ public class PPTAccountController extends AbstractCRUDController {
 	})
 	@QueryExamples({
 			@Example(id = "9999", parameters = {}),
-			@Example(id = "REFERENCE_PPTACCOUNT_7", isDataCacheable = false, parameters = {})
+			@Example(id = "REFERENCE_PPTACCOUNT_1000000000000000007", isDataCacheable = false, parameters = {})
 	})
 	public Result delete(long id) {
 		PPTAccount pptAccount = PPT_ACCOUNT_LOGIC.read(AUTHENTICATION_CHECKER.getLoggedInUser(ctx()), id);

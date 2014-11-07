@@ -37,7 +37,7 @@ public class DecisionKnowledgeSystemMappingController extends AbstractCRUDContro
 	})
 	@QueryDescription("Creates a new Mapping for a DKS Node and a Task Template.")
 	@QueryExamples({
-			@Example(parameters = {"REFERENCE_TASKTEMPLATE_33", "80"}),
+			@Example(parameters = {"REFERENCE_TASKTEMPLATE_1000000000000000033", "80"}),
 			@Example(parameters = {"9999", "87"})
 	})
 	public Result create() {
@@ -50,7 +50,7 @@ public class DecisionKnowledgeSystemMappingController extends AbstractCRUDContro
 	@QueryDescription("Reads a Mapping for a DKS Node and a Task Template.")
 	@QueryExamples({
 			@Example(id = "9999", parameters = {}),
-			@Example(id = "REFERENCE_DKSMAPPING_35", parameters = {})
+			@Example(id = "REFERENCE_DKSMAPPING_1000000000000000035", parameters = {})
 	})
 	public Result read(long id) {
 		return read(DKS_MAPPING_DAO, id);
@@ -74,7 +74,7 @@ public class DecisionKnowledgeSystemMappingController extends AbstractCRUDContro
 	})
 	@QueryDescription("Updates an existing Mapping for a DKS Node and a Task Template.")
 	@QueryExamples({
-			@Example(id = "REFERENCE_DKSMAPPING_37", parameters = {"REFERENCE_TASKTEMPLATE_33", "87"}),
+			@Example(id = "REFERENCE_DKSMAPPING_1000000000000000037", parameters = {"REFERENCE_TASKTEMPLATE_1000000000000000033", "87"}),
 			@Example(id = "9999", parameters = {"9999", "87"})
 	})
 	public Result update(long id) {
@@ -87,7 +87,7 @@ public class DecisionKnowledgeSystemMappingController extends AbstractCRUDContro
 	@QueryDescription("Deletes a Mapping for a DKS Node and a Task Template.")
 	@QueryExamples({
 			@Example(id = "9999", parameters = {}),
-			@Example(id = "REFERENCE_TASKTEMPLATE_39", parameters = {}, isDataCacheable = false)
+			@Example(id = "REFERENCE_TASKTEMPLATE_1000000000000000039", parameters = {}, isDataCacheable = false)
 	})
 	public Result delete(long id) {
 		return delete(DKS_MAPPING_DAO, DKS_MAPPING_LOGIC, id);

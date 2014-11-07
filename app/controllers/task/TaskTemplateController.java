@@ -54,7 +54,7 @@ public class TaskTemplateController extends AbstractCRUDController {
 	@QueryDescription("Reads a Task Template.")
 	@QueryExamples({
 			@Example(id = "9999", parameters = {}),
-			@Example(id = "REFERENCE_TASKTEMPLATE_8", parameters = {})
+			@Example(id = "REFERENCE_TASKTEMPLATE_1000000000000000008", parameters = {})
 	})
 	public Result read(long id) {
 		return read(TASK_TEMPLATE_DAO, id);
@@ -75,7 +75,7 @@ public class TaskTemplateController extends AbstractCRUDController {
 	@QueryDescription("Updates an existing Task Template with new data.")
 	@QueryExamples({
 			@Example(id = "9999", parameters = {"My beautiful task template"}),
-			@Example(id = "REFERENCE_TASKTEMPLATE_8", parameters = {"My example Task Template"})
+			@Example(id = "REFERENCE_TASKTEMPLATE_1000000000000000008", parameters = {"My example Task Template"})
 	})
 	public Result update(long id) {
 		return update(TASK_TEMPLATE_DAO, TASK_TEMPLATE_LOGIC, TaskTemplateLogic.TaskTemplateForm.class, id);
@@ -86,7 +86,7 @@ public class TaskTemplateController extends AbstractCRUDController {
 	@QueryDescription("Deletes a Task Template.")
 	@QueryExamples({
 			@Example(id = "9999", parameters = {}),
-			@Example(id = "REFERENCE_TASKTEMPLATE_13", parameters = {}, isDataCacheable = false)
+			@Example(id = "REFERENCE_TASKTEMPLATE_1000000000000000013", parameters = {}, isDataCacheable = false)
 	})
 	public Result delete(long id) {
 		return delete(TASK_TEMPLATE_DAO, TASK_TEMPLATE_LOGIC, id);
@@ -106,7 +106,7 @@ public class TaskTemplateController extends AbstractCRUDController {
 	})
 	@QueryExamples({
 			@Example(id = "9999", parameters = {"8888", "My beautiful task value"}),
-			@Example(id = "REFERENCE_TASKTEMPLATE_25", parameters = {"REFERENCE_TASKPROPERTY_27", "My example Task Value"})
+			@Example(id = "REFERENCE_TASKTEMPLATE_1000000000000000025", parameters = {"REFERENCE_TASKPROPERTY_1000000000000000027", "My example Task Value"})
 	})
 	public Result addProperty(long id) {
 		TaskTemplate taskTemplate = TASK_TEMPLATE_DAO.readById(id);
@@ -136,7 +136,7 @@ public class TaskTemplateController extends AbstractCRUDController {
 	})
 	@QueryExamples({
 			@Example(id = {"9999", "7777"}, parameters = {"8888", "My beautiful task template"}),
-			@Example(id = {"REFERENCE_TASKPROPERTYVALUE_29", "REFERENCE_TASKTEMPLATE_25"}, parameters = {"REFERENCE_TASKPROPERTY_27", "My example Value"})
+			@Example(id = {"REFERENCE_TASKPROPERTYVALUE_1000000000000000029", "REFERENCE_TASKTEMPLATE_1000000000000000025"}, parameters = {"REFERENCE_TASKPROPERTY_1000000000000000027", "My example Value"})
 	})
 	public Result updateProperty(long id, long taskTemplate) {
 		TaskPropertyValue taskPropertyValue = TASK_PROPERTY_VALUE_DAO.readById(id);
@@ -163,7 +163,7 @@ public class TaskTemplateController extends AbstractCRUDController {
 	})
 	@QueryExamples({
 			@Example(id = {"9999", "7777"}, parameters = {}),
-			@Example(id = {"REFERENCE_TASKPROPERTYVALUE_30", "REFERENCE_TASKTEMPLATE_31"}, isDataCacheable = false, parameters = {})
+			@Example(id = {"REFERENCE_TASKPROPERTYVALUE_1000000000000000030", "REFERENCE_TASKTEMPLATE_1000000000000000031"}, isDataCacheable = false, parameters = {})
 	})
 	public Result deleteProperty(long id, long taskTemplate) {
 		TaskPropertyValue taskPropertyValue = TASK_PROPERTY_VALUE_DAO.readById(id);
