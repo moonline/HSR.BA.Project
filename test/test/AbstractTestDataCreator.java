@@ -1,10 +1,12 @@
 package test;
 
+import daos.dks.DKSMappingDAO;
 import daos.task.TaskPropertyDAO;
 import daos.task.TaskPropertyValueDAO;
 import daos.task.TaskTemplateDAO;
 import daos.user.UserDAO;
 import logics.user.UserLogic;
+import models.dks.DKSMapping;
 import models.ppt.ProjectPlanningTool;
 import models.task.TaskProperty;
 import models.task.TaskPropertyValue;
@@ -97,12 +99,15 @@ public abstract class AbstractTestDataCreator {
 	public static void removeAllTaskRelatedEntities() {
 		new TaskPropertyValueDAO().removeAll();
 		new TaskPropertyDAO().removeAll();
-		TaskTemplateDAO taskTemplateDAO = new TaskTemplateDAO();
-		for (TaskTemplate taskTemplate : taskTemplateDAO.readAll()) {
-			taskTemplate.getDksNode().clear();
-			taskTemplateDAO.persist(taskTemplate);
-		}
-		taskTemplateDAO.flush();
-		taskTemplateDAO.removeAll();
+		new DKSMappingDAO().removeAll();
+		new TaskTemplateDAO().removeAll();
+	}
+
+	public static DKSMapping createDKSMapping(TaskTemplate taskTemplate, String dksNode) {
+		DKSMapping dksMapping = new DKSMapping();
+		dksMapping.setTaskTemplate(taskTemplate);
+		dksMapping.setDksNode(dksNode);
+		persistAndFlush(dksMapping);
+		return dksMapping;
 	}
 }

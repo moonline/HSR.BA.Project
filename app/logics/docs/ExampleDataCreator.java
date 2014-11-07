@@ -1,6 +1,7 @@
 package logics.docs;
 
 import daos.AbstractDAO;
+import daos.dks.DKSMappingDAO;
 import daos.ppt.ProjectPlanningToolDAO;
 import daos.task.TaskPropertyDAO;
 import daos.task.TaskPropertyValueDAO;
@@ -8,6 +9,7 @@ import daos.task.TaskTemplateDAO;
 import daos.user.PPTAccountDAO;
 import daos.user.UserDAO;
 import logics.user.UserLogic;
+import models.dks.DKSMapping;
 import models.ppt.ProjectPlanningTool;
 import models.task.TaskProperty;
 import models.task.TaskPropertyValue;
@@ -31,6 +33,7 @@ public class ExampleDataCreator {
 	private final TaskTemplateDAO TASK_TEMPLATE_DAO;
 	private final TaskPropertyDAO TASK_PROPERTY_DAO;
 	private final TaskPropertyValueDAO TASK_PROPERTY_VALUE_DAO;
+	private final DKSMappingDAO DKS_MAPPING_DAO;
 
 	private Set<String> cache = new HashSet<>();
 
@@ -40,7 +43,7 @@ public class ExampleDataCreator {
 
 	public Long USER_ID;
 
-	public ExampleDataCreator(UserLogic userLogic, UserDAO userDao, PPTAccountDAO pptAccountDao, ProjectPlanningToolDAO projectPlanningToolDao, TaskTemplateDAO taskTemplateDao, TaskPropertyDAO taskPropertyDao, TaskPropertyValueDAO taskPropertyValueDao) {
+	public ExampleDataCreator(UserLogic userLogic, UserDAO userDao, PPTAccountDAO pptAccountDao, ProjectPlanningToolDAO projectPlanningToolDao, TaskTemplateDAO taskTemplateDao, TaskPropertyDAO taskPropertyDao, TaskPropertyValueDAO taskPropertyValueDao, DKSMappingDAO dksMappingDao) {
 		USER_DAO = userDao;
 		PPT_ACCOUNT_DAO = pptAccountDao;
 		JPA.withTransaction(new F.Callback0() {
@@ -65,6 +68,7 @@ public class ExampleDataCreator {
 		TASK_TEMPLATE_DAO = taskTemplateDao;
 		TASK_PROPERTY_DAO = taskPropertyDao;
 		TASK_PROPERTY_VALUE_DAO = taskPropertyValueDao;
+		DKS_MAPPING_DAO = dksMappingDao;
 	}
 
 	public void createExampleObject(String reference, boolean canBeCached) {
@@ -151,6 +155,21 @@ public class ExampleDataCreator {
 							return taskPropertyValue.getId();
 						},
 						existingTaskPropertyValue -> existingTaskPropertyValue.getValue().equals(tpValue));
+				break;
+			case "DKSMAPPING":
+				String dksNode = "87";
+				objectCreator = new ExampleObjectCreator<>("DKSMapping",
+						DKS_MAPPING_DAO,
+						() -> {
+							TaskTemplate taskTemplate = new TaskTemplate();
+							taskTemplate.setName("My example Task Template 2");
+							DKSMapping dksMapping = new DKSMapping();
+							dksMapping.setDksNode(dksNode);
+							dksMapping.setTaskTemplate(taskTemplate);
+							persist(taskTemplate, dksMapping);
+							return dksMapping.getId();
+						},
+						existingTaskPropertyValue -> existingTaskPropertyValue.getDksNode().equals(dksNode));
 				break;
 			default:
 				throw new NotImplementedException("Example-object-creation not implemented for " + referenceParts[1]);

@@ -3,18 +3,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import controllers.AuthenticationChecker;
 import controllers.dks.DecisionKnowledgeSystemController;
+import controllers.dks.DecisionKnowledgeSystemMappingController;
 import controllers.docs.DocumentationController;
 import controllers.ppt.ProjectPlanningToolController;
 import controllers.task.TaskPropertyController;
 import controllers.task.TaskTemplateController;
 import controllers.user.PPTAccountController;
 import controllers.user.UserController;
+import daos.dks.DKSMappingDAO;
 import daos.ppt.ProjectPlanningToolDAO;
 import daos.task.TaskPropertyDAO;
 import daos.task.TaskPropertyValueDAO;
 import daos.task.TaskTemplateDAO;
 import daos.user.PPTAccountDAO;
 import daos.user.UserDAO;
+import logics.dks.DKSMappingLogic;
 import logics.dks.DecisionKnowledgeSystemLogic;
 import logics.docs.DocumentationLogic;
 import logics.docs.ExampleDataCreator;
@@ -47,15 +50,17 @@ import static play.mvc.Results.notFound;
 @SuppressWarnings("UnusedDeclaration")
 public class Global extends GlobalSettings {
 
-	public static final TaskPropertyDAO TASK_PROPERTY_DAO = new TaskPropertyDAO();
-	public static final TaskPropertyValueDAO TASK_PROPERTY_VALUE_DAO = new TaskPropertyValueDAO();
+	private final TaskPropertyDAO TASK_PROPERTY_DAO = new TaskPropertyDAO();
+	private final TaskPropertyValueDAO TASK_PROPERTY_VALUE_DAO = new TaskPropertyValueDAO();
+	private final DKSMappingDAO DKS_MAPPING_DAO = new DKSMappingDAO();
 	private final ProjectPlanningToolDAO PROJECT_PLANNING_TOOL_DAO = new ProjectPlanningToolDAO();
 	private final TaskTemplateDAO TASK_TEMPLATE_DAO = new TaskTemplateDAO();
 	private final UserDAO USER_DAO = new UserDAO();
 	private final PPTAccountDAO PPT_ACCOUNT_DAO = new PPTAccountDAO();
 
-	public static final TaskPropertyLogic TASK_PROPERTY_LOGIC = new TaskPropertyLogic(TASK_PROPERTY_DAO, TASK_PROPERTY_VALUE_DAO);
+	private final TaskPropertyLogic TASK_PROPERTY_LOGIC = new TaskPropertyLogic(TASK_PROPERTY_DAO, TASK_PROPERTY_VALUE_DAO);
 	private final DecisionKnowledgeSystemLogic DKS_LOGIC = new DecisionKnowledgeSystemLogic();
+	private final DKSMappingLogic DKS_MAPPING_LOGIC = new DKSMappingLogic(DKS_MAPPING_DAO);
 	private final PPTTaskLogic PPT_TASK_LOGIC = new PPTTaskLogic();
 	private final DocumentationLogic DOCUMENTATION_LOGIC = new DocumentationLogic();
 	private final TaskTemplateLogic TASK_TEMPLATE_LOGIC = new TaskTemplateLogic(TASK_TEMPLATE_DAO, TASK_PROPERTY_VALUE_DAO);
@@ -74,7 +79,6 @@ public class Global extends GlobalSettings {
 	}
 
 	private void registerJsonObjectMappers() {
-//		Json.setObjectMapper(new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT).enable(SerializationFeature.WRAP_ROOT_VALUE));
 		Json.setObjectMapper(new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT));
 	}
 
@@ -155,7 +159,7 @@ public class Global extends GlobalSettings {
 	}
 
 	private void initializeControllersRequiringParameters() {
-		CONTROLLERS.put(DocumentationController.class, new DocumentationController(DOCUMENTATION_LOGIC, new ExampleDataCreator(USER_LOGIC, USER_DAO, PPT_ACCOUNT_DAO, PROJECT_PLANNING_TOOL_DAO, TASK_TEMPLATE_DAO, TASK_PROPERTY_DAO, TASK_PROPERTY_VALUE_DAO)));
+		CONTROLLERS.put(DocumentationController.class, new DocumentationController(DOCUMENTATION_LOGIC, new ExampleDataCreator(USER_LOGIC, USER_DAO, PPT_ACCOUNT_DAO, PROJECT_PLANNING_TOOL_DAO, TASK_TEMPLATE_DAO, TASK_PROPERTY_DAO, TASK_PROPERTY_VALUE_DAO, DKS_MAPPING_DAO)));
 		CONTROLLERS.put(PPTAccountController.class, new PPTAccountController(PPT_ACCOUNT_DAO, PPT_ACCOUNT_LOGIC, AUTHENTICATION_CHECKER));
 		CONTROLLERS.put(UserController.class, new UserController(USER_LOGIC, AUTHENTICATION_CHECKER));
 		CONTROLLERS.put(TaskTemplateController.class, new TaskTemplateController(TASK_TEMPLATE_LOGIC, TASK_TEMPLATE_DAO, TASK_PROPERTY_VALUE_DAO));
@@ -163,6 +167,7 @@ public class Global extends GlobalSettings {
 		CONTROLLERS.put(DecisionKnowledgeSystemController.class, new DecisionKnowledgeSystemController(DKS_LOGIC));
 		CONTROLLERS.put(AuthenticationChecker.Authenticator.class, AUTHENTICATION_CHECKER.new Authenticator());
 		CONTROLLERS.put(TaskPropertyController.class, new TaskPropertyController(TASK_PROPERTY_LOGIC, TASK_PROPERTY_DAO));
+		CONTROLLERS.put(DecisionKnowledgeSystemMappingController.class, new DecisionKnowledgeSystemMappingController(DKS_MAPPING_LOGIC, DKS_MAPPING_DAO));
 	}
 
 	@Override
