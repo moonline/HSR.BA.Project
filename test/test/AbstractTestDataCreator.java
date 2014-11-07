@@ -87,7 +87,7 @@ public abstract class AbstractTestDataCreator {
 		TaskPropertyValue taskPropertyValue = new TaskPropertyValue();
 		taskPropertyValue.setValue(value);
 		taskPropertyValue.setProperty(property);
-		taskPropertyValue.setTaskTemplate(taskTemplate);
+		taskPropertyValue.setTask(taskTemplate);
 		persistAndFlush(taskPropertyValue);
 		return taskPropertyValue;
 	}

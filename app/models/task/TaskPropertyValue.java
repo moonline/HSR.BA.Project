@@ -19,7 +19,7 @@ public class TaskPropertyValue extends AbstractEntity {
 	@ManyToOne
 	@JoinColumn(nullable = false)
 	@JsonBackReference
-	private TaskTemplate taskTemplate;
+	private AbstractWork task;
 
 	private String value;
 
@@ -31,12 +31,12 @@ public class TaskPropertyValue extends AbstractEntity {
 		this.property = property;
 	}
 
-	public TaskTemplate getTaskTemplate() {
-		return taskTemplate;
+	public AbstractWork getTask() {
+		return task;
 	}
 
-	public void setTaskTemplate(TaskTemplate taskTemplate) {
-		this.taskTemplate = taskTemplate;
+	public void setTask(AbstractWork task) {
+		this.task = task;
 	}
 
 	public String getValue() {

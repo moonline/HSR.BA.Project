@@ -9,6 +9,7 @@ import logics.docs.QueryExamples;
 import logics.docs.QueryParameters;
 import logics.docs.QueryResponses;
 import logics.task.TaskTemplateLogic;
+import logics.task.WorkLogic;
 import models.task.TaskPropertyValue;
 import models.task.TaskTemplate;
 import play.data.Form;
@@ -113,7 +114,7 @@ public class TaskTemplateController extends AbstractCRUDController {
 		if (taskTemplate == null) {
 			return notFound(id);
 		}
-		Form<TaskTemplateLogic.TaskPropertyForm> form = Form.form(TaskTemplateLogic.TaskPropertyForm.class).bindFromRequest();
+		Form<WorkLogic.TaskPropertyForm> form = Form.form(WorkLogic.TaskPropertyForm.class).bindFromRequest();
 		if (form.hasErrors()) {
 			return badRequest(form.errorsAsJson());
 		}
@@ -140,10 +141,10 @@ public class TaskTemplateController extends AbstractCRUDController {
 	})
 	public Result updateProperty(long id, long taskTemplate) {
 		TaskPropertyValue taskPropertyValue = TASK_PROPERTY_VALUE_DAO.readById(id);
-		if (taskPropertyValue == null || taskPropertyValue.getTaskTemplate().getId() != taskTemplate) {
+		if (taskPropertyValue == null || taskPropertyValue.getTask().getId() != taskTemplate) {
 			return notFound(id);
 		}
-		Form<TaskTemplateLogic.TaskPropertyForm> form = Form.form(TaskTemplateLogic.TaskPropertyForm.class).bindFromRequest();
+		Form<WorkLogic.TaskPropertyForm> form = Form.form(WorkLogic.TaskPropertyForm.class).bindFromRequest();
 		if (form.hasErrors()) {
 			return badRequest(form.errorsAsJson());
 		}
@@ -167,7 +168,7 @@ public class TaskTemplateController extends AbstractCRUDController {
 	})
 	public Result deleteProperty(long id, long taskTemplate) {
 		TaskPropertyValue taskPropertyValue = TASK_PROPERTY_VALUE_DAO.readById(id);
-		if (taskPropertyValue == null || taskPropertyValue.getTaskTemplate().getId() != taskTemplate) {
+		if (taskPropertyValue == null || taskPropertyValue.getTask().getId() != taskTemplate) {
 			return notFound(id);
 		}
 		return ok(jsonify(TASK_TEMPLATE_LOGIC.removeProperty(taskPropertyValue)));

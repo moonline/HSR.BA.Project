@@ -150,7 +150,7 @@ public class ExampleDataCreator {
 							TaskPropertyValue taskPropertyValue = new TaskPropertyValue();
 							taskPropertyValue.setValue(tpValue);
 							taskPropertyValue.setProperty(taskProperty);
-							taskPropertyValue.setTaskTemplate(taskTemplate);
+							taskPropertyValue.setTask(taskTemplate);
 							persist(taskProperty, taskTemplate, taskPropertyValue);
 							return taskPropertyValue.getId();
 						},
