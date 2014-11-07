@@ -110,7 +110,7 @@ public class PPTAccountControllerTest extends AbstractControllerTest {
 		User user = createUserWithTransaction("User 9", "123");
 		PPTAccount account = createPPTAccountWithTransaction(user, "http://example1.com", "admin", "1234");
 		//Test
-		Result result = callActionWithUser(routes.ref.PPTAccountController.readOne(account.getId()), user);
+		Result result = callActionWithUser(routes.ref.PPTAccountController.read(account.getId()), user);
 		//Verification
 		assertThat(status(result)).isEqualTo(OK);
 		assertCheckJsonResponse(result, Json.parse("{ \"id\" : " + account.getId() + ",\n" +
@@ -126,7 +126,7 @@ public class PPTAccountControllerTest extends AbstractControllerTest {
 		//Setup
 		PPTAccount account = createPPTAccountWithTransaction(createUserWithTransaction("User 9", "123"), "http://example1.com", "admin", "1234");
 		//Test
-		Result result = callActionWithUser(routes.ref.PPTAccountController.readOne(account.getId()));
+		Result result = callActionWithUser(routes.ref.PPTAccountController.read(account.getId()));
 		//Verification
 		assertThat(status(result)).isEqualTo(NOT_FOUND);
 	}

@@ -17,7 +17,7 @@ GET		/dks/getFromDKS				@controllers.dks.DecisionKnowledgeSystemController.getFr
 
 POST	/user/pptAccount			@controllers.user.PPTAccountController.create()
 GET		/user/pptAccount			@controllers.user.PPTAccountController.readAll()
-GET		/user/pptAccount/$id<[0-9]+>	@controllers.user.PPTAccountController.readOne(id: Long)
+GET		/user/pptAccount/$id<[0-9]+>	@controllers.user.PPTAccountController.read(id: Long)
 POST	/user/pptAccount/$id<[0-9]+>	@controllers.user.PPTAccountController.update(id: Long)
 DELETE	/user/pptAccount/$id<[0-9]+>	@controllers.user.PPTAccountController.delete(id: Long)
 POST	/user/pptAccount/$id<[0-9]+>/delete	@controllers.user.PPTAccountController.delete(id: Long)
