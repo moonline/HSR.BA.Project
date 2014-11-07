@@ -111,17 +111,6 @@ module app.application {
 					$scope.currentMapping = mapping;
 				}
 			};
-
-			$scope.createTaskProperty = function(newTaskPropertyName: string) {
-				taskPropertyRepository.add(new app.domain.model.core.TaskProperty(newTaskPropertyName), function(status, property) {});
-			}
-
-			$scope.renameTaskProperty = function(property: app.domain.model.core.TaskProperty, newName: string) {
-				if(property && newName) {
-					property.name = newName;
-					taskPropertyRepository.update(property, function(status, property) {});
-				}
-			}
 		}
 	}
 }

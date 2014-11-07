@@ -91,27 +91,6 @@
 				</div>
 				<button class="action update" data-ng-click="updateTaskTemplate()"><span class="icon">&#11015;</span>Save</button>
 			</form>
-
-
-			<h2>Manage Properties</h2>
-			<form>
-				<div class="formLine" data-columns="3">
-					<label for="newTaskPropertyName">New property</label>
-					<input type="text" name="newTaskPropertyName" data-ng-model="newTaskPropertyName" placeholder="name" />
-					<button class="action create" data-ng-click="createTaskProperty(newTaskPropertyName); newTaskPropertyName = '';"
-							title="Create a new property">
-						<span class="icon big">&#x2b;</span>Add
-					</button>
-				</div>
-				<div class="formLine" data-columns="3">
-					<select data-ng-model="toRenameProperty" data-ng-options="taskProperty.name for taskProperty in taskProperties" ></select>
-					<input data-ng-disabled="!toRenameProperty" data-ng-model="propertyNewName" placeholder="New name" />
-					<button data-ng-disabled="!toRenameProperty" class="action update"
-						data-ng-click="renameTaskProperty(toRenameProperty, propertyNewName); propertyNewName = ''; toRenameProperty = null;">
-						<span class="icon">&#x270E;</span>rename
-					</button>
-				</div>
-			</form>
 		</div>
 	</div>
 </div>

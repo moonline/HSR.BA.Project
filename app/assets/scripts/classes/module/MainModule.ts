@@ -2,6 +2,7 @@
 /// <reference path='../../classes/application/MappingController.ts' />
 /// <reference path='../../classes/application/TransmissionController.ts' />
 /// <reference path='../../classes/application/AdminController.ts' />
+/// <reference path='../../classes/application/DashboardController.ts' />
 
 /// <reference path='../../classes/domain/model/User.ts' />
 
@@ -33,6 +34,9 @@ module app.mod {
 					$location.path("/register");
 				});
 
+				// TODO: bind current view
+				$rootScope.currentView = '';
+
 				// make Status available in view
 				$rootScope.Status = app.application.Status;
 
@@ -55,6 +59,10 @@ module app.mod {
 
 		private configureModule() {
 			this.module.config(function($routeProvider) {
+				$routeProvider.when('/', {
+					templateUrl: '/public/views/templates/dashboardView.html',
+					controller: 'dashboardController'
+				});
 				$routeProvider.when('/mapping', {
 					templateUrl: '/public/views/templates/mappingView.html',
 					controller: 'mappingController',
@@ -98,8 +106,9 @@ module app.mod {
 		private addControllers() {
 			this.module.controller('mappingController', ['$scope', '$location', '$http', 'persistenceService', app.application.MappingController]);
 			this.module.controller('transmissionController', ['$scope', '$location', 'persistenceService', '$http', app.application.TransmissionController]);
-			this.module.controller('registerController', ['$scope', '$location', '$http', 'authenticationService', app.application.RegisterController]);
-			this.module.controller('adminController', ['$scope', '$location', '$http', 'authenticationService', app.application.AdminController]);
+			this.module.controller('registerController', ['$scope', '$location', '$http', 'persistenceService', app.application.RegisterController]);
+			this.module.controller('adminController', ['$scope', '$location', '$http', 'persistenceService', app.application.AdminController]);
+			this.module.controller('dashboardController', ['$scope', '$location', '$http', 'persistenceService', app.application.DashboardController]);
 
 		}
 
