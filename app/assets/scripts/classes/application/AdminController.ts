@@ -1,5 +1,3 @@
-/// <reference path='../../configuration/ppt.ts' />
-
 /// <reference path='../domain/model/ProjectPlanningTool.ts' />
 /// <reference path='../domain/model/RequestTemplate.ts' />
 /// <reference path='../domain/repository/TaskPropertyRepository.ts' />
@@ -25,10 +23,14 @@ module app.application {
 			$scope.requestTemplates.push(new app.domain.model.core.RequestTemplate("Example", null, '{\n\t"fields": {\n\t\t"project": {\n\t\t\t"key": "TEST"\n\t\t},\n\t\t"assignee": "${assignee}",\n\t\t"description": "${description}",\n\t\t"issuetype": {\n\t\t\t"name": "${type}"\n\t\t}\n\t}\n}'));
 
 
-			$scope.addRequesTemplate = function(name: string, requestBody: string) {
+			$scope.addRequestTemplate = function(name: string, requestBody: string) {
 				$scope.requestTemplates.push(new app.domain.model.core.RequestTemplate(name, null, requestBody));
 			};
-			$scope.updateRequestTemplate = function(request: app.domain.model.ppt.RequestTemplate) {
+			$scope.updateRequestTemplate = function(requestTemplate: app.domain.model.ppt.RequestTemplate) {
+				// update persistence
+			};
+			$scope.removeRequestTemplate = function(requestTemplate: app.domain.model.ppt.RequestTemplate) {
+				$scope.requestTemplates.splice($scope.requestTemplates.indexOf(requestTemplate),1);
 				// update persistence
 			};
 
