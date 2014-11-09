@@ -22,4 +22,31 @@
 			</div>
 		</form>
 	</div>
+
+	<div class="accordeonArea">
+		<h3>Manage RequestTemplates <i>*Not persistent yet</i></h3>
+		<form>
+			<div class="formLine" data-columns="4">
+				<label for="newRequestTemplateName">New Request templtae</label>
+				<input type="text" name="newRequestTemplateName" data-ng-model="newRequestTemplateName" placeholder="name" />
+				<textarea name="newRequestTemplateBody" data-ng-model="newRequestTemplateBody" placeholder="request body"></textarea>
+				<button class="action create" data-ng-click="addRequesTemplate(newRequestTemplateName, newRequestTemplateBody); newRequestTemplateName = ''; newRequestTemplateBody = '';"
+						title="Create a new request template">
+					<span class="icon big">&#x2b;</span>Add
+				</button>
+			</div>
+			<div class="formLine" data-columns="4">
+				<select data-ng-model="toUpdateRequest" data-ng-options="requestTemlate.name for requestTemlate in requestTemplates" ></select>
+
+				<input data-ng-disabled="!toUpdateRequest" type="text" name="requestTemplateNewName" data-ng-model="toUpdateRequest.name"
+					data-ng-model="requestTemplateNewName" placeholder="name" />
+				<textarea data-ng-disabled="!toUpdateRequest" name="requestTemplateNewBody" data-ng-model="toUpdateRequest.requestBody"
+					data-ng-model="requestTemplateNewBody" placeholder="request body"></textarea>
+				<button data-ng-disabled="!toUpdateRequest" class="action update"
+						data-ng-click="updateRequestTemplate(toUpdateRequest); requestTemplateNewName = ''; requestTemplateNewBody = null;">
+					<span class="icon">&#x270E;</span>Update
+				</button>
+			</div>
+		</form>
+	</div>
 </div>

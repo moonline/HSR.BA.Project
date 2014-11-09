@@ -1,3 +1,7 @@
+/// <reference path='../../configuration/ppt.ts' />
+
+/// <reference path='../domain/model/ProjectPlanningTool.ts' />
+/// <reference path='../domain/model/RequestTemplate.ts' />
 /// <reference path='../domain/repository/TaskPropertyRepository.ts' />
 
 module app.application {
@@ -12,6 +16,22 @@ module app.application {
 			taskPropertyRepository.findAll(function(taskProperties) {
 				$scope.taskProperties = taskProperties;
 			});
+
+			var ppts: app.domain.model.ppt.ProjectPlanningTool[] = [];
+			/*configuration.projectPlanningTools.forEach(function(pptConfig: any) {
+				ppts.push(new app.domain.model.ppt.ProjectPlanningTool(pptConfig.url, pptConfig.account, pptConfig.password))
+			});*/
+			$scope.requestTemplates = [];
+			$scope.requestTemplates.push(new app.domain.model.core.RequestTemplate("Example", null, '{\n\t"fields": {\n\t\t"project": {\n\t\t\t"key": "TEST"\n\t\t},\n\t\t"assignee": "${assignee}",\n\t\t"description": "${description}",\n\t\t"issuetype": {\n\t\t\t"name": "${type}"\n\t\t}\n\t}\n}'));
+
+
+			$scope.addRequesTemplate = function(name: string, requestBody: string) {
+				$scope.requestTemplates.push(new app.domain.model.core.RequestTemplate(name, null, requestBody));
+			};
+			$scope.updateRequestTemplate = function(request: app.domain.model.ppt.RequestTemplate) {
+				// update persistence
+			};
+
 
 			$scope.createTaskProperty = function(newTaskPropertyName: string) {
 				taskPropertyRepository.add(new app.domain.model.core.TaskProperty(newTaskPropertyName), function(status, property) {});
