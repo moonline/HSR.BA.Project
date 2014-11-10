@@ -2,7 +2,7 @@
 
 name := """eeppi"""
 
-version := "0.3-SNAPSHOT"
+version := "0.3.1-SNAPSHOT"
 
 lazy val root = (project in file(".")).enablePlugins(PlayJava, SbtWeb)
 
