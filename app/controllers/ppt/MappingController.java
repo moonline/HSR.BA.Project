@@ -8,6 +8,7 @@ import logics.docs.QueryExamples;
 import logics.docs.QueryParameters;
 import logics.docs.QueryResponses;
 import logics.ppt.MappingLogic;
+import models.ppt.Mapping;
 import play.db.jpa.Transactional;
 import play.mvc.Result;
 

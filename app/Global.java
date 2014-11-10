@@ -10,6 +10,7 @@ import controllers.ppt.ProjectPlanningToolController;
 import controllers.task.TaskPropertyController;
 import controllers.task.TaskTemplateController;
 import controllers.user.PPTAccountController;
+import controllers.user.ProjectController;
 import controllers.user.UserController;
 import daos.dks.DKSMappingDAO;
 import daos.ppt.MappingDAO;
@@ -218,6 +219,7 @@ public class Global extends GlobalSettings {
 		CONTROLLERS.put(TaskPropertyController.class, new TaskPropertyController(TASK_PROPERTY_LOGIC, TASK_PROPERTY_DAO));
 		CONTROLLERS.put(DecisionKnowledgeSystemMappingController.class, new DecisionKnowledgeSystemMappingController(DKS_MAPPING_LOGIC, DKS_MAPPING_DAO));
 		CONTROLLERS.put(MappingController.class, new MappingController(MAPPING_LOGIC, MAPPING_DAO));
+		CONTROLLERS.put(ProjectController.class, new ProjectController(PROJECT_DAO));
 	}
 
 	@Override
