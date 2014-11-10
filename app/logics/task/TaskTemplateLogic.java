@@ -3,20 +3,16 @@ package logics.task;
 import daos.task.TaskPropertyValueDAO;
 import daos.task.TaskTemplateDAO;
 import logics.CRUDLogicInterface;
-import models.task.TaskProperty;
-import models.task.TaskPropertyValue;
 import models.task.TaskTemplate;
 import play.data.validation.Constraints;
-import play.db.jpa.JPA;
 
-public class TaskTemplateLogic implements CRUDLogicInterface<TaskTemplate, TaskTemplateLogic.TaskTemplateForm, TaskTemplateLogic.TaskTemplateForm> {
+public class TaskTemplateLogic extends WorkLogic implements CRUDLogicInterface<TaskTemplate, TaskTemplateLogic.TaskTemplateForm, TaskTemplateLogic.TaskTemplateForm> {
 
 	private final TaskTemplateDAO TASK_TEMPLATE_DAO;
-	private final TaskPropertyValueDAO TASK_PROPERTY_VALUE_DAO;
 
 	public TaskTemplateLogic(TaskTemplateDAO taskTemplateDao, TaskPropertyValueDAO taskPropertyValueDao) {
+		super(taskPropertyValueDao);
 		TASK_TEMPLATE_DAO = taskTemplateDao;
-		TASK_PROPERTY_VALUE_DAO = taskPropertyValueDao;
 	}
 
 	public TaskTemplate create(TaskTemplateForm form) {
@@ -47,31 +43,6 @@ public class TaskTemplateLogic implements CRUDLogicInterface<TaskTemplate, TaskT
 		return TASK_TEMPLATE_DAO.readChildren(taskTemplate).isEmpty();
 	}
 
-	public TaskTemplate addProperty(TaskTemplate taskTemplate, TaskPropertyForm taskPropertyForm) {
-		TaskPropertyValue taskPropertyValue = new TaskPropertyValue();
-		taskPropertyValue.setTaskTemplate(taskTemplate);
-		taskPropertyValue.setValue(taskPropertyForm.value);
-		taskPropertyValue.setProperty(taskPropertyForm.property);
-		TASK_PROPERTY_VALUE_DAO.persist(taskPropertyValue);
-		TASK_PROPERTY_VALUE_DAO.flush();
-		JPA.em().refresh(taskTemplate);
-		return taskTemplate;
-	}
-
-	public TaskTemplate updateProperty(TaskPropertyValue taskPropertyValue, TaskPropertyForm taskPropertyForm) {
-		taskPropertyValue.setValue(taskPropertyForm.value);
-		taskPropertyValue.setProperty(taskPropertyForm.property);
-		return taskPropertyValue.getTaskTemplate();
-	}
-
-	public TaskTemplate removeProperty(TaskPropertyValue taskPropertyValue) {
-		TaskTemplate taskTemplate = taskPropertyValue.getTaskTemplate();
-		TASK_PROPERTY_VALUE_DAO.remove(taskPropertyValue);
-		TASK_PROPERTY_VALUE_DAO.flush();
-		JPA.em().refresh(taskTemplate);
-		return taskTemplate;
-	}
-
 	public static class TaskTemplateForm {
 		@Constraints.Required
 		public String name;
@@ -87,10 +58,4 @@ public class TaskTemplateLogic implements CRUDLogicInterface<TaskTemplate, TaskT
 		}
 	}
 
-	public static class TaskPropertyForm {
-		@Constraints.Required
-		public String value;
-		@Constraints.Required
-		public TaskProperty property;
-	}
 }

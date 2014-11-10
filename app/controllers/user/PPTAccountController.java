@@ -43,7 +43,7 @@ public class PPTAccountController extends AbstractCRUDController {
 			@Parameter(name = "pptUsername", description = "the username for the user for the Project Planning Tool"),
 			@Parameter(name = "pptPassword", description = "the password for the user for the Project Planning Tool")
 	})
-	@QueryDescription("Stores new login information for a Project Planning Tool on the server.")
+	@QueryDescription("Stores a new login information for a Project Planning Tool.")
 	@QueryResponses({
 			@Response(status = BAD_REQUEST, description = "If the login information could not be stored."),
 			@Response(status = OK, description = "If the login information were stored. They are also returned in Json form.")

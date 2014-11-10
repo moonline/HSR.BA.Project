@@ -5,22 +5,27 @@ import controllers.AuthenticationChecker;
 import controllers.dks.DecisionKnowledgeSystemController;
 import controllers.dks.DecisionKnowledgeSystemMappingController;
 import controllers.docs.DocumentationController;
+import controllers.ppt.MappingController;
 import controllers.ppt.ProjectPlanningToolController;
 import controllers.task.TaskPropertyController;
 import controllers.task.TaskTemplateController;
 import controllers.user.PPTAccountController;
 import controllers.user.UserController;
 import daos.dks.DKSMappingDAO;
+import daos.ppt.MappingDAO;
 import daos.ppt.ProjectPlanningToolDAO;
+import daos.task.TaskDAO;
 import daos.task.TaskPropertyDAO;
 import daos.task.TaskPropertyValueDAO;
 import daos.task.TaskTemplateDAO;
 import daos.user.PPTAccountDAO;
+import daos.user.ProjectDAO;
 import daos.user.UserDAO;
 import logics.dks.DKSMappingLogic;
 import logics.dks.DecisionKnowledgeSystemLogic;
 import logics.docs.DocumentationLogic;
 import logics.docs.ExampleDataCreator;
+import logics.ppt.MappingLogic;
 import logics.ppt.PPTTaskLogic;
 import logics.task.TaskPropertyLogic;
 import logics.task.TaskTemplateLogic;
@@ -28,8 +33,10 @@ import logics.user.PPTAccountLogic;
 import logics.user.UserLogic;
 import models.ppt.ProjectPlanningTool;
 import models.task.TaskProperty;
+import models.task.TaskPropertyValue;
 import models.task.TaskTemplate;
 import models.user.PPTAccount;
+import models.user.Project;
 import play.Application;
 import play.GlobalSettings;
 import play.data.format.Formatters;
@@ -43,6 +50,8 @@ import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static play.mvc.Controller.ctx;
 import static play.mvc.Results.notFound;
@@ -50,6 +59,9 @@ import static play.mvc.Results.notFound;
 @SuppressWarnings("UnusedDeclaration")
 public class Global extends GlobalSettings {
 
+	private final TaskDAO TASK_DAO = new TaskDAO();
+	private final ProjectDAO PROJECT_DAO = new ProjectDAO();
+	private final MappingDAO MAPPING_DAO = new MappingDAO();
 	private final TaskPropertyDAO TASK_PROPERTY_DAO = new TaskPropertyDAO();
 	private final TaskPropertyValueDAO TASK_PROPERTY_VALUE_DAO = new TaskPropertyValueDAO();
 	private final DKSMappingDAO DKS_MAPPING_DAO = new DKSMappingDAO();
@@ -58,10 +70,11 @@ public class Global extends GlobalSettings {
 	private final UserDAO USER_DAO = new UserDAO();
 	private final PPTAccountDAO PPT_ACCOUNT_DAO = new PPTAccountDAO();
 
+	private final MappingLogic MAPPING_LOGIC = new MappingLogic(MAPPING_DAO);
 	private final TaskPropertyLogic TASK_PROPERTY_LOGIC = new TaskPropertyLogic(TASK_PROPERTY_DAO, TASK_PROPERTY_VALUE_DAO);
 	private final DecisionKnowledgeSystemLogic DKS_LOGIC = new DecisionKnowledgeSystemLogic();
 	private final DKSMappingLogic DKS_MAPPING_LOGIC = new DKSMappingLogic(DKS_MAPPING_DAO);
-	private final PPTTaskLogic PPT_TASK_LOGIC = new PPTTaskLogic();
+	private final PPTTaskLogic PPT_TASK_LOGIC = new PPTTaskLogic(TASK_DAO, TASK_PROPERTY_VALUE_DAO);
 	private final DocumentationLogic DOCUMENTATION_LOGIC = new DocumentationLogic();
 	private final TaskTemplateLogic TASK_TEMPLATE_LOGIC = new TaskTemplateLogic(TASK_TEMPLATE_DAO, TASK_PROPERTY_VALUE_DAO);
 	private final UserLogic USER_LOGIC = new UserLogic(USER_DAO, new SecureRandom());
@@ -146,6 +159,42 @@ public class Global extends GlobalSettings {
 				return taskProperty.getId() + "";
 			}
 		});
+		Formatters.register(TaskPropertyValue.class, new Formatters.SimpleFormatter<TaskPropertyValue>() {
+			@Override
+			public TaskPropertyValue parse(String text, Locale locale) throws ParseException {
+				if (text.matches("\\d+")) {
+					return TASK_PROPERTY_VALUE_DAO.readById(Long.parseLong(text));
+				} else {
+					Matcher matcher = Pattern.compile("(\\d+)-(.*)").matcher(text);
+					if (matcher.matches()) {
+						TaskProperty taskProperty = TASK_PROPERTY_DAO.readById(Long.parseLong(matcher.group(1)));
+						if (taskProperty != null) {
+							TaskPropertyValue taskPropertyValue = new TaskPropertyValue();
+							taskPropertyValue.setProperty(taskProperty);
+							taskPropertyValue.setValue(matcher.group(2));
+							return taskPropertyValue;
+						}
+					}
+				}
+				throw new ParseException(text, 0);
+			}
+
+			@Override
+			public String print(TaskPropertyValue taskPropertyValue, Locale locale) {
+				return taskPropertyValue.getId() + "";
+			}
+		});
+		Formatters.register(Project.class, new Formatters.SimpleFormatter<Project>() {
+			@Override
+			public Project parse(String text, Locale locale) throws ParseException {
+				return PROJECT_DAO.readById(Long.parseLong(text));
+			}
+
+			@Override
+			public String print(Project project, Locale locale) {
+				return project.getId() + "";
+			}
+		});
 	}
 
 	@Override
@@ -159,7 +208,7 @@ public class Global extends GlobalSettings {
 	}
 
 	private void initializeControllersRequiringParameters() {
-		CONTROLLERS.put(DocumentationController.class, new DocumentationController(DOCUMENTATION_LOGIC, new ExampleDataCreator(USER_LOGIC, USER_DAO, PPT_ACCOUNT_DAO, PROJECT_PLANNING_TOOL_DAO, TASK_TEMPLATE_DAO, TASK_PROPERTY_DAO, TASK_PROPERTY_VALUE_DAO, DKS_MAPPING_DAO)));
+		CONTROLLERS.put(DocumentationController.class, new DocumentationController(DOCUMENTATION_LOGIC, new ExampleDataCreator(USER_LOGIC, USER_DAO, PPT_ACCOUNT_DAO, PROJECT_PLANNING_TOOL_DAO, TASK_TEMPLATE_DAO, TASK_PROPERTY_DAO, TASK_PROPERTY_VALUE_DAO, DKS_MAPPING_DAO, MAPPING_DAO, PROJECT_DAO)));
 		CONTROLLERS.put(PPTAccountController.class, new PPTAccountController(PPT_ACCOUNT_DAO, PPT_ACCOUNT_LOGIC, AUTHENTICATION_CHECKER));
 		CONTROLLERS.put(UserController.class, new UserController(USER_LOGIC, AUTHENTICATION_CHECKER));
 		CONTROLLERS.put(TaskTemplateController.class, new TaskTemplateController(TASK_TEMPLATE_LOGIC, TASK_TEMPLATE_DAO, TASK_PROPERTY_VALUE_DAO));
@@ -168,6 +217,7 @@ public class Global extends GlobalSettings {
 		CONTROLLERS.put(AuthenticationChecker.Authenticator.class, AUTHENTICATION_CHECKER.new Authenticator());
 		CONTROLLERS.put(TaskPropertyController.class, new TaskPropertyController(TASK_PROPERTY_LOGIC, TASK_PROPERTY_DAO));
 		CONTROLLERS.put(DecisionKnowledgeSystemMappingController.class, new DecisionKnowledgeSystemMappingController(DKS_MAPPING_LOGIC, DKS_MAPPING_DAO));
+		CONTROLLERS.put(MappingController.class, new MappingController(MAPPING_LOGIC, MAPPING_DAO));
 	}
 
 	@Override
