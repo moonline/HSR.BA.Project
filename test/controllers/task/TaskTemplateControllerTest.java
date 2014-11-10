@@ -87,7 +87,7 @@ public class TaskTemplateControllerTest extends AbstractControllerTest {
 			TaskTemplate taskTemplate = AbstractTestDataCreator.createTaskTemplate("My Task Template Z");
 			return AbstractTestDataCreator.createTaskPropertyValue("property value", "property name", taskTemplate);
 		});
-		Long taskTemplate = taskPropertyValue.getTaskTemplate().getId();
+		Long taskTemplate = taskPropertyValue.getTask().getId();
 		//Test
 		Result result = callActionWithUser(routes.ref.TaskTemplateController.read(taskTemplate));
 		//Verification
@@ -224,12 +224,12 @@ public class TaskTemplateControllerTest extends AbstractControllerTest {
 		});
 		String newValue = "Task Value IV";
 		//Test
-		Result result = callActionWithUser(routes.ref.TaskTemplateController.updateProperty(taskPropertyValue.getId(), taskPropertyValue.getTaskTemplate().getId()), postData("property", taskPropertyValue.getProperty().getId() + "", "value", newValue));
+		Result result = callActionWithUser(routes.ref.TaskTemplateController.updateProperty(taskPropertyValue.getId(), taskPropertyValue.getTask().getId()), postData("property", taskPropertyValue.getProperty().getId() + "", "value", newValue));
 		//Verification
 		assertThat(status(result)).isEqualTo(OK);
 		TaskPropertyValue taskPropertyValueInDB = JPA.withTransaction(() -> TASK_PROPERTY_VALUE_DAO.readById(taskPropertyValue.getId()));
 		assertThat(taskPropertyValueInDB.getValue()).isEqualTo(newValue);
-		assertCheckJsonResponse(result, Json.parse("{ \"id\" : " + taskPropertyValue.getTaskTemplate().getId() + ",\n" +
+		assertCheckJsonResponse(result, Json.parse("{ \"id\" : " + taskPropertyValue.getTask().getId() + ",\n" +
 				"      \"name\" : \"Task Template I\"," +
 				"      \"parent\" : null,\n" +
 				"      \"properties\" : [" +
@@ -252,12 +252,12 @@ public class TaskTemplateControllerTest extends AbstractControllerTest {
 			return AbstractTestDataCreator.createTaskPropertyValue("Task Value VI", "Task Property VII", taskTemplate);
 		});
 		//Test
-		Result result = callActionWithUser(routes.ref.TaskTemplateController.deleteProperty(taskPropertyValue.getId(), taskPropertyValue.getTaskTemplate().getId()));
+		Result result = callActionWithUser(routes.ref.TaskTemplateController.deleteProperty(taskPropertyValue.getId(), taskPropertyValue.getTask().getId()));
 		//Verification
 		assertThat(status(result)).isEqualTo(OK);
 		TaskPropertyValue taskPropertyValueInDB = JPA.withTransaction(() -> TASK_PROPERTY_VALUE_DAO.readById(taskPropertyValue.getId()));
 		assertThat(taskPropertyValueInDB).isNull();
-		assertCheckJsonResponse(result, Json.parse("{ \"id\" : " + taskPropertyValue.getTaskTemplate().getId() + ",\n" +
+		assertCheckJsonResponse(result, Json.parse("{ \"id\" : " + taskPropertyValue.getTask().getId() + ",\n" +
 				"      \"name\" : \"Task Template V\"," +
 				"      \"parent\" : null,\n" +
 				"      \"properties\" : []\n" +

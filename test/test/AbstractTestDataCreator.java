@@ -7,11 +7,13 @@ import daos.task.TaskTemplateDAO;
 import daos.user.UserDAO;
 import logics.user.UserLogic;
 import models.dks.DKSMapping;
+import models.ppt.Mapping;
 import models.ppt.ProjectPlanningTool;
 import models.task.TaskProperty;
 import models.task.TaskPropertyValue;
 import models.task.TaskTemplate;
 import models.user.PPTAccount;
+import models.user.Project;
 import models.user.User;
 import play.db.jpa.JPA;
 
@@ -50,9 +52,11 @@ public abstract class AbstractTestDataCreator {
 		JPA.withTransaction(() -> persistAndFlush(entity));
 	}
 
-	private static void persistAndFlush(Object entity) {
+	private static void persistAndFlush(Object... entities) {
 		EntityManager em = JPA.em();
-		em.persist(entity);
+		for (Object entity : entities) {
+			em.persist(entity);
+		}
 		em.flush();
 	}
 
@@ -87,7 +91,7 @@ public abstract class AbstractTestDataCreator {
 		TaskPropertyValue taskPropertyValue = new TaskPropertyValue();
 		taskPropertyValue.setValue(value);
 		taskPropertyValue.setProperty(property);
-		taskPropertyValue.setTaskTemplate(taskTemplate);
+		taskPropertyValue.setTask(taskTemplate);
 		persistAndFlush(taskPropertyValue);
 		return taskPropertyValue;
 	}
@@ -110,4 +114,36 @@ public abstract class AbstractTestDataCreator {
 		persistAndFlush(dksMapping);
 		return dksMapping;
 	}
+
+	public static Project createProjectWithTransaction() throws Throwable {
+		return JPA.withTransaction(() -> {
+			Project project = new Project();
+			persistAndFlush(project);
+			return project;
+		});
+	}
+
+	public static Mapping createMappingWithTransaction(String ppt, String project, String url, String requestTemplate) throws Throwable {
+		return JPA.withTransaction(() -> createMapping(ppt, project, url, requestTemplate));
+	}
+
+	public static Mapping createMapping(String ppt, String project, String url, String requestTemplate) throws Throwable {
+		ProjectPlanningTool pptEntity = new ProjectPlanningTool();
+		pptEntity.setName(ppt);
+		Project projectEntity = new Project();
+		projectEntity.setName(project);
+		persistAndFlush(pptEntity, projectEntity);
+		return createMapping(pptEntity, projectEntity, url, requestTemplate);
+	}
+
+	public static Mapping createMapping(ProjectPlanningTool ppt, Project project, String url, String requestTemplate) throws Throwable {
+		Mapping mapping = new Mapping();
+		mapping.setProjectPlanningTool(ppt);
+		mapping.setProject(project);
+		mapping.setUrl(url);
+		mapping.setRequestTemplate(requestTemplate);
+		persistAndFlush(mapping);
+		return mapping;
+	}
+
 }
