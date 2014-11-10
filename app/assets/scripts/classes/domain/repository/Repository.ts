@@ -59,6 +59,8 @@ module app.domain.repository.core {
 						console.warn("No data or data in false format returned. specified dataListProperty: '"+dataListName+"', data: ",data);
 					}
 					callback(cache);
+				}).error(function(data){
+					callback(null);
 				});
 			}
 		}

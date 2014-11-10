@@ -1,7 +1,11 @@
 <div class="main" data-region="center" data-layout="flow" data-flow-direction="row" data-align="start">
 	<div class="column1 area" data-layout="flow" data-flow-direction="column" data-scroll="true">
 		<div class="areaContent">
-			<h2>Problem templates <a href="{{currentDks.address}}" target="_blank" title="from {{currentDks.address}}">&#x21d7;</a> (&sum;{{problems.length}})</h2>
+			<h2>Problem templates <a href="{{currentDks.address}}" target="_blank" title="from {{currentDks.address}}">&#x21d7;</a> (&Sigma;:{{problems.length}})</h2>
+
+			<span class="messagebox error" data-ng-if="problemsLoadingStatus === LoadingStatus.failed">Loading of DKS elements failed. Maybe service is not available.</span>
+			<span class="messagebox pending" data-ng-if="problemsLoadingStatus === LoadingStatus.pending">Loading ...</span>
+
 			<ul data-type="list">
 				<li data-ng-repeat="problem in problems" data-state="{{problem == currentDecision && 'selected' || '' }}"
 					data-ng-click="setCurrentDecision(problem)">
@@ -40,6 +44,10 @@
                 </dl>
 
                 <h3>Mapping ({{currentDecision.name}} &hArr; Task templates)</h3>
+
+				<span class="messagebox error" data-ng-if="mappingsLoadingStatus === LoadingStatus.failed">Loading of task mappings failed. Maybe server is not available.</span>
+				<span class="messagebox pending" data-ng-if="mappingsLoadingStatus === LoadingStatus.pending">Loading ...</span>
+
                 <ul>
 					<li data-ng-repeat="mapping in currentMappings">
 						<button class="action remove" data-ng-click="removeMapping(mapping)"
@@ -54,7 +62,10 @@
 
 	<div class="column3 area" data-layout="flow" data-flow-direction="column" data-scroll="true">
 		<div class="areaContent">
-			<h2>Task templates (&sum;{{taskTemplates.length}})</h2>
+			<h2>Task templates (&Sigma;:{{taskTemplates.length}})</h2>
+
+			<span class="messagebox error" data-ng-if="taskTemplateLoadingStatus === LoadingStatus.failed">Loading of task templates failed. Maybe server is not available.</span>
+			<span class="messagebox pending" data-ng-if="taskTemplateLoadingStatus === LoadingStatus.pending">Loading ...</span>
 
 			<ul data-type="list">
 				<li data-ng-repeat="template in taskTemplates" data-state="{{template == currentTaskTemplate && 'selected' || '' }}">
