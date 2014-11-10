@@ -1,17 +1,16 @@
 <div class="main" data-region="center" data-layout="flow" data-flow-direction="row" data-align="start">
 	<div class="column1 area" data-layout="flow" data-flow-direction="column" data-scroll="true">
 		<div class="areaContent">
-			<h2>Problems & Decisions ({{currentDks.address}})</h2>
-			<h3>Problems ({{problems.length}})</h3>
+			<h2>Problem templates <a href="{{currentDks.address}}" target="_blank" title="from {{currentDks.address}}">&#x21d7;</a> (&Sigma;:{{problems.length}})</h2>
+
+			<span class="messagebox error" data-ng-if="problemsLoadingStatus === LoadingStatus.failed">Loading of DKS elements failed. Maybe service is not available.</span>
+			<span class="messagebox pending" data-ng-if="problemsLoadingStatus === LoadingStatus.pending">Loading ...</span>
+
 			<ul data-type="list">
-				<li data-ng-repeat="problem in problems" data-ng-state="{{problem == currentDecision && 'selected' || '' }}" data-ng-click="setCurrentDecision(problem)">
-					<strong>{{problem.name}}</strong> [{{problem.id}}]
-				</li>
-			</ul>
-			<h3>Decisions ({{decisions.length}})</h3>
-			<ul data-type="list">
-				<li data-ng-repeat="decision in decisions" data-ng-click="setCurrentDecision(decision)">
-					<strong>{{decision.name}}</strong> [{{decision.id}}]
+				<li data-ng-repeat="problem in problems" data-state="{{problem == currentDecision && 'selected' || '' }}"
+					data-ng-click="setCurrentDecision(problem)">
+					<button class="action edit" title="View Details"><span class="icon iconOnly">&Xi;</span></button>
+					{{problem.name}}
 				</li>
 			</ul>
 		</div>
@@ -20,19 +19,41 @@
 	<div class="column2 area" data-layout="flow" data-flow-direction="column" data-scroll="true">
 		<div class="areaContent">
 			<div class="decisionDetail" data-ng-if="currentDecision">
-				<h2><strong>{{currentDecision.name}}</strong> [{{currentDecision.id}}]</h2>
-				<h3>Options:</h3>
-				<ul>
-					<li data-ng-repeat="option in currentDecision.options">
-						{{option.name}} [{{option.id}}]
-					</li>
-				</ul>
-			</div>
-			<div class="mappingDetail" data-ng-if="currentMapping">
-				<h3>Task template mapping [{{currentMapping.id}}]</h3>
-				<ul>
-					<li data-ng-repeat="taskTemplate in currentMapping.taskTemplates">
-						{{taskTemplate.name}} [{{taskTemplate.id}}]
+				<h2>{{currentDecision.name}} [#{{currentDecision.id}}]</h2>
+                <dl>
+                    <dt data-ng-if="currentDecision.notes">Notes</dt>
+                    <dd data-ng-if="currentDecision.notes">{{currentDecision.notes}}</dd>
+                    <dt>Path</dt>
+                    <dd><span data-ng-repeat="pathSegment in currentDecision.path">
+                    <span class="pathDivider" data-ng-if="!$first">/</span><span class="pathSegment">{{pathSegment}}</span></span>
+                    </dd>
+                    <dt data-ng-if="currentDecision.attributes.length > 0">Attributes</dt>
+                    <dd data-ng-if="currentDecision.attributes.length > 0">
+                        <ul>
+                            <li data-ng-repeat="(key, value) in currentDecision.attributes">{{key}}: {{value}}</li>
+                        </ul>
+                    </dd>
+                    <dt>Options</dt>
+                    <dd>
+                        <ul>
+                            <li data-ng-repeat="option in currentDecision.options">
+                                {{option.name}} [{{option.id}}]
+                            </li>
+                        </ul>
+                    </dd>
+                </dl>
+
+                <h3>Mapping ({{currentDecision.name}} &hArr; Task templates)</h3>
+
+				<span class="messagebox error" data-ng-if="mappingsLoadingStatus === LoadingStatus.failed">Loading of task mappings failed. Maybe server is not available.</span>
+				<span class="messagebox pending" data-ng-if="mappingsLoadingStatus === LoadingStatus.pending">Loading ...</span>
+
+                <ul>
+					<li data-ng-repeat="mapping in currentMappings">
+						<button class="action remove" data-ng-click="removeMapping(mapping)"
+							title="Remove mapping "><span class="icon small iconOnly">&Chi;</span>
+						</button>
+						{{mapping.taskTemplate.name}} [{{mapping.taskTemplate.id}}]
 					</li>
 				</ul>
 			</div>
@@ -41,34 +62,58 @@
 
 	<div class="column3 area" data-layout="flow" data-flow-direction="column" data-scroll="true">
 		<div class="areaContent">
-			<h2>Task templates</h2>
+			<h2>Task templates (&Sigma;:{{taskTemplates.length}})</h2>
 
-			<h3>Existing templates ({{taskTemplates.length}})</h3>
+			<span class="messagebox error" data-ng-if="taskTemplateLoadingStatus === LoadingStatus.failed">Loading of task templates failed. Maybe server is not available.</span>
+			<span class="messagebox pending" data-ng-if="taskTemplateLoadingStatus === LoadingStatus.pending">Loading ...</span>
+
 			<ul data-type="list">
-				<li data-ng-repeat="template in taskTemplates" data-ng-state="{{template == currentTaskTemplate && 'selected' || '' }}">
-					<button data-ng-if="currentDecision" data-ng-click="mapTaskTemplate(template)">&lt; map</button>&nbsp;
-					<strong data-ng-click="setCurrentTaskTemplate(template)">
-						<button>&#x270E;</button>&nbsp;
-						{{template.name}}
-					</strong> [{{template.id}}]<br />
+				<li data-ng-repeat="template in taskTemplates" data-state="{{template == currentTaskTemplate && 'selected' || '' }}">
+					<button class="action update" data-ng-if="currentDecision" data-ng-click="mapTaskTemplate(template)" title="Map task template with decision">&lt; map</button>
+					<span data-ng-click="setCurrentTaskTemplate(template)" title="Edit task template">
+						<button class="action edit">&#x270E;</button> {{template.name}}
+					</span>
 				</li>
 			</ul>
 
-			<h3>Task template [{{currentTaskTemplate.id}}]</h3>
-			<button data-ng-click="createNewTaskTemplate()">(+) add Template</button>
-			<form data-ng-if="currentTaskTemplate">
-				<div class="formLine">
-					<select data-ng-model="currentTaskProperty" data-ng-options="taskProperty.name for taskProperty in taskProperties" ></select>
-					<button data-ng-click="addPropertyValue(currentTaskProperty)">add property</button>
+			<h3>Create Task template</h3>
+			<form>
+				<div class="formLine" data-columns="3">
+					<label for="createTaskTemplate">New task template</label>
+					<input type="text" name="createTaskTemplateName" data-ng-model="createTaskTemplateName" placeholder="name" />
+					<button class="action create" data-ng-click="createNewTaskTemplate(createTaskTemplateName); createTaskTemplateName = '';"
+						title="Create a new task template">
+						<span class="icon">&#x2b;</span>Create
+					</button>
 				</div>
-				<div class="formLine">
+			</form>
+
+
+			<h3 data-ng-if="currentTaskTemplate">{{currentTaskTemplate.name}} [{{currentTaskTemplate.id}}]</h3>
+			<form data-ng-if="currentTaskTemplate">
+				<div class="formLine" data-columns="3" data-ng-if="currentTaskTemplate.properties.length < taskProperties.length">
+					<select data-ng-model="newTaskProperty"
+						data-ng-options="taskProperty.name for taskProperty in taskProperties | filter:notYetUsed()" >
+					</select>
+					<input type="text" data-ng-disabled="!newTaskProperty" data-ng-model="newTaskPropertyValue" placeholder="value"/>
+					<button data-ng-disabled="!newTaskProperty" class="action create" title="Add property"
+							data-ng-click="addPropertyValue(newTaskProperty, newTaskPropertyValue); newTaskPropertyValue = '';">
+						<span class="icon big">&#x2b;</span>Add
+					</button>
+				</div>
+				<div class="formLine" data-columns="3">
 					<label>Name</label>
 					<input type="text" data-ng-model="currentTaskTemplate.name" />
+					<span></span>
 				</div>
-				<div data-ng-repeat="propertyValue in currentTaskTemplate.properties">
+				<div data-ng-repeat="propertyValue in currentTaskTemplate.properties" class="formLine" data-columns="3"	>
 					<label>{{propertyValue.property.name}}</label>
 					<input data-ng-model="propertyValue.value" />
+					<button class="action remove" data-ng-click="removePropertyValue(propertyValue)"
+							title="Remove property "><span class="icon big">&minus;</span>Remove
+					</button>
 				</div>
+				<button class="action update" data-ng-click="updateTaskTemplate()"><span class="icon">&#11015;</span>Save</button>
 			</form>
 		</div>
 	</div>

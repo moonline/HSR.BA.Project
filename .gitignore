@@ -33,7 +33,7 @@ target
 /run.sh
 
 # secret configuration files
-test/integration/PPT/jira-license.key
-# Vagrant up cached files
-test/integration/PPT/atlassian-jira.bin
+jira-license.key
+# Vagrant cached files
 test/integration/*/downloads/*
+project/vagrant/downloads/*

@@ -1,5 +1,5 @@
 
-module core {
+module app.domain.factory {
 	export class Empty{} // used for createObject
 
 	export class ObjectFactory {
@@ -29,7 +29,7 @@ module core {
 
 				return domainObject;
 			} else {
-				throw new Error("No factory configuration defined for entity!");
+				throw new Error("No factory configuration defined for class "+type.name+"!");
 			}
 		}
 

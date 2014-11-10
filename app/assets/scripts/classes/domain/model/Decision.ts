@@ -4,9 +4,9 @@
 
 /// <reference path='Option.ts' />
 
-module dks {
-	export class Decision implements dks.Node, core.PersistentEntity {
-		public static factoryConfiguration: core.FactoryConfiguration = {
+module app.domain.model.dks {
+	export class Decision implements app.domain.model.dks.Node, app.domain.repository.core.PersistentEntity {
+		public static factoryConfiguration: app.domain.factory.FactoryConfiguration = {
 			constructorArguments: [
 				{ name: "name", type: String, subType: null },
 				{ name: "alternatives", type: Array, subType: Option }

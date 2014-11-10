@@ -2,7 +2,7 @@
 
 name := """eeppi"""
 
-version := "0.2-SNAPSHOT"
+version := "0.3-SNAPSHOT"
 
 lazy val root = (project in file(".")).enablePlugins(PlayJava, SbtWeb)
 
@@ -76,12 +76,10 @@ compileTS := {
   "echo Compiling TypeScript files now.".!
   val sourceFile = (sourceDirectory in Assets).value / "scripts" / "Main.ts"
   val targetFile = WebKeys.webTarget.value / "Main.js"
-  ("rmdir "+targetFile).!
-  ("tsc --target ES5 --out "+targetFile+" "+sourceFile).!
+  ("tsc --target ES5 --out "+targetFile.getAbsolutePath.replaceAll(" ","\\ ")+" "+sourceFile.getAbsolutePath.replaceAll(" ","\\ ")).!
   val testTargetFile = WebKeys.webTarget.value / "Tests.js"
   val testSourceFile = baseDirectory.value / "public" / "test" / "Tests.ts"
-  ("rmdir "+testTargetFile).!
-  ("tsc --target ES5 --out "+testTargetFile+" "+testSourceFile).!
+  ("tsc --target ES5 --out "+testTargetFile.getAbsolutePath.replaceAll(" ","\\ ")+" "+testSourceFile.getAbsolutePath.replaceAll(" ","\\ ")).!
   Seq(targetFile, testTargetFile)
 }
 

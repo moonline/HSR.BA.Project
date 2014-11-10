@@ -4,11 +4,11 @@
 
 /// <reference path='../domain/repository/MappingRepository.ts' />
 
-module core {
+module app.application {
 	'use strict';
 
 	export class TransmissionController {
-		mappingRepository: core.MappingRepository;
+		mappingRepository: app.domain.repository.core.MappingRepository;
 		$scope: any;
 
 		constructor($scope, $location, persistenceService, $http) {

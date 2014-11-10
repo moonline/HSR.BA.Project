@@ -1,29 +1,42 @@
 <div class="main" data-region="center" data-layout="flow" data-flow-direction="column" data-align="start">
-    <form class="register" data-ng-if="authenticator.loggedInUser == null">
+    <form class="register simpleForm" data-ng-if="authenticator.loggedInUser == null">
 		<p class="success status" data-ng-if="registerStatus === Status.success">Registration successful.</p>
 		<p class="error status" data-ng-if="registerStatus === Status.error">Registration failed.</p>
+		<h2>Registration</h2>
         <fieldset>
-            <legend>Register</legend>
-            <label>username</label><br />
-            <input type="text" name="registerUserName" data-ng-model="registerUserName" /><br />
-            <label>password</label><br />
-            <input type="password" name="registerPassword" data-ng-model="registerPassword" /><br />
-            <label>password repeat</label><br />
-            <input type="password" name="registerPasswordRepeat" data-ng-model="registerPasswordRepeat" /><br />
-            <button data-ng-click="register(registerUserName, registerPassword, registerPasswordRepeat); registerUserName = ''; registerPassword = ''; registerPasswordRepeat = '';">Register</button>
+			<div class="formLine">
+				<label>username</label><br />
+				<input type="text" name="registerUserName" data-ng-model="registerUserName" />
+			</div>
+			<div class="formLine">
+				<label>password</label><br />
+				<input type="password" name="registerPassword" data-ng-model="registerPassword" />
+			</div>
+			<div class="formLine">
+				<label>password repeat</label><br />
+				<input type="password" name="registerPasswordRepeat" data-ng-model="registerPasswordRepeat" />
+			</div>
+            <button class="action save" data-ng-click="register(registerUserName, registerPassword, registerPasswordRepeat); registerUserName = ''; registerPassword = ''; registerPasswordRepeat = '';">Register</button>
         </fieldset>
     </form>
-	<form class="changePassword" data-ng-if="authenticator.loggedInUser != null">
+	<form class="changePassword simpleForm" data-ng-if="authenticator.loggedInUser != null">
 		<p class="success status" data-ng-if="passwordChangeStatus === Status.success">Password changed successful.</p>
 		<p class="error status" data-ng-if="passwordChangeStatus === Status.error">Password change failed.</p>
+		<h2>Change password</h2>
 		<fieldset>
-			<label>old password</label><br />
-			<input type="password" name="oldPassword" data-ng-model="oldPassword" /><br />
-			<label>password</label><br />
-			<input type="password" name="newPassword" data-ng-model="newPassword" /><br />
-			<label>password repeat</label><br />
-			<input type="password" name="newPasswordRepeat" data-ng-model="newPasswordRepeat" /><br />
-			<button data-ng-click="changePassword(oldPassword, newPassword, newPasswordRepeat); oldPassword = ''; newPassword = ''; newPasswordRepeat = '';">Change</button>
+			<div class="formLine">
+				<label>old password</label><br />
+				<input type="password" name="oldPassword" data-ng-model="oldPassword" />
+			</div>
+			<div class="formLine">
+				<label>password</label>
+				<input type="password" name="newPassword" data-ng-model="newPassword" />
+			</div>
+			<div class="formLine">
+				<label>password repeat</label>
+				<input type="password" name="newPasswordRepeat" data-ng-model="newPasswordRepeat" />
+			</div>
+			<button class="action update" data-ng-click="changePassword(oldPassword, newPassword, newPasswordRepeat); oldPassword = ''; newPassword = ''; newPasswordRepeat = '';">Change</button>
 		</fieldset>
 	</form>
 </div>

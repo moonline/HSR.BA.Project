@@ -2,8 +2,7 @@
 /// <reference path='../../../app/assets/scripts/classes/domain/factory/FactoryConfiguration.ts' />
 
 
-module test {
-	export module helper {
+module test.helper {
 		export class DummyContainer {
 			public static create(id: number, dummies: Dummy[], labels: string[], data: any) {
 				var dummyContainer: DummyContainer = new DummyContainer(dummies, labels);
@@ -11,7 +10,7 @@ module test {
 				dummyContainer.data = data;
 				return dummyContainer;
 			}
-			public static factoryConfiguration: core.FactoryConfiguration = {
+			public static factoryConfiguration: app.domain.factory.FactoryConfiguration = {
 				constructorArguments: [
 					{ name: "dummies", type: Array, subType: Dummy },
 					{ name: "labels", type: Array, subType: String }
@@ -36,5 +35,5 @@ module test {
 				this.labels = labels;
 			}
 		}
-	}
+
 }

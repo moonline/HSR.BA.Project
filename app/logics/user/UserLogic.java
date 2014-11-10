@@ -1,67 +1,55 @@
 package logics.user;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import daos.user.UserDAO;
 import models.user.User;
-import play.libs.Json;
-import play.mvc.Http;
+import org.jetbrains.annotations.NotNull;
+import play.data.validation.Constraints;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.logging.Logger;
 
 public class UserLogic {
 
-	public static final UserDAO USER_DAO = new UserDAO();
-	public static final String SESSION_USER_IDENTIFIER = "user";
+	private final UserDAO USER_DAO;
+	private final SecureRandom SECURE_RANDOM;
 
-	public User loginUser(String name, String password, Http.Session session) {
+	public UserLogic(UserDAO userDao, SecureRandom secureRandom) {
+		USER_DAO = userDao;
+		SECURE_RANDOM = secureRandom;
+	}
+
+	public User readUser(String name, String password) {
 		User user = USER_DAO.readByName(name);
-		if (passwordCorrect(user, password)) {
-			session.put(SESSION_USER_IDENTIFIER, user.getId() + "");
-			return user;
+		if (!isPasswordCorrect(user, password)) {
+			user = null;
 		}
-		return null;
+		return user;
 	}
 
-	public void logoutUser(Http.Session session) {
-		session.remove(SESSION_USER_IDENTIFIER);
-	}
-
-	public User getLoggedInUser(Http.Session session) {
-		String userIdString = session.get(SESSION_USER_IDENTIFIER);
-		if (userIdString == null || !userIdString.matches("\\d+")) {
-			return null;
-		}
-		Long userId = Long.valueOf(userIdString);
-		return USER_DAO.readById(userId);
-	}
-
-	public boolean isUserLoggedIn(Http.Session session) {
-		return getLoggedInUser(session) != null;
-	}
-
-	public boolean changePassword(User user, String old_password, String new_password) {
-		if (!passwordCorrect(user, old_password)) {
+	public boolean changePassword(User user, ChangePasswordForm form) {
+		if (!isPasswordCorrect(user, form.oldPassword)) {
 			return false;
 		} else {
-			user.setPassword_hash(calculatePasswordHash(user, new_password));
+			user.setPasswordHash(calculatePasswordHash(user, form.newPassword));
 			return true;
 		}
 	}
 
-	public User createUser(String name, String password) {
+	@NotNull
+	public User createUser(RegisterForm form) {
 		User user = new User();
-		user.setName(name);
-		user.initSalt();
-		user.setPassword_hash(calculatePasswordHash(user, password));
+		user.setName(form.name);
+		user.initSalt(SECURE_RANDOM);
+		user.setPasswordHash(calculatePasswordHash(user, form.password));
 		USER_DAO.persist(user);
 		return user;
 	}
 
-	private boolean passwordCorrect(User user, String password) {
-		return Arrays.equals(user.getPassword_hash(), calculatePasswordHash(user, password));
+	public boolean isPasswordCorrect(User user, String password) {
+		return user != null && Arrays.equals(user.getPasswordHash(), calculatePasswordHash(user, password));
 	}
 
 	private byte[] calculatePasswordHash(User user, String password) {
@@ -80,13 +68,56 @@ public class UserLogic {
 		return out;
 	}
 
-	public ObjectNode getAsJson(User user) {
-		if (user == null) {
-			return new ObjectNode(null);
+	/**
+	 * @return null if the password is valid, an error message otherwise
+	 */
+	private static String validatePassword(String password1, String password2) {
+		if (password1 == null || password2 == null) {
+			return "Missing new password";
+		} else if (!password1.equals(password2)) {
+			return "The two passwords do not match";
 		}
-		ObjectNode json = (ObjectNode) Json.toJson(user);
-		json.remove("salt");
-		json.remove("password_hash");
-		return json;
+		return null;
 	}
+
+	public static class LoginForm {
+		@Constraints.Required
+		public String name;
+		@Constraints.Required
+		public String password;
+	}
+
+	public static class RegisterForm extends LoginForm {
+		@Constraints.Required
+		public String passwordRepeat;
+
+		@SuppressWarnings("UnusedDeclaration") //Used by play for validation
+		public RegisterForm() {
+		}
+
+		public RegisterForm(String name, String password) {
+			this.name = name;
+			this.password = password;
+		}
+
+		@SuppressWarnings("UnusedDeclaration") //Used by play for validation
+		public String validate() {
+			return validatePassword(password, passwordRepeat);
+		}
+	}
+
+	public static class ChangePasswordForm {
+		@Constraints.Required
+		public String oldPassword;
+		@Constraints.Required
+		public String newPassword;
+		@Constraints.Required
+		public String newPasswordRepeat;
+
+		@SuppressWarnings("UnusedDeclaration") //Used by play for validation
+		public String validate() {
+			return validatePassword(newPassword, newPasswordRepeat);
+		}
+	}
+
 }

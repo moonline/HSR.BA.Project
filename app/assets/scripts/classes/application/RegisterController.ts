@@ -1,22 +1,24 @@
 /// <reference path='../domain/model/User.ts' />
 /// <reference path='../service/AuthenticationService.ts' />
 
-module core {
+module app.application {
 	'use strict';
 
-	enum Status {
+	export enum Status {
 		success, error
 	}
 
 	export class RegisterController {
 		$scope: any;
-		authenticationService: AuthenticationService;
+		authenticationService: app.service.AuthenticationService;
 
 		constructor($scope, $location, $http, authenticationService) {
 			this.$scope = $scope;
 			this.authenticationService = authenticationService;
 
-			$scope.Status = Status;
+			// make Status available in view
+			$scope.Status = app.application.Status;
+
 			$scope.authenticator = authenticationService;
 			$scope.$watch('authenticator', function() {});
 
@@ -28,9 +30,9 @@ module core {
 				$scope.passwordChangeStatus = null;
 				this.authenticationService.changePassword(oldPassword, newPassword, newPasswordRepeat, function(success: boolean) {
 					if(success) {
-						$scope.passwordChangeStatus = Status.success;
+						$scope.passwordChangeStatus = app.application.Status.success;
 					} else {
-						$scope.passwordChangeStatus = Status.error;
+						$scope.passwordChangeStatus = app.application.Status.error;
 					}
 				});
 			}.bind(this);
@@ -38,9 +40,9 @@ module core {
             $scope.register = function(username, password, passwordRepeat) {
 				this.authenticationService.register(username, password, passwordRepeat, function(success: boolean) {
 					if(success) {
-						$scope.registerStatus = Status.success;
+						$scope.registerStatus = app.application.Status.success;
 					} else {
-						$scope.registerStatus = Status.error;
+						$scope.registerStatus = app.application.Status.error;
 					}
 				});
 			}.bind(this);

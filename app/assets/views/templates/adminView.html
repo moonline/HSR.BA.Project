@@ -1,0 +1,57 @@
+<div class="main" data-region="center" data-layout="flow" data-flow-direction="column" data-align="start" data-scroll="true">
+	<h2>Administration</h2>
+
+	<div class="accordeonArea">
+		<h3>Manage Properties</h3>
+		<form>
+			<div class="formLine" data-columns="3">
+				<label for="newTaskPropertyName">New property</label>
+				<input type="text" name="newTaskPropertyName" data-ng-model="newTaskPropertyName" placeholder="name" />
+				<button class="action create" data-ng-click="createTaskProperty(newTaskPropertyName); newTaskPropertyName = '';"
+						title="Create a new property">
+					<span class="icon big">&#x2b;</span>Add
+				</button>
+			</div>
+			<div class="formLine" data-columns="3">
+				<select data-ng-model="toRenameProperty" data-ng-options="taskProperty.name for taskProperty in taskProperties" ></select>
+				<input data-ng-disabled="!toRenameProperty" data-ng-model="propertyNewName" placeholder="New name" />
+				<button data-ng-disabled="!toRenameProperty" class="action update"
+						data-ng-click="renameTaskProperty(toRenameProperty, propertyNewName); propertyNewName = ''; toRenameProperty = null;">
+					<span class="icon">&#x270E;</span>rename
+				</button>
+			</div>
+		</form>
+	</div>
+
+	<div class="accordeonArea">
+		<h3>Manage RequestTemplates <i>*Not persistent yet</i></h3>
+		<form>
+			<div class="formLine" data-columns="4">
+				<label for="newRequestTemplateName">New Request templtae</label>
+				<input type="text" name="newRequestTemplateName" data-ng-model="newRequestTemplateName" placeholder="name" />
+				<textarea name="newRequestTemplateBody" data-ng-model="newRequestTemplateBody" placeholder="request body"></textarea>
+				<button class="action create" data-ng-click="addRequestTemplate(newRequestTemplateName, newRequestTemplateBody); newRequestTemplateName = ''; newRequestTemplateBody = '';"
+						title="Create a new request template">
+					<span class="icon big">&#x2b;</span>Add
+				</button>
+			</div>
+			<div class="formLine" data-columns="5">
+				<select data-ng-model="toUpdateRequest" data-ng-options="requestTemlate.name for requestTemlate in requestTemplates" ></select>
+
+				<input data-ng-disabled="!toUpdateRequest" type="text" name="requestTemplateNewName" data-ng-model="toUpdateRequest.name"
+					data-ng-model="requestTemplateNewName" placeholder="name" />
+				<textarea data-ng-disabled="!toUpdateRequest" name="requestTemplateNewBody" data-ng-model="toUpdateRequest.requestBody"
+					data-ng-model="requestTemplateNewBody" placeholder="request body"></textarea>
+				<button data-ng-disabled="!toUpdateRequest" class="action update" title="Update request template"
+						data-ng-click="updateRequestTemplate(toUpdateRequest); requestTemplateNewName = ''; requestTemplateNewBody = ''; toUpdateRequest = null;">
+					<span class="icon">&#x270E;</span>Update
+				</button>
+				<button data-ng-disabled="!toUpdateRequest" class="action remove" title="Remove request template"
+						data-ng-click="removeRequestTemplate(toUpdateRequest); requestTemplateNewName = ''; requestTemplateNewBody = ''; toUpdateRequest = null;">
+					<span class="icon big">&minus;</span>Remove
+				</button>
+
+			</div>
+		</form>
+	</div>
+</div>

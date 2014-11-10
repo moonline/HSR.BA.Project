@@ -1,9 +1,9 @@
 package logic.user;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import logics.user.UserLogic;
 import models.user.User;
 import org.junit.Test;
+import play.libs.Json;
 import test.AbstractDatabaseTest;
 import test.AbstractTestDataCreator;
 
@@ -19,12 +19,12 @@ public class UserLogicTest extends AbstractDatabaseTest {
 		//Setup
 		User user = AbstractTestDataCreator.createUser("A", "123");
 		//Test
-		final JsonNode json = new UserLogic().getAsJson(user);
+		final JsonNode json = Json.toJson(user);
 		//Verification
 		assertThat(json.get("name").asText()).isEqualTo("A");
-		assertThat(json.get("password_hash")).isNull();
+		assertThat(json.get("passwordHash")).isNull();
 		assertThat(json.get("salt")).isNull();
-		assertThat(json.size()).isEqualTo(getUserObjectFieldCount() - 2); // "-2" for password_hash and salt
+		assertThat(json.size()).isEqualTo(getUserObjectFieldCount() - 2); // "-2" for passwordHash and salt
 	}
 
 	private int getUserObjectFieldCount() {
@@ -35,6 +35,7 @@ public class UserLogicTest extends AbstractDatabaseTest {
 				size++;
 			}
 		}
+		size++; //for the id field which is in AbstractEntity.class
 		return size;
 	}
 

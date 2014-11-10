@@ -5,7 +5,7 @@
 
 module test {
 	export module helper {
-		export class CLO implements dks.Node, core.PersistentEntity {
+		export class CLO implements app.domain.model.dks.Node, app.domain.repository.core.PersistentEntity {
 			public id: number;
 			public name: string;
 

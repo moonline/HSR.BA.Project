@@ -1,33 +1,47 @@
 module configuration {
-	export var paths = {
+	export var paths:any = {
 		dks: {
-			remoteProxy: '/dks/getFromDKS?url={target}'
+			remoteProxy: { url: '/dks/getFromDKS?url={target}' }
 		},
 		problem: {
-			//list: '/public/temporaryDevelopmentData/dks/element.json'
-			list: '/element'
+			list: { method: 'GET', url: '/element' }
 		},
 		decision: {
-			list: '/element'
+			list: { method: 'GET', url: '/element' }
 		},
 		decisionKnowledgeSystem: {
-			list: '/public/temporaryDevelopmentData/dks/decisionKnowledgeSystem.json'
+			list: { method: 'GET', url: '/public/temporaryDevelopmentData/dks/decisionKnowledgeSystem.json' }
 		},
 		mapping: {
-			list: '/public/temporaryDevelopmentData/eeppi/mapping/list.json'
+			list: { method: 'GET', url: '/dksMapping' },
+			detail: { method: 'GET', url: '/dksMapping/{id}' },
+			create: { method: 'POST', url: '/dksMapping' },
+			update: { method: 'POST', url: '/dksMapping/{id}' },
+			remove: { method: 'POST', url: '/dksMapping/{id}/delete' }
 		},
 		taskTemplate: {
-			list: '/public/temporaryDevelopmentData/eeppi/tasktemplate/list.json'
+			list: { method: 'GET', url: '/taskTemplate' },
+			detail: { method: 'GET', url: '/taskTemplate/{id}' },
+			create: { method: 'POST', url: '/taskTemplate' },
+			remove: { method: 'POST', url: '/taskTemplate/{id}/delete' },
+			update: { method: 'POST', url: '/taskTemplate/{id}' },
+			updateProperty: { method: 'POST', url: '/taskTemplate/{id}/properties/{propertyId}'},
+			addProperty: { method: 'POST', url: '/taskTemplate/{id}/addProperty'},
+			removeProperty: { method: 'POST', url: '/taskTemplate/{id}/properties/{propertyValueId}/delete' }
 		},
 		taskProperty: {
-			list: '/public/temporaryDevelopmentData/eeppi/taskProperty.json'
+			list: { method: 'GET', url: '/taskProperty' },
+			detail: { method: 'GET', url: '/taskProperty/{id}' },
+			create: { method: 'POST', url: '/taskProperty' },
+			update: { method: 'POST', url: '/taskProperty/{id}' },
+			remove: { method: 'POST', url: '/taskProperty/{id}/delete' }
 		},
 		user: {
-			'login':'/user/login',
-			'logout':'/user/logout',
-			'status': '/user/login-status',
-			'register': '/user/register',
-			'changePassword': '/user/changePassword'
+			login: { method: 'POST', url: '/user/login' },
+			logout: { method: 'POST', url: '/user/logout' },
+			status: { method: 'GET', url: '/user/loginStatus' },
+			register: { method: 'POST', url: '/user/register' },
+			changePassword: { method: 'POST', url: '/user/changePassword' }
 		}
 	}
 }

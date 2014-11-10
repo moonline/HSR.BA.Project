@@ -1,6 +1,8 @@
 package integration;
 
-import logics.tasks.PPTTaskLogic;
+import daos.task.TaskDAO;
+import daos.task.TaskPropertyValueDAO;
+import logics.ppt.PPTTaskLogic;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -73,7 +75,7 @@ public class PPTIntegrationTest extends AbstractIntegrationTest {
 		//Create an issue
 		{
 			//Setup
-			PPTTaskLogic.CreatePPTTaskForm form = new PPTTaskLogic.CreatePPTTaskForm();
+			PPTTaskLogic.CreatePPTTaskWithoutStoringForm form = new PPTTaskLogic.CreatePPTTaskWithoutStoringForm();
 			form.account = AbstractTestDataCreator.createPPTAccountWithTransaction(AbstractTestDataCreator.createUserWithTransaction("Admin", "123"), JIRA_URL, "admin", "admin");
 			form.path = "/rest/api/2/issue/";
 			form.content = Json.parse("{\n" +
@@ -90,7 +92,7 @@ public class PPTIntegrationTest extends AbstractIntegrationTest {
 					"   }\n" +
 					"}");
 			//Test
-			WSResponse response = new PPTTaskLogic().createPPTTask(form);
+			WSResponse response = new PPTTaskLogic(new TaskDAO(), new TaskPropertyValueDAO()).createPPTTaskWithoutStoring(form);
 			//Verification
 			assertThat(response.getStatus()).isEqualTo(CREATED);
 			assertThat(response.asJson().has("key")).isTrue();

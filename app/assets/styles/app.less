@@ -3,7 +3,6 @@
 	background: dodgerblue; background: linear-gradient(dodgerblue, steelblue); color: white;
 }
 
-
 /* general */
 * { -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; padding: 0; margin: 0; text-indent: 0; text-align: left; }
 
@@ -12,18 +11,47 @@ body { font-family: Arial, Helvetica, sans-serif; }
 
 
 /* container */
-header, footer { .blueGradient; color: white; padding: 0.5rem; }
-header { border-bottom: 0.25rem solid black; }
+.headerPanel, footer { .blueGradient; color: white; padding: 0.5rem; }
+.headerPanel { border-bottom: 0.25rem solid black; }
 
 .page { height: 100%; width: 100% }
 .area {
 	background: aliceblue; padding: 0.5rem; box-shadow: 0 0 0.25rem silver;
 	border-radius: 0.5rem; margin: 0.5rem;
 
-	h2 { .blueGradient; padding: 0.5rem; margin: -0.5rem -0.5rem 0.5rem -0.5rem; }
+	&.column1, &.column2 { width: 30%!important; }
+	&.column3 { width: 40%!important; }
+
+
+	h2 {
+		.blueGradient; padding: 0.5rem; margin: 1.5rem -0.5rem 0.5rem -0.5rem;
+		&:first-of-type { margin-top: -0.5rem; }
+	}
+	h3 { margin-top: 1rem; background: rgb(110,170,220); padding: 0.25rem; color: white; margin-left: -0.5rem; margin-right: -0.5rem; }
+	ul li {
+		list-style-type: none;
+		margin: 0.2rem 0;
+	}
+	.messagebox {
+		padding: 0.5rem; margin: 0 -0.5rem; margin-top: -0.5rem; display: block; color: white; font-weight: bold;
+
+		&.error { background: maroon; }
+		&.pending { background: seagreen; }
+	}
 }
 
 div.main { padding: 0.5rem; }
+
+nav.mainNavigation {
+	padding: 0.25rem 0.5rem 0.5rem 0.5rem; background: cadetblue;
+	ul li {
+		&.current {
+			a, a:link, a:hover { font-weight: bold; }
+		}
+		display: inline-block; list-style-type: none; margin-right: 1rem;
+		.icon { margin-bottom: -0.1rem; }
+	}
+}
 
 
 /* font / text */
@@ -36,24 +64,138 @@ ol, ul {
 	}
 }
 
+.pathDivider { color: cornflowerblue; font-weight: bold; margin: 0 0.3rem 0 0.1rem; display: inline-block; }
+
 a {
 	&:link, &:hover { color: black; margin-left: 0.1rem; margin-right: 0.1rem; }
 	&:hover { color: white; }
 }
 
+.icon {
+	font-weight: bold; margin-right: 0.5rem;
+
+	&.big { font-size: 1.2rem; }
+	&.small { font-size: 0.8rem; }
+	&[data-icon] { width: 1rem; height: 1rem; display: inline-block; background-size: 1rem 1rem; }
+	&[data-icon="settings"] {
+		// Icon made by Freepik (http://www.freepik.com) from Flaticon (http://www.flaticon.com)
+		//is licensed under Creative Commons BY 3.0 (http://creativecommons.org/licenses/by/3.0/)
+		background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAQAAADZc7J/AAABkUlEQVR4AaXVP0uVURzA8c9zsbjkFSElMEJy0VeQo853twikhouEBHfJoSVwqiXqRkENTmGC6NRU0Etob06EAkO4/klT0tOFlsPzG3rSz3c/nOc8nN8pnFMfiOCaFxrY0rbjDN5If/NIBChEwIBvGoDvrjsWoSbX1jIAuKMBYMRtwKhFD4DouSQ5sKJpzqaUtaFlxgcnkuSpyDOpep7ET2iqjhtxgWXVsSwYcihVbFs97mDbiui0V/TWr7gAB3KsmzbYa9q6HEnQb96ulDUrNytl7VgwDMCYjq6UZ0nZkpTnyKpJ6LMlhSaUTUihfReoS6GuQlmhK4XqNedUc+KnskHjysYNKvvhN0xadfTfh9jVMQbAsAU7lX/jrnn9/76Pa6Y0ek1Zk/K8jDMRCjlu9jpFTdklkbptqWKHhuJduOWyquruCT5J1fMl7uCz6ngv0pEkJz6a0bIhZW2a07TiIA7V3EOLRgF3paz7gAEt7WoPy0VfjQD2XbUHUQ0QHXsN4J29szyur4y7gn2PAaLCOf0BLrcs5/jXkOYAAAAASUVORK5CYII0eb5f01c6d263e9af6bb1bd98e3d1115');
+	}
+	&[data-icon="user"] {
+		// Icon made by Icomoon (http://www.icomoon.io) from Flaticon (http://www.flaticon.com)
+		// is licensed under Creative Commons BY 3.0 (http://creativecommons.org/licenses/by/3.0/)
+		background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAQAAADZc7J/AAABDUlEQVR4Ac3VMWoCURDG8f8LhKCIiAewsVhShxQewGvYCMEDeBF7W0sLcw8FyxTClmITLBRDXCavyfLIjnGGFPH3VW9gPpa3sBv4o7sbLsiYsuI9ZsWUDKcXzkiSc5w49Mr1tKKH2RxRMrffwbN9GtTZB/dUffKAWJ6gpa4Tpy2wFBy55GgraCNohLatYEhAExjaCoRLBJMuB0TJgS5GjxSV9SJOHRaVggUu/UpBH5fAGkmyJuCUsS/X92T+D8obG75t4sntKXkTRTw5NBjwyglJcoqTAQ2uqjNmh6Bnx5g6vxixRa5kywhVjRlizIwaP3RYIo4s6ZBokiPO5DQpTRD8mVDKEfzJAf7/7/wFZgkWyRTk6ZIAAAAASUVORK5CYII54b59d4b57850cefeb238dd4202069de');
+	}
+	&[data-icon="transmit"] {
+		// Icon made by Freepik (http://www.freepik.com) from Flaticon (http://www.flaticon.com)
+		// is licensed under Creative Commons BY 3.0 (http://creativecommons.org/licenses/by/3.0/)
+		background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAADhAAAA4QBAwW54QAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAF7SURBVFiF7Zc9KEZhGIavW34ySCmTLJRsTBZlMCiLhRQWu0VWoSzKwmxVfrIpZUAZDUbDNxikTOorRf5yG7736PTl+9PJUc5dT+/fc55zvef0Ps85sk2aqkv17hlABvAXAOqjjqRWYAVoSyh2zvZaRS/bhFwwDbhGuwDyoX8c2kfgPPS7ovilLP4KGn+wy5sA8AFcAW/AA3Ad1hsqBagvGudDgGo1ENpbYBy4C+Nh4AlQrQCrtjdrACgpSXvV+KV+CjKAXwGQ1JwagKQ54FDSQUh2vwsAjARbB/aLIYqP4Y8kaYJCHniJTbcASxRywZTtHUmLwK6kMdvviQEAk8CM7bdyTrYvJZ0CQ8BZkgAnwIGk5xLr27aPJHUAo8BWnCoqRrPAfKXiUa0Be0AvcBTGfWHX3XG/pJ5AOeUkLQODwKTt+/hiHOAV6JTUH5trooqCUkLtwIvtBUk9tle/c1L0X5DAB8kHhU1EytneqHTRF0Ba+h+1IAPIAMrpEygu0vmF9olCAAAAAElFTkSuQmCCc5cffd4f7a0138cd7e37c3c991c06938');
+	}
+	&[data-icon="link"] {
+		// Icon made by Rami McMin (http://RamiMcM.in) from Flaticon (http://www.flaticon.com)
+		// is licensed under Creative Commons BY 3.0 (http://creativecommons.org/licenses/by/3.0/)
+		background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAA3NCSVQICAjb4U/gAAAACXBIWXMAAA3XAAAN1wFCKJt4AAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAJBQTFRF////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPUIf2wAAAC90Uk5TAAECAwQGDBkaISUmKjpMUFJjam9we3+Ag4eIjp6jpbO1ubzAw8XP0Nzk5ufw9v6vCUf3AAABIUlEQVQ4y32T2ZaCMBAFL7iAouLG4A4iuIBY//938+CowZPhviXVyenUSUuWDFdpVSZxIHucRQ0A9dKx8X7GO6mlop8D+cTzwwJY2nnkSpK7hjqw8dcxt4CfFi6FkLRx+VA23pd9teVBZRYsvtueQGr6qyEyuZvDylivIHc1v246fxsR1EOjIIWJdINjT5K0BBbmjRV4UgxsXzxrqL7DQHL28BhJUyDvv96/O4+lC8wkdU+wlQ4mz+EgbeHUlTSDizQ+70zOVBo9YO9IA7jb/W2BuM1f7wi3Vn+dzXX+jz8jdn+f/OOvwZv+SvCb/O3nmQTCNq4YCreFK6hh/fzmkY0/jxWh701yO5eTfkYts3DJWb6GdWEdVklBnJRVuhra2C8BGzNi6Z2KWQAAAABJRU5ErkJggg6210a74d53f6ce508a3ab556d1f69cfc');
+	}
+	&.iconOnly { margin-right: 0; }
+}
+
+dl dt { font-weight: bold; }
+li[data-state="selected"] { font-weight: bold; color: teal; }
+
+
+/* action buttons */
+button {
+	display: inline-block;
+	padding: 0.3rem; line-height: 1em; padding-left: 0.5rem; padding-right: 0.5rem;
+	background: silver; background: linear-gradient(gainsboro, silver); border: none; color: black;
+	border-radius: 0.2rem;
+	&:hover { color: white; }
+
+	&.action {
+		&.create, &.save {
+			background: green; background: linear-gradient(rgb(80,180,130),seagreen); color: white;
+			&:hover { 	color: black; }
+		}
+		&.edit {
+			background: orange; background: linear-gradient(#F8B356, #DD852C); color: white;
+			&:hover { color: black; }
+		}
+		&.update {
+			background: cornflowerblue; background: linear-gradient(rgb(110,170,220), steelblue);color: white;
+			&:hover { color: black; }
+		}
+		&.remove, &.warning {
+			background: maroon; background: linear-gradient(rgb(180,40,40), darkred); color: white;
+			&:hover { color: black; }
+		}
+	}
+	&[disabled] {
+		background: silver; background: linear-gradient(gainsboro, silver); border: none; color: gray;
+		&:hover { border: none; }
+	}
+}
+button + button { margin-left: 0.25rem; }
+
 
 /* forms */
-label { width: 10rem; display: inline-block; }
+label { display: inline-block; }
 input {
-	width: 15rem; display: inline-block;
+	border-radius: 1rem; padding: 0.25rem 0.5rem; border: none;
+	box-shadow: inset 0.1rem 0.1rem 0.2rem #dcdcdc;
+	background: whitesmoke; color: #000;
+	display: inline-block;
+
+	&[disabled] { background: gainsboro; color: gray; box-shadow: none; }
+}
+input, textarea {
+	&.error { background: peachpuff; color: black; box-shadow: inset 0.1rem 0.1rem 0.2rem darksalmon; }
 }
 form .status { margin: -0.5rem -0.5rem 0.5rem -0.5rem; }
+.formLine {
+	margin: 0.25rem 0;
+	display: flex; flex-wrap: nowrap; justify-content: spance-between; width: 100%;
+	&[data-columns="3"] {
+		> :nth-child(+1) { width: 30%; margin-right: 0.2rem; max-width: 12rem; }
+		> :nth-child(+2) { width: 50%; margin: 0 0.2rem; }
+		> :nth-child(+3) { width: 20%; max-width: 8rem; margin-left: 0.2rem; }
+	}
+	&[data-columns="4"] {
+		> :nth-child(+1) { width: 30%; margin-right: 0.2rem; max-width: 12rem; }
+		> :nth-child(+2) { width: 20%; margin: 0 0.2rem; }
+		> :nth-child(+3) { width: 30%; margin: 0 0.2rem; }
+		> :nth-child(+4) { width: 20%; max-width: 8rem; margin-left: 0.2rem; }
+	}
+	&[data-columns="5"] {
+		> :nth-child(+1) { width: 30%; margin-right: 0.2rem; max-width: 12rem; }
+		> :nth-child(+2) { width: 20%; margin: 0 0.2rem; }
+		> :nth-child(+3) { width: 30%; margin: 0 0.2rem; }
+		> :nth-child(+4) { width: 10%; max-width: 8rem; margin-left: 0.2rem; }
+		> :nth-child(+5) { width: 10%; max-width: 8rem; margin-left: 0.2rem; }
+	}
+}
+select {
+	-webkit-appearance: none; -ms-appearance: none; -moz-appearance: none;  appearance: none;
+	background-color: silver; background: linear-gradient(gainsboro, silver); border: none; color: black;
+	border-radius: 0.2rem; border: none;
+	// Icon made by Freepik (href="http://www.freepik.com) from Flaticon (http://www.flaticon.com) is licensed under Creative Commons BY 3.0 (http://creativecommons.org/licenses/by/3.0/)
+	//background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgBAMAAACBVGfHAAAAA3NCSVQICAjb4U/gAAAACXBIWXMAAARuAAAEbgHQo7JoAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAB5QTFRF////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAhow4rQAAAAl0Uk5TAAwREiowWMPOLoJhMgAAAEhJREFUKFNjYBhCgCUNDgLAAoyVM6FghgFEiThMoBmqB6YEpgCuBKYApgShAKoEoQCiBFkBWAmyApASVAVAJagKgEoUGIYaAADIMSWmfFk62AAAAABJRU5ErkJgggeb100a48247b7100fa12d2df668b370f');
+	//background-repeat: no-repeat; background-position: 90% 60%; background-size: 1rem;
+
+	option {
+		background: silver; padding: 0.2rem; border: none;
+	}
+}
+
+form.simpleForm label { width: 10rem; }
+
+fieldset { background: none; padding: 0.5rem 0; border: none;
+	legend { font-size: 0.8rem; font-weight: bold; }
+}
 
 
 /* application state */
 [data-ng-click] { cursor: pointer; }
 
-li[data-ng-state="selected"] { color: teal; }
-
 .success { background: seagreen; color: white; font-weight: bold; padding: 0.5rem; }
-.error { background: maroon; color: white; font-weight: bold; padding: 0.5rem; }
+.error { background: maroon; color: white; font-weight: bold; }

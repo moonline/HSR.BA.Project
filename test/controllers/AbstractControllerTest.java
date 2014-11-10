@@ -1,7 +1,6 @@
 package controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import logics.user.UserLogic;
 import models.user.User;
 import play.api.mvc.HandlerRef;
 import play.libs.Json;
@@ -26,21 +25,21 @@ public abstract class AbstractControllerTest extends AbstractDatabaseTest {
 	}
 
 	protected static Result callActionWithUser(HandlerRef<?> target, User user) {
-		return callActionWithUser(target, user, new HashMap<String, String>(0));
+		return callActionWithUser(target, user, new HashMap<>(0));
 	}
 
 	protected static Result callActionWithUser(HandlerRef<?> target, User user, Map<String, String> postData) {
 		FakeRequest fakeRequest = new FakeRequest().withFormUrlEncodedBody(postData);
-		fakeRequest = fakeRequest.withSession(UserLogic.SESSION_USER_IDENTIFIER, user.getId() + "");
+		fakeRequest = fakeRequest.withSession(AuthenticationChecker.SESSION_USER_IDENTIFIER, user.getId() + "");
 		return callAction(target, fakeRequest);
 	}
 
-	protected static Result callActionWithUser(HandlerRef<?> target) {
-		return callActionWithUser(target, new HashMap<String, String>(0));
+	protected static Result callActionWithUser(HandlerRef<?> target) throws Throwable {
+		return callActionWithUser(target, new HashMap<>(0));
 	}
 
-	protected static Result callActionWithUser(HandlerRef<?> target, Map<String, String> postData) {
-		User user = AbstractTestDataCreator.createUser("Benutzer " + uniqueIdCounter++, "1234");
+	protected static Result callActionWithUser(HandlerRef<?> target, Map<String, String> postData) throws Throwable {
+		User user = AbstractTestDataCreator.createUserWithTransaction("Benutzer " + uniqueIdCounter++, "1234");
 		return callActionWithUser(target, user, postData);
 	}
 
@@ -53,10 +52,8 @@ public abstract class AbstractControllerTest extends AbstractDatabaseTest {
 	}
 
 	protected void assertCheckJsonResponse(Result result, JsonNode expected) {
-		String result_content = contentAsString(result);
-		result_content = Json.stringify(Json.parse(result_content)); //format with "correct" spaces
-		final String expected_content = Json.stringify(expected);
-		assertThat(result_content).isEqualTo(expected_content);
+		JsonNode resultJson = Json.parse(contentAsString(result));
+		assertThat(resultJson.equals(expected)).describedAs(Json.stringify(expected) + " --- was expected but was --- " + Json.stringify(resultJson)).isTrue();
 	}
 
 }

@@ -3,14 +3,12 @@
 /// <reference path='Repository.ts' />
 /// <reference path='../../domain/model/TaskProperty.ts' />
 
-module core {
-	export class TaskPropertyRepository extends core.Repository<TaskProperty> {
+module app.domain.repository.core {
+	export class TaskPropertyRepository extends app.domain.repository.core.Repository<app.domain.model.core.TaskProperty> {
 		constructor(httpService) {
 			super(httpService);
-			this.type = TaskProperty;
-			this.resources = {
-				'all': configuration.paths.taskProperty.list
-			};
+			this.type = app.domain.model.core.TaskProperty;
+			this.resources = configuration.paths.taskProperty;
 		}
 	}
 }
