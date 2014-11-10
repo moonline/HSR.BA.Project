@@ -53,11 +53,12 @@ module app.application {
 			});
 
 			$scope.currentDecision = null;
-			$scope.currentMapping = null;
+			$scope.currentMappings = [];
+			$scope.$watch('currentMappings', function(){});
 			$scope.setCurrentDecision = function(decision) {
 				$scope.currentDecision = decision;
-				mappingRepository.findOneBy('decision', decision, function(mapping) {
-					$scope.currentMapping = mapping;
+				mappingRepository.findByDksNode(decision, function(mappings) {
+					$scope.currentMappings = mappings;
 				});
 			};
 
@@ -102,15 +103,23 @@ module app.application {
 			};
 
 			$scope.mapTaskTemplate = function(taskTemplate: app.domain.model.core.TaskTemplate) {
-				if($scope.currentMapping) {
-					$scope.currentMapping.addTaskTemplate(taskTemplate);
-				} else if($scope.currentDecision) {
-					var mapping: app.domain.model.core.Mapping = new app.domain.model.core.Mapping($scope.currentDecision);
-					mapping.addTaskTemplate(taskTemplate);
-					//mappingRepository.add(mapping, function(item){});
-					$scope.currentMapping = mapping;
+				if($scope.currentDecision) {
+					var newMapping: app.domain.model.core.Mapping = new app.domain.model.core.Mapping($scope.currentDecision, taskTemplate);
+					mappingRepository.add(newMapping, function(item){
+						mappingRepository.findByDksNode($scope.currentDecision, function(mappings) {
+							$scope.currentMappings = mappings;
+						});
+					});
 				}
 			};
+
+			$scope.removeMapping = function(mapping: app.domain.model.core.Mapping) {
+				mappingRepository.remove(mapping, function() {
+					mappingRepository.findByDksNode($scope.currentDecision, function(mappings) {
+						$scope.currentMappings = mappings;
+					});
+				})
+			}
 		}
 	}
 }

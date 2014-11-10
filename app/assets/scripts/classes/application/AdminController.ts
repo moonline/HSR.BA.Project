@@ -26,10 +26,10 @@ module app.application {
 			$scope.addRequestTemplate = function(name: string, requestBody: string) {
 				$scope.requestTemplates.push(new app.domain.model.core.RequestTemplate(name, null, requestBody));
 			};
-			$scope.updateRequestTemplate = function(requestTemplate: app.domain.model.ppt.RequestTemplate) {
+			$scope.updateRequestTemplate = function(requestTemplate: app.domain.model.core.RequestTemplate) {
 				// update persistence
 			};
-			$scope.removeRequestTemplate = function(requestTemplate: app.domain.model.ppt.RequestTemplate) {
+			$scope.removeRequestTemplate = function(requestTemplate: app.domain.model.core.RequestTemplate) {
 				$scope.requestTemplates.splice($scope.requestTemplates.indexOf(requestTemplate),1);
 				// update persistence
 			};

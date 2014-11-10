@@ -8,24 +8,21 @@ module app.domain.model.core {
 	export class Mapping implements app.domain.repository.core.PersistentEntity {
 		public static factoryConfiguration: app.domain.factory.FactoryConfiguration = {
 			constructorArguments: [
-				{ name: "decision", type: app.domain.model.dks.Decision, subType: null },
-				{ name: "taskTemplates", type: Array, subType: app.domain.model.core.TaskTemplate }
+				// use Object, because items could be Problems or Options
+				{ name: "dksNode", type: Object, subType: null },
+				{ name: "taskTemplate", type: app.domain.model.core.TaskTemplate, subType: null }
 			],
 			publicProperties: [{ name: "id", type: Number, subType: null }]
 		};
 
 		public id: number;
-		public decision: app.domain.model.dks.Decision;
-		public taskTemplates: app.domain.model.core.TaskTemplate[];
+		public dksNode: Object;
+		public taskTemplate: app.domain.model.core.TaskTemplate;
 
- 		constructor(decision: app.domain.model.dks.Decision, taskTemplates: app.domain.model.core.TaskTemplate[] = []) {
+ 		constructor(dksNode: Object, taskTemplate: app.domain.model.core.TaskTemplate = null) {
 			this.id = Math.round(Math.random()*1000000);
-			this.decision = decision;
-			this.taskTemplates = taskTemplates;
-		}
-
-		public addTaskTemplate(taskTemplate: app.domain.model.core.TaskTemplate): void {
-			this.taskTemplates.push(taskTemplate);
+			this.dksNode = dksNode;
+			this.taskTemplate = taskTemplate;
 		}
 	}
 }

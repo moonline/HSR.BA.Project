@@ -13,7 +13,11 @@ module configuration {
 			list: { method: 'GET', url: '/public/temporaryDevelopmentData/dks/decisionKnowledgeSystem.json' }
 		},
 		mapping: {
-			list: { method: 'GET', url: '/public/temporaryDevelopmentData/eeppi/mapping/list.json' }
+			list: { method: 'GET', url: '/mapping' },
+			detail: { method: 'GET', url: '/mapping/{id}' },
+			create: { method: 'POST', url: '/mapping' },
+			update: { method: 'POST', url: '/mapping/{id}' },
+			remove: { method: 'POST', url: '/mapping/{id}/delete' }
 		},
 		taskTemplate: {
 			list: { method: 'GET', url: '/taskTemplate' },

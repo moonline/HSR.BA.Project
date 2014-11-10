@@ -5,7 +5,9 @@
 			<h3>Problems ({{problems.length}})</h3>
 			<ul data-type="list">
 				<li data-ng-repeat="problem in problems" data-state="{{problem == currentDecision && 'selected' || '' }}"
-					data-ng-click="setCurrentDecision(problem)">{{problem.name}}
+					data-ng-click="setCurrentDecision(problem)">
+					<button class="action edit"><span class="icon iconOnly">&Xi;</span></button>
+					{{problem.name}}
 				</li>
 			</ul>
 
@@ -40,13 +42,13 @@
 	<div class="column2 area" data-layout="flow" data-flow-direction="column" data-scroll="true">
 		<div class="areaContent">
 			<div class="decisionDetail" data-ng-if="currentDecision">
-				<h2><strong>{{currentDecision.name}}</strong> [{{currentDecision.id}}]</h2>
-			</div>
-			<div class="mappingDetail" data-ng-if="currentMapping">
-				<h3>Task template mapping [{{currentMapping.id}}]</h3>
+				<h2>Mapping ({{currentDecision.name}} &hArr; Task templates)</h2>
 				<ul>
-					<li data-ng-repeat="taskTemplate in currentMapping.taskTemplates">
-						{{taskTemplate.name}} [{{taskTemplate.id}}]
+					<li data-ng-repeat="mapping in currentMappings">
+						<button class="action remove" data-ng-click="removeMapping(mapping)"
+							title="Remove mapping "><span class="icon small iconOnly">&Chi;</span>
+						</button>
+						{{mapping.taskTemplate.name}} [{{mapping.taskTemplate.id}}]
 					</li>
 				</ul>
 			</div>
@@ -62,7 +64,7 @@
 				<li data-ng-repeat="template in taskTemplates" data-state="{{template == currentTaskTemplate && 'selected' || '' }}">
 					<button class="action update" data-ng-if="currentDecision" data-ng-click="mapTaskTemplate(template)" title="Map task template with decision">&lt; map</button>
 					<span data-ng-click="setCurrentTaskTemplate(template)" title="Edit task template">
-						<button  class="action edit">&#x270E;</button> {{template.name}}
+						<button class="action edit">&#x270E;</button> {{template.name}}
 					</span>
 				</li>
 			</ul>
