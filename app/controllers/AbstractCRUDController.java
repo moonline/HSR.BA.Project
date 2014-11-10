@@ -96,7 +96,7 @@ public abstract class AbstractCRUDController extends AbstractController {
 		}
 	}
 
-	protected Status notFound(long id) {
+	protected Results.Status notFound(long id) {
 		return notFound(jsonify("Could not find " + getEntityName() + " with id " + id + "."));
 	}
 }
