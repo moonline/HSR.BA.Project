@@ -11,7 +11,7 @@ import java.util.List;
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class AbstractWork extends AbstractEntity {
 
-	@OneToMany(cascade = CascadeType.PERSIST, mappedBy = "task")
+	@OneToMany(cascade = CascadeType.PERSIST, mappedBy = "task", fetch = FetchType.EAGER)
 	@JsonManagedReference
 	private List<TaskPropertyValue> properties = new ArrayList<>();
 

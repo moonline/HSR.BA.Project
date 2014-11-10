@@ -52,7 +52,7 @@ create table task (
     finalrequestcontent varchar(255),
     finalrequesturl varchar(255),
     finalresponsecontent varchar(255),
-    finalresponsestatus varchar(255),
+    finalresponsestatus integer not null,
     createdfrom_id bigint,
     project_id bigint,
     primary key (id)

@@ -1,6 +1,8 @@
 package models.task;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import models.user.Project;
+import play.libs.Json;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
@@ -16,7 +18,7 @@ public class Task extends AbstractWork {
 	private Project project;
 	private String finalRequestUrl;
 	private String finalRequestContent;
-	private String finalResponseStatus;
+	private int finalResponseStatus;
 	private String finalResponseContent;
 
 	public TaskTemplate getCreatedFrom() {
@@ -47,23 +49,23 @@ public class Task extends AbstractWork {
 		return finalRequestContent;
 	}
 
-	public void setFinalRequestContent(String finalRequestContent) {
-		this.finalRequestContent = finalRequestContent;
+	public void setFinalRequestContent(JsonNode finalRequestContent) {
+		this.finalRequestContent = Json.stringify(finalRequestContent);
 	}
 
-	public String getFinalResponseStatus() {
+	public int getFinalResponseStatus() {
 		return finalResponseStatus;
 	}
 
-	public void setFinalResponseStatus(String finalResponseStatus) {
+	public void setFinalResponseStatus(int finalResponseStatus) {
 		this.finalResponseStatus = finalResponseStatus;
 	}
 
-	public String getFinalResponseContent() {
-		return finalResponseContent;
+	public JsonNode getFinalResponseContent() {
+		return Json.toJson(finalResponseContent);
 	}
 
-	public void setFinalResponseContent(String finalResponseContent) {
-		this.finalResponseContent = finalResponseContent;
+	public void setFinalResponseContent(JsonNode finalResponseContent) {
+		this.finalResponseContent = Json.stringify(finalResponseContent);
 	}
 }

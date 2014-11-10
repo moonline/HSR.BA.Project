@@ -13,6 +13,7 @@ GET		/user/loginStatus			@controllers.user.UserController.loginStatus()
 POST	/user/register				@controllers.user.UserController.register()
 POST	/user/changePassword		@controllers.user.UserController.changePassword()
 POST	/ppt/sendToPPT				@controllers.ppt.ProjectPlanningToolController.sendToPPT()
+POST	/ppt/createPPTTask			@controllers.ppt.ProjectPlanningToolController.createPPTTask()
 GET		/dks/getFromDKS				@controllers.dks.DecisionKnowledgeSystemController.getFromDKS(url: String)
 
 POST	/user/pptAccount			@controllers.user.PPTAccountController.create()

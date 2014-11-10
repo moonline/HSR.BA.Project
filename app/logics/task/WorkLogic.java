@@ -34,6 +34,7 @@ public class WorkLogic {
 
 	public AbstractWork removeProperty(TaskPropertyValue taskPropertyValue) {
 		AbstractWork work = taskPropertyValue.getTask();
+		work.removeProperty(taskPropertyValue);
 		TASK_PROPERTY_VALUE_DAO.remove(taskPropertyValue);
 		TASK_PROPERTY_VALUE_DAO.flush();
 		JPA.em().refresh(work);
