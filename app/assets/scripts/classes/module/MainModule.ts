@@ -53,6 +53,7 @@ module app.mod {
 				$rootScope.logout = function() {
 					authenticationService.logout();
 					$rootScope.loginStatus = null;
+					$location.path("/");
 				}
 			}]);
 		}
