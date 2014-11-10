@@ -74,7 +74,7 @@ The EEPPI application is independent of the choosen persistence.
 * In the play console the following commands are especially useful:
   * `run` to start this project under http://localhost:9000
   * `test` to run all tests
-  * `build` to build the project to target/universal/eeppi-0.2-SNAPSHOT.zip
+  * `build` to build the project to target/universal/eeppi-0.3-SNAPSHOT.zip
   * `compile` to just compile the code without running anyting
 
 
@@ -98,7 +98,7 @@ There is a vagrant environment containing EEPPI, ADRepo and Jira you can use to 
 - [Vagrant](www.vagrantup.com)
 
 
-#### 4.3.2. usage
+#### 4.3.2. Usage
 
 To start an virtual environment:
 
