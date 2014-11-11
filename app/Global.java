@@ -22,6 +22,7 @@ import daos.task.TaskTemplateDAO;
 import daos.user.PPTAccountDAO;
 import daos.user.ProjectDAO;
 import daos.user.UserDAO;
+import logics.Logger;
 import logics.dks.DKSMappingLogic;
 import logics.dks.DecisionKnowledgeSystemLogic;
 import logics.docs.DocumentationLogic;
@@ -43,9 +44,11 @@ import play.GlobalSettings;
 import play.data.format.Formatters;
 import play.libs.F;
 import play.libs.Json;
+import play.mvc.Action;
 import play.mvc.Http;
 import play.mvc.Result;
 
+import java.lang.reflect.Method;
 import java.security.SecureRandom;
 import java.text.ParseException;
 import java.util.HashMap;
@@ -60,6 +63,7 @@ import static play.mvc.Results.notFound;
 @SuppressWarnings("UnusedDeclaration")
 public class Global extends GlobalSettings {
 
+	private static final Logger LOGGER = new Logger("application.access");
 	private final TaskDAO TASK_DAO = new TaskDAO();
 	private final ProjectDAO PROJECT_DAO = new ProjectDAO();
 	private final MappingDAO MAPPING_DAO = new MappingDAO();
@@ -225,5 +229,29 @@ public class Global extends GlobalSettings {
 	@Override
 	public F.Promise<Result> onHandlerNotFound(Http.RequestHeader request) {
 		return F.Promise.pure(notFound(views.html.notFound.render()));
+	}
+
+	/**
+	 * Call to create the root Action of a request for a Java application.
+	 * The request and actionMethod values are passed for information.
+	 *
+	 * @param request      The HTTP Request
+	 * @param actionMethod The action method containing the user code for this Action.
+	 * @return The default implementation returns a raw Action calling the method.
+	 */
+	@Override
+	public Action onRequest(Http.Request request, Method actionMethod) {
+		return new Action.Simple() {
+			/**
+			 * Executes this action with the given HTTP context and returns the result.
+			 */
+			@Override
+			public F.Promise<Result> call(Http.Context ctx) throws Throwable {
+				LOGGER.debug("called " + actionMethod.getDeclaringClass().getCanonicalName() + "#" + actionMethod.getName() + "()");
+				return delegate.call(ctx);
+			}
+
+
+		};
 	}
 }
