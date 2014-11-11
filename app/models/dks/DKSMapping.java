@@ -34,4 +34,9 @@ public class DKSMapping extends AbstractEntity {
 		this.dksNode = dksNode;
 	}
 
+	@Override
+	public String toString() {
+		return "<DKSMapping " + getId() + " (taskTemplate=" + (taskTemplate == null ? "null" : taskTemplate.getId()) + ", dksNode=" + dksNode + ")>";
+	}
+
 }

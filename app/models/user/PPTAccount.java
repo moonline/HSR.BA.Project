@@ -64,4 +64,13 @@ public class PPTAccount extends AbstractEntity {
 	public void setPptPassword(String pptPassword) {
 		this.pptPassword = pptPassword;
 	}
+
+	@Override
+	public String toString() {
+		return "<PPTAccount " + getId() + " " + pptUsername +
+				" (ppt=" + (ppt == null ? "null" : ppt.getId()) +
+				", pptUrl=" + pptUrl +
+				",user=" + (user == null ? "null" : user.getId()) + ")>";
+	}
+
 }

@@ -1,8 +1,8 @@
 package daos;
 
+import logics.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import play.Logger;
 import play.db.jpa.JPA;
 
 import javax.persistence.Query;
@@ -11,14 +11,14 @@ import java.util.List;
 
 public abstract class AbstractDAO<T> {
 
+	private static final Logger LOGGER = new Logger("application.database");
+
 	@NotNull
 	private final Class<T> entity;
 	@NotNull
 	private final String queryReadAll;
 	@NotNull
 	private final String queryDeleteAll;
-	@NotNull
-	private final String queryRemoveById;
 
 	@SuppressWarnings({"rawtypes", "unchecked"})
 	protected AbstractDAO() {
@@ -31,10 +31,10 @@ public abstract class AbstractDAO<T> {
 		entity = (Class<T>) parameterizedType.getActualTypeArguments()[0];
 		queryReadAll = "select t from " + entity.getName() + " t ";
 		queryDeleteAll = "delete from " + entity.getName();
-		queryRemoveById = "delete from " + entity.getName() + " where id = ?1";
 	}
 
 	public T readById(Long id) {
+		LOGGER.debug("looked for " + entity.getSimpleName() + " with id " + id);
 		return JPA.em().find(entity, id);
 	}
 
@@ -42,19 +42,15 @@ public abstract class AbstractDAO<T> {
 		return findAll(queryReadAll);
 	}
 
-	public T persist(T e) {
-		JPA.em().persist(e);
-		return e;
+	public T persist(T entity) {
+		JPA.em().persist(entity);
+		LOGGER.debug("created: " + entity);
+		return entity;
 	}
 
 	public void remove(T entity) {
+		LOGGER.debug("removed: " + entity);
 		JPA.em().remove(entity);
-	}
-
-	public void removeById(long id) {
-		Query query = JPA.em().createQuery(queryRemoveById);
-		query.setParameter(1, id);
-		query.executeUpdate();
 	}
 
 	public void flush() {
@@ -62,30 +58,21 @@ public abstract class AbstractDAO<T> {
 	}
 
 	public int removeAll() {
+		LOGGER.debug("removed all " + entity.getSimpleName());
 		return JPA.em().createQuery(queryDeleteAll).executeUpdate();
 	}
 
 	protected List<T> findAll(String query) {
-		Logger.debug(query);
+		LOGGER.debug("looked for " + query);
 		return getResultList(JPA.em().createQuery(query));
 	}
 
 	protected List<T> findAll(String query, @NotNull Object... params) {
-		Logger.debug(query);
 		Query q = JPA.em().createQuery(query);
 		for (int i = 1; i <= params.length; i++) {
 			q.setParameter(i, params[i - 1]);
 		}
-		return getResultList(q);
-	}
-
-	protected List<T> findAllWithMaxResult(String query, Integer maxResult, @NotNull Object... params) {
-		Logger.debug(query);
-		Query q = JPA.em().createQuery(query);
-		for (int i = 1; i <= params.length; i++) {
-			q.setParameter(i, params[i - 1]);
-		}
-		q.setMaxResults(maxResult);
+		LOGGER.debug("looked for " + query, params);
 		return getResultList(q);
 	}
 

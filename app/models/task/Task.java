@@ -68,4 +68,15 @@ public class Task extends AbstractWork {
 	public void setFinalResponseContent(JsonNode finalResponseContent) {
 		this.finalResponseContent = Json.stringify(finalResponseContent);
 	}
+
+	@Override
+	public String toString() {
+		return "<User " + getId() + " (createdFrom=" + (createdFrom == null ? "null" : createdFrom.getId()) +
+				", project=" + (project == null ? "null" : project.getId()) +
+				", finalRequestUrl=" + finalRequestUrl +
+				", finalRequestContent=" + finalRequestContent +
+				", finalResponseStatus=" + finalResponseStatus +
+				", finalResponseContent=" + finalRequestContent + ")>";
+	}
+
 }

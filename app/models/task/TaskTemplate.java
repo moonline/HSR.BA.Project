@@ -40,4 +40,9 @@ public class TaskTemplate extends AbstractWork {
 		return dksMappings;
 	}
 
+	@Override
+	public String toString() {
+		return "<TaskTemplate " + getId() + " " + name + " (parent=" + (parent == null ? "null" : parent.getId()) + ")>";
+	}
+
 }

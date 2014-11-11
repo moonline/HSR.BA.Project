@@ -1,5 +1,3 @@
-//import com.arpnetworking.sbt.typescript.Import.TypescriptKeys._ //TODO Laurin: clean up this when https://github.com/ArpNetworking/sbt-typescript/issues/1 is solved
-
 name := """eeppi"""
 
 version := "0.3.1-SNAPSHOT"
