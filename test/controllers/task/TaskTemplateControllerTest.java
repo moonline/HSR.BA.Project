@@ -1,5 +1,6 @@
 package controllers.task;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import controllers.AbstractControllerTest;
 import daos.task.TaskPropertyValueDAO;
 import daos.task.TaskTemplateDAO;
@@ -17,6 +18,7 @@ import java.util.List;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static play.mvc.Http.Status.*;
+import static play.test.Helpers.contentAsString;
 import static play.test.Helpers.status;
 import static test.AbstractTestDataCreator.createUserWithTransaction;
 
@@ -262,6 +264,33 @@ public class TaskTemplateControllerTest extends AbstractControllerTest {
 				"      \"parent\" : null,\n" +
 				"      \"properties\" : []\n" +
 				"    }"));
+	}
+
+	@Test
+	public void testTaskTemplatesAreOrderedByName() throws Throwable {
+		//Setup
+		JPA.withTransaction(() -> {
+			AbstractTestDataCreator.removeAllTaskRelatedEntities();
+			AbstractTestDataCreator.createTaskTemplate("Task Template A");
+			AbstractTestDataCreator.createTaskTemplate("Task Template C");
+			AbstractTestDataCreator.createTaskTemplate("Task Template B");
+			AbstractTestDataCreator.createTaskTemplate("Task Template D");
+			AbstractTestDataCreator.createTaskTemplate("Task Template d");
+			AbstractTestDataCreator.createTaskTemplate("Task Template e");
+			AbstractTestDataCreator.createTaskTemplate("Task Template E");
+		});
+		//Test
+		Result result = callActionWithUser(routes.ref.TaskTemplateController.readAll());
+		//Verification
+		assertThat(status(result)).isEqualTo(OK);
+		ArrayNode list = (ArrayNode) Json.parse(contentAsString(result)).get("items");
+		assertThat(list.get(0).get("name").asText()).isEqualTo("Task Template A");
+		assertThat(list.get(1).get("name").asText()).isEqualTo("Task Template B");
+		assertThat(list.get(2).get("name").asText()).isEqualTo("Task Template C");
+		assertThat(list.get(3).get("name").asText()).isEqualTo("Task Template D");
+		assertThat(list.get(4).get("name").asText()).isEqualTo("Task Template d");
+		assertThat(list.get(5).get("name").asText()).isEqualTo("Task Template E");
+		assertThat(list.get(6).get("name").asText()).isEqualTo("Task Template e");
 	}
 
 }
