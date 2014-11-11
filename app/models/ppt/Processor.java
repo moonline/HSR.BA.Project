@@ -39,4 +39,10 @@ public class Processor extends AbstractEntity {
 	public void setCode(String code) {
 		this.code = code;
 	}
+
+	@Override
+	public String toString() {
+		return "<Processor " + getId() + " " + name + " (project=" + (project == null ? "null" : project.getId()) + ", code=" + code + ")>";
+	}
+
 }

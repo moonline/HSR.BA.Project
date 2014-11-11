@@ -50,4 +50,13 @@ public class Mapping extends AbstractEntity {
 		this.requestTemplate = requestTemplate;
 	}
 
+	@Override
+	public String toString() {
+		return "<User " + getId() +
+				" (ppt=" + (projectPlanningTool == null ? "null" : projectPlanningTool.getId()) +
+				", project=" + (project == null ? "null" : project.getId()) +
+				", url=" + url +
+				", requestTemplate=" + requestTemplate + ")>";
+	}
+
 }

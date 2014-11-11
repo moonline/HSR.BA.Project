@@ -24,7 +24,7 @@ public class Logger {
 	}
 
 	public void debug(String action, @NotNull Object... params) {
-		if (!action.equals("looked for select u from User u where u.name = ?")) { //prevent Stack Overflow Exception on logging (Logger calls this method itself)
+		if (!action.equals("looked for select u from User u where u.name = ?") && !action.startsWith("looked for User with id ")) { //prevent Stack Overflow Exception on logging (Logger calls this method itself)
 			Http.Context context = getContextIfPossible();
 			if (context != null) {
 				User loggedInUser = getLoggedInUserWithOrWithoutTransaction(context);

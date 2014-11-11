@@ -18,4 +18,10 @@ public class TaskProperty extends AbstractEntity {
 	public void setName(String name) {
 		this.name = name;
 	}
+
+	@Override
+	public String toString() {
+		return "<TaskProperty " + getId() + " " + name + ">";
+	}
+
 }
