@@ -55,7 +55,7 @@ module app.application {
 
 
 			$scope.problems = [];
-			$scope.currentProblem = null;
+			$scope.currentDksNode = null;
 			$scope.problemsLoadingStatus = app.application.ApplicationState.waiting;
 			devisionKnowledgeRepository.findAll(function(items) {
 				$scope.currentDks = <app.domain.model.dks.DecisionKnowledgeSystem>items[0];
@@ -77,8 +77,8 @@ module app.application {
 
 
 			/* problems */
-			$scope.setCurrentProblem = function(problem) {
-				$scope.currentProblem = problem;
+			$scope.setCurrentDksNode = function(problem) {
+				$scope.currentDksNode = problem;
 
 				$scope.mappingsLoadingStatus = app.application.ApplicationState.pending;
 				mappingRepository.findByDksNode(problem, function(mappings) {
@@ -148,11 +148,11 @@ module app.application {
 
 			/* mappings */
 			$scope.mapTaskTemplate = function(taskTemplate: app.domain.model.core.TaskTemplate) {
-				if($scope.currentProblem) {
+				if($scope.currentDksNode) {
 					$scope.mappingsLoadingStatus = app.application.ApplicationState.pending;
-					var newMapping: app.domain.model.core.Mapping = new app.domain.model.core.Mapping($scope.currentProblem.id, taskTemplate);
+					var newMapping: app.domain.model.core.Mapping = new app.domain.model.core.Mapping($scope.currentDksNode.id, taskTemplate);
 					mappingRepository.add(newMapping, function(item){
-						mappingRepository.findByDksNode($scope.currentProblem, function(mappings) {
+						mappingRepository.findByDksNode($scope.currentDksNode, function(mappings) {
 							if(mappings) {
 								$scope.currentMappings = mappings;
 								setTimeout(() => { $scope.mappingsLoadingStatus = app.application.ApplicationState.successful; $scope.$apply(); }, configuration.settings.messageBoxDelay);
@@ -167,7 +167,7 @@ module app.application {
 			$scope.removeMapping = function(mapping: app.domain.model.core.Mapping) {
 				$scope.mappingsLoadingStatus = app.application.ApplicationState.pending;
 				mappingRepository.remove(mapping, function() {
-					mappingRepository.findByDksNode($scope.currentProblem, function(mappings) {
+					mappingRepository.findByDksNode($scope.currentDksNode, function(mappings) {
 						if(mappings) {
 							$scope.currentMappings = mappings;
 							setTimeout(() => { $scope.mappingsLoadingStatus = app.application.ApplicationState.successful; $scope.$apply(); }, configuration.settings.messageBoxDelay);
