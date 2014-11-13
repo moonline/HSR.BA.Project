@@ -12,6 +12,9 @@ module configuration {
 		decisionKnowledgeSystem: {
 			list: { method: 'GET', url: '/public/temporaryDevelopmentData/dks/decisionKnowledgeSystem.json' }
 		},
+		project: {
+			list: { method: 'GET', url: '/project' }
+		},
 		mapping: {
 			list: { method: 'GET', url: '/dksMapping' },
 			detail: { method: 'GET', url: '/dksMapping/{id}' },
