@@ -4,8 +4,8 @@
 			<div class="areaContent">
 				<h2>Problem templates <a href="{{currentDks.address}}" target="_blank" title="from {{currentDks.address}}">&#x21d7;</a> (&Sigma;:{{problems.length}})</h2>
 
-				<span class="messagebox error" data-ng-if="problemsLoadingStatus === LoadingStatus.failed">Loading of DKS elements failed. Maybe service is not available.</span>
-				<span class="messagebox pending" data-ng-if="problemsLoadingStatus === LoadingStatus.pending">Loading ...</span>
+				<span class="messagebox error" data-ng-if="problemsLoadingStatus === ApplicationState.failed">Loading of DKS elements failed. Maybe service is not available.</span>
+				<span class="messagebox pending" data-ng-if="problemsLoadingStatus === ApplicationState.pending">Loading ...</span>
 
 				<ul data-type="list">
 					<li data-ng-repeat="problem in problems">
@@ -17,8 +17,8 @@
 							<span data-ng-if="!problemListChildrenVisibilityState[$index]" class="symbol extremeSmall">&#x25bc;</span>
 							<span data-ng-if="problemListChildrenVisibilityState[$index]" class="symbol extremeSmall">&#x25b2;</span>
 						</button>
-						<ul data-type="list" data-ng-if="problem.options.length > 0 && problemListChildrenVisibilityState[$index]">
-							<li data-ng-repeat="option in problem.options">
+						<ul data-type="list" data-ng-if="problem.alternatives.length > 0 && problemListChildrenVisibilityState[$index]">
+							<li data-ng-repeat="option in problem.alternatives">
 								<span class="name">{{option.name}}</span>
 							</li>
 						</ul>
@@ -29,7 +29,7 @@
 
 		<div class="column2 area pane" data-layout="flow" data-flow-direction="column" data-scroll="y">
 			<div class="areaContent">
-				<div class="decisionDetail" data-ng-if="currentProblem">
+				<div class="ProblemDetail" data-ng-if="currentProblem">
 					<h2>{{currentProblem.name}} [#{{currentProblem.id}}]</h2>
 					<dl>
 						<dt data-ng-if="currentProblem.notes">Notes</dt>
@@ -58,8 +58,8 @@
 
 					<h3>Mapping ({{currentProblem.name}} &hArr; Task templates)</h3>
 
-					<span class="messagebox error" data-ng-if="mappingsLoadingStatus === LoadingStatus.failed">Loading of task mappings failed. Maybe server is not available.</span>
-					<span class="messagebox pending" data-ng-if="mappingsLoadingStatus === LoadingStatus.pending">Loading ...</span>
+					<span class="messagebox error" data-ng-if="mappingsLoadingStatus === ApplicationState.failed">Loading of task mappings failed. Maybe server is not available.</span>
+					<span class="messagebox pending" data-ng-if="mappingsLoadingStatus === ApplicationState.pending">Loading ...</span>
 
 					<ul>
 						<li data-ng-repeat="mapping in currentMappings">
@@ -77,12 +77,12 @@
 			<div class="areaContent">
 				<h2>Task templates (&Sigma;:{{taskTemplates.length}})</h2>
 
-				<span class="messagebox error" data-ng-if="taskTemplateLoadingStatus === LoadingStatus.failed">Loading of task templates failed. Maybe server is not available.</span>
-				<span class="messagebox pending" data-ng-if="taskTemplateLoadingStatus === LoadingStatus.pending">Loading ...</span>
+				<span class="messagebox error" data-ng-if="taskTemplateLoadingStatus === ApplicationState.failed">Loading of task templates failed. Maybe server is not available.</span>
+				<span class="messagebox pending" data-ng-if="taskTemplateLoadingStatus === ApplicationState.pending">Loading ...</span>
 
 				<ul data-type="list">
 					<li data-ng-repeat="template in taskTemplates" data-state="{{template == currentTaskTemplate && 'selected' || '' }}">
-						<button class="action update" data-ng-if="currentProblem" data-ng-click="mapTaskTemplate(template)" title="Map task template with decision">&lt; map</button>
+						<button class="action update" data-ng-if="currentProblem" data-ng-click="mapTaskTemplate(template)" title="Map task template with decision knowledge system element">&lt; map</button>
 						<span data-ng-click="setCurrentTaskTemplate(template)" title="Edit task template">
 							<button class="action edit">&#x270E;</button> {{template.name}}
 						</span>

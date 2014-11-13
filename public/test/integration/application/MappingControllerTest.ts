@@ -24,7 +24,6 @@ module test.integration.application {
 				persistenceService = {
 					taskTemplateRepository: new app.domain.repository.core.TaskTemplateRepository($http),
 					taskPropertyRepository: new app.domain.repository.core.TaskPropertyRepository($http),
-					decisionRepository: new app.domain.repository.dks.DecisionRepository($http),
 					mappingRepository: new app.domain.repository.core.MappingRepository($http),
 					decisionKnowledgeRepository: new app.domain.repository.dks.DecisionKnowledgeSystemRepository($http),
 					problemRepository: new app.domain.repository.dks.ProblemRepository($http)
@@ -130,11 +129,7 @@ module test.integration.application {
 
 				expect(scope.problems.length).toEqual(1);
 				expect(scope.problems[0].name).toEqual("DB Model");
-				expect(scope.problems[0].options.length).toEqual(2);
-
-				expect(scope.decisions.length).toEqual(1);
-				expect(scope.decisions[0].name).toEqual("Session State Management");
-				expect(scope.decisions[0].options.length).toEqual(3);
+				expect(scope.problems[0].alternatives.length).toEqual(2);
 			})
 		});
 	}
