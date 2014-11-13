@@ -2,11 +2,12 @@
 
 /// <reference path='../domain/model/ProjectPlanningTool.ts' />
 /// <reference path='../domain/model/RequestTemplate.ts' />
+/// <reference path='../domain/model/PPTAccount.ts' />
+
 /// <reference path='../domain/repository/TaskPropertyRepository.ts' />
 
 /// <reference path='../application/ApplicationState.ts' />
 
-/// <reference path='../domain/model/PPTAccount.ts' />
 
 module app.application {
 	'use strict';
@@ -22,38 +23,88 @@ module app.application {
 
 			var pptAccountRepository = persistenceService['pptAccountRepository'];
 			var taskPropertyRepository = persistenceService['taskPropertyRepository'];
+			var requestTemplateRepository = persistenceService['requestTemplateRepository'];
+			var projectRepository = persistenceService['projectRepository'];
 
 			$scope.operationState = app.application.ApplicationState.pending;
+			setTimeout(() => { // set operation state to failed if no success after 4 seconds
+				if($scope.operationState == app.application.ApplicationState.pending) {
+					$scope.operationState = app.application.ApplicationState.failed;
+					$scope.$apply();
+				}
+			}, 4000);
 			taskPropertyRepository.findAll(function(taskProperties) {
 				$scope.taskProperties = taskProperties;
 
-				// prevent request mix of angular
+				// prevent request mix of angular -> call sync instead of parallel async
 				pptAccountRepository.findAll(function(pptAccounts) {
 					$scope.pptAccounts = pptAccounts;
-					setTimeout(() => { $scope.operationState = app.application.ApplicationState.successful; $scope.$apply(); }, configuration.settings.messageBoxDelay);
+
+					requestTemplateRepository.findAll(function(requestTemplates){
+						$scope.requestTemplates = requestTemplates;
+
+						projectRepository.findAll(function(projects){
+							$scope.currentProject = projects[0];
+							setTimeout(() => { $scope.operationState = app.application.ApplicationState.successful; $scope.$apply(); }, configuration.settings.messageBoxDelay);
+						});
+					});
 				});
 			});
 
-			var ppts: app.domain.model.ppt.ProjectPlanningTool[] = [];
+			$scope.projectPlanningTools =[];
+			// TODO: replace with api call
+			var ppt = new app.domain.model.ppt.ProjectPlanningTool("Redmine");
+			ppt.id = 1;
+			$scope.projectPlanningTools.push(ppt);
 			/*configuration.projectPlanningTools.forEach(function(pptConfig: any) {
-				ppts.push(new app.domain.model.ppt.ProjectPlanningTool(pptConfig.url, pptConfig.account, pptConfig.password))
+				projectPlanningTools.push(new app.domain.model.ppt.ProjectPlanningTool(pptConfig.url, pptConfig.account, pptConfig.password))
 			});*/
-			$scope.requestTemplates = [];
-			$scope.requestTemplates.push(new app.domain.model.core.RequestTemplate("Example", null, '{\n\t"fields": {\n\t\t"project": {\n\t\t\t"key": "TEST"\n\t\t},\n\t\t"assignee": "${assignee}",\n\t\t"description": "${description}",\n\t\t"issuetype": {\n\t\t\t"name": "${type}"\n\t\t}\n\t}\n}'));
+
+			//$scope.requestTemplates.push(new app.domain.model.ppt.RequestTemplate("Example", null, '{\n\t"fields": {\n\t\t"project": {\n\t\t\t"key": "TEST"\n\t\t},\n\t\t"assignee": "${assignee}",\n\t\t"description": "${description}",\n\t\t"issuetype": {\n\t\t\t"name": "${type}"\n\t\t}\n\t}\n}'));
 
 
-			$scope.addRequestTemplate = function(name: string, requestBody: string) {
-				$scope.requestTemplates.push(new app.domain.model.core.RequestTemplate(name, null, requestBody));
+			/* request templates */
+			$scope.addRequestTemplate = function(ppt: app.domain.model.ppt.ProjectPlanningTool, url: string, requestBody: string) {
+				var newRequestTemplate = new app.domain.model.ppt.RequestTemplate(ppt, url, requestBody);
+				newRequestTemplate.project = $scope.currentProject;
+				(<any>newRequestTemplate).requestTemplate = newRequestTemplate.requestBody;
+
+				$scope.operationState = app.application.ApplicationState.saving;
+				requestTemplateRepository.add(newRequestTemplate, function(success: boolean, item: app.domain.model.ppt.RequestTemplate){
+					if(success) {
+						setTimeout(() => { $scope.operationState = app.application.ApplicationState.successful; $scope.$apply(); }, configuration.settings.messageBoxDelay);
+					} else {
+						setTimeout(() => { $scope.operationState = app.application.ApplicationState.failed; $scope.$apply(); }, configuration.settings.messageBoxDelay);
+					}
+				})
 			};
-			$scope.updateRequestTemplate = function(requestTemplate: app.domain.model.core.RequestTemplate) {
-				// update persistence
+
+			$scope.updateRequestTemplate = function(requestTemplate: app.domain.model.ppt.RequestTemplate) {
+				(<any>requestTemplate).requestTemplate = requestTemplate.requestBody;
+
+				$scope.operationState = app.application.ApplicationState.saving;
+				requestTemplateRepository.update(requestTemplate, function(success: boolean, item: app.domain.model.ppt.RequestTemplate){
+					if(success) {
+						setTimeout(() => { $scope.operationState = app.application.ApplicationState.successful; $scope.$apply(); }, configuration.settings.messageBoxDelay);
+					} else {
+						setTimeout(() => { $scope.operationState = app.application.ApplicationState.failed; $scope.$apply(); }, configuration.settings.messageBoxDelay);
+					}
+				})
 			};
-			$scope.removeRequestTemplate = function(requestTemplate: app.domain.model.core.RequestTemplate) {
-				$scope.requestTemplates.splice($scope.requestTemplates.indexOf(requestTemplate),1);
-				// update persistence
+
+			$scope.removeRequestTemplate = function(requestTemplate: app.domain.model.ppt.RequestTemplate) {
+				$scope.operationState = app.application.ApplicationState.saving;
+				requestTemplateRepository.remove(requestTemplate, function(success: boolean){
+					if(success) {
+						setTimeout(() => { $scope.operationState = app.application.ApplicationState.successful; $scope.$apply(); }, configuration.settings.messageBoxDelay);
+					} else {
+						setTimeout(() => { $scope.operationState = app.application.ApplicationState.failed; $scope.$apply(); }, configuration.settings.messageBoxDelay);
+					}
+				})
 			};
 
 
+			/* task properties */
 			$scope.createTaskProperty = function(newTaskPropertyName: string) {
 				taskPropertyRepository.add(new app.domain.model.core.TaskProperty(newTaskPropertyName), function(status, property) {});
 			};
@@ -66,6 +117,7 @@ module app.application {
 			};
 
 
+			/* ppt accounts */
 			$scope.createPPTAccount = function(pptUrl: string, userName: string, password: string, ppt: app.domain.model.ppt.ProjectPlanningTool) {
 				var pptAccount: app.domain.model.ppt.PPTAccount = new app.domain.model.ppt.PPTAccount(
 					authenticationService.currentUser, userName, pptUrl, ppt

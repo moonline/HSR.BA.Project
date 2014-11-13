@@ -1,8 +1,6 @@
 /// <reference path='../../domain/repository/PersistentEntity.ts' />
 /// <reference path='../../domain/factory/FactoryConfiguration.ts' />
 
-/// <reference path='../../domain/repository/PersistentEntity.ts' />
-
 module app.domain.model.ppt {
 	export class ProjectPlanningTool implements app.domain.repository.core.PersistentEntity {
 		public static factoryConfiguration: app.domain.factory.FactoryConfiguration = {

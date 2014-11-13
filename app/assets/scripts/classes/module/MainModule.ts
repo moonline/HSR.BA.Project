@@ -13,6 +13,8 @@
 /// <reference path='../../classes/domain/repository/DecisionKnowledgeSystemRepository.ts' />
 /// <reference path='../../classes/domain/repository/ProblemRepository.ts' />
 /// <reference path='../../classes/domain/repository/PPTAccountRepository.ts' />
+/// <reference path='../../classes/domain/repository/RequestTemplateRepository.ts' />
+/// <reference path='../../classes/domain/repository/ProjectRepository.ts' />
 
 /// <reference path='../../classes/service/AuthenticationService.ts' />
 
@@ -123,7 +125,9 @@ module app.mod {
 					mappingRepository: new app.domain.repository.core.MappingRepository($http),
 					decisionKnowledgeRepository: new app.domain.repository.dks.DecisionKnowledgeSystemRepository($http),
 					problemRepository: new app.domain.repository.dks.ProblemRepository($http),
-					pptAccountRepository: new app.domain.repository.ppt.PPTAccountRepository($http)
+					pptAccountRepository: new app.domain.repository.ppt.PPTAccountRepository($http),
+					requestTemplateRepository: new app.domain.repository.ppt.RequestTemplateRepository($http),
+					projectRepository: new app.domain.repository.core.ProjectRepository($http)
 				};
 			}]);
 

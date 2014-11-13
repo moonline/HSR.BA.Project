@@ -30,22 +30,24 @@
 		</div>
 
 		<div class="area accordion">
-			<h3>Manage RequestTemplates <i>*Not persistent yet</i></h3>
+			<h3>Manage RequestTemplates</h3>
 			<form>
-				<div class="formLine" data-columns="4">
-					<label for="newRequestTemplateName">New Request template</label>
-					<input type="text" name="newRequestTemplateName" data-ng-model="newRequestTemplateName" placeholder="name" />
+				<div class="formLine" data-columns="6">
+					<label>New Request template</label>
 					<textarea name="newRequestTemplateBody" data-ng-model="newRequestTemplateBody" placeholder="request body"></textarea>
-					<button class="action create" data-ng-click="addRequestTemplate(newRequestTemplateName, newRequestTemplateBody); newRequestTemplateName = ''; newRequestTemplateBody = '';"
+					<input type="text" name="newRequestTemplateUrl" data-ng-model="newRequestTemplateUrl" placeholder="Request url (relative)" />
+					<select data-ng-model="newRequestTemplatePPT" name="newRequestTemplatePPT"
+						data-ng-options="projectPlanningTool.name for projectPlanningTool in projectPlanningTools" ></select>
+					<button class="action create" data-ng-click="addRequestTemplate(newRequestTemplatePPT, newRequestTemplateUrl, newRequestTemplateBody); newRequestTemplatePPT = null; newRequestTemplateUrl = ''; newRequestTemplateBody = '';"
 							title="Create a new request template">
 						<span class="icon big">&#x2b;</span>Add
 					</button>
 				</div>
-				<div class="formLine" data-columns="5">
-					<select data-ng-model="toUpdateRequest" data-ng-options="requestTemlate.name for requestTemlate in requestTemplates" ></select>
-
-					<input data-ng-disabled="!toUpdateRequest" type="text" name="requestTemplateNewName" data-ng-model="toUpdateRequest.name" placeholder="name" />
+				<div class="formLine" data-columns="6">
+					<select data-ng-model="toUpdateRequest" data-ng-options="requestTemlate.url for requestTemlate in requestTemplates" ></select>
 					<textarea data-ng-disabled="!toUpdateRequest" name="requestTemplateNewBody" data-ng-model="toUpdateRequest.requestBody" placeholder="request body"></textarea>
+					<input data-ng-disabled="!toUpdateRequest" type="text" name="requestTemplateNewUrl" data-ng-model="toUpdateRequest.url" placeholder="name" />
+					<label><span data-ng-if="toUpdateRequest">{{toUpdateRequest.ppt.name}}</span></label>
 					<button data-ng-disabled="!toUpdateRequest" class="action update" title="Update request template"
 							data-ng-click="updateRequestTemplate(toUpdateRequest); requestTemplateNewName = ''; requestTemplateNewBody = ''; toUpdateRequest = null;">
 						<span class="icon">&#x270E;</span>Update

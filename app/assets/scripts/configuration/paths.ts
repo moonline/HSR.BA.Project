@@ -46,6 +46,13 @@ module configuration {
 			update: { method: 'POST', url: '/taskProperty/{id}' },
 			remove: { method: 'POST', url: '/taskProperty/{id}/delete' }
 		},
+		requestTemplate: {
+			list: { method: 'GET', url: '/pptMapping' },
+			detail: { method: 'GET', url: '/pptMapping/{id}' },
+			create: { method: 'POST', url: '/pptMapping' },
+			update: { method: 'POST', url: '/pptMapping/{id}' },
+			remove: { method: 'POST', url: '/pptMapping/{id}/delete' }
+		},
 		user: {
 			login: { method: 'POST', url: '/user/login' },
 			logout: { method: 'POST', url: '/user/logout' },
