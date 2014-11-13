@@ -13,6 +13,7 @@ module app.domain.model.dks {
 			],
 			publicProperties: [
 				{ name: "id", type: Number, subType: null },
+				{ name: "self", type: String, subType: null },
 				{ name: "notes", type: String, subType: null },
 				{ name: "attributes", type: Object, subType: null },
 				{ name: "path", type: Array, subType: String }
@@ -22,6 +23,7 @@ module app.domain.model.dks {
 		public id: number;
 		public name: string;
 		public notes: string;
+		public self: string;
 		public attibutes: Object;
 		public path: string[];
 		public options: app.domain.model.dks.OptionTemplate[];

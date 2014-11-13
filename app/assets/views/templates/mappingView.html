@@ -7,7 +7,7 @@
 			<span class="messagebox pending" data-ng-if="problemsLoadingStatus === LoadingStatus.pending">Loading ...</span>
 
 			<ul data-type="list">
-				<li data-ng-repeat="problem in problems" data-state="{{problem == currentDecision && 'selected' || '' }}"
+				<li data-ng-repeat="problem in problems" data-state="{{problem == currentProblem && 'selected' || '' }}"
 					data-ng-click="setCurrentDecision(problem)">
 					<button class="action edit" title="View Details"><span class="icon iconOnly">&Xi;</span></button>
 					{{problem.name}}
@@ -18,32 +18,34 @@
 
 	<div class="column2 area" data-layout="flow" data-flow-direction="column" data-scroll="true">
 		<div class="areaContent">
-			<div class="decisionDetail" data-ng-if="currentDecision">
-				<h2>{{currentDecision.name}} [#{{currentDecision.id}}]</h2>
+			<div class="decisionDetail" data-ng-if="currentProblem">
+				<h2>{{currentProblem.name}} [#{{currentProblem.id}}]</h2>
                 <dl>
-                    <dt data-ng-if="currentDecision.notes">Notes</dt>
-                    <dd data-ng-if="currentDecision.notes">{{currentDecision.notes}}</dd>
+                    <dt data-ng-if="currentProblem.notes">Notes</dt>
+                    <dd data-ng-if="currentProblem.notes">{{currentProblem.notes}}</dd>
                     <dt>Path</dt>
-                    <dd><span data-ng-repeat="pathSegment in currentDecision.path">
+                    <dd><span data-ng-repeat="pathSegment in currentProblem.path">
                     <span class="pathDivider" data-ng-if="!$first">/</span><span class="pathSegment">{{pathSegment}}</span></span>
                     </dd>
-                    <dt data-ng-if="currentDecision.attributes.length > 0">Attributes</dt>
-                    <dd data-ng-if="currentDecision.attributes.length > 0">
+                    <dt data-ng-if="currentProblem.attributes.length > 0">Attributes</dt>
+                    <dd data-ng-if="currentProblem.attributes.length > 0">
                         <ul>
-                            <li data-ng-repeat="(key, value) in currentDecision.attributes">{{key}}: {{value}}</li>
+                            <li data-ng-repeat="(key, value) in currentProblem.attributes">{{key}}: {{value}}</li>
                         </ul>
                     </dd>
+					<dt>DKS link</dt>
+					<dd><a href="{{currentProblem.self}}" target="_blank">{{currentProblem.self}}</a></dd>
                     <dt>Options</dt>
                     <dd>
                         <ul>
-                            <li data-ng-repeat="option in currentDecision.options">
+                            <li data-ng-repeat="option in currentProblem.options">
                                 {{option.name}} [{{option.id}}]
                             </li>
                         </ul>
                     </dd>
                 </dl>
 
-                <h3>Mapping ({{currentDecision.name}} &hArr; Task templates)</h3>
+                <h3>Mapping ({{currentProblem.name}} &hArr; Task templates)</h3>
 
 				<span class="messagebox error" data-ng-if="mappingsLoadingStatus === LoadingStatus.failed">Loading of task mappings failed. Maybe server is not available.</span>
 				<span class="messagebox pending" data-ng-if="mappingsLoadingStatus === LoadingStatus.pending">Loading ...</span>
@@ -69,7 +71,7 @@
 
 			<ul data-type="list">
 				<li data-ng-repeat="template in taskTemplates" data-state="{{template == currentTaskTemplate && 'selected' || '' }}">
-					<button class="action update" data-ng-if="currentDecision" data-ng-click="mapTaskTemplate(template)" title="Map task template with decision">&lt; map</button>
+					<button class="action update" data-ng-if="currentProblem" data-ng-click="mapTaskTemplate(template)" title="Map task template with decision">&lt; map</button>
 					<span data-ng-click="setCurrentTaskTemplate(template)" title="Edit task template">
 						<button class="action edit">&#x270E;</button> {{template.name}}
 					</span>

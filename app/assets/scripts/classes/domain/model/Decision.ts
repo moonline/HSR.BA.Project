@@ -13,16 +13,24 @@ module app.domain.model.dks {
 			],
 			publicProperties: [
 				{ name: "id", type: Number, subType: null },
-				{ name: "state", type: String, subType: null }
+				{ name: "state", type: String, subType: null },
+				{ name: "self", type: String, subType: null },
+				{ name: "notes", type: String, subType: null },
+				{ name: "attributes", type: Object, subType: null },
+				{ name: "path", type: Array, subType: String }
 			]
 		};
 
 		public id: number;
 		public name: string;
-		public options: Option[];
+		public self: string;
+		public notes: string;
+		public attibutes: Object;
+		public path: string[];
+		public options;
 		public state: string;
 
-		constructor(name: string, options: Option[] = []) {
+		constructor(name: string, options = []) {
 			this.id = Math.round(Math.random()*1000000);
 			this.name = name;
 			this.options = options;

@@ -74,12 +74,12 @@ module app.application {
 				});
 			});
 
-			$scope.currentDecision = null;
+			$scope.currentProblem = null;
 			$scope.currentMappings = [];
 			$scope.mappingsLoadingStatus = LoadingStatus.waiting;
 
 			$scope.setCurrentDecision = function(decision) {
-				$scope.currentDecision = decision;
+				$scope.currentProblem = decision;
 
 				$scope.mappingsLoadingStatus = LoadingStatus.pending;
 				mappingRepository.findByDksNode(decision, function(mappings) {
@@ -133,11 +133,11 @@ module app.application {
 			};
 
 			$scope.mapTaskTemplate = function(taskTemplate: app.domain.model.core.TaskTemplate) {
-				if($scope.currentDecision) {
+				if($scope.currentProblem) {
 					$scope.mappingsLoadingStatus = LoadingStatus.pending;
-					var newMapping: app.domain.model.core.Mapping = new app.domain.model.core.Mapping($scope.currentDecision, taskTemplate);
+					var newMapping: app.domain.model.core.Mapping = new app.domain.model.core.Mapping($scope.currentProblem, taskTemplate);
 					mappingRepository.add(newMapping, function(item){
-						mappingRepository.findByDksNode($scope.currentDecision, function(mappings) {
+						mappingRepository.findByDksNode($scope.currentProblem, function(mappings) {
 							if(mappings) {
 								$scope.currentMappings = mappings;
 								setTimeout(() => { $scope.mappingsLoadingStatus = LoadingStatus.successful; $scope.$apply(); }, messageBoxDelay);
@@ -152,7 +152,7 @@ module app.application {
 			$scope.removeMapping = function(mapping: app.domain.model.core.Mapping) {
 				$scope.mappingsLoadingStatus = LoadingStatus.pending;
 				mappingRepository.remove(mapping, function() {
-					mappingRepository.findByDksNode($scope.currentDecision, function(mappings) {
+					mappingRepository.findByDksNode($scope.currentProblem, function(mappings) {
 						if(mappings) {
 							$scope.currentMappings = mappings;
 							setTimeout(() => { $scope.mappingsLoadingStatus = LoadingStatus.successful; $scope.$apply(); }, messageBoxDelay);
