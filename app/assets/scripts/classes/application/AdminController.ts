@@ -1,6 +1,10 @@
+/// <reference path='../../configuration/application.ts' />
+
 /// <reference path='../domain/model/ProjectPlanningTool.ts' />
 /// <reference path='../domain/model/RequestTemplate.ts' />
 /// <reference path='../domain/repository/TaskPropertyRepository.ts' />
+
+/// <reference path='../application/ApplicationState.ts' />
 
 /// <reference path='../domain/model/PPTAccount.ts' />
 
@@ -13,6 +17,8 @@ module app.application {
 
 		constructor($scope, $location, $http, persistenceService, authenticationService) {
 			this.authenticationService = authenticationService;
+			$scope.ApplicationState = app.application.ApplicationState;
+			$scope.operationState = app.application.ApplicationState.waiting;
 
 			var taskPropertyRepository = persistenceService['taskPropertyRepository'];
 			taskPropertyRepository.findAll(function(taskProperties) {
@@ -55,25 +61,43 @@ module app.application {
 				}
 			};
 
+
 			$scope.createPPTAccount = function(pptUrl: string, userName: string, password: string, ppt: app.domain.model.ppt.ProjectPlanningTool) {
 				var pptAccount: app.domain.model.ppt.PPTAccount = new app.domain.model.ppt.PPTAccount(
 					authenticationService.currentUser, userName, pptUrl, ppt
 				);
 				pptAccount.pptPassword = password;
+				$scope.operationState = app.application.ApplicationState.saving;
 				pptAccountRepository.add(pptAccount, function(success: boolean, item: app.domain.model.ppt.PPTAccount) {
-					// TODO
+					if(success) {
+						setTimeout(() => { $scope.operationState = app.application.ApplicationState.successful; $scope.$apply(); }, configuration.settings.messageBoxDelay);
+					} else {
+						setTimeout(() => { $scope.operationState = app.application.ApplicationState.failed; $scope.$apply(); }, configuration.settings.messageBoxDelay);
+					}
 				});
 			};
 
 			$scope.updatePPTAccount = function(pptAccount: app.domain.model.ppt.PPTAccount) {
+				// TODO remove this hack after api fix
+				(<any>pptAccount).ppt = 1;
+				$scope.operationState = app.application.ApplicationState.saving;
 				pptAccountRepository.update(pptAccount, function(success, item) {
-					// TODO
+					if(success) {
+						setTimeout(() => { $scope.operationState = app.application.ApplicationState.successful; $scope.$apply(); }, configuration.settings.messageBoxDelay);
+					} else {
+						setTimeout(() => { $scope.operationState = app.application.ApplicationState.failed; $scope.$apply(); }, configuration.settings.messageBoxDelay);
+					}
 				});
 			};
 
 			$scope.removePPTAccount = function(pptAccount: app.domain.model.ppt.PPTAccount) {
+				$scope.operationState = app.application.ApplicationState.saving;
 				pptAccountRepository.remove(pptAccount, function(success){
-					// TODO
+					if(success) {
+						setTimeout(() => { $scope.operationState = app.application.ApplicationState.successful; $scope.$apply(); }, configuration.settings.messageBoxDelay);
+					} else {
+						setTimeout(() => { $scope.operationState = app.application.ApplicationState.failed; $scope.$apply(); }, configuration.settings.messageBoxDelay);
+					}
 				});
 			}
 		}

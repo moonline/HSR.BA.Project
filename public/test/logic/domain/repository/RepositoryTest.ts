@@ -159,6 +159,7 @@ module test.logic.domain.repository {
 					$httpBackend.flush();
 
 					expect(status).toEqual(true);
+					expect(repository.itemCache.length).toEqual(1);
 				}));
 
 				it("Update dummy using .update()",angular.mock.inject(function($httpBackend, $http) {
