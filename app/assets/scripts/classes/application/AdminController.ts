@@ -20,14 +20,18 @@ module app.application {
 			$scope.ApplicationState = app.application.ApplicationState;
 			$scope.operationState = app.application.ApplicationState.waiting;
 
+			var pptAccountRepository = persistenceService['pptAccountRepository'];
 			var taskPropertyRepository = persistenceService['taskPropertyRepository'];
+
+			$scope.operationState = app.application.ApplicationState.pending;
 			taskPropertyRepository.findAll(function(taskProperties) {
 				$scope.taskProperties = taskProperties;
-			});
 
-			var pptAccountRepository = persistenceService['pptAccountRepository'];
-			pptAccountRepository.findAll(function(pptAccounts) {
-				$scope.pptAccounts = pptAccounts;
+				// prevent request mix of angular
+				pptAccountRepository.findAll(function(pptAccounts) {
+					$scope.pptAccounts = pptAccounts;
+					setTimeout(() => { $scope.operationState = app.application.ApplicationState.successful; $scope.$apply(); }, configuration.settings.messageBoxDelay);
+				});
 			});
 
 			var ppts: app.domain.model.ppt.ProjectPlanningTool[] = [];
