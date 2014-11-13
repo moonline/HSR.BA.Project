@@ -75,10 +75,10 @@
 
 		<div class="column3 area pane" data-layout="flow" data-flow-direction="column" data-scroll="y">
 			<div class="areaContent">
+				<h2>Task templates (&Sigma;:{{taskTemplates.length}})</h2>
+
 				<span class="messagebox error" data-ng-if="taskTemplateLoadingStatus === LoadingStatus.failed">Loading of task templates failed. Maybe server is not available.</span>
 				<span class="messagebox pending" data-ng-if="taskTemplateLoadingStatus === LoadingStatus.pending">Loading ...</span>
-
-				<h2>Task templates (&Sigma;:{{taskTemplates.length}})</h2>
 
 				<ul data-type="list">
 					<li data-ng-repeat="template in taskTemplates" data-state="{{template == currentTaskTemplate && 'selected' || '' }}">
