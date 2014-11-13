@@ -38,10 +38,8 @@
 			<div class="formLine" data-columns="5">
 				<select data-ng-model="toUpdateRequest" data-ng-options="requestTemlate.name for requestTemlate in requestTemplates" ></select>
 
-				<input data-ng-disabled="!toUpdateRequest" type="text" name="requestTemplateNewName" data-ng-model="toUpdateRequest.name"
-					data-ng-model="requestTemplateNewName" placeholder="name" />
-				<textarea data-ng-disabled="!toUpdateRequest" name="requestTemplateNewBody" data-ng-model="toUpdateRequest.requestBody"
-					data-ng-model="requestTemplateNewBody" placeholder="request body"></textarea>
+				<input data-ng-disabled="!toUpdateRequest" type="text" name="requestTemplateNewName" data-ng-model="toUpdateRequest.name" placeholder="name" />
+				<textarea data-ng-disabled="!toUpdateRequest" name="requestTemplateNewBody" data-ng-model="toUpdateRequest.requestBody" placeholder="request body"></textarea>
 				<button data-ng-disabled="!toUpdateRequest" class="action update" title="Update request template"
 						data-ng-click="updateRequestTemplate(toUpdateRequest); requestTemplateNewName = ''; requestTemplateNewBody = ''; toUpdateRequest = null;">
 					<span class="icon">&#x270E;</span>Update
@@ -50,7 +48,41 @@
 						data-ng-click="removeRequestTemplate(toUpdateRequest); requestTemplateNewName = ''; requestTemplateNewBody = ''; toUpdateRequest = null;">
 					<span class="icon big">&minus;</span>Remove
 				</button>
+			</div>
+		</form>
+	</div>
 
+	<div class="accordeonArea">
+		<h3>Manage project planning tool accounts</h3>
+		<form>
+			<div class="formLine" data-columns="6">
+				<label for="newPPTAccountUrl">New ppt account</label>
+				<input type="text" name="newPPTAccountUrl" data-ng-model="newPPTAccountUrl" placeholder="ppt url" />
+				<input type="text" name="newPPTAccountUsername" data-ng-model="newPPTAccountUsername" placeholder="ppt username" />
+				<input type="password" name="newPPTAccountPassword" data-ng-model="newPPTAccountPassword" placeholder="ppt password" />
+				<!--<select data-ng-model="newPPTAccountPPT"
+						data-ng-options="ppt.name for ppt in ppts" >
+				</select>-->
+
+				<button class="action create" data-ng-click="createPPTAccount(newPPTAccountUrl, newPPTAccountUsername, newPPTAccountPassword, null); newPPTAccountUrl = ''; newPPTAccountUsername = ''; newPPTAccountPassword = '';"
+						title="Create a new project planning tool account">
+					<span class="icon big">&#x2b;</span>Add
+				</button>
+			</div>
+			<div class="formLine" data-columns="6">
+				<select data-ng-model="toUpdatePPTAccount" data-ng-options="pptAccount.pptUsername for pptAccount in pptAccounts"></select>
+				<input data-ng-disabled="!toUpdatePPTAccount" type="text" name="toUpdatePPTAccountUrl" data-ng-model="toUpdatePPTAccount.pptUrl" placeholder="ppt url" />
+				<input data-ng-disabled="!toUpdatePPTAccount" type="text" name="toUpdatePPTAccountUsername" data-ng-model="toUpdatePPTAccount.pptUsername" placeholder="username" />
+				<input data-ng-disabled="!toUpdatePPTAccount" type="password" name="toUpdatePPTAccountPassword" data-ng-model="toUpdatePPTAccount.pptPassword" placeholder="password" />
+
+				<button data-ng-disabled="!toUpdatePPTAccount" class="action update"
+					data-ng-click="updatePPTAccount(toUpdatePPTAccount); toUpdatePPTAccount = null;">
+					<span class="icon">&#x270E;</span>update
+				</button>
+				<button data-ng-disabled="!toUpdatePPTAccount" class="action remove" title="Remove project planning tool account"
+					data-ng-click="removeRequestTemplate(toUpdateRequest); requestTemplateNewName = ''; requestTemplateNewBody = ''; toUpdateRequest = null;">
+				<span class="icon big">&minus;</span>Remove
+			</button>
 			</div>
 		</form>
 	</div>

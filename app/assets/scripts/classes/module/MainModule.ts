@@ -12,6 +12,7 @@
 /// <reference path='../../classes/domain/repository/MappingRepository.ts' />
 /// <reference path='../../classes/domain/repository/DecisionKnowledgeSystemRepository.ts' />
 /// <reference path='../../classes/domain/repository/ProblemRepository.ts' />
+/// <reference path='../../classes/domain/repository/PPTAccountRepository.ts' />
 
 /// <reference path='../../classes/service/AuthenticationService.ts' />
 
@@ -108,7 +109,7 @@ module app.mod {
 			this.module.controller('mappingController', ['$scope', '$location', '$http', 'persistenceService', app.application.MappingController]);
 			this.module.controller('transmissionController', ['$scope', '$location', 'persistenceService', '$http', app.application.TransmissionController]);
 			this.module.controller('registerController', ['$scope', '$location', '$http', 'persistenceService', app.application.RegisterController]);
-			this.module.controller('adminController', ['$scope', '$location', '$http', 'persistenceService', app.application.AdminController]);
+			this.module.controller('adminController', ['$scope', '$location', '$http', 'persistenceService', 'authenticationService', app.application.AdminController]);
 			this.module.controller('dashboardController', ['$scope', '$location', '$http', 'persistenceService', app.application.DashboardController]);
 
 		}
@@ -121,7 +122,8 @@ module app.mod {
 					decisionRepository: new app.domain.repository.dks.DecisionRepository($http),
 					mappingRepository: new app.domain.repository.core.MappingRepository($http),
 					decisionKnowledgeRepository: new app.domain.repository.dks.DecisionKnowledgeSystemRepository($http),
-					problemRepository: new app.domain.repository.dks.ProblemRepository($http)
+					problemRepository: new app.domain.repository.dks.ProblemRepository($http),
+					pptAccountRepository: new app.domain.repository.ppt.PPTAccountRepository($http)
 				};
 			}]);
 

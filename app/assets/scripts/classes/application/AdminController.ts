@@ -2,6 +2,8 @@
 /// <reference path='../domain/model/RequestTemplate.ts' />
 /// <reference path='../domain/repository/TaskPropertyRepository.ts' />
 
+/// <reference path='../domain/model/PPTAccount.ts' />
+
 module app.application {
 	'use strict';
 
@@ -9,10 +11,17 @@ module app.application {
 		$scope: any;
 		authenticationService: app.service.AuthenticationService;
 
-		constructor($scope, $location, $http, persistenceService) {
+		constructor($scope, $location, $http, persistenceService, authenticationService) {
+			this.authenticationService = authenticationService;
+
 			var taskPropertyRepository = persistenceService['taskPropertyRepository'];
 			taskPropertyRepository.findAll(function(taskProperties) {
 				$scope.taskProperties = taskProperties;
+			});
+
+			var pptAccountRepository = persistenceService['pptAccountRepository'];
+			pptAccountRepository.findAll(function(pptAccounts) {
+				$scope.pptAccounts = pptAccounts;
 			});
 
 			var ppts: app.domain.model.ppt.ProjectPlanningTool[] = [];
@@ -45,6 +54,28 @@ module app.application {
 					taskPropertyRepository.update(property, function(status, property) {});
 				}
 			};
+
+			$scope.createPPTAccount = function(pptUrl: string, userName: string, password: string, ppt: app.domain.model.ppt.ProjectPlanningTool) {
+				var pptAccount: app.domain.model.ppt.PPTAccount = new app.domain.model.ppt.PPTAccount(
+					authenticationService.currentUser, userName, pptUrl, ppt
+				);
+				pptAccount.pptPassword = password;
+				pptAccountRepository.add(pptAccount, function(success: boolean, item: app.domain.model.ppt.PPTAccount) {
+					// TODO
+				});
+			};
+
+			$scope.updatePPTAccount = function(pptAccount: app.domain.model.ppt.PPTAccount) {
+				pptAccountRepository.update(pptAccount, function(success, item) {
+					// TODO
+				});
+			};
+
+			$scope.removePPTAccount = function(pptAccount: app.domain.model.ppt.PPTAccount) {
+				pptAccountRepository.remove(pptAccount, function(success){
+					// TODO
+				});
+			}
 		}
 	}
 }

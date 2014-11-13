@@ -30,6 +30,7 @@ body, pre.multilineText { font-family: Arial, Helvetica, sans-serif; }
 	&.column3 { width: 40%!important; }
 
 
+
 	h2 {
 		.blueGradient; padding: 0.5rem; margin: 1.5rem -0.5rem 0.5rem -0.5rem;
 		&:first-of-type { margin-top: -0.5rem; }
@@ -155,13 +156,13 @@ button {
 			&:hover { color: black; }
 		}
 	}
-	&[disabled] {
-		background: silver; background: linear-gradient(gainsboro, silver); border: none; color: gray;
-		&:hover { border: none; }
-	}
 	&.noButton {
 		background: none; border: none; box-shadow: none;
 		&:hover { color: gray; }
+	}
+	&[disabled] {
+		background: silver!important; background: linear-gradient(gainsboro, silver)!important; border: none; color: gray;
+		&:hover { border: none; }
 	}
 }
 button + button { margin-left: 0.25rem; }
@@ -184,26 +185,34 @@ input, textarea {
 	&.error { background: peachpuff; color: black; box-shadow: inset 0.1rem 0.1rem 0.2rem darksalmon; }
 }
 form .status { margin: -0.5rem -0.5rem 0.5rem -0.5rem; }
+
 .formLine {
 	margin: 0.25rem 0;
 	display: flex; flex-wrap: nowrap; justify-content: spance-between; width: 100%;
 	&[data-columns="3"] {
-		> :nth-child(+1) { width: 30%; margin-right: 0.2rem; max-width: 12rem; }
+		> :nth-child(+1) { width: 30%; margin-right: 0.2rem; max-width: 15rem; }
 		> :nth-child(+2) { width: 50%; margin: 0 0.2rem; }
-		> :nth-child(+3) { width: 20%; max-width: 8rem; margin-left: 0.2rem; }
+		> :nth-child(+3) { width: 20%; max-width: 10rem; margin-left: 0.2rem; }
 	}
 	&[data-columns="4"] {
-		> :nth-child(+1) { width: 30%; margin-right: 0.2rem; max-width: 12rem; }
+		> :nth-child(+1) { width: 30%; margin-right: 0.2rem; max-width: 15rem; }
 		> :nth-child(+2) { width: 20%; margin: 0 0.2rem; }
 		> :nth-child(+3) { width: 30%; margin: 0 0.2rem; }
-		> :nth-child(+4) { width: 20%; max-width: 8rem; margin-left: 0.2rem; }
+		> :nth-child(+4) { width: 20%; max-width: 10rem; margin-left: 0.2rem; }
 	}
 	&[data-columns="5"] {
-		> :nth-child(+1) { width: 30%; margin-right: 0.2rem; max-width: 12rem; }
+		> :nth-child(+1) { width: 30%; margin-right: 0.2rem; max-width: 15rem; }
 		> :nth-child(+2) { width: 20%; margin: 0 0.2rem; }
 		> :nth-child(+3) { width: 30%; margin: 0 0.2rem; }
-		> :nth-child(+4) { width: 10%; max-width: 8rem; margin-left: 0.2rem; }
-		> :nth-child(+5) { width: 10%; max-width: 8rem; margin-left: 0.2rem; }
+		> :nth-child(+4), > :nth-child(+5) { width: 10%; max-width: 10rem; margin-left: 0.2rem; }
+	}
+	&[data-columns="6"] {
+		> :nth-child(+1) { width: 30%; margin-right: 0.2rem; max-width: 15rem; }
+		> :nth-child(+2) { width: 20%; margin: 0 0.2rem; }
+		> :nth-child(+3), > :nth-child(+4) {
+			width: 15%; margin: 0 0.1rem;
+		}
+		> :nth-child(+5), > :nth-child(+6) { width: 10%; max-width: 10rem; margin-left: 0.2rem; }
 	}
 }
 select {

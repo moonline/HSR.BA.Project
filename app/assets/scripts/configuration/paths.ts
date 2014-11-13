@@ -29,6 +29,13 @@ module configuration {
 			addProperty: { method: 'POST', url: '/taskTemplate/{id}/addProperty'},
 			removeProperty: { method: 'POST', url: '/taskTemplate/{id}/properties/{propertyValueId}/delete' }
 		},
+		pptAccount: {
+			list: { method: 'GET', url: '/user/pptAccount' },
+			detail: { method: 'GET', url: '/user/pptAccount/{id}' },
+			create: { method: 'POST', url: '/user/pptAccount' },
+			update: { method: 'POST', url: '/user/pptAccount/{id}' },
+			remove: { method: 'POST', url: '/user/pptAccount/{id}/delete' }
+		},
 		taskProperty: {
 			list: { method: 'GET', url: '/taskProperty' },
 			detail: { method: 'GET', url: '/taskProperty/{id}' },
