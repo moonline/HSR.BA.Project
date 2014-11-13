@@ -1,11 +1,11 @@
 <div class="main" data-region="center" >
 	<div class="area page admin" data-scroll="y">
-		<h2>Administration</h2>
 		<div class="operationState">
-			<span class="messagebox error" data-ng-if="operationState === ApplicationState.failed">Loading of task templates failed. Maybe server is not available.</span>
+			<span class="messagebox error" data-ng-if="operationState === ApplicationState.failed">Loading of data failed. Maybe server is not available.</span>
 			<span class="messagebox pending" data-ng-if="operationState === ApplicationState.pending">Loading ...</span>
 			<span class="messagebox saving" data-ng-if="operationState === ApplicationState.saving">Saving ...</span>
 		</div>
+		<h2>Administration</h2>
 
 		<div class="area accordion">
 			<h3>Manage Properties</h3>
