@@ -4,6 +4,7 @@
 /// <reference path='../test/logic/domain/repository/MappingRepositoryTest.ts' />
 /// <reference path='../test/logic/domain/factory/ObjectFactoryTest.ts' />
 /// <reference path='../test/logic/service/AuthenticationServiceTest.ts' />
+/// <reference path='../test/logic/service/ProcessorProcesserTest.ts' />
 /// <reference path='../test/integration/application/MappingControllerTest.ts' />
 
 module test {
@@ -21,6 +22,7 @@ module test {
 
 		describe("Service test suite", function() {
 			test.logic.service.AuthenticationServiceTest();
+			test.logic.service.ProcessorProcesserTest();
 		});
 	});
 
