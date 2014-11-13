@@ -30,7 +30,7 @@ public class PPTAccountControllerTest extends AbstractControllerTest {
 		//Test
 		Result result = callActionWithUser(routes.ref.PPTAccountController.create(), user, postData(
 				"ppt", ppt.getId() + "",
-				"url", "http://example.com",
+				"pptUrl", "http://example.com",
 				"pptUsername", "my username",
 				"pptPassword", "123456"));
 		//Verification
@@ -54,7 +54,7 @@ public class PPTAccountControllerTest extends AbstractControllerTest {
 		//Test
 		Result result = callActionWithUser(routes.ref.PPTAccountController.create(), user, postData(
 				"ppt", ppt.getId() + "",
-				"url", "http://example.com",
+				"pptUrl", "http://example.com",
 				"pptUsername", "my username"));
 		//Verification
 		assertThat(status(result)).isEqualTo(BAD_REQUEST);
@@ -67,7 +67,7 @@ public class PPTAccountControllerTest extends AbstractControllerTest {
 		//Test
 		Result result = callActionWithUser(routes.ref.PPTAccountController.create(), user, postData(
 				"ppt", "9999",
-				"url", "http://example.com",
+				"pptUrl", "http://example.com",
 				"pptUsername", "my username",
 				"pptPassword", "123456"));
 		//Verification
@@ -140,7 +140,7 @@ public class PPTAccountControllerTest extends AbstractControllerTest {
 		//Test
 		Result result = callActionWithUser(routes.ref.PPTAccountController.update(account.getId()), user, postData(
 				"ppt", ppt.getId() + "",
-				"url", "http://another-example.com",
+				"pptUrl", "http://another-example.com",
 				"pptUsername", "my new username",
 				"pptPassword", "more secure"));
 		//Verification
@@ -170,7 +170,7 @@ public class PPTAccountControllerTest extends AbstractControllerTest {
 		//Test
 		Result result = callActionWithUser(routes.ref.PPTAccountController.update(account.getId()), user, postData(
 				"ppt", ppt.getId() + "",
-				"url", "http://another-example.com",
+				"pptUrl", "http://another-example.com",
 				"pptUsername", "my new username"));
 		//Verification
 		assertThat(status(result)).isEqualTo(OK);

@@ -35,7 +35,7 @@ public class PPTAccountLogic {
 
 	public PPTAccount update(PPTAccount account, UpdatePPTAccountForm updateData) {
 		account.setPpt(updateData.ppt);
-		account.setPptUrl(updateData.url);
+		account.setPptUrl(updateData.pptUrl);
 		account.setPptUsername(updateData.pptUsername);
 		if (updateData.pptPassword != null) {
 			account.setPptPassword(updateData.pptPassword);
@@ -53,7 +53,7 @@ public class PPTAccountLogic {
 		@Constraints.Required
 		public ProjectPlanningTool ppt;
 		@Constraints.Required
-		public String url;
+		public String pptUrl;
 		@Constraints.Required
 		public String pptUsername;
 
