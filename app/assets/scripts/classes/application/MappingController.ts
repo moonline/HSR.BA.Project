@@ -10,18 +10,17 @@
 /// <reference path='../domain/repository/MappingRepository.ts' />
 /// <reference path='../domain/repository/TaskTemplateRepository.ts' />
 /// <reference path='../domain/repository/TaskPropertyRepository.ts' />
+/// <reference path='../application/ApplicationState.ts' />
 
 module app.application {
 	'use strict';
-
-	export enum LoadingStatus { waiting, successful, failed, pending }
 
 	export class MappingController {
 		private scope: any;
 
 		constructor($scope, $location, $http, persistenceService) {
 			var messageBoxDelay = 1000; //ms
-			$scope.LoadingStatus = LoadingStatus;
+			$scope.LoadingStatus = app.application.ApplicationState;
 			var decisionRepository = persistenceService['decisionRepository'];
 
 			// there is a problem if Angular fires two requests nearly at the same time.
@@ -32,13 +31,13 @@ module app.application {
 			var taskTemplateRepository =  persistenceService['taskTemplateRepository'];
 
 			$scope.taskTemplates = [];
-			$scope.taskTemplateLoadingStatus = LoadingStatus.pending;
+			$scope.taskTemplateLoadingStatus = app.application.ApplicationState.pending;
 			taskTemplateRepository.findAll(function(taskTemplates) {
 				if(taskTemplates) {
 					$scope.taskTemplates = taskTemplates;
-					setTimeout(() => { $scope.taskTemplateLoadingStatus = LoadingStatus.successful; $scope.$apply(); }, messageBoxDelay);
+					setTimeout(() => { $scope.taskTemplateLoadingStatus = app.application.ApplicationState.successful; $scope.$apply(); }, messageBoxDelay);
 				} else {
-					setTimeout(() => { $scope.taskTemplateLoadingStatus = LoadingStatus.failed; $scope.$apply(); }, messageBoxDelay);
+					setTimeout(() => { $scope.taskTemplateLoadingStatus = app.application.ApplicationState.failed; $scope.$apply(); }, messageBoxDelay);
 				}
 
 				taskPropertyRepository.findAll(function(taskProperties) {
@@ -51,18 +50,18 @@ module app.application {
 			var mappingRepository: app.domain.repository.core.MappingRepository = persistenceService['mappingRepository'];
 
 			$scope.problems = [];
-			$scope.problemsLoadingStatus = LoadingStatus.waiting;
+			$scope.problemsLoadingStatus = app.application.ApplicationState.waiting;
 			persistenceService['decisionKnowledgeRepository'].findAll(function(items) {
 				$scope.currentDks = <app.domain.model.dks.DecisionKnowledgeSystem>items[0];
 
-				$scope.problemsLoadingStatus = LoadingStatus.pending;
+				$scope.problemsLoadingStatus = app.application.ApplicationState.pending;
 				problemRepository.host = $scope.currentDks.address;
 				problemRepository.findAll(function(items) {
 					if(items) {
 						$scope.problems = items;
-						setTimeout(() => { $scope.problemsLoadingStatus = LoadingStatus.successful; $scope.$apply(); }, messageBoxDelay);
+						setTimeout(() => { $scope.problemsLoadingStatus = app.application.ApplicationState.successful; $scope.$apply(); }, messageBoxDelay);
 					} else {
-						setTimeout(() => { $scope.problemsLoadingStatus = LoadingStatus.failed; $scope.$apply(); }, messageBoxDelay);
+						setTimeout(() => { $scope.problemsLoadingStatus = app.application.ApplicationState.failed; $scope.$apply(); }, messageBoxDelay);
 					}
 				});
 
@@ -76,18 +75,18 @@ module app.application {
 
 			$scope.currentProblem = null;
 			$scope.currentMappings = [];
-			$scope.mappingsLoadingStatus = LoadingStatus.waiting;
+			$scope.mappingsLoadingStatus = app.application.ApplicationState.waiting;
 
 			$scope.setCurrentProblem = function(decision) {
 				$scope.currentProblem = decision;
 
-				$scope.mappingsLoadingStatus = LoadingStatus.pending;
+				$scope.mappingsLoadingStatus = app.application.ApplicationState.pending;
 				mappingRepository.findByDksNode(decision, function(mappings) {
 					if(mappings) {
 						$scope.currentMappings = mappings;
-						setTimeout(() => { $scope.mappingsLoadingStatus = LoadingStatus.successful; $scope.$apply(); }, messageBoxDelay);
+						setTimeout(() => { $scope.mappingsLoadingStatus = app.application.ApplicationState.successful; $scope.$apply(); }, messageBoxDelay);
 					} else {
-						setTimeout(() => { $scope.mappingsLoadingStatus = LoadingStatus.failed; $scope.$apply(); }, messageBoxDelay);
+						setTimeout(() => { $scope.mappingsLoadingStatus = app.application.ApplicationState.failed; $scope.$apply(); }, messageBoxDelay);
 					}
 				});
 			};
@@ -145,15 +144,15 @@ module app.application {
 
 			$scope.mapTaskTemplate = function(taskTemplate: app.domain.model.core.TaskTemplate) {
 				if($scope.currentProblem) {
-					$scope.mappingsLoadingStatus = LoadingStatus.pending;
+					$scope.mappingsLoadingStatus = app.application.ApplicationState.pending;
 					var newMapping: app.domain.model.core.Mapping = new app.domain.model.core.Mapping($scope.currentProblem, taskTemplate);
 					mappingRepository.add(newMapping, function(item){
 						mappingRepository.findByDksNode($scope.currentProblem, function(mappings) {
 							if(mappings) {
 								$scope.currentMappings = mappings;
-								setTimeout(() => { $scope.mappingsLoadingStatus = LoadingStatus.successful; $scope.$apply(); }, messageBoxDelay);
+								setTimeout(() => { $scope.mappingsLoadingStatus = app.application.ApplicationState.successful; $scope.$apply(); }, messageBoxDelay);
 							} else {
-								setTimeout(() => { $scope.mappingsLoadingStatus = LoadingStatus.failed; $scope.$apply(); }, messageBoxDelay);
+								setTimeout(() => { $scope.mappingsLoadingStatus = app.application.ApplicationState.failed; $scope.$apply(); }, messageBoxDelay);
 							}
 						});
 					});
@@ -161,14 +160,14 @@ module app.application {
 			};
 
 			$scope.removeMapping = function(mapping: app.domain.model.core.Mapping) {
-				$scope.mappingsLoadingStatus = LoadingStatus.pending;
+				$scope.mappingsLoadingStatus = app.application.ApplicationState.pending;
 				mappingRepository.remove(mapping, function() {
 					mappingRepository.findByDksNode($scope.currentProblem, function(mappings) {
 						if(mappings) {
 							$scope.currentMappings = mappings;
-							setTimeout(() => { $scope.mappingsLoadingStatus = LoadingStatus.successful; $scope.$apply(); }, messageBoxDelay);
+							setTimeout(() => { $scope.mappingsLoadingStatus = app.application.ApplicationState.successful; $scope.$apply(); }, messageBoxDelay);
 						} else {
-							setTimeout(() => { $scope.mappingsLoadingStatus = LoadingStatus.failed; $scope.$apply(); }, messageBoxDelay);
+							setTimeout(() => { $scope.mappingsLoadingStatus = app.application.ApplicationState.failed; $scope.$apply(); }, messageBoxDelay);
 						}
 					});
 				})

@@ -160,6 +160,8 @@ module app.domain.repository.core {
 			this.httpService[method](url, {})
 				.success(function(data, status, headers, config) {
 					callback(true);
+					var position: number = cache.indexOf(item);
+					if(position >= 0) { cache.splice(cache.indexOf(item),1); }
 				})
 				.error(function(data, status, headers, config) {
 					callback(false);
