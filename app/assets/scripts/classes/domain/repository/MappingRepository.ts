@@ -1,6 +1,7 @@
 /// <reference path='../../../configuration/paths.ts' />
 
-/// <reference path='Repository.ts' />
+/// <reference path='../../domain/repository/Repository.ts' />
+/// <reference path='../../domain/model/DksNode.ts' />
 /// <reference path='../../domain/model/Mapping.ts' />
 
 module app.domain.repository.core {
@@ -11,7 +12,7 @@ module app.domain.repository.core {
 			this.resources = configuration.paths.mapping;
 		}
 
-		public findByDksNode(dksNode: app.domain.model.dks.Node, callback: (items: app.domain.model.core.Mapping[]) => void, doCache: boolean = false): void {
+		public findByDksNode(dksNode: app.domain.model.dks.DksNode, callback: (items: app.domain.model.core.Mapping[]) => void, doCache: boolean = false): void {
 			this.findAll(function(items) {
 				var foundItems: app.domain.model.core.Mapping[] = [];
 				items.forEach(function(item){
@@ -32,7 +33,7 @@ module app.domain.repository.core {
 			if(!this.resources['create']) {
 				throw new Error("Please configure a 'create' resource for the" +this.type.name+" repository.");
 			} else {
-				this.httpService[method](url, { dksNode: (<any>item.dksNode).id, taskTemplate: item.taskTemplate.id })
+				this.httpService[method](url, { dksNode: item.dksNode, taskTemplate: item.taskTemplate.id })
 					.success(function(data, status, headers, config) {
 						var newObject: app.domain.model.core.Mapping = app.domain.factory.ObjectFactory.createFromJson(type, data);
 						cache.push(newObject);

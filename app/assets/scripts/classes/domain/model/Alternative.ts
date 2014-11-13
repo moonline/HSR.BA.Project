@@ -3,10 +3,8 @@
 /// <reference path='../../domain/repository/PersistentEntity.ts' />
 /// <reference path='../../domain/factory/FactoryConfiguration.ts' />
 
-/// <reference path='../../domain/model/Alternative.ts' />
-
 module app.domain.model.dks {
-	export class Problem extends app.domain.model.dks.DksNode implements app.domain.model.dks.Node, app.domain.repository.core.PersistentEntity {
+	export class Alternative extends DksNode implements app.domain.model.dks.Node, app.domain.repository.core.PersistentEntity {
 		public static factoryConfiguration: app.domain.factory.FactoryConfiguration = {
 			constructorArguments: [
 				{ name: "name", type: String, subType: null },
@@ -16,12 +14,9 @@ module app.domain.model.dks {
 			],
 			publicProperties: [
 				{ name: "id", type: Number, subType: null },
-				{ name: "self", type: String, subType: null },
-				{ name: "alternatives", type: Array, subType: app.domain.model.dks.Alternative }
+				{ name: "self", type: String, subType: null }
 			]
 		};
-
-		public alternatives: app.domain.model.dks.Alternative[];
 
 		constructor(name: string, path: string[], attributes: Object, notes: string) {
 			super(name, path, attributes, notes);
