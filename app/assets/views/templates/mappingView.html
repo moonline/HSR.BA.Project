@@ -7,10 +7,20 @@
 			<span class="messagebox pending" data-ng-if="problemsLoadingStatus === LoadingStatus.pending">Loading ...</span>
 
 			<ul data-type="list">
-				<li data-ng-repeat="problem in problems" data-state="{{problem == currentProblem && 'selected' || '' }}"
-					data-ng-click="setCurrentDecision(problem)">
-					<button class="action edit" title="View Details"><span class="icon iconOnly">&Xi;</span></button>
-					{{problem.name}}
+				<li data-ng-repeat="problem in problems">
+					<div class="listElement" data-ng-click="setCurrentProblem(problem)" data-state="{{problem == currentProblem && 'selected' || '' }}">
+						<button class="action edit" title="View Details"><span class="icon iconOnly">&Xi;</span></button>
+						<span class="name">{{problem.name}}</span>
+					</div>
+					<button data-ng-click="toggleVisibilityState($index)" class="noButton">
+						<span data-ng-if="!problemListChildrenVisibilityState[$index]" class="symbol extremeSmall">&#x25bc;</span>
+						<span data-ng-if="problemListChildrenVisibilityState[$index]" class="symbol extremeSmall">&#x25b2;</span>
+					</button>
+					<ul data-type="list" data-ng-if="problem.options.length > 0 && problemListChildrenVisibilityState[$index]">
+						<li data-ng-repeat="option in problem.options">
+							<span class="name">{{option.name}}</span>
+						</li>
+					</ul>
 				</li>
 			</ul>
 		</div>
@@ -22,7 +32,7 @@
 				<h2>{{currentProblem.name}} [#{{currentProblem.id}}]</h2>
                 <dl>
                     <dt data-ng-if="currentProblem.notes">Notes</dt>
-                    <dd data-ng-if="currentProblem.notes">{{currentProblem.notes}}</dd>
+                    <dd data-ng-if="currentProblem.notes"><pre class="multilineText">{{currentProblem.notes}}</pre></dd>
                     <dt>Path</dt>
                     <dd><span data-ng-repeat="pathSegment in currentProblem.path">
                     <span class="pathDivider" data-ng-if="!$first">/</span><span class="pathSegment">{{pathSegment}}</span></span>

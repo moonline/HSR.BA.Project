@@ -78,7 +78,7 @@ module app.application {
 			$scope.currentMappings = [];
 			$scope.mappingsLoadingStatus = LoadingStatus.waiting;
 
-			$scope.setCurrentDecision = function(decision) {
+			$scope.setCurrentProblem = function(decision) {
 				$scope.currentProblem = decision;
 
 				$scope.mappingsLoadingStatus = LoadingStatus.pending;
@@ -91,6 +91,17 @@ module app.application {
 					}
 				});
 			};
+
+
+			$scope.problemListChildrenVisibilityState = [];
+			$scope.toggleVisibilityState = function(index:number) {
+				if($scope.problemListChildrenVisibilityState[index]) {
+					$scope.problemListChildrenVisibilityState[index] = !$scope.problemListChildrenVisibilityState[index];
+				} else {
+					$scope.problemListChildrenVisibilityState[index] = true;
+				}
+			};
+
 
 			$scope.currentTaskTemplate = null;
 			// filter already used properties

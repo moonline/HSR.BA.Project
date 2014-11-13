@@ -3,14 +3,21 @@
 	background: dodgerblue; background: linear-gradient(dodgerblue, steelblue); color: white;
 }
 
-/* general */
+
+
+/**
+ * general
+ */
 * { -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; padding: 0; margin: 0; text-indent: 0; text-align: left; }
 
 html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; }
-body { font-family: Arial, Helvetica, sans-serif; }
+body, pre.multilineText { font-family: Arial, Helvetica, sans-serif; }
 
 
-/* container */
+
+/**
+ * container
+ */
 .headerPanel, footer { .blueGradient; color: white; padding: 0.5rem; }
 .headerPanel { border-bottom: 0.25rem solid black; }
 
@@ -56,8 +63,11 @@ nav.mainNavigation {
 }
 
 
-/* font / text */
-h2, h3 { margin-top: 0.5rem; margin-bottom: 0.25rem; }
+
+/**
+ * lists
+ */
+li > .listElement { display: inline-block; }
 
 ol, ul {
 	list-style-position: inside;
@@ -66,6 +76,13 @@ ol, ul {
 	}
 }
 
+dl dt { font-weight: bold; }
+[data-state="selected"] { font-weight: bold; color: teal; }
+
+
+/* font / text */
+h2, h3 { margin-top: 0.5rem; margin-bottom: 0.25rem; }
+
 .pathDivider { color: cornflowerblue; font-weight: bold; margin: 0 0.3rem 0 0.1rem; display: inline-block; }
 
 a {
@@ -73,11 +90,17 @@ a {
 	&:hover { color: white; }
 }
 
-.icon {
-	font-weight: bold; margin-right: 0.5rem;
 
+/**
+ * icons / symbols
+ */
+.icon, .symbol {
 	&.big { font-size: 1.2rem; }
 	&.small { font-size: 0.8rem; }
+	&.extremeSmall { font-size: 0.6rem; }
+}
+.icon {
+	font-weight: bold; margin-right: 0.5rem;
 	&[data-icon] { width: 1rem; height: 1rem; display: inline-block; background-size: 1rem 1rem; }
 	&[data-icon="settings"] {
 		// Icon made by Freepik (http://www.freepik.com) from Flaticon (http://www.flaticon.com)
@@ -102,11 +125,11 @@ a {
 	&.iconOnly { margin-right: 0; }
 }
 
-dl dt { font-weight: bold; }
-li[data-state="selected"] { font-weight: bold; color: teal; }
 
 
-/* action buttons */
+/**
+ * action buttons
+ */
 button {
 	display: inline-block;
 	padding: 0.3rem; line-height: 1em; padding-left: 0.5rem; padding-right: 0.5rem;
@@ -136,11 +159,18 @@ button {
 		background: silver; background: linear-gradient(gainsboro, silver); border: none; color: gray;
 		&:hover { border: none; }
 	}
+	&.noButton {
+		background: none; border: none; box-shadow: none;
+		&:hover { color: gray; }
+	}
 }
 button + button { margin-left: 0.25rem; }
 
 
-/* forms */
+
+/**
+ * forms
+ */
 label { display: inline-block; }
 input {
 	border-radius: 1rem; padding: 0.25rem 0.5rem; border: none;
@@ -196,7 +226,10 @@ fieldset { background: none; padding: 0.5rem 0; border: none;
 }
 
 
-/* application state */
+
+/**
+ * application state
+ */
 [data-ng-click] { cursor: pointer; }
 
 .success { background: seagreen; color: white; font-weight: bold; padding: 0.5rem; }
