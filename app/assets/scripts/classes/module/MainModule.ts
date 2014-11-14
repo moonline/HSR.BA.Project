@@ -15,6 +15,7 @@
 /// <reference path='../../classes/domain/repository/PPTAccountRepository.ts' />
 /// <reference path='../../classes/domain/repository/RequestTemplateRepository.ts' />
 /// <reference path='../../classes/domain/repository/ProjectRepository.ts' />
+/// <reference path='../../classes/domain/repository/ProcessorRepository.ts' />
 
 /// <reference path='../../classes/service/AuthenticationService.ts' />
 
@@ -127,6 +128,7 @@ module app.mod {
 					problemRepository: new app.domain.repository.dks.ProblemRepository($http),
 					pptAccountRepository: new app.domain.repository.ppt.PPTAccountRepository($http),
 					requestTemplateRepository: new app.domain.repository.ppt.RequestTemplateRepository($http),
+					processorRepository: new app.domain.repository.core.ProcessorRepository($http),
 					projectRepository: new app.domain.repository.core.ProjectRepository($http)
 				};
 			}]);

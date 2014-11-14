@@ -60,7 +60,7 @@ module app.domain.repository.core {
 					}
 					callback(cache);
 				}).error(function(data){
-					callback(null);
+					callback([]);
 				});
 			}
 		}

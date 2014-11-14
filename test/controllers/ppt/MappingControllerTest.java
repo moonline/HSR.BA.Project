@@ -133,5 +133,4 @@ public class MappingControllerTest extends AbstractControllerTest {
 		assertThat(status(result)).isEqualTo(NO_CONTENT);
 		assertThat(JPA.withTransaction(() -> MAPPING_DAO.readById(mapping))).isNull();
 	}
-
 }

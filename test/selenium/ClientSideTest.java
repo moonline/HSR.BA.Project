@@ -11,7 +11,7 @@ import static org.fest.assertions.Assertions.assertThat;
 public class ClientSideTest extends AbstractSeleniumTest {
 
 	@Test
-	public void exampleTest() {
+	public void runJasmineTests() {
 		//Test
 		browser.goTo("/public/test/index.html");
 		browser.await().atMost(30, SECONDS).untilPage().isLoaded();

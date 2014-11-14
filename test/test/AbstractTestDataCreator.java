@@ -8,6 +8,7 @@ import daos.user.UserDAO;
 import logics.user.UserLogic;
 import models.dks.DKSMapping;
 import models.ppt.Mapping;
+import models.ppt.Processor;
 import models.ppt.ProjectPlanningTool;
 import models.task.TaskProperty;
 import models.task.TaskPropertyValue;
@@ -146,4 +147,19 @@ public abstract class AbstractTestDataCreator {
 		return mapping;
 	}
 
+	public static Processor createProcessor(String name, String projectName, String code) {
+		Project projectEntity = new Project();
+		projectEntity.setName(projectName);
+		persistAndFlush(projectEntity);
+		return createProcessor(name, projectEntity, code);
+	}
+
+	public static Processor createProcessor(String name, Project project, String code) {
+		Processor processor = new Processor();
+		processor.setName(name);
+		processor.setCode(code);
+		processor.setProject(project);
+		persistAndFlush(processor);
+		return processor;
+	}
 }

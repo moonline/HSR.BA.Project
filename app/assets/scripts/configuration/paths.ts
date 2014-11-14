@@ -22,6 +22,13 @@ module configuration {
 			update: { method: 'POST', url: '/dksMapping/{id}' },
 			remove: { method: 'POST', url: '/dksMapping/{id}/delete' }
 		},
+		processor: {
+			list: { method: 'GET', url: '/processor' },
+			detail: { method: 'GET', url: '/processor/{id}' },
+			create: { method: 'POST', url: '/processor' },
+			update: { method: 'POST', url: '/processor/{id}' },
+			remove: { method: 'POST', url: '/processor/{id}/delete' }
+		},
 		taskTemplate: {
 			list: { method: 'GET', url: '/taskTemplate' },
 			detail: { method: 'GET', url: '/taskTemplate/{id}' },

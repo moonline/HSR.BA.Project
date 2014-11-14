@@ -3,6 +3,7 @@ package logics.docs;
 import daos.AbstractDAO;
 import daos.dks.DKSMappingDAO;
 import daos.ppt.MappingDAO;
+import daos.ppt.ProcessorDAO;
 import daos.ppt.ProjectPlanningToolDAO;
 import daos.task.TaskPropertyDAO;
 import daos.task.TaskPropertyValueDAO;
@@ -13,6 +14,7 @@ import daos.user.UserDAO;
 import logics.user.UserLogic;
 import models.dks.DKSMapping;
 import models.ppt.Mapping;
+import models.ppt.Processor;
 import models.ppt.ProjectPlanningTool;
 import models.task.TaskProperty;
 import models.task.TaskPropertyValue;
@@ -31,6 +33,7 @@ import java.util.Set;
 
 public class ExampleDataCreator {
 
+	private final ProcessorDAO PROCESSOR_DAO;
 	private final UserDAO USER_DAO;
 	private final PPTAccountDAO PPT_ACCOUNT_DAO;
 	private final ProjectPlanningToolDAO PROJECT_PLANNING_TOOL_DAO;
@@ -41,6 +44,7 @@ public class ExampleDataCreator {
 	private final MappingDAO MAPPING_DAO;
 	private final ProjectDAO PROJECT_DAO;
 
+
 	private Set<String> cache = new HashSet<>();
 
 	public String USER_NAME;
@@ -49,7 +53,7 @@ public class ExampleDataCreator {
 
 	public Long USER_ID;
 
-	public ExampleDataCreator(UserLogic userLogic, UserDAO userDao, PPTAccountDAO pptAccountDao, ProjectPlanningToolDAO projectPlanningToolDao, TaskTemplateDAO taskTemplateDao, TaskPropertyDAO taskPropertyDao, TaskPropertyValueDAO taskPropertyValueDao, DKSMappingDAO dksMappingDao, MappingDAO mappingDao, ProjectDAO projectDao) {
+	public ExampleDataCreator(UserLogic userLogic, UserDAO userDao, PPTAccountDAO pptAccountDao, ProjectPlanningToolDAO projectPlanningToolDao, TaskTemplateDAO taskTemplateDao, TaskPropertyDAO taskPropertyDao, TaskPropertyValueDAO taskPropertyValueDao, DKSMappingDAO dksMappingDao, MappingDAO mappingDao, ProjectDAO projectDao, ProcessorDAO processorDAO) {
 		USER_DAO = userDao;
 		PPT_ACCOUNT_DAO = pptAccountDao;
 		JPA.withTransaction(new F.Callback0() {
@@ -77,6 +81,7 @@ public class ExampleDataCreator {
 		DKS_MAPPING_DAO = dksMappingDao;
 		MAPPING_DAO = mappingDao;
 		PROJECT_DAO = projectDao;
+		PROCESSOR_DAO = processorDAO;
 	}
 
 	public void createExampleObject(String reference, boolean canBeCached) {
@@ -178,6 +183,24 @@ public class ExampleDataCreator {
 							return dksMapping.getId();
 						},
 						existingDKSMapping -> existingDKSMapping.getDksNode().equals(dksNode));
+				break;
+			case "PROCESSOR":
+				String name = "Example Processor";
+				String code = "function(a) { return a+'.'+a; }";
+				objectCreator = new ExampleObjectCreator<>("Processor",
+						PROCESSOR_DAO,
+						() -> {
+							Project project = new Project();
+							project.setName("Example project");
+
+							Processor processor = new Processor();
+							processor.setName(name);
+							processor.setProject(project);
+							processor.setCode(code);
+							persist(project, processor);
+							return processor.getId();
+						},
+						existingProcessor -> existingProcessor.getName().equals(name) && existingProcessor.getCode().equals(code));
 				break;
 			case "PPTMAPPING":
 				String url = "/example/endpoint";
