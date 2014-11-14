@@ -11,7 +11,7 @@
 			<h3>Manage Properties</h3>
 			<form>
 				<div class="formLine" data-columns="3">
-					<label for="newTaskPropertyName">New property</label>
+					<label>New property</label>
 					<input type="text" name="newTaskPropertyName" data-ng-model="newTaskPropertyName" placeholder="name" />
 					<button class="action create" data-ng-click="createTaskProperty(newTaskPropertyName); newTaskPropertyName = '';"
 							title="Create a new property">
@@ -21,9 +21,9 @@
 				<div class="formLine" data-columns="3">
 					<select data-ng-model="toRenameProperty" data-ng-options="taskProperty.name for taskProperty in taskProperties" ></select>
 					<input data-ng-disabled="!toRenameProperty" data-ng-model="propertyNewName" placeholder="New name" />
-					<button data-ng-disabled="!toRenameProperty" class="action update"
+					<button data-ng-disabled="!toRenameProperty" class="action update" title="Changes the name of the property"
 							data-ng-click="renameTaskProperty(toRenameProperty, propertyNewName); propertyNewName = ''; toRenameProperty = null;">
-						<span class="icon">&#x270E;</span>rename
+						<span class="icon">&#x270E;</span>Rename
 					</button>
 				</div>
 			</form>
@@ -61,7 +61,7 @@
 		</div>
 
 		<div class="area accordion">
-			<h3>Manage project planning tool (PPT) accounts</h3>
+			<h3>Manage project planning tool (PPT) accounts for the currently logged in user</h3>
 			<form>
 				<div class="formLine" data-columns="6">
 					<label>New PPT account</label>
@@ -83,17 +83,50 @@
 					<input data-ng-disabled="!toUpdatePPTAccount" type="text" name="toUpdatePPTAccountUsername" data-ng-model="toUpdatePPTAccount.pptUsername" placeholder="PPT username" />
 					<input data-ng-disabled="!toUpdatePPTAccount" type="password" name="toUpdatePPTAccountPassword" data-ng-model="toUpdatePPTAccount.pptPassword" placeholder="PPT password" />
 
-					<button data-ng-disabled="!toUpdatePPTAccount" class="action update"
+					<button data-ng-disabled="!toUpdatePPTAccount" class="action update" title="Update project planning tool account"
 						data-ng-click="updatePPTAccount(toUpdatePPTAccount); toUpdatePPTAccount = null;">
-						<span class="icon">&#x270E;</span>update
+						<span class="icon">&#x270E;</span>Update
 					</button>
 					<button data-ng-disabled="!toUpdatePPTAccount" class="action remove" title="Remove project planning tool account"
 						data-ng-click="removePPTAccount(toUpdatePPTAccount); toUpdatePPTAccount = null;">
-					<span class="icon big">&minus;</span>Remove
-				</button>
+					    <span class="icon big">&minus;</span>Remove
+				    </button>
 				</div>
 			</form>
 		</div>
 
-	</div>
+        <div class="area accordion">
+            <h3>Manage processors</h3>
+            <form>
+                <div class="formLine" data-columns="6">
+                    <label>New processor</label>
+                    <input type="text" name="newProcessorName" data-ng-model="newProcessorName" placeholder="processor" />
+                    <select data-ng-model="newProcessorProject" name="newProcessorProject"
+                            data-ng-options="projectPlanningTool.name for projectPlanningTool in projectPlanningTools" ></select>
+                    <input type="text" name="newProcessorCode" data-ng-model="newProcessorCode" placeholder="code" />
+                    <button class="action create" data-ng-click="createProcessor(newProcessorName, newProcessorProject, newProcessorCode); newProcessorName = ''; newProcessorProject = ''; newProcessorCode = '';" title="Create a new processor">
+                        <span class="icon big">&#x2b;</span>Add
+                    </button>
+                </div>
+                <div class="formLine" data-columns="6">
+                    <select data-ng-model="toUpdateProcessor" data-ng-options="processor.name for processor in processors" data-ng-change="showSelectedProcessor()"></select>
+
+                    <input type="text" data-ng-disabled="!toUpdateProcessor" name="processorNewName" data-ng-model="processorNewName" placeholder="processor" />
+                    <select data-ng-disabled="!toUpdateProcessor" data-ng-model="processorNewProject" name="processorNewProject"
+                            data-ng-options="projectPlanningTool.name for projectPlanningTool in projectPlanningTools" ></select>
+                    <input type="text" data-ng-disabled="!toUpdateProcessor" name="processorNewCode" data-ng-model="processorNewCode" placeholder="code" />
+
+                    <button data-ng-disabled="!toUpdateProcessor" class="action update" title="Update processor"
+                            data-ng-click="updateProcessor(toUpdateProcessor, processorNewName, processorNewProject, processorNewCode); toUpdateProcessor = ''; processorNewName = ''; processorNewProject = ''; processorNewCode = ''; toUpdateProcessor = null;">
+                        <span class="icon">&#x270E;</span>Update
+                    </button>
+                    <button data-ng-disabled="!toUpdateProcessor" class="action remove" title="Remove processor"
+                            data-ng-click="removeProcessor(toUpdateProcessor); toUpdateProcessor = null;">
+                        <span class="icon big">&minus;</span>Remove
+                    </button>
+                </div>
+            </form>
+        </div>
+
+    </div>
 </div>

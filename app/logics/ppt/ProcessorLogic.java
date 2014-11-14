@@ -4,10 +4,8 @@ import daos.ppt.ProcessorDAO;
 import logics.CRUDLogicInterface;
 import models.ppt.Processor;
 import models.user.Project;
+import play.data.validation.Constraints;
 
-/**
- * Created by tobias on 14.11.14.
- */
 public class ProcessorLogic implements CRUDLogicInterface<Processor, ProcessorLogic.ProcessorForm, ProcessorLogic.ProcessorForm> {
 	private final ProcessorDAO PROCESSOR_DAO;
 
@@ -36,8 +34,11 @@ public class ProcessorLogic implements CRUDLogicInterface<Processor, ProcessorLo
 	}
 
 	public static class ProcessorForm {
+		@Constraints.Required
 		public String name;
+		@Constraints.Required
 		public Project project;
+		@Constraints.Required
 		public String code;
 	}
 }
