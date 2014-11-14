@@ -2,6 +2,7 @@ package controllers.ppt;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import controllers.AbstractControllerTest;
+import daos.ppt.ProjectPlanningToolDAO;
 import daos.task.TaskDAO;
 import models.task.Task;
 import models.task.TaskProperty;
@@ -27,6 +28,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.atLeastOnce;
 import static org.powermock.api.mockito.PowerMockito.*;
+import static play.mvc.Http.Status.OK;
 import static play.test.Helpers.status;
 
 
@@ -120,6 +122,19 @@ public class ProjectPlanningToolControllerTest extends AbstractControllerTest {
 		assertThat(task.getProject().getId()).isEqualTo(project.getId());
 		assertThat(task.getProperties()).hasSize(2);
 	}
+
+	@Test
+	public void testReadTheSingleProject() throws Throwable {
+		Result result = callActionWithUser(routes.ref.ProjectPlanningToolController.readAll());
+		//Verification
+		assertThat(status(result)).isEqualTo(OK);
+		Long pptId = JPA.withTransaction(() -> new ProjectPlanningToolDAO().readAll().get(0).getId());
+		assertCheckJsonResponse(result, Json.parse("{\"items\":[{" +
+				"	\"id\" : " + pptId + ",\n" +
+				"	\"name\":\"Project Planning Tool\"\n" +
+				"}]}"));
+	}
+
 
 
 }

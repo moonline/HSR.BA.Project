@@ -1,8 +1,9 @@
 package controllers.ppt;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import controllers.AbstractController;
+import controllers.AbstractReadController;
 import controllers.GuaranteeAuthenticatedUser;
+import daos.ppt.ProjectPlanningToolDAO;
 import logics.docs.QueryDescription;
 import logics.docs.QueryExamples;
 import logics.docs.QueryParameters;
@@ -19,12 +20,14 @@ import static logics.docs.QueryExamples.Example;
 import static logics.docs.QueryParameters.Parameter;
 import static logics.docs.QueryResponses.Response;
 
-public class ProjectPlanningToolController extends AbstractController {
+public class ProjectPlanningToolController extends AbstractReadController {
 
 	private final PPTTaskLogic PPT_TASK_LOGIC;
+	private final ProjectPlanningToolDAO PROJECT_PLANNING_TOOL_DAO;
 
-	public ProjectPlanningToolController(PPTTaskLogic pptTaskLogic) {
+	public ProjectPlanningToolController(PPTTaskLogic pptTaskLogic, ProjectPlanningToolDAO projectPlanningToolDao) {
 		PPT_TASK_LOGIC = pptTaskLogic;
+		PROJECT_PLANNING_TOOL_DAO = projectPlanningToolDao;
 	}
 
 	@Transactional(readOnly = true)
@@ -120,6 +123,31 @@ public class ProjectPlanningToolController extends AbstractController {
 		}).map(wsResponse ->
 						status(wsResponse.getStatus(), wsResponse.asJson())
 		);
+	}
+
+	@Override
+	protected String getEntityName() {
+		return "Project Planning Tool";
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	@GuaranteeAuthenticatedUser
+	@QueryDescription("Returns one Project Planning Tool.")
+	@QueryExamples({
+			@Example(id = "9999", parameters = {}),
+			@Example(id = "REFERENCE_PPT_1000000000000000051", parameters = {})
+	})
+	public Result read(long id) {
+		return read(PROJECT_PLANNING_TOOL_DAO, id);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	@GuaranteeAuthenticatedUser
+	@QueryDescription("Returns all Project Planning Tools.")
+	public Result readAll() {
+		return readAll(PROJECT_PLANNING_TOOL_DAO);
 	}
 
 }

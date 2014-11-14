@@ -111,7 +111,7 @@ public class DocumentationLogic {
 	}
 
 	/**
-	 * Uses reflection to get all API-controller classes (extending AbstractController and in package controllers but not in package controllers.docs and not AbstractCRUDController).
+	 * Uses reflection to get all API-controller classes (extending AbstractController and in package controllers but not in package controllers.docs and not Abstract).
 	 */
 	private Set<Class<? extends AbstractController>> getAllControllerClasses() {
 		List<ClassLoader> classLoadersList = new LinkedList<>();
@@ -123,6 +123,14 @@ public class DocumentationLogic {
 				.setUrls(ClasspathHelper.forClassLoader(classLoadersList.toArray(new ClassLoader[classLoadersList.size()])))
 				.filterInputsBy(new FilterBuilder().include(FilterBuilder.prefix("controllers")).exclude(FilterBuilder.prefix("controllers.docs"))));
 		Set<Class<? extends AbstractController>> classes = reflections.getSubTypesOf(AbstractController.class);
+		//Now removing all abstract Classes
+		Iterator<Class<? extends AbstractController>> classIterator = classes.iterator();
+		while (classIterator.hasNext()) {
+			Class<? extends AbstractController> aClass = classIterator.next();
+			if (Modifier.isAbstract(aClass.getModifiers())) {
+				classIterator.remove();
+			}
+		}
 		classes.remove(AbstractCRUDController.class);
 		return classes;
 	}
