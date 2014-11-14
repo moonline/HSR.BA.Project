@@ -8,6 +8,7 @@ import logics.docs.QueryExamples;
 import logics.docs.QueryParameters;
 import logics.docs.QueryResponses;
 import logics.ppt.ProcessorLogic;
+import models.ppt.Processor;
 import play.db.jpa.Transactional;
 import play.mvc.Result;
 
@@ -38,7 +39,7 @@ public class ProcessorController extends AbstractCRUDController {
 			@QueryExamples.Example(parameters = {"Example processor", "REFERENCE_PROJECT_1000000000000000042", "function(num) { return num*num; }"})
 	})
 	public Result create() {
-		return create(PROCESSOR_LOGIC, ProcessorLogic.ProcessorForm.class);
+		return create(PROCESSOR_LOGIC, Processor.class);
 	}
 
 	@Override
@@ -57,7 +58,7 @@ public class ProcessorController extends AbstractCRUDController {
 			@QueryExamples.Example(id = "REFERENCE_PROCESSOR_1000000000000000056", parameters = {"Example processor", "REFERENCE_PROJECT_1000000000000000043", "function(a) { return a+'.'+a; }" })
 	})
 	public Result update(long id) {
-		return update(PROCESSOR_DAO, PROCESSOR_LOGIC, ProcessorLogic.ProcessorForm.class, id);
+		return update(PROCESSOR_DAO, PROCESSOR_LOGIC, Processor.class, id);
 	}
 
 	@Override

@@ -3,10 +3,8 @@ package logics.ppt;
 import daos.ppt.ProcessorDAO;
 import logics.CRUDLogicInterface;
 import models.ppt.Processor;
-import models.user.Project;
-import play.data.validation.Constraints;
 
-public class ProcessorLogic implements CRUDLogicInterface<Processor, ProcessorLogic.ProcessorForm, ProcessorLogic.ProcessorForm> {
+public class ProcessorLogic implements CRUDLogicInterface<Processor, Processor, Processor> {
 	private final ProcessorDAO PROCESSOR_DAO;
 
 	public ProcessorLogic(ProcessorDAO processorDAO) {
@@ -14,15 +12,15 @@ public class ProcessorLogic implements CRUDLogicInterface<Processor, ProcessorLo
 	}
 
 	@Override
-	public Processor create(ProcessorForm createForm) {
+	public Processor create(Processor createForm) {
 		return update(new Processor(), createForm);
 	}
 
 	@Override
-	public Processor update(Processor entity, ProcessorForm updateForm) {
-		entity.setName(updateForm.name);
-		entity.setProject(updateForm.project);
-		entity.setCode(updateForm.code);
+	public Processor update(Processor entity, Processor updateForm) {
+		entity.setName(updateForm.getName());
+		entity.setProject(updateForm.getProject());
+		entity.setCode(updateForm.getCode());
 		PROCESSOR_DAO.persist(entity);
 		return entity;
 	}
@@ -33,12 +31,4 @@ public class ProcessorLogic implements CRUDLogicInterface<Processor, ProcessorLo
 		return null;
 	}
 
-	public static class ProcessorForm {
-		@Constraints.Required
-		public String name;
-		@Constraints.Required
-		public Project project;
-		@Constraints.Required
-		public String code;
-	}
 }
