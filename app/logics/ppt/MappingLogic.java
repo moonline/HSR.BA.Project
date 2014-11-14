@@ -3,10 +3,8 @@ package logics.ppt;
 import daos.ppt.MappingDAO;
 import logics.CRUDLogicInterface;
 import models.ppt.Mapping;
-import models.ppt.ProjectPlanningTool;
-import models.user.Project;
 
-public class MappingLogic implements CRUDLogicInterface<Mapping, MappingLogic.MappingForm, MappingLogic.MappingForm> {
+public class MappingLogic implements CRUDLogicInterface<Mapping, Mapping, Mapping> {
 
 
 	private final MappingDAO MAPPING_DAO;
@@ -16,16 +14,16 @@ public class MappingLogic implements CRUDLogicInterface<Mapping, MappingLogic.Ma
 	}
 
 	@Override
-	public Mapping create(MappingForm createForm) {
+	public Mapping create(Mapping createForm) {
 		return update(new Mapping(), createForm);
 	}
 
 	@Override
-	public Mapping update(Mapping entity, MappingForm updateForm) {
-		entity.setProjectPlanningTool(updateForm.projectPlanningTool);
-		entity.setProject(updateForm.project);
-		entity.setUrl(updateForm.url);
-		entity.setRequestTemplate(updateForm.requestTemplate);
+	public Mapping update(Mapping entity, Mapping updateForm) {
+		entity.setProjectPlanningTool(updateForm.getProjectPlanningTool());
+		entity.setProject(updateForm.getProject());
+		entity.setUrl(updateForm.getUrl());
+		entity.setRequestTemplate(updateForm.getRequestTemplate());
 		MAPPING_DAO.persist(entity);
 		return entity;
 	}
@@ -40,10 +38,4 @@ public class MappingLogic implements CRUDLogicInterface<Mapping, MappingLogic.Ma
 		return null;
 	}
 
-	public static class MappingForm {
-		public ProjectPlanningTool projectPlanningTool;
-		public Project project;
-		public String url;
-		public String requestTemplate;
-	}
 }

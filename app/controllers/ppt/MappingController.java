@@ -8,6 +8,7 @@ import logics.docs.QueryExamples;
 import logics.docs.QueryParameters;
 import logics.docs.QueryResponses;
 import logics.ppt.MappingLogic;
+import models.ppt.Mapping;
 import play.db.jpa.Transactional;
 import play.mvc.Result;
 
@@ -48,7 +49,7 @@ public class MappingController extends AbstractCRUDController {
 			@Example(parameters = {"REFERENCE_PPT_1000000000000000041", "REFERENCE_PROJECT_1000000000000000042", "/example/target", "{}"})
 	})
 	public Result create() {
-		return create(MAPPING_LOGIC, MappingLogic.MappingForm.class);
+		return create(MAPPING_LOGIC, Mapping.class);
 	}
 
 	@Transactional(readOnly = true)
@@ -85,7 +86,7 @@ public class MappingController extends AbstractCRUDController {
 			@Example(id = "REFERENCE_PPTMAPPING_1000000000000000049", parameters = {"REFERENCE_PPT_1000000000000000041", "REFERENCE_PROJECT_1000000000000000042", "/example/target", "{}"})
 	})
 	public Result update(long id) {
-		return update(MAPPING_DAO, MAPPING_LOGIC, MappingLogic.MappingForm.class, id);
+		return update(MAPPING_DAO, MAPPING_LOGIC, Mapping.class, id);
 	}
 
 	@Transactional()
