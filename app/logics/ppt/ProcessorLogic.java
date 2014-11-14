@@ -4,7 +4,7 @@ import daos.ppt.ProcessorDAO;
 import logics.CRUDLogicInterface;
 import models.ppt.Processor;
 
-public class ProcessorLogic implements CRUDLogicInterface<Processor, Processor, Processor> {
+public class ProcessorLogic implements CRUDLogicInterface<Processor> {
 	private final ProcessorDAO PROCESSOR_DAO;
 
 	public ProcessorLogic(ProcessorDAO processorDAO) {
@@ -12,17 +12,17 @@ public class ProcessorLogic implements CRUDLogicInterface<Processor, Processor, 
 	}
 
 	@Override
-	public Processor create(Processor createForm) {
-		return update(new Processor(), createForm);
+	public Processor create(Processor postedEntity) {
+		return update(new Processor(), postedEntity);
 	}
 
 	@Override
-	public Processor update(Processor entity, Processor updateForm) {
-		entity.setName(updateForm.getName());
-		entity.setProject(updateForm.getProject());
-		entity.setCode(updateForm.getCode());
-		PROCESSOR_DAO.persist(entity);
-		return entity;
+	public Processor update(Processor persistedEntity, Processor postedEntity) {
+		persistedEntity.setName(postedEntity.getName());
+		persistedEntity.setProject(postedEntity.getProject());
+		persistedEntity.setCode(postedEntity.getCode());
+		PROCESSOR_DAO.persist(persistedEntity);
+		return persistedEntity;
 	}
 
 	@Override

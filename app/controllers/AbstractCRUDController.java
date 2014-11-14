@@ -16,8 +16,8 @@ public abstract class AbstractCRUDController extends AbstractReadController {
 	})
 	public abstract Result create();
 
-	protected <F> Result create(CRUDLogicInterface<?, F, ?> logic, Class<F> createFormClass) {
-		Form<F> form = Form.form(createFormClass).bindFromRequest();
+	protected <E extends AbstractEntity> Result create(CRUDLogicInterface<E> logic, Class<E> createFormClass) {
+		Form<E> form = Form.form(createFormClass).bindFromRequest();
 		if (form.hasErrors()) {
 			return badRequest(form.errorsAsJson());
 		}
@@ -32,12 +32,12 @@ public abstract class AbstractCRUDController extends AbstractReadController {
 	})
 	public abstract Result update(long id);
 
-	protected <E extends AbstractEntity, F> Result update(AbstractDAO<E> dao, CRUDLogicInterface<E, ?, F> logic, Class<F> updateFormClass, long id) {
+	protected <E extends AbstractEntity> Result update(AbstractDAO<E> dao, CRUDLogicInterface<E> logic, Class<E> updateFormClass, long id) {
 		E entity = dao.readById(id);
 		if (entity == null) {
 			return notFound(id);
 		}
-		Form<F> form = Form.form(updateFormClass).bindFromRequest();
+		Form<E> form = Form.form(updateFormClass).bindFromRequest();
 		if (form.hasErrors()) {
 			return badRequest(form.errorsAsJson());
 		}
@@ -52,7 +52,7 @@ public abstract class AbstractCRUDController extends AbstractReadController {
 	})
 	public abstract Result delete(long id);
 
-	protected <E extends AbstractEntity> Result delete(AbstractDAO<E> dao, CRUDLogicInterface<E, ?, ?> logic, long id) {
+	protected <E extends AbstractEntity> Result delete(AbstractDAO<E> dao, CRUDLogicInterface<E> logic, long id) {
 		E entity = dao.readById(id);
 		if (entity == null) {
 			return notFound(id);

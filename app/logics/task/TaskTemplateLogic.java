@@ -5,7 +5,7 @@ import daos.task.TaskTemplateDAO;
 import logics.CRUDLogicInterface;
 import models.task.TaskTemplate;
 
-public class TaskTemplateLogic extends WorkLogic implements CRUDLogicInterface<TaskTemplate, TaskTemplate, TaskTemplate> {
+public class TaskTemplateLogic extends WorkLogic implements CRUDLogicInterface<TaskTemplate> {
 
 	private final TaskTemplateDAO TASK_TEMPLATE_DAO;
 
@@ -14,15 +14,15 @@ public class TaskTemplateLogic extends WorkLogic implements CRUDLogicInterface<T
 		TASK_TEMPLATE_DAO = taskTemplateDao;
 	}
 
-	public TaskTemplate create(TaskTemplate form) {
+	public TaskTemplate create(TaskTemplate postedEntity) {
 		TaskTemplate taskTemplate = new TaskTemplate();
-		return update(taskTemplate, form);
+		return update(taskTemplate, postedEntity);
 	}
 
-	public TaskTemplate update(TaskTemplate taskTemplate, TaskTemplate form) {
-		taskTemplate.setName(form.getName());
-		taskTemplate.setParent(form.getParent());
-		return TASK_TEMPLATE_DAO.persist(taskTemplate);
+	public TaskTemplate update(TaskTemplate persistedEntity, TaskTemplate postedEntity) {
+		persistedEntity.setName(postedEntity.getName());
+		persistedEntity.setParent(postedEntity.getParent());
+		return TASK_TEMPLATE_DAO.persist(persistedEntity);
 	}
 
 	/**

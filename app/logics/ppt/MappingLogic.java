@@ -4,7 +4,7 @@ import daos.ppt.MappingDAO;
 import logics.CRUDLogicInterface;
 import models.ppt.Mapping;
 
-public class MappingLogic implements CRUDLogicInterface<Mapping, Mapping, Mapping> {
+public class MappingLogic implements CRUDLogicInterface<Mapping> {
 
 
 	private final MappingDAO MAPPING_DAO;
@@ -14,18 +14,18 @@ public class MappingLogic implements CRUDLogicInterface<Mapping, Mapping, Mappin
 	}
 
 	@Override
-	public Mapping create(Mapping createForm) {
-		return update(new Mapping(), createForm);
+	public Mapping create(Mapping postedEntity) {
+		return update(new Mapping(), postedEntity);
 	}
 
 	@Override
-	public Mapping update(Mapping entity, Mapping updateForm) {
-		entity.setProjectPlanningTool(updateForm.getProjectPlanningTool());
-		entity.setProject(updateForm.getProject());
-		entity.setUrl(updateForm.getUrl());
-		entity.setRequestTemplate(updateForm.getRequestTemplate());
-		MAPPING_DAO.persist(entity);
-		return entity;
+	public Mapping update(Mapping persistedEntity, Mapping postedEntity) {
+		persistedEntity.setProjectPlanningTool(postedEntity.getProjectPlanningTool());
+		persistedEntity.setProject(postedEntity.getProject());
+		persistedEntity.setUrl(postedEntity.getUrl());
+		persistedEntity.setRequestTemplate(postedEntity.getRequestTemplate());
+		MAPPING_DAO.persist(persistedEntity);
+		return persistedEntity;
 	}
 
 	/**
