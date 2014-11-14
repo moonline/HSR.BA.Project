@@ -3,9 +3,16 @@ module app.service {
 
 		private data: Object;
 		private template: string;
-		private processorPattern = /\$\w*\:\(\w*\)\$/igm;
-		private processorNamePattern = /\$\w*\:\(/igm;
-		private processorParameterPattern = /\:\(\w*\)\$/igm;
+		/**
+		 * @example:
+		 *	 $processor:(abc1, abc, "ef")$
+		 *	 $processor:(abc1)$
+		 *	 $processor:(abc1 )$
+		 *	 $processor:()$
+		 */
+		private processorPattern:string = '\\$\\w+:\\([^\\(\\)]*\\)\\$';
+		private processorNamePattern:string = '\\$\\w+:\\(';
+		private processorParameterPattern:string = ':\\([^\\(\\)]*\\)\\$';
 		private processors: { [index:string]: any };
 
 		constructor(data: Object, template: string, processors: { [index:string]: any }) {
@@ -17,18 +24,29 @@ module app.service {
 		public process(): string {
 			var template = this.template;
 			// $processorname:(param1, param2)$
-			for(var match; match = this.processorPattern.exec(template); ) {
-				var processorLiteral: string = match[0];
-				var index: number = match.index;
-				var replaceLength:number = match[0].length;
-
-				var processorName: string = this.getProcessorName(processorLiteral);
-				var processorParameters: string[] = this.getParameters(processorLiteral);
-
+			this.parseProcessors(template, function(processorName, processorParameters, startIndex, length){
 				var processorReplacement = this.runProcessor(processorName, processorParameters);
-				template = template.slice(0, index) + processorReplacement + template.slice(index+replaceLength, template.length);
-			}
+				template = template.slice(0, startIndex) + processorReplacement + template.slice(startIndex+length, template.length);
+			}.bind(this));
 			return template;
+		}
+
+		public parseProcessors(text: string, executer: (processorName: string, processorParameters: string[], startIndex: number, length: number) => void) {
+			var regex: RegExp = new RegExp(this.processorPattern, "gim");
+
+			for(var match; match = regex.exec(text); ) {
+				var processorLiteral: string = match[0];
+				var name: string = this.getProcessorName(processorLiteral);
+				var params: string[] = this.getParameters(processorLiteral);
+
+				if(name && params && match.index && match.index >= 0 && match[0].length > 0) {
+					executer(name, params, match.index, match[0].length);
+				} else {
+					throw new Error("Invalid processor properties: "+JSON.stringify({
+						match: match, name: name, params: params, startIndex: match.index, length: match[0].length
+					}));
+				}
+			}
 		}
 
 		public runProcessor(processorName: string, processorParameters: string[]):string {
@@ -37,8 +55,6 @@ module app.service {
 				var param: any;
 				if(this.isStringParameter(parameter)) {
 					param = parameter.substring(1,parameter.length-1) || null;
-				} else if(this.isObjectParameter(parameter)) {
-					param = JSON.parse(parameter) || null;
 				} else {
 					param = this.data[parameter] || null;
 				}
@@ -57,22 +73,30 @@ module app.service {
 			return variable[0] == '"' && variable[variable.length-1] == '"';
 		}
 
-		private isObjectParameter(variable: string) {
-			return variable[0] == '{' && variable[variable.length-1] == '}';
-		}
-
 		private getProcessorName(processorLiteral: string) {
-			var processorNamePart:string = this.processorNamePattern.exec(processorLiteral)[0];
-			return processorNamePart.substring(1, processorNamePart.length-2);
+			var match;
+			var processorNamePart:string = (match = (new RegExp(this.processorNamePattern)).exec(processorLiteral)) ? match[0] : null;
+			if(processorNamePart) {
+				return processorNamePart.substring(1, processorNamePart.length-2);
+			} else {
+				return null;
+			}
 		}
 
 		private getParameters(processorLiteral: string):string[] {
-			var processorParameterPart: string = this.processorParameterPattern.exec(processorLiteral)[0];
-			var parameters: string[] = (processorParameterPart.substring(2, processorParameterPart.length-2)).split(',');
-			for(var pi in parameters) {
-				parameters[pi] = parameters[pi].trim();
+			var match;
+			var processorParameterPart: string = (match = (new RegExp(this.processorParameterPattern)).exec(processorLiteral)) ? match[0] : null;
+			if(processorParameterPart) {
+				var parameterCommaSepList:string = processorParameterPart.substring(2, processorParameterPart.length-2);
+				if(parameterCommaSepList.length > 1) {
+					var parameters: string[] = parameterCommaSepList.split(',');
+					return <string[]>parameters.map(function(element) { return element.trim(); });
+				} else {
+					return [];
+				}
+			} else {
+				return [];
 			}
-			return parameters;
 		}
 	}
 }

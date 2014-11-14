@@ -5,6 +5,74 @@
 module test.logic.service {
 	export function ProcessorProcesserTest() {
 		describe("Processor processer service test suite", function() {
+			it("Parse simple processors", function() {
+				var template: string = "{\
+	\"assignee\": \"$simple:()$\",\
+	\"name\": \"$simple:()$\"\
+}";
+
+				var processorService: app.service.ProcessorProcesser = new app.service.ProcessorProcesser({}, '', {});
+				var processorData: any[] = [];
+				processorService.parseProcessors(
+					template,
+					function(processorName, processorParameters, startIndex, length){
+						processorData.push({
+							processorName:processorName,
+							processorParameters:processorParameters,
+							startIndex:startIndex,
+							length:length
+						});
+					}
+				);
+				expect(processorData).toEqual([
+					{
+						processorName:'simple',
+						processorParameters:[],
+						startIndex:15,
+						length:11
+					},{
+						processorName:'simple',
+						processorParameters:[],
+						startIndex:38,
+						length:11
+					}
+				]);
+			});
+
+			it("Parse complex processors", function() {
+				var template: string = "{\
+	\"assignee\": \"$concater:(var1, \":\", var2)$\",\
+	\"name\": \"$listConcater:(list,\"|\")$\"\
+}";
+
+				var processorService: app.service.ProcessorProcesser = new app.service.ProcessorProcesser({}, '', {});
+				var processorData: any[] = [];
+				processorService.parseProcessors(
+					template,
+					function(processorName, processorParameters, startIndex, length){
+						processorData.push({
+							processorName:processorName,
+							processorParameters:processorParameters,
+							startIndex:startIndex,
+							length:length
+						});
+					}
+				);
+				expect(processorData).toEqual([
+					{
+						processorName:'concater',
+						processorParameters:['var1', '":"', 'var2'],
+						startIndex:15,
+						length:28
+					},{
+						processorName:'listConcater',
+						processorParameters:['list', '"|"'],
+						startIndex:55,
+						length:25
+					}
+				]);
+			});
+
 			it("Simple processor", function() {
 				var processors: { [index:string]: any} = {
 					simple: function() {
@@ -65,21 +133,18 @@ module test.logic.service {
 				expect(result1).toEqual('Hans Müller <hmueller@gmx.net>');
 			});
 
-			it("Direct input object processor", function() {
-				var data:any = {
-					var1: 'irgendwas',
-					var2: 'nochwas'
-				}
+			/*it("Process template", function() {
+
+				var template: string = "{\
+	\"assignee\": \"$simple:()$\",\
+	\"name\": \"$simple:()$\"\
+}";
 				var processors: { [index:string]: any} = {
-					concater: function(text1, text2, text3) {
-						return text1+text2.gap+text3;
+					simple: function() {
+						return 'simpleStringReturn';
 					}
 				};
-
-				var processorService: app.service.ProcessorProcesser = new app.service.ProcessorProcesser(data, '', processors);
-				var result1: string = processorService.runProcessor('concater',['var1', '{ "iw": "auto", "gap": ":" }', 'var2']);
-				expect(result1).toEqual('irgendwas:nochwas');
-			});
+			});*/
 		});
 	}
 }
