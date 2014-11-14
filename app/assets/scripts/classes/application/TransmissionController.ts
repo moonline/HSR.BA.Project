@@ -3,6 +3,7 @@
 /// <reference path='../domain/model/Mapping.ts' />
 
 /// <reference path='../domain/repository/MappingRepository.ts' />
+/// <reference path='../domain/repository/DecisionRepository.ts' />
 
 module app.application {
 	'use strict';
@@ -13,9 +14,13 @@ module app.application {
 
 		constructor($scope, $location, persistenceService, $http) {
 			this.$scope = $scope;
-			this.mappingRepository = persistenceService['mappingRepository'];
-			this.mappingRepository.findAll(function(items) {
+			var mappingRepository = persistenceService['mappingRepository'];
+			mappingRepository.findAll(function(items) {
 				$scope.mappings = items;
+			});
+			var decisionrepository:app.domain.repository.dks.DecisionRepository = new app.domain.repository.dks.DecisionRepository($http);
+			decisionrepository.findAll(function(items){
+				$scope.decisions = items;
 			});
 
 			$scope.url = "http://localhost:9920/rest/api/2/issue/";
