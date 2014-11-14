@@ -52,7 +52,7 @@ module app.application {
                                 $scope.processors = processors;
 
                                 projectRepository.findAll(function(projects){
-                                    $scope.projectPlanningTools = projects;
+                                    $scope.projects = projects;
 							setTimeout(() => { $scope.operationState = app.application.ApplicationState.successful; $scope.$apply(); }, configuration.settings.messageBoxDelay);
 						});
 					});
@@ -174,6 +174,7 @@ module app.application {
 						setTimeout(() => { $scope.operationState = app.application.ApplicationState.failed; $scope.$apply(); }, configuration.settings.messageBoxDelay);
 					}
 				});
+                return processor;
 			};
 
 			$scope.updateProcessor = function(processor: app.domain.model.core.Processor, newProcessorName: string, newProcessorProject: app.domain.model.core.Project, newProcessorCode: string) {
@@ -210,9 +211,9 @@ module app.application {
 
             //Finds the correct object instance for the given project to select it in the list
             $scope.findProjectInList = function(expectedProject: app.domain.model.core.Project) {
-                for(var index=0;index<$scope.projectPlanningTools.length;++index) {
-                    if($scope.projectPlanningTools[index].id==expectedProject["id"]) {
-                        return $scope.projectPlanningTools[index];
+                for(var index=0;index<$scope.projects.length;++index) {
+                    if($scope.projects[index].id==expectedProject["id"]) {
+                        return $scope.projects[index];
                     }
                 }
                 return null;

@@ -5,6 +5,7 @@
 /// <reference path='../test/logic/domain/factory/ObjectFactoryTest.ts' />
 /// <reference path='../test/logic/service/AuthenticationServiceTest.ts' />
 /// <reference path='../test/logic/service/ProcessorProcesserTest.ts' />
+/// <reference path='../test/integration/application/AdminControllerTest.ts' />
 /// <reference path='../test/integration/application/MappingControllerTest.ts' />
 
 module test {
@@ -28,6 +29,7 @@ module test {
 
 	describe("Integration tests", function(){
 		describe("Application test suite", function() {
+			test.integration.application.AdminControllerTest();
 			test.integration.application.MappingControllerTest();
 		});
 	});

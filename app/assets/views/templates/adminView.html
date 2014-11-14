@@ -102,7 +102,7 @@
                     <label>New processor</label>
                     <input type="text" name="newProcessorName" data-ng-model="newProcessorName" placeholder="name" />
                     <select data-ng-model="newProcessorProject" name="newProcessorProject"
-                            data-ng-options="projectPlanningTool.name for projectPlanningTool in projectPlanningTools" ></select>
+                            data-ng-options="project.name for project in projects" ></select>
                     <textarea name="newProcessorCode" data-ng-model="newProcessorCode" placeholder="code"></textarea>
                     <button class="action create" data-ng-click="createProcessor(newProcessorName, newProcessorProject, newProcessorCode); newProcessorName = ''; newProcessorProject = ''; newProcessorCode = '';" title="Create a new processor">
                         <span class="icon big">&#x2b;</span>Add
@@ -113,7 +113,7 @@
 
                     <input type="text" data-ng-disabled="!toUpdateProcessor" name="processorNewName" data-ng-model="processorNewName" placeholder="name" />
                     <select data-ng-disabled="!toUpdateProcessor" data-ng-model="processorNewProject" name="processorNewProject"
-                            data-ng-options="projectPlanningTool.name for projectPlanningTool in projectPlanningTools" ></select>
+                            data-ng-options="project.name for project in projects" ></select>
                     <textarea data-ng-disabled="!toUpdateProcessor" name="processorNewCode" data-ng-model="processorNewCode" placeholder="code"></textarea>
 
                     <button data-ng-disabled="!toUpdateProcessor" class="action update" title="Update processor"
