@@ -4,14 +4,12 @@ import models.AbstractEntity;
 
 /**
  * @param <E> Entity of this Logic
- * @param <C> Create form
- * @param <U> Update form
  */
-public interface CRUDLogicInterface<E extends AbstractEntity, C, U> {
+public interface CRUDLogicInterface<E extends AbstractEntity> {
 
-	E create(C createForm);
+	E create(E postedEntity);
 
-	E update(E entity, U updateForm);
+	E update(E persistedEntity, E postedEntity);
 
 	/**
 	 * @param entity The entity to delete

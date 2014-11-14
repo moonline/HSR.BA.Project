@@ -117,8 +117,13 @@ public abstract class AbstractTestDataCreator {
 	}
 
 	public static Project createProjectWithTransaction() throws Throwable {
+		return createProjectWithTransaction(null);
+	}
+
+	public static Project createProjectWithTransaction(String name) throws Throwable {
 		return JPA.withTransaction(() -> {
 			Project project = new Project();
+			project.setName(name);
 			persistAndFlush(project);
 			return project;
 		});

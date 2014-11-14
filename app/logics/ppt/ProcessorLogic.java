@@ -3,10 +3,8 @@ package logics.ppt;
 import daos.ppt.ProcessorDAO;
 import logics.CRUDLogicInterface;
 import models.ppt.Processor;
-import models.user.Project;
-import play.data.validation.Constraints;
 
-public class ProcessorLogic implements CRUDLogicInterface<Processor, ProcessorLogic.ProcessorForm, ProcessorLogic.ProcessorForm> {
+public class ProcessorLogic implements CRUDLogicInterface<Processor> {
 	private final ProcessorDAO PROCESSOR_DAO;
 
 	public ProcessorLogic(ProcessorDAO processorDAO) {
@@ -14,17 +12,17 @@ public class ProcessorLogic implements CRUDLogicInterface<Processor, ProcessorLo
 	}
 
 	@Override
-	public Processor create(ProcessorForm createForm) {
-		return update(new Processor(), createForm);
+	public Processor create(Processor postedEntity) {
+		return update(new Processor(), postedEntity);
 	}
 
 	@Override
-	public Processor update(Processor entity, ProcessorForm updateForm) {
-		entity.setName(updateForm.name);
-		entity.setProject(updateForm.project);
-		entity.setCode(updateForm.code);
-		PROCESSOR_DAO.persist(entity);
-		return entity;
+	public Processor update(Processor persistedEntity, Processor postedEntity) {
+		persistedEntity.setName(postedEntity.getName());
+		persistedEntity.setProject(postedEntity.getProject());
+		persistedEntity.setCode(postedEntity.getCode());
+		PROCESSOR_DAO.persist(persistedEntity);
+		return persistedEntity;
 	}
 
 	@Override
@@ -33,12 +31,4 @@ public class ProcessorLogic implements CRUDLogicInterface<Processor, ProcessorLo
 		return null;
 	}
 
-	public static class ProcessorForm {
-		@Constraints.Required
-		public String name;
-		@Constraints.Required
-		public Project project;
-		@Constraints.Required
-		public String code;
-	}
 }

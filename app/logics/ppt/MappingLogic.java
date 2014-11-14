@@ -3,10 +3,8 @@ package logics.ppt;
 import daos.ppt.MappingDAO;
 import logics.CRUDLogicInterface;
 import models.ppt.Mapping;
-import models.ppt.ProjectPlanningTool;
-import models.user.Project;
 
-public class MappingLogic implements CRUDLogicInterface<Mapping, MappingLogic.MappingForm, MappingLogic.MappingForm> {
+public class MappingLogic implements CRUDLogicInterface<Mapping> {
 
 
 	private final MappingDAO MAPPING_DAO;
@@ -16,18 +14,18 @@ public class MappingLogic implements CRUDLogicInterface<Mapping, MappingLogic.Ma
 	}
 
 	@Override
-	public Mapping create(MappingForm createForm) {
-		return update(new Mapping(), createForm);
+	public Mapping create(Mapping postedEntity) {
+		return update(new Mapping(), postedEntity);
 	}
 
 	@Override
-	public Mapping update(Mapping entity, MappingForm updateForm) {
-		entity.setProjectPlanningTool(updateForm.projectPlanningTool);
-		entity.setProject(updateForm.project);
-		entity.setUrl(updateForm.url);
-		entity.setRequestTemplate(updateForm.requestTemplate);
-		MAPPING_DAO.persist(entity);
-		return entity;
+	public Mapping update(Mapping persistedEntity, Mapping postedEntity) {
+		persistedEntity.setProjectPlanningTool(postedEntity.getProjectPlanningTool());
+		persistedEntity.setProject(postedEntity.getProject());
+		persistedEntity.setUrl(postedEntity.getUrl());
+		persistedEntity.setRequestTemplate(postedEntity.getRequestTemplate());
+		MAPPING_DAO.persist(persistedEntity);
+		return persistedEntity;
 	}
 
 	/**
@@ -40,10 +38,4 @@ public class MappingLogic implements CRUDLogicInterface<Mapping, MappingLogic.Ma
 		return null;
 	}
 
-	public static class MappingForm {
-		public ProjectPlanningTool projectPlanningTool;
-		public Project project;
-		public String url;
-		public String requestTemplate;
-	}
 }

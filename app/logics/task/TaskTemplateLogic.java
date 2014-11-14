@@ -4,9 +4,8 @@ import daos.task.TaskPropertyValueDAO;
 import daos.task.TaskTemplateDAO;
 import logics.CRUDLogicInterface;
 import models.task.TaskTemplate;
-import play.data.validation.Constraints;
 
-public class TaskTemplateLogic extends WorkLogic implements CRUDLogicInterface<TaskTemplate, TaskTemplateLogic.TaskTemplateForm, TaskTemplateLogic.TaskTemplateForm> {
+public class TaskTemplateLogic extends WorkLogic implements CRUDLogicInterface<TaskTemplate> {
 
 	private final TaskTemplateDAO TASK_TEMPLATE_DAO;
 
@@ -15,15 +14,15 @@ public class TaskTemplateLogic extends WorkLogic implements CRUDLogicInterface<T
 		TASK_TEMPLATE_DAO = taskTemplateDao;
 	}
 
-	public TaskTemplate create(TaskTemplateForm form) {
+	public TaskTemplate create(TaskTemplate postedEntity) {
 		TaskTemplate taskTemplate = new TaskTemplate();
-		return update(taskTemplate, form);
+		return update(taskTemplate, postedEntity);
 	}
 
-	public TaskTemplate update(TaskTemplate taskTemplate, TaskTemplateForm form) {
-		taskTemplate.setName(form.name);
-		taskTemplate.setParent(form.parent);
-		return TASK_TEMPLATE_DAO.persist(taskTemplate);
+	public TaskTemplate update(TaskTemplate persistedEntity, TaskTemplate postedEntity) {
+		persistedEntity.setName(postedEntity.getName());
+		persistedEntity.setParent(postedEntity.getParent());
+		return TASK_TEMPLATE_DAO.persist(persistedEntity);
 	}
 
 	/**
@@ -41,21 +40,6 @@ public class TaskTemplateLogic extends WorkLogic implements CRUDLogicInterface<T
 
 	private boolean canBeDeleted(TaskTemplate taskTemplate) {
 		return TASK_TEMPLATE_DAO.readChildren(taskTemplate).isEmpty();
-	}
-
-	public static class TaskTemplateForm {
-		@Constraints.Required
-		public String name;
-
-		public TaskTemplate parent;
-
-		@SuppressWarnings("UnusedDeclaration") //Used by Play Framework to validate form
-		public String validate() {
-			if (parent != null && parent.getParent() != null) {
-				return "Can not create sub-sub-task (two layers).";
-			}
-			return null;
-		}
 	}
 
 }

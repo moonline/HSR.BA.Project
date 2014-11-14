@@ -22,6 +22,16 @@
         </li>
         <li>As a JSON-object as binary data:
             <pre class="prettyprint"><code class="language-bash">curl -H 'Content-Type: application/json;charset=UTF-8' --data-binary '{"theKey":"theValue","theKey2":"theValue2"}' http://localhost:9000/...</code></pre>
+            <p>If it's passed as a JSON-object and some parameter reference another object, the reference can be passed in two ways:</p>
+            <ul>
+                <li>As a numeric ID of the referenced object:
+                    <pre class="prettyprint"><code class="language-bash">curl -H 'Content-Type: application/json;charset=UTF-8' --data-binary '{"id":61,"name":"Example processor","project":<strong>63</strong>,"code":"function(num) { return num*num; }"}' @controllers.ppt.routes.ProcessorController.create().absoluteURL(request())</code></pre>
+                </li>
+                <li>As a full object containing at least an ID-property:
+                    <pre class="prettyprint"><code class="language-bash">curl -H 'Content-Type: application/json;charset=UTF-8' --data-binary '{"id":61,"name":"Example processor","project":<strong>{"id":63,"name":"The Example Project"}</strong>,"code":"function(num) { return num*num; }"}' @controllers.ppt.routes.ProcessorController.create().absoluteURL(request())</code></pre>
+                    If it's passed as a full object and the method returns the referenced object again, it's returned as it got passed. However, it's not updated on the server.
+                </li>
+            </ul>
         </li>
     </ul>
 </p>

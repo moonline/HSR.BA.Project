@@ -52,7 +52,7 @@ public class Mapping extends AbstractEntity {
 
 	@Override
 	public String toString() {
-		return "<User " + getId() +
+		return "<Mapping " + getId() +
 				" (ppt=" + (projectPlanningTool == null ? "null" : projectPlanningTool.getId()) +
 				", project=" + (project == null ? "null" : project.getId()) +
 				", url=" + url +
