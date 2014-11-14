@@ -22,6 +22,7 @@ module test.logic.service {
 							startIndex:startIndex,
 							length:length
 						});
+						return '';
 					}
 				);
 				expect(processorData).toEqual([
@@ -33,7 +34,7 @@ module test.logic.service {
 					},{
 						processorName:'simple',
 						processorParameters:[],
-						startIndex:38,
+						startIndex:27,
 						length:11
 					}
 				]);
@@ -56,6 +57,7 @@ module test.logic.service {
 							startIndex:startIndex,
 							length:length
 						});
+						return '';
 					}
 				);
 				expect(processorData).toEqual([
@@ -67,7 +69,7 @@ module test.logic.service {
 					},{
 						processorName:'listConcater',
 						processorParameters:['list', '"|"'],
-						startIndex:55,
+						startIndex:27,
 						length:25
 					}
 				]);
@@ -114,8 +116,8 @@ module test.logic.service {
 				var result1: string = processorService.runProcessor('concater',['var1', '":"', 'var2']);
 				expect(result1).toEqual('irgendwas:nochwas');
 
-				var result2: string = processorService.runProcessor('listConcater',['wortliste','", "']);
-				expect(result2).toEqual('eins, zwei, drei, vier');
+				var result2: string = processorService.runProcessor('listConcater',['wortliste','"|"']);
+				expect(result2).toEqual('eins|zwei|drei|vier');
 			});
 
 			it("Complex object processor", function() {
@@ -133,18 +135,40 @@ module test.logic.service {
 				expect(result1).toEqual('Hans Müller <hmueller@gmx.net>');
 			});
 
-			/*it("Process template", function() {
-
+			it("Process template", function() {
 				var template: string = "{\
-	\"assignee\": \"$simple:()$\",\
-	\"name\": \"$simple:()$\"\
+	\"assignee\": \"$concater:(var1, \":\", var2)$\",\
+	\"name\": \"$listConcater:(list,\"|\")$\",\
+	\"assignee\": \"$concater:(var1, \":\", var2)$\"\
 }";
+				var data:any = {
+					var1: 'irgendwas',
+					var2: 'nochwas',
+					list: [ 'eins', 'zwei', 'drei', 'vier']
+				};
 				var processors: { [index:string]: any} = {
-					simple: function() {
-						return 'simpleStringReturn';
+					concater: function(text1, text2, text3) {
+						return text1+text2+text3;
+					},
+					listConcater: function(list, gap) {
+						var result: string = '';
+						for(var li in list) {
+							result += (li < list.length-1) ? list[li].toString()+gap : list[li].toString();
+						}
+						return result;
 					}
 				};
-			});*/
+
+				var processorService: app.service.ProcessorProcesser = new app.service.ProcessorProcesser(data, template, processors);
+				var renderedTemplate = processorService.process();
+				var expectedTemplate: string = "{\
+	\"assignee\": \"irgendwas:nochwas\",\
+	\"name\": \"eins|zwei|drei|vier\",\
+	\"assignee\": \"irgendwas:nochwas\"\
+}";
+
+				expect(renderedTemplate).toEqual(expectedTemplate);
+			});
 		});
 	}
 }

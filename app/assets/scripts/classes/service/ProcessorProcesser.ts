@@ -24,29 +24,36 @@ module app.service {
 		public process(): string {
 			var template = this.template;
 			// $processorname:(param1, param2)$
-			this.parseProcessors(template, function(processorName, processorParameters, startIndex, length){
-				var processorReplacement = this.runProcessor(processorName, processorParameters);
-				template = template.slice(0, startIndex) + processorReplacement + template.slice(startIndex+length, template.length);
-			}.bind(this));
+			template = this.parseProcessors(
+				template,
+				function(processorName, processorParameters, startIndex, length) {
+					return this.runProcessor(processorName, processorParameters);
+				}.bind(this)
+			);
 			return template;
 		}
 
-		public parseProcessors(text: string, executer: (processorName: string, processorParameters: string[], startIndex: number, length: number) => void) {
-			var regex: RegExp = new RegExp(this.processorPattern, "gim");
+		public parseProcessors(text: string, executer: (processorName: string, processorParameters: string[], startIndex: number, length: number) => string):string {
+			var regex: RegExp = new RegExp(this.processorPattern);
 
 			for(var match; match = regex.exec(text); ) {
+				console.log(JSON.stringify(regex.lastIndex));
 				var processorLiteral: string = match[0];
+				var startIndex: number = match.index;
+				var length: number = match[0].length;
 				var name: string = this.getProcessorName(processorLiteral);
 				var params: string[] = this.getParameters(processorLiteral);
 
-				if(name && params && match.index && match.index >= 0 && match[0].length > 0) {
-					executer(name, params, match.index, match[0].length);
+				if(name && params && startIndex && startIndex >= 0 && length > 0) {
+					var replacement: string = executer(name, params, match.index, match[0].length);
+					text = text.slice(0, startIndex) + (replacement || '') + text.slice(startIndex+length, text.length);
 				} else {
 					throw new Error("Invalid processor properties: "+JSON.stringify({
 						match: match, name: name, params: params, startIndex: match.index, length: match[0].length
 					}));
 				}
 			}
+			return text;
 		}
 
 		public runProcessor(processorName: string, processorParameters: string[]):string {
