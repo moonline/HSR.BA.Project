@@ -3,6 +3,7 @@ package controllers.ppt;
 import com.fasterxml.jackson.databind.JsonNode;
 import controllers.AbstractController;
 import controllers.GuaranteeAuthenticatedUser;
+import daos.ppt.ProjectPlanningToolDAO;
 import logics.docs.QueryDescription;
 import logics.docs.QueryExamples;
 import logics.docs.QueryParameters;
@@ -22,9 +23,11 @@ import static logics.docs.QueryResponses.Response;
 public class ProjectPlanningToolController extends AbstractController {
 
 	private final PPTTaskLogic PPT_TASK_LOGIC;
+	private final ProjectPlanningToolDAO PROJECT_PLANNING_TOOL_DAO;
 
-	public ProjectPlanningToolController(PPTTaskLogic pptTaskLogic) {
+	public ProjectPlanningToolController(PPTTaskLogic pptTaskLogic, ProjectPlanningToolDAO projectPlanningToolDao) {
 		PPT_TASK_LOGIC = pptTaskLogic;
+		PROJECT_PLANNING_TOOL_DAO = projectPlanningToolDao;
 	}
 
 	@Transactional(readOnly = true)
@@ -121,5 +124,17 @@ public class ProjectPlanningToolController extends AbstractController {
 						status(wsResponse.getStatus(), wsResponse.asJson())
 		);
 	}
+
+	@Transactional(readOnly = true)
+	@GuaranteeAuthenticatedUser
+	@QueryDescription("Returns the only existing Project Planning Tool.")
+	@QueryResponses({
+			@QueryResponses.Response(status = OK, description = "It is returned as Json.")
+	})
+	@QueryExamples({@QueryExamples.Example(parameters = {})})
+	public Result read() {
+		return ok(jsonify(PROJECT_PLANNING_TOOL_DAO.readTheOnlyOne()));
+	}
+
 
 }
