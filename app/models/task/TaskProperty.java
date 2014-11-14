@@ -1,6 +1,7 @@
 package models.task;
 
 import models.AbstractEntity;
+import play.data.validation.Constraints;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -9,6 +10,7 @@ import javax.persistence.Table;
 @Table(name = "taskproperty")
 public class TaskProperty extends AbstractEntity {
 
+	@Constraints.Required
 	private String name;
 
 	public String getName() {

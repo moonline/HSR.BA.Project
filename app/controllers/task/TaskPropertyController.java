@@ -7,6 +7,7 @@ import logics.docs.QueryDescription;
 import logics.docs.QueryExamples;
 import logics.docs.QueryParameters;
 import logics.task.TaskPropertyLogic;
+import models.task.TaskProperty;
 import play.db.jpa.Transactional;
 import play.mvc.Result;
 
@@ -38,7 +39,7 @@ public class TaskPropertyController extends AbstractCRUDController {
 			@Example(parameters = {"A new Task Property"})
 	})
 	public Result create() {
-		return create(TASK_PROPERTY_LOGIC, TaskPropertyLogic.TaskPropertyForm.class);
+		return create(TASK_PROPERTY_LOGIC, TaskProperty.class);
 	}
 
 	@Override
@@ -73,7 +74,7 @@ public class TaskPropertyController extends AbstractCRUDController {
 			@Example(id = "REFERENCE_TASKPROPERTY_1000000000000000008", parameters = {"My example Task Property"})
 	})
 	public Result update(long id) {
-		return update(TASK_PROPERTY_DAO, TASK_PROPERTY_LOGIC, TaskPropertyLogic.TaskPropertyForm.class, id);
+		return update(TASK_PROPERTY_DAO, TASK_PROPERTY_LOGIC, TaskProperty.class, id);
 	}
 
 	@Override
