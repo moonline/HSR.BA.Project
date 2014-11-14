@@ -37,6 +37,8 @@ module app.service {
 				var param: any;
 				if(this.isStringParameter(parameter)) {
 					param = parameter.substring(1,parameter.length-1) || null;
+				} else if(this.isObjectParameter(parameter)) {
+					param = JSON.parse(parameter) || null;
 				} else {
 					param = this.data[parameter] || null;
 				}
@@ -53,6 +55,10 @@ module app.service {
 
 		private isStringParameter(variable: string) {
 			return variable[0] == '"' && variable[variable.length-1] == '"';
+		}
+
+		private isObjectParameter(variable: string) {
+			return variable[0] == '{' && variable[variable.length-1] == '}';
 		}
 
 		private getProcessorName(processorLiteral: string) {
