@@ -13,12 +13,14 @@ GET		/user/loginStatus			@controllers.user.UserController.loginStatus()
 POST	/user/register				@controllers.user.UserController.register()
 POST	/user/changePassword		@controllers.user.UserController.changePassword()
 
-GET		/ppt						@controllers.ppt.ProjectPlanningToolController.read()
+GET		/ppt						@controllers.ppt.ProjectPlanningToolController.readAll()
+GET		/ppt/$id<[0-9]+>			@controllers.ppt.ProjectPlanningToolController.read(id: Long)
 POST	/ppt/sendToPPT				@controllers.ppt.ProjectPlanningToolController.sendToPPT()
 POST	/ppt/createPPTTask			@controllers.ppt.ProjectPlanningToolController.createPPTTask()
 GET		/dks/getFromDKS				@controllers.dks.DecisionKnowledgeSystemController.getFromDKS(url: String)
 
-GET		/project					@controllers.user.ProjectController.read()
+GET		/project					@controllers.user.ProjectController.readAll()
+GET		/project/$id<[0-9]+>		@controllers.user.ProjectController.read(id: Long)
 
 POST	/user/pptAccount			@controllers.user.PPTAccountController.create()
 GET		/user/pptAccount			@controllers.user.PPTAccountController.readAll()

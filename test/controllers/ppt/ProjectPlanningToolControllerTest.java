@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import controllers.AbstractControllerTest;
 import daos.ppt.ProjectPlanningToolDAO;
 import daos.task.TaskDAO;
-import daos.user.ProjectDAO;
 import models.task.Task;
 import models.task.TaskProperty;
 import models.task.TaskTemplate;
@@ -126,14 +125,14 @@ public class ProjectPlanningToolControllerTest extends AbstractControllerTest {
 
 	@Test
 	public void testReadTheSingleProject() throws Throwable {
-		Result result = callActionWithUser(routes.ref.ProjectPlanningToolController.read());
+		Result result = callActionWithUser(routes.ref.ProjectPlanningToolController.readAll());
 		//Verification
 		assertThat(status(result)).isEqualTo(OK);
-		Long pptId = JPA.withTransaction(() -> new ProjectPlanningToolDAO().readTheOnlyOne().getId());
-		assertCheckJsonResponse(result, Json.parse("{" +
+		Long pptId = JPA.withTransaction(() -> new ProjectPlanningToolDAO().readAll().get(0).getId());
+		assertCheckJsonResponse(result, Json.parse("{\"items\":[{" +
 				"	\"id\" : " + pptId + ",\n" +
 				"	\"name\":\"Project Planning Tool\"\n" +
-				"}"));
+				"}]}"));
 	}
 
 
