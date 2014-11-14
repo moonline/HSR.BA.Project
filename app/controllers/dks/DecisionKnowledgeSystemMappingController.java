@@ -7,6 +7,7 @@ import logics.dks.DKSMappingLogic;
 import logics.docs.QueryDescription;
 import logics.docs.QueryExamples;
 import logics.docs.QueryParameters;
+import models.dks.DKSMapping;
 import play.db.jpa.Transactional;
 import play.mvc.Result;
 
@@ -41,7 +42,7 @@ public class DecisionKnowledgeSystemMappingController extends AbstractCRUDContro
 			@Example(parameters = {"9999", "87"})
 	})
 	public Result create() {
-		return create(DKS_MAPPING_LOGIC, DKSMappingLogic.DKSMappingForm.class);
+		return create(DKS_MAPPING_LOGIC, DKSMapping.class);
 	}
 
 	@Override
@@ -78,7 +79,7 @@ public class DecisionKnowledgeSystemMappingController extends AbstractCRUDContro
 			@Example(id = "9999", parameters = {"9999", "87"})
 	})
 	public Result update(long id) {
-		return update(DKS_MAPPING_DAO, DKS_MAPPING_LOGIC, DKSMappingLogic.DKSMappingForm.class, id);
+		return update(DKS_MAPPING_DAO, DKS_MAPPING_LOGIC, DKSMapping.class, id);
 	}
 
 	@Override

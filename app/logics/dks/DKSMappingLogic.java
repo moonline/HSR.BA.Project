@@ -3,10 +3,8 @@ package logics.dks;
 import daos.dks.DKSMappingDAO;
 import logics.CRUDLogicInterface;
 import models.dks.DKSMapping;
-import models.task.TaskTemplate;
-import play.data.validation.Constraints;
 
-public class DKSMappingLogic implements CRUDLogicInterface<DKSMapping, DKSMappingLogic.DKSMappingForm, DKSMappingLogic.DKSMappingForm> {
+public class DKSMappingLogic implements CRUDLogicInterface<DKSMapping, DKSMapping, DKSMapping> {
 
 	private final DKSMappingDAO DKS_MAPPING_DAO;
 
@@ -15,14 +13,14 @@ public class DKSMappingLogic implements CRUDLogicInterface<DKSMapping, DKSMappin
 	}
 
 	@Override
-	public DKSMapping create(DKSMappingForm createForm) {
+	public DKSMapping create(DKSMapping createForm) {
 		return update(new DKSMapping(), createForm);
 	}
 
 	@Override
-	public DKSMapping update(DKSMapping entity, DKSMappingForm updateForm) {
-		entity.setDksNode(updateForm.dksNode);
-		entity.setTaskTemplate(updateForm.taskTemplate);
+	public DKSMapping update(DKSMapping entity, DKSMapping updateForm) {
+		entity.setDksNode(updateForm.getDksNode());
+		entity.setTaskTemplate(updateForm.getTaskTemplate());
 		DKS_MAPPING_DAO.persist(entity);
 		return entity;
 	}
@@ -35,13 +33,6 @@ public class DKSMappingLogic implements CRUDLogicInterface<DKSMapping, DKSMappin
 	public String delete(DKSMapping entity) {
 		DKS_MAPPING_DAO.remove(entity);
 		return null;
-	}
-
-	public static class DKSMappingForm {
-		@Constraints.Required
-		public String dksNode;
-		@Constraints.Required
-		public TaskTemplate taskTemplate;
 	}
 
 }
