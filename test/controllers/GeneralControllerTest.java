@@ -68,4 +68,31 @@ public class GeneralControllerTest extends AbstractControllerTest {
 		assertThat(JPA.withTransaction(() -> new ProjectDAO().readById(newProjectId)).getName()).isEqualToIgnoringCase("New Project");
 	}
 
+	@Test
+	public void testUpdateWithJsonRequestDoNotRequireParametersButTheId() throws Throwable {
+		//Setup
+		Mapping mapping = AbstractTestDataCreator.createMappingWithTransaction("My PPT", "My Project", "/example/target", "{}");
+		Long newProjectId = AbstractTestDataCreator.createProjectWithTransaction("New Project").getId();
+		JsonNode mappingAsJson = Json.parse("{ \"id\" : " + mapping.getId() + ",\n" +
+				"	\"projectPlanningTool\":{\"id\":" + mapping.getProjectPlanningTool().getId() + ",\"name\":\"My PPT\"},\n" +
+				"	\"project\":{\"id\":" + newProjectId + "},\n" + //no name parameter here
+				"	\"url\" : \"/post/target2\",\n" +
+				"	\"requestTemplate\" : \"{\\\"name\\\":\\\"${titleeee}\\\"}\"\n" +
+				"}");
+		String user = AbstractTestDataCreator.createUserWithTransaction("User 77", "1234").getId() + "";
+		//Test
+		FakeRequest requestParams = new FakeRequest().withJsonBody(mappingAsJson).withSession(AuthenticationChecker.SESSION_USER_IDENTIFIER, user);
+		Result result = callAction(controllers.ppt.routes.ref.MappingController.update(mapping.getId()), requestParams);
+		//Verification
+		assertThat(status(result)).isEqualTo(OK);
+		assertCheckJsonResponse(result, Json.parse("{ \"id\" : " + mapping.getId() + ",\n" +
+				"	\"projectPlanningTool\":{\"id\":" + mapping.getProjectPlanningTool().getId() + ",\"name\":\"My PPT\"},\n" +
+				"	\"project\":{\"id\":" + newProjectId + ",\"name\":null},\n" +
+				"	\"url\" : \"/post/target2\",\n" +
+				"	\"requestTemplate\" : \"{\\\"name\\\":\\\"${titleeee}\\\"}\"\n" +
+				"}"));
+		Mapping mappingInDB = JPA.withTransaction(() -> new MappingDAO().readById(mapping.getId()));
+		assertThat(mappingInDB.getProject().getId()).isEqualTo(newProjectId);
+	}
+
 }

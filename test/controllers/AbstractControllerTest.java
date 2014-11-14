@@ -53,7 +53,7 @@ public abstract class AbstractControllerTest extends AbstractDatabaseTest {
 
 	protected void assertCheckJsonResponse(Result result, JsonNode expected) {
 		JsonNode resultJson = Json.parse(contentAsString(result));
-		assertThat(resultJson.equals(expected)).describedAs(Json.stringify(expected) + " --- was expected but was --- " + Json.stringify(resultJson)).isTrue();
+		assertThat(resultJson.equals(expected)).describedAs("\n" + Json.stringify(expected) + "\n --- was expected but was --- \n" + Json.stringify(resultJson)).isTrue();
 	}
 
 }
