@@ -85,7 +85,7 @@
 				<span class="messagebox pending" data-ng-if="taskTemplateLoadingStatus === ApplicationState.pending">Loading ...</span>
 			</div>
 			<div class="taskTemplateList">
-				<ul data-type="list">
+				<ul data-type="list" class="twoColumns">
 					<li data-ng-repeat="template in taskTemplates"
 						data-state="{{template == currentTaskTemplate && 'selected' || '' }}">
 						<button class="action update" data-ng-if="currentDksNode"
