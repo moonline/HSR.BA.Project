@@ -77,26 +77,33 @@
 			</div>
 		</div>
 
-		<div class="column3 area pane" data-layout="flow" data-flow-direction="column" data-scroll="y">
+		<div class="column3 area pane verticalFlex" data-layout="flow" data-flow-direction="column" data-scroll="y">
 			<div class="areaContent">
 				<h2>Task templates (&Sigma;:{{taskTemplates.length}})</h2>
 
 				<span class="messagebox error" data-ng-if="taskTemplateLoadingStatus === ApplicationState.failed">Loading of task templates failed. Maybe server is not available.</span>
 				<span class="messagebox pending" data-ng-if="taskTemplateLoadingStatus === ApplicationState.pending">Loading ...</span>
-
-				<ul data-type="list">
-					<li data-ng-repeat="template in taskTemplates" data-state="{{template == currentTaskTemplate && 'selected' || '' }}">
-						<button class="action update" data-ng-if="currentDksNode" data-ng-click="mapTaskTemplate(template)" title="Map task template with decision knowledge system element">&lt; map</button>
+			</div>
+			<div class="taskTemplateList">
+				<ul data-type="list" class="twoColumns">
+					<li data-ng-repeat="template in taskTemplates"
+						data-state="{{template == currentTaskTemplate && 'selected' || '' }}">
+						<button class="action update" data-ng-if="currentDksNode"
+								data-ng-click="mapTaskTemplate(template)"
+								title="Map task template with decision knowledge system element">&lt; map
+						</button>
 						<span data-ng-click="setCurrentTaskTemplate(template)" title="Edit task template">
 							<button class="action edit">&#x270E;</button> {{template.name}}
 						</span>
 					</li>
 				</ul>
+			</div>
 
+			<div class="areaContent taskTemplateDetail">
 				<h3>Create Task template</h3>
 				<form>
 					<div class="formLine" data-columns="3">
-						<label for="createTaskTemplate">New task template</label>
+						<label>New task template</label>
 						<input type="text" name="createTaskTemplateName" data-ng-model="createTaskTemplateName" placeholder="name" />
 						<button class="action create" data-ng-click="createNewTaskTemplate(createTaskTemplateName); createTaskTemplateName = '';"
 							title="Create a new task template">
@@ -104,7 +111,6 @@
 						</button>
 					</div>
 				</form>
-
 
 				<h3 data-ng-if="currentTaskTemplate">{{currentTaskTemplate.name}} [{{currentTaskTemplate.id}}]</h3>
 				<form data-ng-if="currentTaskTemplate">

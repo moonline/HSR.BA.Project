@@ -41,14 +41,14 @@ body, pre.multilineText, textarea { font-family: Arial, Helvetica, sans-serif; }
 	}
 
 	&.page {
-		width: 100%; padding: 0;
+		padding: 0;
 
 		&.mapping {
 			padding-bottom: 1rem;
 
 			.pane {
-				&.column1, &.column2 { width: 30%!important; }
-				&.column3 { width: 40%!important; }
+				&.column1, &.column2 { width: 30.9%!important; }
+				&.column3 { width: 38.2%!important; } //golden ratio
 
 				padding-bottom: 0.5rem;
 			}
@@ -68,6 +68,12 @@ body, pre.multilineText, textarea { font-family: Arial, Helvetica, sans-serif; }
 	a:hover { color: gray; }
 	.accordion { padding: 0.5rem; }
 }
+
+.verticalFlex { display: flex; flex-direction: column; }
+
+.taskTemplateList { flex-grow: 1; overflow-x: hidden; overflow-y: scroll; height: 5em; }
+
+.taskTemplateDetail { align-self: flex-end; min-height: 38.2%; max-height: 62.8%; } //height min/max according to golden ratio
 
 [data-scroll="y"] { height: 100%; overflow-y: scroll; overflow-x: hidden; }
 
@@ -100,6 +106,15 @@ ol, ul {
 
 dl dt { font-weight: bold; }
 [data-state="selected"] { font-weight: bold; color: teal; }
+
+ul.twoColumns {
+  -moz-column-count: 2;
+  -moz-column-gap: 10px;
+  -webkit-column-count: 2;
+  -webkit-column-gap: 10px;
+  column-count: 2;
+  column-gap: 10px;
+}
 
 
 /* font / text */
