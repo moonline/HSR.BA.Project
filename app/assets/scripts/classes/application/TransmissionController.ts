@@ -17,24 +17,49 @@ module app.application {
 			this.$scope = $scope;
 
 			var mappingRepository = persistenceService['mappingRepository'];
-			mappingRepository.findAll(function(success, items) {
-				$scope.mappings = items;
-			});
+			$scope.decisions = [];
+			$scope.mappings = [];
+			$scope.decisionMappings = {};
 
 			var decisionRepository:app.domain.repository.dks.DecisionRepository = persistenceService['decisionRepository'];
-			var devisionKnowledgeRepository: app.domain.repository.dks.DecisionKnowledgeSystemRepository = persistenceService['decisionKnowledgeRepository'];
-			devisionKnowledgeRepository.findAll(function(success, items) {
+			var decisionKnowledgeRepository: app.domain.repository.dks.DecisionKnowledgeSystemRepository = persistenceService['decisionKnowledgeRepository'];
+			decisionKnowledgeRepository.findAll(function(success, items) {
 				$scope.currentDks = <app.domain.model.dks.DecisionKnowledgeSystem>items[0];
 
-				decisionRepository.host = $scope.currentDks.address;
+				//decisionRepository.host = $scope.currentDks.address;
+				decisionRepository.proxy = null;
 				decisionRepository.findAll(function(success, items){
 					$scope.decisions = items;
+
+					for(var di in $scope.decisions) {
+						var decision = $scope.decisions[di];
+						if(!$scope.decisionMappings[decision.template.id]) {
+							$scope.decisionMappings[decision.template.id] = { problem: decision.template, decisions: {} };
+						}
+						$scope.decisionMappings[decision.template.id]['decisions'][decision.id] = { decision: decision, decisionsToExport: {}, mappings: {} };
+					}
+
+					mappingRepository.findAll(function(success, items) {
+						$scope.mappings = items;
+
+						for(var mi in $scope.mappings) {
+							var mapping = $scope.mappings[mi];
+							// only add mapping, if decision exist
+							if($scope.decisionMappings[mapping.dksNode]) {
+								for(var dmi in $scope.decisionMappings[mapping.dksNode]['decisions']) {
+									var decisionElement = $scope.decisionMappings[mapping.dksNode]['decisions'][dmi];
+									decisionElement.mappings[mapping.id] = mapping;
+								}
+							}
+						}
+						console.log($scope.decisionMappings);
+					});
 				});
 			});
 
-			$scope.url = "http://localhost:9920/rest/api/2/issue/";
+			/*$scope.url = "http://localhost:9920/rest/api/2/issue/";
 			$scope.data = '{\n\t"fields": {\n\t\t"project": {\n\t\t\t"key": "TEST"\n\t\t},\n\t\t"assignee": "${assignee}",\n\t\t"description": "${description}",\n\t\t"issuetype": {\n\t\t\t"name": "${type}"\n\t\t}\n\t}\n}';
-			$scope.output = [];
+			$scope.output = [];*/
 
 			/*$scope.render = function(text: string) {
 				$scope.output = [];

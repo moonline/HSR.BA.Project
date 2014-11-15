@@ -1,31 +1,53 @@
-<div class="main" data-region="center" data-layout="flow" data-flow-direction="column" data-align="start">
-	<h2>Decisions &amp; Options</h2>
-	<ul data-type="list">
-		<li data-ng-repeat="decision in decisions">
-			<div class="listElement">
-				<span class="name">{{decision.name}}</span>
-			</div>
-			({{decision.alternatives.length}})
-			<ul data-type="list" data-ng-if="decision.alternatives.length > =">
-				<li data-ng-repeat="alternative in decision.alternatives">
-					<div class="listElement">
-						<span class="name">{{alternative.name}}</span>
-					</div>
-				</li>
-			</ul>
-		</li>
-	</ul>
-
-	<!--<form>
-		<input type="text" data-ng-model="url" /><br />
-		<textarea data-ng-model="data" ></textarea><br />
-		<button data-ng-click="render(data)">Render</button>
-		<button data-ng-if="output.length > 0" data-ng-click="transmit()">Transmit to PPT</button><br />
-		<span data-ng-if="trasmitCount > 0">{{transmitSuccessfullCount}} of {{trasmitCount}} successfull transmitted!</span>
-	</form>
-	<ul>
-		<li data-ng-repeat="decisionTemplates in output">
-			<pre data-ng-repeat="decisionTaskTemplate in decisionTemplates">{{decisionTaskTemplate}}</pre><br />
+<div class="main" data-region="center" >
+	<div class="area page admin" data-scroll="y">
+		<h2>Decisions &amp; Options</h2>
+		<ul data-type="list">
+			<li data-ng-repeat="(pkey, element) in decisionMappings">
+				<dl>
+					<dt>Problem</dt>
+					<dd>{{element.problem.name}} [#{{element.problem.id}}]</dd>
+					<dt>Decisions</dt>
+					<dd>
+						<ul>
+							<li data-ng-repeat="(dkey,decisionElement) in element.decisions">
+								{{decisionElement.decision.name}} [#{{decisionElement.decision.id}}]
+								<dl>
+									<dt>Mapped task templates to transmit</dt>
+									<dd>
+										<ul>
+											<li data-ng-repeat="(mkey, mapping) in decisionElement.mappings">
+												<input type="checkbox" data-ng-model="decisionElement.decisionsToExport[mkey]" />&nbsp;
+												{{mapping.taskTemplate.name}} [#{{mapping.taskTemplate.id}}]
+											</li>
+										</ul>
+									</dd>
+									<dt>Alternatives</dt>
+									<dd>
+										<ul>
+											<li data-ng-repeat="alternative in decisionElement.decision.alternatives">
+												{{alternative.name}} [#{{alternative.id}}]
+											</li>
+										</ul>
+									</dd>
+								</dl>
+							</li>
+						</ul>
+					</dd>
+				</dl>
+			</li>
 		</ul>
-	</ul>-->
+
+		<!--<form>
+			<input type="text" data-ng-model="url" /><br />
+			<textarea data-ng-model="data" ></textarea><br />
+			<button data-ng-click="render(data)">Render</button>
+			<button data-ng-if="output.length > 0" data-ng-click="transmit()">Transmit to PPT</button><br />
+			<span data-ng-if="trasmitCount > 0">{{transmitSuccessfullCount}} of {{trasmitCount}} successfull transmitted!</span>
+		</form>
+		<ul>
+			<li data-ng-repeat="decisionTemplates in output">
+				<pre data-ng-repeat="decisionTaskTemplate in decisionTemplates">{{decisionTaskTemplate}}</pre><br />
+			</ul>
+		</ul>-->
+	</div>
 </div>
