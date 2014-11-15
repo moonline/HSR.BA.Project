@@ -29,6 +29,7 @@ import play.libs.F;
 
 import javax.persistence.EntityManager;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class ExampleDataCreator {
@@ -183,6 +184,33 @@ public class ExampleDataCreator {
 							return dksMapping.getId();
 						},
 						existingDKSMapping -> existingDKSMapping.getDksNode().equals(dksNode));
+				break;
+			case "DKSNODE":
+				objectCreator = new ExampleObjectCreator<DKSMapping>("DKSNode",
+						DKS_MAPPING_DAO,
+						() -> null,
+						existingDKSMapping -> true) {
+					@Override
+					public void create(long id) {
+						List<DKSMapping> existingEntities = DKS_MAPPING_DAO.readByDKSNode(id + "");
+						if (existingEntities == null) {
+							TaskTemplate taskTemplate = new TaskTemplate();
+							taskTemplate.setName("My example Task Template 7");
+							DKSMapping dksMapping = new DKSMapping();
+							dksMapping.setDksNode(id + "");
+							dksMapping.setTaskTemplate(taskTemplate);
+							persist(taskTemplate, dksMapping);
+						} else {
+							for (DKSMapping existingEntity : existingEntities) {
+								if (!existingEntity.getTaskTemplate().getName().equals("My example Task Template 7")) {
+									// In case this error occours, try to take larger id numbers.
+									// This is the reason for example data ids > 1000000000000000000!
+									Logger.error("Could not create Example Data DKSNode with ID " + id + ", because it already exists. The problem is, this existing object is exposed to every use as example of the documentation: " + existingEntities);
+								}
+							}
+						}
+					}
+				};
 				break;
 			case "PROCESSOR":
 				String name = "Example Processor";
