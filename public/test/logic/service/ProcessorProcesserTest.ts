@@ -120,6 +120,50 @@ module test.logic.service {
 				expect(result2).toEqual('eins|zwei|drei|vier');
 			});
 
+			it("Render variables", function(){
+				var template: string = "{\
+	\"assignee\": \"${var1}\",\
+	\"name\": \"${var1} und ${var2}\"\
+}";
+				var data:any = {
+					var1: 'irgendwas',
+					var2: 'nochwas',
+					list: [ 'eins', 'zwei', 'drei', 'vier']
+				};
+
+				var processorService: app.service.ProcessorProcesser = new app.service.ProcessorProcesser(data, '', {});
+				var renderedTemplate = processorService.parseVariables(template);
+				var expectedTemplate: string = "{\
+	\"assignee\": \"irgendwas\",\
+	\"name\": \"irgendwas und nochwas\"\
+}";
+				expect(renderedTemplate).toEqual(expectedTemplate);
+			});
+
+			it("Render cascading variables", function(){
+				var template: string = "{\
+	\"assignee\": \"${list.2}\",\
+	\"name\": \"${var1.titel}: ${var1.place.name}\"\
+}";
+				var data:any = {
+					var1: {
+						titel: 'irgendwas',
+						place: {
+							name: 'irgendwo'
+						}
+					},
+					list: [ 'eins', 'zwei', 'drei', 'vier']
+				};
+
+				var processorService: app.service.ProcessorProcesser = new app.service.ProcessorProcesser(data, '', {});
+				var renderedTemplate = processorService.parseVariables(template);
+				var expectedTemplate: string = "{\
+	\"assignee\": \"drei\",\
+	\"name\": \"irgendwas: irgendwo\"\
+}";
+				expect(renderedTemplate).toEqual(expectedTemplate);
+			});
+
 			it("Complex object processor", function() {
 				var data:any = {
 					person1: { name: 'Hans Müller', email: 'hmueller@gmx.net' }

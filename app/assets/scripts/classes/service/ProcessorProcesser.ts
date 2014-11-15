@@ -10,6 +10,7 @@ module app.service {
 		 *	 $processor:(abc1 )$
 		 *	 $processor:()$
 		 */
+		private variablePattern:string = '\\$\\{[\\w\\d\\.]*\\}';
 		private processorPattern:string = '\\$\\w+:\\([^\\(\\)]*\\)\\$';
 		private processorNamePattern:string = '\\$\\w+:\\(';
 		private processorParameterPattern:string = ':\\([^\\(\\)]*\\)\\$';
@@ -35,9 +36,9 @@ module app.service {
 
 		public parseProcessors(text: string, executer: (processorName: string, processorParameters: string[], startIndex: number, length: number) => string):string {
 			var regex: RegExp = new RegExp(this.processorPattern);
+			var textToReplace = ""+text;
 
-			for(var match; match = regex.exec(text); ) {
-				console.log(JSON.stringify(regex.lastIndex));
+			for(var match; match = regex.exec(textToReplace); ) {
 				var processorLiteral: string = match[0];
 				var startIndex: number = match.index;
 				var length: number = match[0].length;
@@ -46,14 +47,14 @@ module app.service {
 
 				if(name && params && startIndex && startIndex >= 0 && length > 0) {
 					var replacement: string = executer(name, params, match.index, match[0].length);
-					text = text.slice(0, startIndex) + (replacement || '') + text.slice(startIndex+length, text.length);
+					textToReplace = textToReplace.slice(0, startIndex) + (replacement || '') + textToReplace.slice(startIndex+length, textToReplace.length);
 				} else {
 					throw new Error("Invalid processor properties: "+JSON.stringify({
 						match: match, name: name, params: params, startIndex: match.index, length: match[0].length
 					}));
 				}
 			}
-			return text;
+			return textToReplace;
 		}
 
 		public runProcessor(processorName: string, processorParameters: string[]):string {
@@ -104,6 +105,38 @@ module app.service {
 			} else {
 				return [];
 			}
+		}
+
+		/**
+		 * find patterns like ${var} or ${var.auto.name}
+		 */
+		public parseVariables(text: string):string {
+			var regex: RegExp = new RegExp(this.variablePattern);
+			var textToReplace = ""+text;
+
+			for(var match; match = regex.exec(textToReplace); ) {
+				var property: string = match[0].substring(2,match[0].length-1);
+				var replaceLength:number = match[0].length;
+				var index: number = match.index;
+
+				var replacer: string = "";
+				var currentSegment:string = null;
+				var currentData = this.data;
+				var propertyPathSegments = property.split('.');
+
+				if(propertyPathSegments.length >= 1) {
+					for(var si in propertyPathSegments) {
+						currentSegment = propertyPathSegments[si];
+						if(si == propertyPathSegments.length-1) {
+							var replacer = (currentData[currentSegment] != undefined) ? <string>currentData[currentSegment] : "";
+						} else {
+							currentData = (currentData[currentSegment] != undefined) ? currentData[currentSegment] : null;
+						}
+					}
+				}
+				textToReplace = textToReplace.slice(0, index) + replacer + textToReplace.slice(index+replaceLength, textToReplace.length);
+			}
+			return textToReplace;
 		}
 	}
 }
