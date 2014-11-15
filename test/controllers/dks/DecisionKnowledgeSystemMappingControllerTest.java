@@ -132,4 +132,49 @@ public class DecisionKnowledgeSystemMappingControllerTest extends AbstractContro
 		assertThat(JPA.withTransaction(() -> DKS_MAPPING_DAO.readById(dksMapping))).isNull();
 	}
 
+	@Test
+	public void testReadDKSMappingByDKSNode() throws Throwable {
+		//Setup
+		String dksNode = "11";
+		DKSMapping[] dksMappings = JPA.withTransaction(() -> {
+			AbstractTestDataCreator.removeAllTaskRelatedEntities();
+			return new DKSMapping[]{
+					createDKSMapping(createTaskTemplate("The TT 1"), dksNode),
+					createDKSMapping(createTaskTemplate("The TT 2"), "22"),
+					createDKSMapping(createTaskTemplate("The TT 3"), dksNode)};
+		});
+		//Test
+		Result result = callActionWithUser(routes.ref.DecisionKnowledgeSystemMappingController.readByDKSNode(dksNode));
+		//Verification
+		assertThat(status(result)).isEqualTo(OK);
+		assertCheckJsonResponse(result, Json.parse("{\"items\":[ { \"id\" : " + dksMappings[0].getId() + ",\n" +
+				"      \"taskTemplate\" : {" +
+				"			\"id\":" + dksMappings[0].getTaskTemplate().getId() + ",\n" +
+				"			\"parent\":null,\n" +
+				"			\"name\":\"The TT 1\",\n" +
+				"			\"properties\":[]\n" +
+				"		},\n" +
+				"      \"dksNode\" : \"11\"\n" +
+				"    },\n" +
+				"    { \"id\" : " + dksMappings[2].getId() + ",\n" +
+				"      \"taskTemplate\" : {" +
+				"			\"id\":" + dksMappings[2].getTaskTemplate().getId() + ",\n" +
+				"			\"parent\":null,\n" +
+				"			\"name\":\"The TT 3\",\n" +
+				"			\"properties\":[]\n" +
+				"		},\n" +
+				"      \"dksNode\" : \"11\"\n" +
+				"    }\n" +
+				"  ]}"));
+	}
+
+	@Test
+	public void testReadDKSMappingByDKSNodeWithoutMatch() throws Throwable {
+		//Test
+		Result result = callActionWithUser(routes.ref.DecisionKnowledgeSystemMappingController.readByDKSNode("9999"));
+		//Verification
+		assertThat(status(result)).isEqualTo(OK);
+		assertCheckJsonResponse(result, Json.parse("{\"items\":[]}"));
+	}
+
 }

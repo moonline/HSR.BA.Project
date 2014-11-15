@@ -41,6 +41,7 @@ POST	/taskTemplate/$taskTemplate<[0-9]+>/properties/$id<[0-9]+>/delete	@controll
 
 POST	/dksMapping				@controllers.dks.DecisionKnowledgeSystemMappingController.create()
 GET		/dksMapping				@controllers.dks.DecisionKnowledgeSystemMappingController.readAll()
+GET		/dksMapping/byDKSNode/:dksNode	@controllers.dks.DecisionKnowledgeSystemMappingController.readByDKSNode(dksNode: String)
 GET		/dksMapping/$id<[0-9]+>	@controllers.dks.DecisionKnowledgeSystemMappingController.read(id: Long)
 POST	/dksMapping/$id<[0-9]+>	@controllers.dks.DecisionKnowledgeSystemMappingController.update(id: Long)
 DELETE	/dksMapping/$id<[0-9]+>	@controllers.dks.DecisionKnowledgeSystemMappingController.delete(id: Long)
