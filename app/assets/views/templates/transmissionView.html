@@ -1,5 +1,22 @@
 <div class="main" data-region="center" data-layout="flow" data-flow-direction="column" data-align="start">
-	<form>
+	<h2>Decisions &amp; Options</h2>
+	<ul data-type="list">
+		<li data-ng-repeat="decision in decisions">
+			<div class="listElement">
+				<span class="name">{{decision.name}}</span>
+			</div>
+			({{decision.alternatives.length}})
+			<ul data-type="list" data-ng-if="decision.alternatives.length > =">
+				<li data-ng-repeat="alternative in decision.alternatives">
+					<div class="listElement">
+						<span class="name">{{alternative.name}}</span>
+					</div>
+				</li>
+			</ul>
+		</li>
+	</ul>
+
+	<!--<form>
 		<input type="text" data-ng-model="url" /><br />
 		<textarea data-ng-model="data" ></textarea><br />
 		<button data-ng-click="render(data)">Render</button>
@@ -10,5 +27,5 @@
 		<li data-ng-repeat="decisionTemplates in output">
 			<pre data-ng-repeat="decisionTaskTemplate in decisionTemplates">{{decisionTaskTemplate}}</pre><br />
 		</ul>
-	</ul>
+	</ul>-->
 </div>

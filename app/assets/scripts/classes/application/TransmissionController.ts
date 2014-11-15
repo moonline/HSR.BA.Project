@@ -4,6 +4,7 @@
 
 /// <reference path='../domain/repository/MappingRepository.ts' />
 /// <reference path='../domain/repository/DecisionRepository.ts' />
+/// <reference path='../domain/repository/DecisionKnowledgeSystemRepository.ts' />
 
 module app.application {
 	'use strict';
@@ -14,13 +15,21 @@ module app.application {
 
 		constructor($scope, $location, persistenceService, $http) {
 			this.$scope = $scope;
+
 			var mappingRepository = persistenceService['mappingRepository'];
-			mappingRepository.findAll(function(items) {
+			mappingRepository.findAll(function(success, items) {
 				$scope.mappings = items;
 			});
-			var decisionrepository:app.domain.repository.dks.DecisionRepository = new app.domain.repository.dks.DecisionRepository($http);
-			decisionrepository.findAll(function(items){
-				$scope.decisions = items;
+
+			var decisionRepository:app.domain.repository.dks.DecisionRepository = persistenceService['decisionRepository'];
+			var devisionKnowledgeRepository: app.domain.repository.dks.DecisionKnowledgeSystemRepository = persistenceService['decisionKnowledgeRepository'];
+			devisionKnowledgeRepository.findAll(function(success, items) {
+				$scope.currentDks = <app.domain.model.dks.DecisionKnowledgeSystem>items[0];
+
+				decisionRepository.host = $scope.currentDks.address;
+				decisionRepository.findAll(function(success, items){
+					$scope.decisions = items;
+				});
 			});
 
 			$scope.url = "http://localhost:9920/rest/api/2/issue/";
