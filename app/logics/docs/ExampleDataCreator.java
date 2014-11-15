@@ -193,7 +193,7 @@ public class ExampleDataCreator {
 					@Override
 					public void create(long id) {
 						List<DKSMapping> existingEntities = DKS_MAPPING_DAO.readByDKSNode(id + "");
-						if (existingEntities == null) {
+						if (existingEntities == null || existingEntities.isEmpty()) {
 							TaskTemplate taskTemplate = new TaskTemplate();
 							taskTemplate.setName("My example Task Template 7");
 							DKSMapping dksMapping = new DKSMapping();
@@ -203,7 +203,7 @@ public class ExampleDataCreator {
 						} else {
 							for (DKSMapping existingEntity : existingEntities) {
 								if (!existingEntity.getTaskTemplate().getName().equals("My example Task Template 7")) {
-									// In case this error occours, try to take larger id numbers.
+									// In case this error occurs, try to take larger id numbers.
 									// This is the reason for example data ids > 1000000000000000000!
 									Logger.error("Could not create Example Data DKSNode with ID " + id + ", because it already exists. The problem is, this existing object is exposed to every use as example of the documentation: " + existingEntities);
 								}
@@ -288,7 +288,7 @@ public class ExampleDataCreator {
 				JPA.em().createQuery("update " + className + " p set p.id=:new where p.id=:old").setParameter("old", currentId).setParameter("new", id).executeUpdate();
 			} else {
 				if (!isExistingAndExpectedFunction.check(existingEntity)) {
-					// In case this error occours, try to take larger id numbers.
+					// In case this error occurs, try to take larger id numbers.
 					// This is the reason for example data ids > 1000000000000000000!
 					Logger.error("Could not create Example Data " + className + " with ID " + id + ", because it already exists. The problem is, this existing object is exposed to every use as example of the documentation: " + existingEntity);
 				}
