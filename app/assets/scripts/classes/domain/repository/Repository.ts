@@ -29,11 +29,11 @@ module app.domain.repository.core {
 			}
 		}
 
-		public findAll(callback: (items: T[]) => void, doCache = false): void {
+		public findAll(callback: (success: boolean, items: T[]) => void, doCache = false): void {
 			var cache: T[] = this.itemCache;
 
 			if(doCache) {
-				callback(cache);
+				callback(true, cache);
 			} else {
 				var filterFunction = this.filter;
 				var type = this.type;
@@ -58,9 +58,9 @@ module app.domain.repository.core {
 					} else {
 						console.warn("No data or data in false format returned. specified dataListProperty: '"+dataListName+"', data: ",data);
 					}
-					callback(cache);
+					callback(true, cache);
 				}).error(function(data){
-					callback([]);
+					callback(false, []);
 				});
 			}
 		}
@@ -95,7 +95,7 @@ module app.domain.repository.core {
 		 * search by id on remote resource. Do not search in cache
 		 * but update cache because user would like to get to get the newest data.
 		 */
-		public findOneById(id: number, callback: (item: T) => void, doCache:boolean = false): void {
+		public findOneById(id: number, callback: (success: boolean, item: T) => void, doCache:boolean = false): void {
 			var method: string = this.resources['detail']['method'].toLowerCase();
 			var path:string = this.getResourcePath('one').replace('{id}', id.toString());
 			var type = this.type;
@@ -117,9 +117,9 @@ module app.domain.repository.core {
 							} else {
 								cache.push(object);
 							}
-							callback(object);
+							callback(true, object);
 						} else {
-							callback(null);
+							callback(false, null);
 						}
 					});
 				}
@@ -127,7 +127,7 @@ module app.domain.repository.core {
 		}
 
 		public updateCache(): void {
-			this.findAll(function(items){
+			this.findAll(function(success, items){
 				this.itemCache = items;
 			}.bind(this));
 		}
@@ -136,15 +136,15 @@ module app.domain.repository.core {
 		 * search in local cache for item because loading all elements
 		 * only to filter occours a lot of trafic
 		 */
-		public findOneBy(propertyName: string, property: any, callback: (item: T) => void, doCache: boolean = false): void {
-			this.findAll(function(items) {
+		public findOneBy(propertyName: string, property: any, callback: (success: boolean, item: T) => void, doCache: boolean = false): void {
+			this.findAll(function(success, items) {
 				var foundItem: T = null;
 				items.forEach(function(item){
 					if(item[propertyName] && item[propertyName] === property) {
 						foundItem = item;
 					}
 				});
-				callback(foundItem);
+				callback(true, foundItem);
 			}, doCache);
 		}
 

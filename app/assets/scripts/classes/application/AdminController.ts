@@ -4,6 +4,7 @@
 /// <reference path='../domain/model/RequestTemplate.ts' />
 /// <reference path='../domain/model/PPTAccount.ts' />
 /// <reference path='../domain/model/Project.ts' />
+/// <reference path='../domain/model/Processor.ts' />
 
 /// <reference path='../domain/repository/TaskPropertyRepository.ts' />
 
@@ -35,29 +36,30 @@ module app.application {
 					$scope.$apply();
 				}
 			}, 4000);
-			taskPropertyRepository.findAll(function(taskProperties) {
+			taskPropertyRepository.findAll(function(success, taskProperties) {
 				$scope.taskProperties = taskProperties;
 
 				// prevent request mix of angular -> call sync instead of parallel async
-				pptAccountRepository.findAll(function(pptAccounts) {
+				pptAccountRepository.findAll(function(success, pptAccounts) {
 					$scope.pptAccounts = pptAccounts;
 
-					requestTemplateRepository.findAll(function(requestTemplates){
+					requestTemplateRepository.findAll(function(success, requestTemplates){
 						$scope.requestTemplates = requestTemplates;
 
-						projectRepository.findAll(function(projects){
+						// TODO: projects redundance?
+						projectRepository.findAll(function(success, projects){
 							$scope.currentProject = projects[0];
 
-                            processorRepository.findAll(function(processors){
+                            processorRepository.findAll(function(success, processors){
                                 $scope.processors = processors;
 
-                                projectRepository.findAll(function(projects){
+                                projectRepository.findAll(function(success, projects){
                                     $scope.projects = projects;
-							setTimeout(() => { $scope.operationState = app.application.ApplicationState.successful; $scope.$apply(); }, configuration.settings.messageBoxDelay);
+									setTimeout(() => { $scope.operationState = app.application.ApplicationState.successful; $scope.$apply(); }, configuration.settings.messageBoxDelay);
+								});
+							});
 						});
 					});
-				});
-			});
 				});
 			});
 
@@ -76,11 +78,7 @@ module app.application {
 
 				$scope.operationState = app.application.ApplicationState.saving;
 				requestTemplateRepository.add(newRequestTemplate, function(success: boolean, item: app.domain.model.ppt.RequestTemplate){
-					if(success) {
-						setTimeout(() => { $scope.operationState = app.application.ApplicationState.successful; $scope.$apply(); }, configuration.settings.messageBoxDelay);
-					} else {
-						setTimeout(() => { $scope.operationState = app.application.ApplicationState.failed; $scope.$apply(); }, configuration.settings.messageBoxDelay);
-					}
+					$scope.setOperationFinishState(success);
 				})
 			};
 
@@ -89,35 +87,33 @@ module app.application {
 
 				$scope.operationState = app.application.ApplicationState.saving;
 				requestTemplateRepository.update(requestTemplate, function(success: boolean, item: app.domain.model.ppt.RequestTemplate){
-					if(success) {
-						setTimeout(() => { $scope.operationState = app.application.ApplicationState.successful; $scope.$apply(); }, configuration.settings.messageBoxDelay);
-					} else {
-						setTimeout(() => { $scope.operationState = app.application.ApplicationState.failed; $scope.$apply(); }, configuration.settings.messageBoxDelay);
-					}
+					$scope.setOperationFinishState(success);
 				})
 			};
 
 			$scope.removeRequestTemplate = function(requestTemplate: app.domain.model.ppt.RequestTemplate) {
 				$scope.operationState = app.application.ApplicationState.saving;
 				requestTemplateRepository.remove(requestTemplate, function(success: boolean){
-					if(success) {
-						setTimeout(() => { $scope.operationState = app.application.ApplicationState.successful; $scope.$apply(); }, configuration.settings.messageBoxDelay);
-					} else {
-						setTimeout(() => { $scope.operationState = app.application.ApplicationState.failed; $scope.$apply(); }, configuration.settings.messageBoxDelay);
-					}
+					$scope.setOperationFinishState(success);
 				})
 			};
 
 
 			/* task properties */
 			$scope.createTaskProperty = function(newTaskPropertyName: string) {
-				taskPropertyRepository.add(new app.domain.model.core.TaskProperty(newTaskPropertyName), function(status, property) {});
+				$scope.operationState = app.application.ApplicationState.saving;
+				taskPropertyRepository.add(new app.domain.model.core.TaskProperty(newTaskPropertyName), function(success, property) {
+					$scope.setOperationFinishState(success);
+				});
 			};
 
 			$scope.renameTaskProperty = function(property: app.domain.model.core.TaskProperty, newName: string) {
 				if(property && newName) {
 					property.name = newName;
-					taskPropertyRepository.update(property, function(status, property) {});
+					$scope.operationState = app.application.ApplicationState.saving;
+					taskPropertyRepository.update(property, function(success, property) {
+						$scope.setOperationFinishState(success);
+					});
 				}
 			};
 
@@ -130,11 +126,7 @@ module app.application {
 				pptAccount.pptPassword = password;
 				$scope.operationState = app.application.ApplicationState.saving;
 				pptAccountRepository.add(pptAccount, function(success: boolean, item: app.domain.model.ppt.PPTAccount) {
-					if(success) {
-						setTimeout(() => { $scope.operationState = app.application.ApplicationState.successful; $scope.$apply(); }, configuration.settings.messageBoxDelay);
-					} else {
-						setTimeout(() => { $scope.operationState = app.application.ApplicationState.failed; $scope.$apply(); }, configuration.settings.messageBoxDelay);
-					}
+					$scope.setOperationFinishState(success);
 				});
 			};
 
@@ -143,22 +135,14 @@ module app.application {
 				(<any>pptAccount).ppt = 1;
 				$scope.operationState = app.application.ApplicationState.saving;
 				pptAccountRepository.update(pptAccount, function(success, item) {
-					if(success) {
-						setTimeout(() => { $scope.operationState = app.application.ApplicationState.successful; $scope.$apply(); }, configuration.settings.messageBoxDelay);
-					} else {
-						setTimeout(() => { $scope.operationState = app.application.ApplicationState.failed; $scope.$apply(); }, configuration.settings.messageBoxDelay);
-					}
+					$scope.setOperationFinishState(success);
 				});
 			};
 
 			$scope.removePPTAccount = function(pptAccount: app.domain.model.ppt.PPTAccount) {
 				$scope.operationState = app.application.ApplicationState.saving;
 				pptAccountRepository.remove(pptAccount, function(success){
-					if(success) {
-						setTimeout(() => { $scope.operationState = app.application.ApplicationState.successful; $scope.$apply(); }, configuration.settings.messageBoxDelay);
-					} else {
-						setTimeout(() => { $scope.operationState = app.application.ApplicationState.failed; $scope.$apply(); }, configuration.settings.messageBoxDelay);
-					}
+					$scope.setOperationFinishState(success);
 				});
 			};
 
@@ -168,11 +152,7 @@ module app.application {
 				var processor: app.domain.model.core.Processor = new app.domain.model.core.Processor (newProcessorName, newProcessorProject, newProcessorCode);
 				$scope.operationState = app.application.ApplicationState.saving;
 				processorRepository.add(processor, function(success: boolean, item: app.domain.model.core.Processor) {
-					if(success) {
-						setTimeout(() => { $scope.operationState = app.application.ApplicationState.successful; $scope.$apply(); }, configuration.settings.messageBoxDelay);
-					} else {
-						setTimeout(() => { $scope.operationState = app.application.ApplicationState.failed; $scope.$apply(); }, configuration.settings.messageBoxDelay);
-					}
+					$scope.setOperationFinishState(success);
 				});
                 return processor;
 			};
@@ -183,22 +163,14 @@ module app.application {
                 processor.project = newProcessorProject;
                 processor.code = newProcessorCode;
                 processorRepository.update(processor, function(success: boolean, item: app.domain.model.core.Processor) {
-					if(success) {
-						setTimeout(() => { $scope.operationState = app.application.ApplicationState.successful; $scope.$apply(); }, configuration.settings.messageBoxDelay);
-					} else {
-						setTimeout(() => { $scope.operationState = app.application.ApplicationState.failed; $scope.$apply(); }, configuration.settings.messageBoxDelay);
-					}
+					$scope.setOperationFinishState(success);
 				});
 			};
 
 			$scope.removeProcessor = function(processor: app.domain.model.core.Processor) {
 				$scope.operationState = app.application.ApplicationState.saving;
                 processorRepository.remove(processor, function(success: boolean){
-					if(success) {
-						setTimeout(() => { $scope.operationState = app.application.ApplicationState.successful; $scope.$apply(); }, configuration.settings.messageBoxDelay);
-					} else {
-						setTimeout(() => { $scope.operationState = app.application.ApplicationState.failed; $scope.$apply(); }, configuration.settings.messageBoxDelay);
-					}
+					$scope.setOperationFinishState(success);
 				});
 			};
 
@@ -217,6 +189,18 @@ module app.application {
                     }
                 }
                 return null;
+			};
+
+			$scope.setOperationFinishState = function(success: boolean) {
+				if(success) {
+					setTimeout(() => {
+						$scope.operationState = app.application.ApplicationState.successful; $scope.$apply();
+					}, configuration.settings.messageBoxDelay);
+				} else {
+					setTimeout(() => {
+						$scope.operationState = app.application.ApplicationState.failed; $scope.$apply();
+					}, configuration.settings.messageBoxDelay);
+				}
 			}
 		}
 	}

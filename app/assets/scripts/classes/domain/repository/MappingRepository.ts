@@ -12,15 +12,15 @@ module app.domain.repository.core {
 			this.resources = configuration.paths.mapping;
 		}
 
-		public findByDksNode(dksNode: app.domain.model.dks.DksNode, callback: (items: app.domain.model.core.Mapping[]) => void, doCache: boolean = false): void {
-			this.findAll(function(items) {
+		public findByDksNode(dksNode: app.domain.model.dks.DksNode, callback: (success: boolean, items: app.domain.model.core.Mapping[]) => void, doCache: boolean = false): void {
+			this.findAll(function(success, items) {
 				var foundItems: app.domain.model.core.Mapping[] = [];
 				items.forEach(function(item){
 					if(item.dksNode && Number(item.dksNode) == dksNode['id']) {
 						foundItems.push(item);
 					}
 				});
-				callback(foundItems);
+				callback(success, foundItems);
 			}, doCache);
 		}
 
