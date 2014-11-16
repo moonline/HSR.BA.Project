@@ -3,6 +3,7 @@
 /// <reference path='../domain/model/TaskTemplate.ts' />
 /// <reference path='../domain/model/Decision.ts' />
 /// <reference path='../domain/model/Mapping.ts' />
+/// <reference path='../domain/model/RequestTemplate.ts' />
 
 /// <reference path='../domain/repository/MappingRepository.ts' />
 /// <reference path='../domain/repository/DecisionRepository.ts' />
@@ -29,6 +30,7 @@ module app.application {
 			$scope.operationState = app.application.ApplicationState.waiting;
 
 			$scope.targetPPT = null;
+			$scope.currentRequestTemplate = null;
 
 			$scope.decisions = [];
 			$scope.mappings = [];
@@ -93,6 +95,18 @@ module app.application {
 					});
 				});
 			});
+
+			$scope.setCurrentRequestTemplate = function(ppt: app.domain.model.ppt.ProjectPlanningTool) {
+				if(ppt) {
+					requestTemplateRepository.findOneBy('ppt', ppt, function(success: boolean, item: app.domain.model.ppt.RequestTemplate) {
+						$scope.currentRequestTemplate = item;
+					}, true);
+				}
+			};
+
+			$scope.processTaskTemplates = function() {
+
+			};
 
 			$scope.nextStep = function() {
 				$scope.currentWizzardStep++;
