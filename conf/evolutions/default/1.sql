@@ -8,7 +8,7 @@ create table dksmapping (
 );
 create table mapping (
     id bigint not null,
-    requesttemplate varchar(255),
+    requesttemplate clob,
     url varchar(255),
     project_id bigint,
     projectplanningtool_id bigint,
@@ -37,7 +37,7 @@ create table pptaccount (
 );
 create table processor (
     id bigint not null,
-    code varchar(255),
+    code clob,
     name varchar(255),
     project_id bigint,
     primary key (id)

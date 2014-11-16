@@ -11,9 +11,15 @@ INSERT INTO PERSON ( ID , NAME , PASSWORDHASH , SALT ) VALUES (nextval('entity_s
 INSERT INTO PPTACCOUNT ( ID , PPTURL , PPT_ID , PPTUSERNAME, PPTPASSWORD  , USER_ID) VALUES (nextval('entity_seq'), 'http://localhost:9920', (SELECT id FROM PPT WHERE name='Project Planning Tool'), 'admin', 'admin', (SELECT id FROM PERSON WHERE name='demo'));
 
 -- Creating Task Properties
-INSERT INTO TASKPROPERTY (ID, NAME) VALUES (nextval('entity_seq'), 'Assignee'), (nextval('entity_seq'), 'Type'), (nextval('entity_seq'), 'Description');
+INSERT INTO TASKPROPERTY (ID, NAME) VALUES
+	(nextval('entity_seq'), 'Assignee'),
+	(nextval('entity_seq'), 'Type'),
+	(nextval('entity_seq'), 'Description'),
+	(nextval('entity_seq'), 'Priority'),
+	(nextval('entity_seq'), 'Due Date'),
+	(nextval('entity_seq'), 'Estimated Duration');
 
--- Createing Task Templates
+-- Creating Task Templates
 INSERT INTO TASKTEMPLATE (ID, NAME, PARENT_ID) VALUES (nextval('entity_seq'), 'Define criterions', null);
 INSERT INTO TASKPROPERTYVALUE(ID, "VALUE", PROPERTY_ID, TASK_ID) VALUES (nextval('entity_seq'),'Project Planner',(SELECT id FROM TASKPROPERTY WHERE name='Assignee'),(SELECT id FROM TASKTEMPLATE WHERE name='Define criterions'));
 INSERT INTO TASKPROPERTYVALUE(ID, "VALUE", PROPERTY_ID, TASK_ID) VALUES (nextval('entity_seq'),'Task',           (SELECT id FROM TASKPROPERTY WHERE name='Type'    ),(SELECT id FROM TASKTEMPLATE WHERE name='Define criterions'));
@@ -37,12 +43,39 @@ INSERT INTO TASKPROPERTYVALUE(ID, "VALUE", PROPERTY_ID, TASK_ID) VALUES (nextval
 INSERT INTO TASKTEMPLATE (ID, NAME, PARENT_ID) VALUES (nextval('entity_seq'), 'Invite to decision meeting', (SELECT id FROM TASKTEMPLATE WHERE name='Hold decision meeting'));
 INSERT INTO TASKPROPERTYVALUE(ID, "VALUE", PROPERTY_ID, TASK_ID) VALUES (nextval('entity_seq'),'Sub Task',       (SELECT id FROM TASKPROPERTY WHERE name='Type'    ),(SELECT id FROM TASKTEMPLATE WHERE name='Hold decision meeting'));
 
+-- Creating Mappings
+INSERT INTO MAPPING (ID, REQUESTTEMPLATE, URL, PROJECT_ID, PROJECTPLANNINGTOOL_ID) VALUES (nextval('entity_seq'),CONCAT('{
+','	"fields": {
+','		"project": {
+','			"key": "$(projectKey)$"
+','		},
+','		"summary": "$(title)$",
+',' 	"description": "$(description)$",
+',' 	"duedate": "$(dueDate)$",
+',' 	"issuetype": {
+','			"name": "$(type)$"
+','		},
+',' 	"priority": {
+','			"name": "$(priority)$"
+','		},
+',' 	"assignee": {
+','			"name": "$(assignee)$"
+','		},
+','		"timetracking": {
+','			"originalEstimate": "$(estimatedDuration)$",
+','			"remainingEstimate": "$(estimatedDuration)$"
+','		}
+','	}
+}'),'/rest/api/2/issue',(SELECT id FROM PROJECT WHERE name='Project'),(SELECT id FROM PPT WHERE name='Project Planning Tool'));
+
 
 # --- !Downs
 
-delete from pptaccount where 1=1;
-delete from person where 1=1;
-delete from ppt where 1=1;
+delete from mapping;
+delete from processor;
+delete from pptaccount;
+delete from person;
+delete from ppt;
 delete from taskpropertyvalue;
 delete from taskproperty;
 delete from dksmapping;

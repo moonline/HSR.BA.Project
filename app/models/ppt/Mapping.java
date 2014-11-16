@@ -4,6 +4,7 @@ import models.AbstractEntity;
 import models.user.Project;
 
 import javax.persistence.Entity;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -16,6 +17,7 @@ public class Mapping extends AbstractEntity {
 	@ManyToOne
 	private Project project;
 	private String url;
+	@Lob
 	private String requestTemplate;
 
 	public ProjectPlanningTool getProjectPlanningTool() {
