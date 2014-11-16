@@ -63,25 +63,28 @@
 		<div class="area accordion">
 			<h3>Manage project planning tool (PPT) accounts for the currently logged in user</h3>
 			<form>
-				<div class="formLine" data-columns="6">
+				<div class="formLine" data-columns="7">
 					<label>New PPT account</label>
 					<input type="text" name="newPPTAccountUrl" data-ng-model="newPPTAccountUrl" placeholder="PPT url" />
 					<input type="text" name="newPPTAccountUsername" data-ng-model="newPPTAccountUsername" placeholder="PPT username" />
 					<input type="password" name="newPPTAccountPassword" data-ng-model="newPPTAccountPassword" placeholder="PPT password" />
-					<!--<select data-ng-model="newPPTAccountPPT"
-							data-ng-options="ppt.name for ppt in ppts" >
-					</select>-->
+					<select name="newPPTAccountPPT" data-ng-model="newPPTAccountPPT"
+							data-ng-options="ppt.name for ppt in projectPlanningTools" >
+					</select>
 
-					<button class="action create" data-ng-click="createPPTAccount(newPPTAccountUrl, newPPTAccountUsername, newPPTAccountPassword, 1); newPPTAccountUrl = ''; newPPTAccountUsername = ''; newPPTAccountPassword = '';"
+					<button class="action create" data-ng-click="createPPTAccount(newPPTAccountUrl, newPPTAccountUsername, newPPTAccountPassword, newPPTAccountPPT); newPPTAccountUrl = ''; newPPTAccountUsername = ''; newPPTAccountPassword = '';"
 							title="Create a new project planning tool account">
 						<span class="icon big">&#x2b;</span>Add
 					</button>
 				</div>
-				<div class="formLine" data-columns="6">
+				<div class="formLine" data-columns="7">
 					<select data-ng-model="toUpdatePPTAccount" data-ng-options="pptAccount.pptUsername for pptAccount in pptAccounts"></select>
 					<input data-ng-disabled="!toUpdatePPTAccount" type="text" name="toUpdatePPTAccountUrl" data-ng-model="toUpdatePPTAccount.pptUrl" placeholder="PPT url" />
 					<input data-ng-disabled="!toUpdatePPTAccount" type="text" name="toUpdatePPTAccountUsername" data-ng-model="toUpdatePPTAccount.pptUsername" placeholder="PPT username" />
 					<input data-ng-disabled="!toUpdatePPTAccount" type="password" name="toUpdatePPTAccountPassword" data-ng-model="toUpdatePPTAccount.pptPassword" placeholder="PPT password" />
+					<select data-ng-disabled="!toUpdatePPTAccount" name="toUpdatePPTAccountPPT" data-ng-model="toUpdatePPTAccount.ppt"
+							data-ng-options="ppt.name for ppt in projectPlanningTools" >
+					</select>
 
 					<button data-ng-disabled="!toUpdatePPTAccount" class="action update" title="Update project planning tool account"
 						data-ng-click="updatePPTAccount(toUpdatePPTAccount); toUpdatePPTAccount = null;">

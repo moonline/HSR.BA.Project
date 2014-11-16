@@ -28,6 +28,7 @@ module app.application {
 			var requestTemplateRepository = persistenceService['requestTemplateRepository'];
 			var projectRepository = persistenceService['projectRepository'];
             var processorRepository = persistenceService['processorRepository'];
+			var projectPlanningToolRepository = persistenceService['projectPlanningToolRepository'];
 
 			$scope.operationState = app.application.ApplicationState.pending;
 			setTimeout(() => { // set operation state to failed if no success after 4 seconds
@@ -55,7 +56,12 @@ module app.application {
 
                                 projectRepository.findAll(function(success, projects){
                                     $scope.projects = projects;
-									setTimeout(() => { $scope.operationState = app.application.ApplicationState.successful; $scope.$apply(); }, configuration.settings.messageBoxDelay);
+
+									projectPlanningToolRepository.findAll(function(success, ppts){
+										$scope.projectPlanningTools = ppts;
+
+										setTimeout(() => { $scope.operationState = app.application.ApplicationState.successful; $scope.$apply(); }, configuration.settings.messageBoxDelay);
+									});
 								});
 							});
 						});
@@ -131,8 +137,6 @@ module app.application {
 			};
 
 			$scope.updatePPTAccount = function(pptAccount: app.domain.model.ppt.PPTAccount) {
-				// TODO remove this hack after api fix
-				(<any>pptAccount).ppt = 1;
 				$scope.operationState = app.application.ApplicationState.saving;
 				pptAccountRepository.update(pptAccount, function(success, item) {
 					$scope.setOperationFinishState(success);

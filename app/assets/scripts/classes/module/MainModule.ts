@@ -16,6 +16,7 @@
 /// <reference path='../../classes/domain/repository/RequestTemplateRepository.ts' />
 /// <reference path='../../classes/domain/repository/ProjectRepository.ts' />
 /// <reference path='../../classes/domain/repository/ProcessorRepository.ts' />
+/// <reference path='../../classes/domain/repository/ProjectPlanningToolRepository.ts' />
 
 /// <reference path='../../classes/service/AuthenticationService.ts' />
 
@@ -122,14 +123,17 @@ module app.mod {
 				return {
 					taskTemplateRepository: new app.domain.repository.core.TaskTemplateRepository($http),
 					taskPropertyRepository: new app.domain.repository.core.TaskPropertyRepository($http),
-					decisionRepository: new app.domain.repository.dks.DecisionRepository($http),
 					mappingRepository: new app.domain.repository.core.MappingRepository($http),
+					processorRepository: new app.domain.repository.core.ProcessorRepository($http),
+					projectRepository: new app.domain.repository.core.ProjectRepository($http),
+
+					decisionRepository: new app.domain.repository.dks.DecisionRepository($http),
 					decisionKnowledgeRepository: new app.domain.repository.dks.DecisionKnowledgeSystemRepository($http),
 					problemRepository: new app.domain.repository.dks.ProblemRepository($http),
+
 					pptAccountRepository: new app.domain.repository.ppt.PPTAccountRepository($http),
 					requestTemplateRepository: new app.domain.repository.ppt.RequestTemplateRepository($http),
-					processorRepository: new app.domain.repository.core.ProcessorRepository($http),
-					projectRepository: new app.domain.repository.core.ProjectRepository($http)
+					projectPlanningToolRepository: new app.domain.repository.ppt.ProjectPlanningToolRepository($http)
 				};
 			}]);
 

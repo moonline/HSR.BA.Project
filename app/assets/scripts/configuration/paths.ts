@@ -15,6 +15,9 @@ module configuration {
 		project: {
 			list: { method: 'GET', url: '/project' }
 		},
+		projectPlanningTool: {
+			list: { method: 'GET', url: '/ppt' }
+		},
 		mapping: {
 			list: { method: 'GET', url: '/dksMapping' },
 			detail: { method: 'GET', url: '/dksMapping/{id}' },
