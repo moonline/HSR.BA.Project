@@ -4,7 +4,7 @@
 /// <reference path='../test/logic/domain/repository/MappingRepositoryTest.ts' />
 /// <reference path='../test/logic/domain/factory/ObjectFactoryTest.ts' />
 /// <reference path='../test/logic/service/AuthenticationServiceTest.ts' />
-/// <reference path='../test/logic/service/ProcessorProcesserTest.ts' />
+/// <reference path='../test/logic/service/TemplateProcesserTest.ts' />
 /// <reference path='../test/integration/application/AdminControllerTest.ts' />
 /// <reference path='../test/integration/application/MappingControllerTest.ts' />
 

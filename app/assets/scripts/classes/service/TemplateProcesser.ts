@@ -1,5 +1,5 @@
 module app.service {
-	export class ProcessorProcesser {
+	export class TemplateProcesser {
 
 		private data: Object;
 		private template: string;
