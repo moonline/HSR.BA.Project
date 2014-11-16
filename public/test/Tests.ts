@@ -23,7 +23,7 @@ module test {
 
 		describe("Service test suite", function() {
 			test.logic.service.AuthenticationServiceTest();
-			test.logic.service.ProcessorProcesserTest();
+			test.logic.service.TemplateProcesserTest();
 		});
 	});
 

@@ -64,7 +64,7 @@ module app.service {
 				if(this.isStringParameter(parameter)) {
 					param = parameter.substring(1,parameter.length-1) || null;
 				} else {
-					param = this.data[parameter] || null;
+					param = this.findValuesInPath(parameter, this.data);
 				}
 				parameterList.push(param);
 			}.bind(this));
@@ -119,24 +119,28 @@ module app.service {
 				var replaceLength:number = match[0].length;
 				var index: number = match.index;
 
-				var replacer: string = "";
-				var currentSegment:string = null;
-				var currentData = this.data;
-				var propertyPathSegments = property.split('.');
-
-				if(propertyPathSegments.length >= 1) {
-					for(var si in propertyPathSegments) {
-						currentSegment = propertyPathSegments[si];
-						if(si == propertyPathSegments.length-1) {
-							var replacer = (currentData[currentSegment] != undefined) ? <string>currentData[currentSegment] : "";
-						} else {
-							currentData = (currentData[currentSegment] != undefined) ? currentData[currentSegment] : null;
-						}
-					}
-				}
+				var replacer: string = this.findValuesInPath(property,this.data);
 				textToReplace = textToReplace.slice(0, index) + replacer + textToReplace.slice(index+replaceLength, textToReplace.length);
 			}
 			return textToReplace;
+		}
+
+		private findValuesInPath(path: string, data: Object): string {
+			var currentSegment:string = null;
+			var currentData = data;
+			var propertyPathSegments = path.split('.');
+
+			if(propertyPathSegments.length >= 1) {
+				for(var si in propertyPathSegments) {
+					currentSegment = propertyPathSegments[si];
+					if(si == propertyPathSegments.length-1) {
+						return (currentData[currentSegment] != undefined) ? <string>currentData[currentSegment] : "";
+					} else {
+						currentData = (currentData[currentSegment] != undefined) ? currentData[currentSegment] : null;
+					}
+				}
+			}
+			return "";
 		}
 	}
 }

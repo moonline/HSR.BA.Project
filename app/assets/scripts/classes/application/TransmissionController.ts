@@ -55,8 +55,9 @@ module app.application {
 			decisionKnowledgeRepository.findAll(function(success, items) {
 				$scope.currentDks = <app.domain.model.dks.DecisionKnowledgeSystem>items[0];
 
-				//decisionRepository.host = $scope.currentDks.address;
-				decisionRepository.proxy = null;
+				decisionRepository.host = $scope.currentDks.address;
+				//decisionRepository.proxy = null;
+				//problemRepository.host = $scope.currentDks.address;
 				decisionRepository.findAll(function(success, items){
 					$scope.decisions = items;
 

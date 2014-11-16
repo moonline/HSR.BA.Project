@@ -1,9 +1,9 @@
 /// <reference path='../../../../public/test/includes.ts' />
 
-/// <reference path='../../../../app/assets/scripts/classes/service/ProcessorProcesser.ts' />
+/// <reference path='../../../../app/assets/scripts/classes/service/TemplateProcesser.ts' />
 
 module test.logic.service {
-	export function ProcessorProcesserTest() {
+	export function TemplateProcesserTest() {
 		describe("Processor processer service test suite", function() {
 			it("Parse simple processors", function() {
 				var template: string = "{\
@@ -11,7 +11,7 @@ module test.logic.service {
 	\"name\": \"$simple:()$\"\
 }";
 
-				var processorService: app.service.ProcessorProcesser = new app.service.ProcessorProcesser({}, '', {});
+				var processorService: app.service.TemplateProcesser = new app.service.TemplateProcesser({}, '', {});
 				var processorData: any[] = [];
 				processorService.parseProcessors(
 					template,
@@ -46,7 +46,7 @@ module test.logic.service {
 	\"name\": \"$listConcater:(list,\"|\")$\"\
 }";
 
-				var processorService: app.service.ProcessorProcesser = new app.service.ProcessorProcesser({}, '', {});
+				var processorService: app.service.TemplateProcesser = new app.service.TemplateProcesser({}, '', {});
 				var processorData: any[] = [];
 				processorService.parseProcessors(
 					template,
@@ -85,7 +85,7 @@ module test.logic.service {
 					}
 				};
 
-				var processorService: app.service.ProcessorProcesser = new app.service.ProcessorProcesser({}, '', processors);
+				var processorService: app.service.TemplateProcesser = new app.service.TemplateProcesser({}, '', processors);
 				var result1: string = processorService.runProcessor('simple',[]);
 				expect(result1).toEqual('simpleStringReturn');
 
@@ -112,12 +112,51 @@ module test.logic.service {
 					}
 				};
 
-				var processorService: app.service.ProcessorProcesser = new app.service.ProcessorProcesser(data, '', processors);
+				var processorService: app.service.TemplateProcesser = new app.service.TemplateProcesser(data, '', processors);
 				var result1: string = processorService.runProcessor('concater',['var1', '":"', 'var2']);
 				expect(result1).toEqual('irgendwas:nochwas');
 
 				var result2: string = processorService.runProcessor('listConcater',['wortliste','"|"']);
 				expect(result2).toEqual('eins|zwei|drei|vier');
+			});
+
+			it("Process complex template with processors and path variables", function() {
+				var template: string = "{\
+	\"assignee\": \"$concater:(var1.title, \"-\", var1.object.name)$\",\
+	\"values\": \"$listConcater:(var2.list,\"|\")$\"\
+}";
+				var data:any = {
+					var1: {
+						title: 'irgendwer',
+						object: {
+							name: 'irgendwo'
+						}
+					},
+					var2: {
+						list: [ 'eins', 'zwei', 'drei', 'vier']
+					}
+				};
+				var processors: { [index:string]: any} = {
+					concater: function(text1, text2, text3) {
+						return text1+text2+text3;
+					},
+					listConcater: function(list, gap) {
+						var result: string = '';
+						for(var li in list) {
+							result += (li < list.length-1) ? list[li].toString()+gap : list[li].toString();
+						}
+						return result;
+					}
+				};
+
+				var processorService: app.service.TemplateProcesser = new app.service.TemplateProcesser(data, template, processors);
+				var result1: string = processorService.process();
+
+				var expectedTemplate: string = "{\
+	\"assignee\": \"irgendwer-irgendwo\",\
+	\"values\": \"eins|zwei|drei|vier\"\
+}";
+				expect(result1).toEqual(expectedTemplate);
 			});
 
 			it("Render variables", function(){
@@ -131,7 +170,7 @@ module test.logic.service {
 					list: [ 'eins', 'zwei', 'drei', 'vier']
 				};
 
-				var processorService: app.service.ProcessorProcesser = new app.service.ProcessorProcesser(data, '', {});
+				var processorService: app.service.TemplateProcesser = new app.service.TemplateProcesser(data, '', {});
 				var renderedTemplate = processorService.parseVariables(template);
 				var expectedTemplate: string = "{\
 	\"assignee\": \"irgendwas\",\
@@ -155,7 +194,7 @@ module test.logic.service {
 					list: [ 'eins', 'zwei', 'drei', 'vier']
 				};
 
-				var processorService: app.service.ProcessorProcesser = new app.service.ProcessorProcesser(data, '', {});
+				var processorService: app.service.TemplateProcesser = new app.service.TemplateProcesser(data, '', {});
 				var renderedTemplate = processorService.parseVariables(template);
 				var expectedTemplate: string = "{\
 	\"assignee\": \"drei\",\
@@ -174,7 +213,7 @@ module test.logic.service {
 					}
 				};
 
-				var processorService: app.service.ProcessorProcesser = new app.service.ProcessorProcesser(data, '', processors);
+				var processorService: app.service.TemplateProcesser = new app.service.TemplateProcesser(data, '', processors);
 				var result1: string = processorService.runProcessor('receiverGenerator',['person1']);
 				expect(result1).toEqual('Hans Müller <hmueller@gmx.net>');
 			});
@@ -203,7 +242,7 @@ module test.logic.service {
 					}
 				};
 
-				var processorService: app.service.ProcessorProcesser = new app.service.ProcessorProcesser(data, template, processors);
+				var processorService: app.service.TemplateProcesser = new app.service.TemplateProcesser(data, template, processors);
 				var renderedTemplate = processorService.process();
 				var expectedTemplate: string = "{\
 	\"assignee\": \"irgendwas:nochwas\",\
