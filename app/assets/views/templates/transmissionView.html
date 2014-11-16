@@ -1,5 +1,11 @@
 <div class="main" data-region="center" >
-	<div class="area page admin" data-scroll="y">
+	<div class="area page" data-scroll="y">
+		<div class="operationState">
+			<span class="messagebox error" data-ng-if="operationState === ApplicationState.failed">Loading of data failed. Maybe server is not available.</span>
+			<span class="messagebox pending" data-ng-if="operationState === ApplicationState.pending">Loading ...</span>
+			<span class="messagebox saving" data-ng-if="operationState === ApplicationState.saving">Saving ...</span>
+		</div>
+
 		<form class="wizzard">
 			<div class="wizzardStep" data-step="DataSelection" data-ng-if="currentWizzardStep == ExportWizzardSteps.ToolSelection">
 				<h2>Target selection</h2>

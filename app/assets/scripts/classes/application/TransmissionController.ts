@@ -1,3 +1,5 @@
+/// <reference path='../../configuration/application.ts' />
+
 /// <reference path='../domain/model/TaskTemplate.ts' />
 /// <reference path='../domain/model/Decision.ts' />
 /// <reference path='../domain/model/Mapping.ts' />
@@ -23,18 +25,31 @@ module app.application {
 			$scope.ExportWizzardSteps = ExportWizzardSteps;
 			$scope.currentWizzardStep = ExportWizzardSteps.ToolSelection;
 
+			$scope.ApplicationState = app.application.ApplicationState;
+			$scope.operationState = app.application.ApplicationState.waiting;
+
 			$scope.targetPPT = null;
 
 			$scope.decisions = [];
 			$scope.mappings = [];
 			$scope.decisionMappings = {};
 			$scope.pptAccounts = [];
+			$scope.requestTemplates = [];
 
 			var mappingRepository = persistenceService['mappingRepository'];
 			var pptAccountRepository: app.domain.repository.ppt.PPTAccountRepository = persistenceService['pptAccountRepository'];
 			var decisionRepository: app.domain.repository.dks.DecisionRepository = persistenceService['decisionRepository'];
 			var decisionKnowledgeRepository: app.domain.repository.dks.DecisionKnowledgeSystemRepository = persistenceService['decisionKnowledgeRepository'];
+			var requestTemplateRepository = persistenceService['requestTemplateRepository'];
 
+
+			$scope.operationState = app.application.ApplicationState.pending;
+			setTimeout(() => { // set operation state to failed if no success after 5 seconds
+				if($scope.operationState == app.application.ApplicationState.pending) {
+					$scope.operationState = app.application.ApplicationState.failed;
+					$scope.$apply();
+				}
+			}, 5000);
 			decisionKnowledgeRepository.findAll(function(success, items) {
 				$scope.currentDks = <app.domain.model.dks.DecisionKnowledgeSystem>items[0];
 
@@ -56,6 +71,12 @@ module app.application {
 
 						pptAccountRepository.findAll(function(success, pptAccounts) {
 							$scope.pptAccounts = pptAccounts;
+
+							requestTemplateRepository.findAll(function(success, requestTemplates){
+								$scope.requestTemplates = requestTemplates;
+
+								setTimeout(() => { $scope.operationState = app.application.ApplicationState.successful; $scope.$apply(); }, configuration.settings.messageBoxDelay);
+							});
 						});
 
 						for(var mi in $scope.mappings) {
