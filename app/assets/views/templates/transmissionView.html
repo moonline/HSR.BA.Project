@@ -1,41 +1,62 @@
 <div class="main" data-region="center" >
 	<div class="area page admin" data-scroll="y">
-		<h2>Decisions &amp; Options</h2>
-		<ul data-type="list">
-			<li data-ng-repeat="(pkey, element) in decisionMappings">
-				<dl>
-					<dt>Problem</dt>
-					<dd>{{element.problem.name}} [#{{element.problem.id}}]</dd>
-					<dt>Decisions</dt>
-					<dd>
-						<ul>
-							<li data-ng-repeat="(dkey,decisionElement) in element.decisions">
-								{{decisionElement.decision.name}} [#{{decisionElement.decision.id}}]
-								<dl>
-									<dt>Mapped task templates to transmit</dt>
-									<dd>
-										<ul>
-											<li data-ng-repeat="(mkey, mapping) in decisionElement.mappings">
-												<input type="checkbox" data-ng-model="decisionElement.decisionsToExport[mkey]" />&nbsp;
-												{{mapping.taskTemplate.name}} [#{{mapping.taskTemplate.id}}]
-											</li>
-										</ul>
-									</dd>
-									<dt>Alternatives</dt>
-									<dd>
-										<ul>
-											<li data-ng-repeat="alternative in decisionElement.decision.alternatives">
-												{{alternative.name}} [#{{alternative.id}}]
-											</li>
-										</ul>
-									</dd>
-								</dl>
-							</li>
-						</ul>
-					</dd>
-				</dl>
-			</li>
-		</ul>
+		<form class="wizzard">
+			<div class="wizzardStep" data-step="DataSelection" data-ng-if="currentWizzardStep == ExportWizzardSteps.ToolSelection">
+				<h2>Target selection</h2>
+
+				<div class="formLine">
+					<label>Target system</label>
+					<select data-ng-model="targetPPT" data-ng-options="pptAccount.pptUrl for pptAccount in pptAccounts"></select>
+				</div>
+
+				<button data-ng-disabled="!targetPPT" class="action" data-ng-click="nextStep()">(=>) Select decisions</button>
+			</div>
+
+			<div class="wizzardStep" data-step="DataSelection" data-ng-if="currentWizzardStep == ExportWizzardSteps.DataSelection">
+				<h2>Decision &amp; option selection</h2>
+				<ul data-type="list">
+					<li data-ng-repeat="(pkey, element) in decisionMappings">
+						<dl>
+							<dt>Problem</dt>
+							<dd>{{element.problem.name}} [#{{element.problem.id}}]</dd>
+							<dt>Decisions</dt>
+							<dd>
+								<ul>
+									<li data-ng-repeat="(dkey,decisionElement) in element.decisions">
+										{{decisionElement.decision.name}} [#{{decisionElement.decision.id}}]
+										<dl>
+											<dt>Mapped task templates to transmit</dt>
+											<dd>
+												<ul>
+													<li data-ng-repeat="(mkey, mapping) in decisionElement.mappings">
+														<input type="checkbox" data-ng-model="decisionElement.decisionsToExport[mkey]" />&nbsp;
+														{{mapping.taskTemplate.name}} [#{{mapping.taskTemplate.id}}]
+													</li>
+												</ul>
+											</dd>
+											<dt>Alternatives</dt>
+											<dd>
+												<ul>
+													<li data-ng-repeat="alternative in decisionElement.decision.alternatives">
+														{{alternative.name}} [#{{alternative.id}}]
+													</li>
+												</ul>
+											</dd>
+										</dl>
+									</li>
+								</ul>
+							</dd>
+						</dl>
+					</li>
+				</ul>
+
+				<button class="action" data-ng-click="nextStep()">(=>) Transform selected decisions</button>
+			</div>
+
+			<div class="wizzardStep" data-step="DataSelection" data-ng-if="currentWizzardStep == ExportWizzardSteps.Transformation">
+				<h2>Transformation</h2>
+			</div>
+		</form>
 
 		<!--<form>
 			<input type="text" data-ng-model="url" /><br />

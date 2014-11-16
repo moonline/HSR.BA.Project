@@ -5,9 +5,14 @@
 /// <reference path='../domain/repository/MappingRepository.ts' />
 /// <reference path='../domain/repository/DecisionRepository.ts' />
 /// <reference path='../domain/repository/DecisionKnowledgeSystemRepository.ts' />
+/// <reference path='../domain/repository/PPTAccountRepository.ts' />
 
 module app.application {
 	'use strict';
+
+	export enum ExportWizzardSteps {
+		ToolSelection, DataSelection, Transformation
+	}
 
 	export class TransmissionController {
 		mappingRepository: app.domain.repository.core.MappingRepository;
@@ -15,14 +20,21 @@ module app.application {
 
 		constructor($scope, $location, persistenceService, $http) {
 			this.$scope = $scope;
+			$scope.ExportWizzardSteps = ExportWizzardSteps;
+			$scope.currentWizzardStep = ExportWizzardSteps.ToolSelection;
 
-			var mappingRepository = persistenceService['mappingRepository'];
+			$scope.targetPPT = null;
+
 			$scope.decisions = [];
 			$scope.mappings = [];
 			$scope.decisionMappings = {};
+			$scope.pptAccounts = [];
 
-			var decisionRepository:app.domain.repository.dks.DecisionRepository = persistenceService['decisionRepository'];
+			var mappingRepository = persistenceService['mappingRepository'];
+			var pptAccountRepository: app.domain.repository.ppt.PPTAccountRepository = persistenceService['pptAccountRepository'];
+			var decisionRepository: app.domain.repository.dks.DecisionRepository = persistenceService['decisionRepository'];
 			var decisionKnowledgeRepository: app.domain.repository.dks.DecisionKnowledgeSystemRepository = persistenceService['decisionKnowledgeRepository'];
+
 			decisionKnowledgeRepository.findAll(function(success, items) {
 				$scope.currentDks = <app.domain.model.dks.DecisionKnowledgeSystem>items[0];
 
@@ -42,6 +54,10 @@ module app.application {
 					mappingRepository.findAll(function(success, items) {
 						$scope.mappings = items;
 
+						pptAccountRepository.findAll(function(success, pptAccounts) {
+							$scope.pptAccounts = pptAccounts;
+						});
+
 						for(var mi in $scope.mappings) {
 							var mapping = $scope.mappings[mi];
 							// only add mapping, if decision exist
@@ -56,6 +72,10 @@ module app.application {
 					});
 				});
 			});
+
+			$scope.nextStep = function() {
+				$scope.currentWizzardStep++;
+			};
 
 			/*$scope.url = "http://localhost:9920/rest/api/2/issue/";
 			$scope.data = '{\n\t"fields": {\n\t\t"project": {\n\t\t\t"key": "TEST"\n\t\t},\n\t\t"assignee": "${assignee}",\n\t\t"description": "${description}",\n\t\t"issuetype": {\n\t\t\t"name": "${type}"\n\t\t}\n\t}\n}';
