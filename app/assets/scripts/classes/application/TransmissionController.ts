@@ -97,11 +97,27 @@ module app.application {
 			});
 
 			$scope.setCurrentRequestTemplate = function(ppt: app.domain.model.ppt.ProjectPlanningTool) {
-				if(ppt) {
+
+// TODO: remove this hack after ppt apiAccount api is fixed
+var requestTemplate = '{\
+	"fields": {\
+		"project": {\
+			"key": "TEST"\
+		},\
+		"assignee": "${assignee}",\
+		"description": "${description}",\
+		"issuetype": {\
+			"name": "${type}"\
+		}\
+	}\
+}';
+				$scope.currentRequestTemplate = new app.domain.model.ppt.RequestTemplate(ppt, 'localhost:9920', requestTemplate);
+
+				/*if(ppt) {
 					requestTemplateRepository.findOneBy('ppt', ppt, function(success: boolean, item: app.domain.model.ppt.RequestTemplate) {
 						$scope.currentRequestTemplate = item;
 					}, true);
-				}
+				}*/
 			};
 
 			$scope.processTaskTemplates = function() {
