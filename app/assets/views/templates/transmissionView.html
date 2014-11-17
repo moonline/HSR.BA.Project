@@ -1,11 +1,10 @@
 <div class="main" data-region="center" data-layout="border">
-	<div class="operationState" data-region="north">
-		<span class="messagebox error" data-ng-if="operationState === ApplicationState.failed">Loading of data failed. Maybe server is not available.</span>
-		<span class="messagebox pending" data-ng-if="operationState === ApplicationState.pending">Loading ...</span>
-		<span class="messagebox saving" data-ng-if="operationState === ApplicationState.saving">Saving ...</span>
-	</div>
-	<div class="area page" data-scroll="y" data-region="middle">
-
+	<div data-scroll="y" data-region="center">
+		<div class="operationState">
+			<span class="messagebox error" data-ng-if="operationState === ApplicationState.failed">Loading of data failed. Maybe server is not available.</span>
+			<span class="messagebox pending" data-ng-if="operationState === ApplicationState.pending">Loading ...</span>
+			<span class="messagebox saving" data-ng-if="operationState === ApplicationState.saving">Saving ...</span>
+		</div>
 		<form class="wizard">
 			<div class="wizardStep" data-step="DataSelection"
 				 data-ng-if="currentWizardStep == ExportWizardSteps.ToolSelection">
