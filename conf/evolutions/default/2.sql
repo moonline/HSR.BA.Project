@@ -43,31 +43,39 @@ INSERT INTO TASKPROPERTYVALUE(ID, "VALUE", PROPERTY_ID, TASK_ID) VALUES (nextval
 INSERT INTO TASKTEMPLATE (ID, NAME, PARENT_ID) VALUES (nextval('entity_seq'), 'Invite to decision meeting', (SELECT id FROM TASKTEMPLATE WHERE name='Hold decision meeting'));
 INSERT INTO TASKPROPERTYVALUE(ID, "VALUE", PROPERTY_ID, TASK_ID) VALUES (nextval('entity_seq'),'Sub Task',       (SELECT id FROM TASKPROPERTY WHERE name='Type'    ),(SELECT id FROM TASKTEMPLATE WHERE name='Hold decision meeting'));
 
--- Creating Mappings
+-- Creating Mappings / Request templates
 INSERT INTO MAPPING (ID, REQUESTTEMPLATE, URL, PROJECT_ID, PPT_ID) VALUES (nextval('entity_seq'),CONCAT('{
 ','	"fields": {
 ','		"project": {
-','			"key": "$(projectKey)$"
+','			"key": "${pptProject}"
 ','		},
-','		"summary": "$(title)$",
-',' 	"description": "$(description)$",
-',' 	"duedate": "$(dueDate)$",
+','		"summary": "${taskTemplate.name}",
+',' 	"description": "${taskTemplate.attributes.description}. Decision: ${decision.name}, ${decision.self}, attributes: $objecttostring:(decision.attributes)$",
+',' 	"duedate": "${taskTemplate.attributes.dueDate}",
 ',' 	"issuetype": {
-','			"name": "$(type)$"
+','			"name": "${taskTemplate.attributes.type}"
 ','		},
 ',' 	"priority": {
-','			"name": "$(priority)$"
+','			"name": "${taskTemplate.attributes.priority}"
 ','		},
 ',' 	"assignee": {
-','			"name": "$(assignee)$"
+','			"name": "${taskTemplate.attributes.assignee}"
 ','		},
 ','		"timetracking": {
-','			"originalEstimate": "$(estimatedDuration)$",
-','			"remainingEstimate": "$(estimatedDuration)$"
+','			"originalEstimate": "${taskTemplate.attributes.remainingEstimate}"
 ','		}
 ','	}
 }'),'/rest/api/2/issue',(SELECT id FROM PROJECT WHERE name='Project'),(SELECT id FROM PPT WHERE name='Project Planning Tool'));
 
+-- Creating Processors
+INSERT INTO PROCESSOR (ID, CODE, NAME, PROJECT_ID) VALUES (nextval('entity_seq'),CONCAT('function(list) {
+',' 	var text = "";
+','		Object.keys(list).forEach(function(key){
+','			text += key+": +"+list[key];
+','			if(key < list.length-1) { text += ", " ; }
+','		});
+','		return text;
+}'),'objecttostring','(SELECT id FROM PROJECT WHERE name='Project'));
 
 # --- !Downs
 
