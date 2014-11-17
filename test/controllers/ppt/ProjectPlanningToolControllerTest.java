@@ -2,6 +2,7 @@ package controllers.ppt;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import controllers.AbstractControllerTest;
+import controllers.AuthenticationChecker;
 import daos.ppt.ProjectPlanningToolDAO;
 import daos.task.TaskDAO;
 import models.task.Task;
@@ -21,6 +22,7 @@ import play.libs.ws.WS;
 import play.libs.ws.WSRequestHolder;
 import play.libs.ws.WSResponse;
 import play.mvc.Result;
+import play.test.FakeRequest;
 import test.AbstractTestDataCreator;
 
 import static org.fest.assertions.Assertions.assertThat;
@@ -29,6 +31,7 @@ import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.atLeastOnce;
 import static org.powermock.api.mockito.PowerMockito.*;
 import static play.mvc.Http.Status.OK;
+import static play.test.Helpers.callAction;
 import static play.test.Helpers.status;
 
 
@@ -76,6 +79,15 @@ public class ProjectPlanningToolControllerTest extends AbstractControllerTest {
 
 	@Test
 	public void createPPTTaskWithGoodData() throws Throwable {
+		createPPTTaskWithGoodData(false);
+	}
+
+	@Test
+	public void createPPTTaskWithGoodDataAsJsonRequest() throws Throwable {
+		createPPTTaskWithGoodData(true);
+	}
+
+	private void createPPTTaskWithGoodData(boolean asJsonRequest) throws Throwable {
 		//Setup
 		JPA.withTransaction(TASK_DAO::removeAll);
 		User user = AbstractTestDataCreator.createUserWithTransaction("User 1", "1");
@@ -103,7 +115,25 @@ public class ProjectPlanningToolControllerTest extends AbstractControllerTest {
 		when(WS.url(baseUrl + urlPath)).thenReturn(wsURL);
 
 		//Test
-		Result result = callActionWithUser(routes.ref.ProjectPlanningToolController.createPPTTask(), user, postData("path", urlPath, "content", contentString, "account", account, "taskTemplate", taskTemplate.getId() + "", "project", project.getId() + "", "taskProperties[0]", taskProperty1.getId() + "-A value", "taskProperties[1]", taskProperty2.getId() + "-Another value"));
+		Result result;
+		if (asJsonRequest) {
+			result = callAction(routes.ref.ProjectPlanningToolController.createPPTTask(), new FakeRequest().withJsonBody(Json.parse("{\n" +
+					"	\"path\":\"" + urlPath + "\",\n" +
+					"	\"content\":\"" + contentString.replaceAll("\"", "\\\\\\\"") + "\",\n" +
+					"	\"account\":" + account + ",\n" +
+					"	\"taskTemplate\":" + taskTemplate.getId() + ",\n" +
+					"	\"project\":" + project.getId() + ",\n" +
+					"	\"taskProperties\":[{\n" +
+					"		\"property\":" + Json.stringify(Json.toJson(taskProperty1)) + ",\n" +
+					"		\"value\":\"A value\"" +
+					"	},{\n" +
+					"		\"property\":" + Json.stringify(Json.toJson(taskProperty2)) + ",\n" +
+					"		\"value\":\"Another value\"" +
+					"	}]\n" +
+					"}")).withSession(AuthenticationChecker.SESSION_USER_IDENTIFIER, user.getId() + ""));
+		} else {
+			result = callActionWithUser(routes.ref.ProjectPlanningToolController.createPPTTask(), user, postData("path", urlPath, "content", contentString, "account", account, "taskTemplate", taskTemplate.getId() + "", "project", project.getId() + "", "taskProperties[0]", taskProperty1.getId() + "-A value", "taskProperties[1]", taskProperty2.getId() + "-Another value"));
+		}
 
 		//Verification
 		assertThat(status(result)).isEqualTo(resultStatus);
