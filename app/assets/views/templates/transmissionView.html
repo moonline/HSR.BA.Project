@@ -1,14 +1,15 @@
-<div class="main" data-region="center" >
-	<div class="area page" data-scroll="y">
-		<div class="operationState">
-			<span class="messagebox error" data-ng-if="operationState === ApplicationState.failed">Loading of data failed. Maybe server is not available.</span>
-			<span class="messagebox pending" data-ng-if="operationState === ApplicationState.pending">Loading ...</span>
-			<span class="messagebox saving" data-ng-if="operationState === ApplicationState.saving">Saving ...</span>
+<div class="main" data-region="center" data-layout="border">
+	<div class="operationState" data-region="north">
+		<span class="messagebox error" data-ng-if="operationState === ApplicationState.failed">Loading of data failed. Maybe server is not available.</span>
+		<span class="messagebox pending" data-ng-if="operationState === ApplicationState.pending">Loading ...</span>
+		<span class="messagebox saving" data-ng-if="operationState === ApplicationState.saving">Saving ...</span>
 		</div>
+	<div class="area page" data-scroll="y" data-region="middle">
 
 		<form class="wizzard">
-			<div class="wizzardStep" data-step="DataSelection" data-ng-if="currentWizzardStep == ExportWizzardSteps.ToolSelection">
-				<div class="requestTemplateState" data-ng-if="targetPPT">
+			<div class="wizzardStep" data-step="DataSelection"
+				 data-ng-if="currentWizzardStep == ExportWizzardSteps.ToolSelection">
+			<div class="requestTemplateState" data-ng-if="targetPPT">
 					<span class="messagebox error" data-ng-if="!currentRequestTemplate">No request template found assigned with this project planning tool. Please create one.</span>
 				</div>
 
@@ -87,5 +88,12 @@
 				<pre data-ng-repeat="decisionTaskTemplate in decisionTemplates">{{decisionTaskTemplate}}</pre><br />
 			</ul>
 		</ul>-->
+	</div>
+	<div class="exportProgressBar" data-region="south">
+		<span class="currentStep_{{currentWizzardStep == ExportWizzardSteps.ToolSelection}}">Select Input Data</span>
+		<span class="arrows">&rarr;</span>
+		<span class="currentStep_{{currentWizzardStep == ExportWizzardSteps.DataSelection}}">Select Tasks to Export</span>
+		<span class="arrows">&rarr;</span>
+		<span class="currentStep_{{currentWizzardStep == ExportWizzardSteps.Transformation}}">Perform Export</span>
 	</div>
 </div>
