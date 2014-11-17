@@ -1,4 +1,4 @@
-<div class="main" data-region="center" >
+	<div class="main" data-region="center" >
 	<div class="area mapping page" data-layout="flow" data-flow-direction="row" data-align="start">
 		<div class="column1 area pane" data-layout="flow" data-flow-direction="column" data-scroll="y">
 			<div class="areaContent">
@@ -42,10 +42,10 @@
 						<dd><span data-ng-repeat="pathSegment in currentDksNode.path">
 						<span class="pathDivider" data-ng-if="!$first">/</span><span class="pathSegment">{{pathSegment}}</span></span>
 						</dd>
-						<dt data-ng-if="currentDksNode.attributes.length > 0">Attributes</dt>
-						<dd data-ng-if="currentDksNode.attributes.length > 0">
+						<dt>Attributes</dt>
+						<dd>
 							<ul>
-								<li data-ng-repeat="(key, value) in currentDksNode.attributes">{{key}}: {{value}}</li>
+								<li data-ng-repeat="(name, value) in currentDksNode.attributes">{{name}}: {{value}}</li>
 							</ul>
 						</dd>
 						<dt>DKS link</dt>

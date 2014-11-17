@@ -75,7 +75,7 @@ INSERT INTO PROCESSOR (ID, CODE, NAME, PROJECT_ID) VALUES (nextval('entity_seq')
 ','			if(key < list.length-1) { text += ", " ; }
 ','		});
 ','		return text;
-}'),'objecttostring','(SELECT id FROM PROJECT WHERE name='Project'));
+}'),'objecttostring',(SELECT id FROM PROJECT WHERE name='Project'));
 
 # --- !Downs
 

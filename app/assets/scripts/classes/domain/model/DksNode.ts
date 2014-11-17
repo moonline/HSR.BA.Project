@@ -21,14 +21,14 @@ module app.domain.model.dks {
 		public name: string;
 		public path: string[];
 		public self: string;
-		public attibutes: Object;
+		public attributes: Object;
 		public notes: string;
 
 		constructor(name: string, path: string[], attributes: Object, notes: string) {
 			this.id = Math.round(Math.random()*1000000);
 			this.name = name;
 			this.path = path;
-			this.attibutes = attributes;
+			this.attributes = attributes;
 			this.notes = notes;
 		}
 	}

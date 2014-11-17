@@ -72,7 +72,7 @@ module app.application {
 				requestTemplateRepository.findAll(function(success, requestTemplates){
 					$scope.requestTemplates = requestTemplates;
 
-					projectRepository.findAll(function(success, projects){
+					projectRepository.findAll(function(	success, projects){
 						$scope.projects = projects;
 						$scope.currentProject = projects[0] || null;
 
