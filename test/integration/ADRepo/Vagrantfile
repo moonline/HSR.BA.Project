@@ -128,5 +128,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   #   chef.validation_client_name = "ORGNAME-validator"
   
   config.vm.provision "shell", path: "setup.sh"
-  
+  config.vm.provision "shell", path: "startup.sh", run: "always"
+
 end

@@ -21,16 +21,6 @@ sudo apt-get -y install oracle-java8-installer
 echo "== Extracting ADRepo =="
 unzip /vagrant/downloads/adrepo-0.1.2-SNAPSHOT.zip -d /home/vagrant/ADRepo
 
-echo "== Starting up ADRepo =="
-sudo /home/vagrant/ADRepo/adrepo-0.1.2-SNAPSHOT/bin/adrepo -Dhttp.port=9940 &
-
-echo "== Create Crontab to start ADRepo after reboot =="
-( crontab -l 2>/dev/null | grep -Fv ntpdate ; printf -- "@reboot sudo /home/vagrant/ADRepo/adrepo-0.1.2-SNAPSHOT/bin/adrepo -Dhttp.port=9940 &\n" ) | crontab
-
-echo "------ Installation and configuration of ADRepo done ------"
-
-echo "||==================================================||"
-echo "|| ADRepo is now available at http://localhost:9940 ||"
-echo "||==================================================||"
+echo "------ Installation ADRepo done ------"
 
 sudo apt-get -yqq autoremove
