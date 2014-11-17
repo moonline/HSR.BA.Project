@@ -8,10 +8,10 @@ create table dksmapping (
 );
 create table mapping (
     id bigint not null,
-    requesttemplate varchar(255),
+    requesttemplate clob,
     url varchar(255),
+    ppt_id bigint,
     project_id bigint,
-    projectplanningtool_id bigint,
     primary key (id)
 );
 create table person (
@@ -37,7 +37,7 @@ create table pptaccount (
 );
 create table processor (
     id bigint not null,
-    code varchar(255),
+    code clob,
     name varchar(255),
     project_id bigint,
     primary key (id)
@@ -81,8 +81,8 @@ alter table dksmapping
     foreign key (tasktemplate_id)
     references tasktemplate;
 alter table mapping
-    add constraint fk_eyojirby4p9hx0fkaxmpyn3wm
-    foreign key (projectplanningtool_id)
+    add constraint fk_8olrrhqn1iq72l3c1syqovivq
+    foreign key (ppt_id)
     references ppt;
 alter table mapping
     add constraint fk_odpw0yawpljxoiw7nxo2ci9ep

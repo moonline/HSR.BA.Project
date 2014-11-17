@@ -5,6 +5,7 @@ import models.user.Project;
 import play.data.validation.Constraints;
 
 import javax.persistence.Entity;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -18,6 +19,7 @@ public class Processor extends AbstractEntity {
 	@Constraints.Required
 	private Project project;
 	@Constraints.Required
+	@Lob
 	private String code;
 
 	public String getName() {
