@@ -21,8 +21,9 @@ public class GeneralControllerTest extends AbstractControllerTest {
 	@Test
 	public void testUpdateWithJsonRequest() throws Throwable {
 		//Setup
-		Mapping mapping = AbstractTestDataCreator.createMappingWithTransaction("My PPT", "My Project", "/example/target", "{}");
+		Mapping mapping = AbstractTestDataCreator.createMappingWithTransaction("My Mapping", "My PPT", "My Project", "/example/target", "{}");
 		JsonNode mappingAsJson = Json.parse("{ \"id\" : " + mapping.getId() + ",\n" +
+				"	\"name\":\"My Mapping\",\n" +
 				"	\"ppt\":{\"id\":" + mapping.getPpt().getId() + ",\"name\":\"My PPT\"},\n" +
 				"	\"project\":{\"id\":" + mapping.getProject().getId() + ",\"name\":\"My Project\"},\n" +
 				"	\"url\" : \"/post/target2\",\n" +
@@ -45,10 +46,11 @@ public class GeneralControllerTest extends AbstractControllerTest {
 	@Test
 	public void testUpdateWithJsonRequestDoesNotUpdateReferencedItems() throws Throwable {
 		//Setup
-		Mapping mapping = AbstractTestDataCreator.createMappingWithTransaction("My PPT", "My Project", "/example/target", "{}");
+		Mapping mapping = AbstractTestDataCreator.createMappingWithTransaction("My Mapping", "My PPT", "My Project", "/example/target", "{}");
 		Long oldProjectId = mapping.getProject().getId();
 		Long newProjectId = AbstractTestDataCreator.createProjectWithTransaction("New Project").getId();
 		JsonNode mappingAsJson = Json.parse("{ \"id\" : " + mapping.getId() + ",\n" +
+				"	\"name\":\"My Mapping\",\n" +
 				"	\"ppt\":{\"id\":" + mapping.getPpt().getId() + ",\"name\":\"My PPT\"},\n" +
 				"	\"project\":{\"id\":" + newProjectId + ",\"name\":\"JUST SOMETHING ELSE HERE\"},\n" +
 				"	\"url\" : \"/post/target2\",\n" +
@@ -71,9 +73,10 @@ public class GeneralControllerTest extends AbstractControllerTest {
 	@Test
 	public void testUpdateWithJsonRequestDoNotRequireParametersButTheId() throws Throwable {
 		//Setup
-		Mapping mapping = AbstractTestDataCreator.createMappingWithTransaction("My PPT", "My Project", "/example/target", "{}");
+		Mapping mapping = AbstractTestDataCreator.createMappingWithTransaction("My Mapping", "My PPT", "My Project", "/example/target", "{}");
 		Long newProjectId = AbstractTestDataCreator.createProjectWithTransaction("New Project").getId();
 		JsonNode mappingAsJson = Json.parse("{ \"id\" : " + mapping.getId() + ",\n" +
+				"	\"name\":\"My Mapping\",\n" +
 				"	\"ppt\":{\"id\":" + mapping.getPpt().getId() + ",\"name\":\"My PPT\"},\n" +
 				"	\"project\":{\"id\":" + newProjectId + "},\n" + //no name parameter here
 				"	\"url\" : \"/post/target2\",\n" +
@@ -86,6 +89,7 @@ public class GeneralControllerTest extends AbstractControllerTest {
 		//Verification
 		assertThat(status(result)).isEqualTo(OK);
 		assertCheckJsonResponse(result, Json.parse("{ \"id\" : " + mapping.getId() + ",\n" +
+				"	\"name\":\"My Mapping\",\n" +
 				"	\"ppt\":{\"id\":" + mapping.getPpt().getId() + ",\"name\":\"My PPT\"},\n" +
 				"	\"project\":{\"id\":" + newProjectId + ",\"name\":null},\n" +
 				"	\"url\" : \"/post/target2\",\n" +

@@ -16,6 +16,7 @@ public class Mapping extends AbstractEntity {
 	private ProjectPlanningTool ppt;
 	@ManyToOne
 	private Project project;
+	private String name;
 	private String url;
 	@Lob
 	private String requestTemplate;
@@ -34,6 +35,14 @@ public class Mapping extends AbstractEntity {
 
 	public void setProject(Project project) {
 		this.project = project;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getUrl() {

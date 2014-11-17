@@ -27,7 +27,7 @@ public class MappingControllerTest extends AbstractControllerTest {
 		ProjectPlanningTool ppt = AbstractTestDataCreator.createProjectPlanningToolWithTransaction("My PPT");
 		Project project = AbstractTestDataCreator.createProjectWithTransaction("My Project");
 		//Test
-		Result result = callActionWithUser(routes.ref.MappingController.create(), postData("ppt", ppt.getId() + "", "project", project.getId() + "", "url", "/post/target", "requestTemplate", "{\"name\":\"${title}\"}"));
+		Result result = callActionWithUser(routes.ref.MappingController.create(), postData("name", "My Mapping", "ppt", ppt.getId() + "", "project", project.getId() + "", "url", "/post/target", "requestTemplate", "{\"name\":\"${title}\"}"));
 		//Verification
 		assertThat(status(result)).isEqualTo(OK);
 		//noinspection Convert2MethodRef
@@ -40,6 +40,7 @@ public class MappingControllerTest extends AbstractControllerTest {
 		assertThat(mapping.getRequestTemplate()).isEqualTo("{\"name\":\"${title}\"}");
 		assertCheckJsonResponse(result, Json.parse("{\n" +
 				"	\"id\":" + mapping.getId() + ",\n" +
+				"	\"name\":\"My Mapping\",\n" +
 				"	\"ppt\":{\"id\":" + mapping.getPpt().getId() + ",\"name\":\"My PPT\"},\n" +
 				"	\"project\":{\"id\":" + mapping.getProject().getId() + ",\"name\":\"My Project\"},\n" +
 				"	\"url\":\"/post/target\",\n" +
@@ -52,10 +53,10 @@ public class MappingControllerTest extends AbstractControllerTest {
 		//Setup
 		Mapping[] mappings = JPA.withTransaction(() -> {
 			MAPPING_DAO.removeAll();
-			Mapping mapping1 = AbstractTestDataCreator.createMapping("My PPT", "My Project", "/example/target", "{}");
+			Mapping mapping1 = AbstractTestDataCreator.createMapping("My Mapping 1", "My PPT", "My Project", "/example/target", "{}");
 			return new Mapping[]{
 					mapping1,
-					AbstractTestDataCreator.createMapping(mapping1.getPpt(), mapping1.getProject(), "/another/example/target", "{\"name\":\"${title}\"}")
+					AbstractTestDataCreator.createMapping("My Mapping 2", mapping1.getPpt(), mapping1.getProject(), "/another/example/target", "{\"name\":\"${title}\"}")
 			};
 		});
 		//Test
@@ -65,12 +66,14 @@ public class MappingControllerTest extends AbstractControllerTest {
 		assertCheckJsonResponse(result, Json.parse("{\"items\":[" +
 				"	{" +
 				"		\"id\" : " + mappings[0].getId() + ",\n" +
+				"		\"name\":\"My Mapping 1\",\n" +
 				"		\"ppt\":{\"id\":" + mappings[0].getPpt().getId() + ",\"name\":\"My PPT\"},\n" +
 				"		\"project\":{\"id\":" + mappings[0].getProject().getId() + ",\"name\":\"My Project\"},\n" +
 				"		\"url\":\"/example/target\",\n" +
 				"		\"requestTemplate\":\"{}\"\n" +
 				"    },{" +
 				"		\"id\" : " + mappings[1].getId() + ",\n" +
+				"		\"name\":\"My Mapping 2\",\n" +
 				"		\"ppt\":{\"id\":" + mappings[0].getPpt().getId() + ",\"name\":\"My PPT\"},\n" +
 				"		\"project\":{\"id\":" + mappings[0].getProject().getId() + ",\"name\":\"My Project\"},\n" +
 				"		\"url\":\"/another/example/target\",\n" +
@@ -83,13 +86,14 @@ public class MappingControllerTest extends AbstractControllerTest {
 	@Test
 	public void testReadOneMapping() throws Throwable {
 		//Setup
-		Mapping mapping = AbstractTestDataCreator.createMappingWithTransaction("My PPT", "My Project", "/example/target", "{}");
+		Mapping mapping = AbstractTestDataCreator.createMappingWithTransaction("My Mapping", "My PPT", "My Project", "/example/target", "{}");
 		//Test
 		Result result = callActionWithUser(routes.ref.MappingController.read(mapping.getId()));
 		//Verification
 		assertThat(status(result)).isEqualTo(OK);
 		assertCheckJsonResponse(result, Json.parse("{\n" +
 				"	\"id\" : " + mapping.getId() + ",\n" +
+				"	\"name\":\"My Mapping\",\n" +
 				"	\"ppt\":{\"id\":" + mapping.getPpt().getId() + ",\"name\":\"My PPT\"},\n" +
 				"	\"project\":{\"id\":" + mapping.getProject().getId() + ",\"name\":\"My Project\"},\n" +
 				"	\"url\":\"/example/target\",\n" +
@@ -108,16 +112,17 @@ public class MappingControllerTest extends AbstractControllerTest {
 	@Test
 	public void testUpdateMappingWorking() throws Throwable {
 		//Setup
-		Mapping mapping = AbstractTestDataCreator.createMappingWithTransaction("My PPT", "My Project", "/example/target", "{}");
+		Mapping mapping = AbstractTestDataCreator.createMappingWithTransaction("My Mapping", "My PPT", "My Project", "/example/target", "{}");
 		Long ppt = mapping.getPpt().getId();
 		Long project = mapping.getProject().getId();
 		String url = "/post/target2";
 		String requestTemplate = "{\"name\":\"${titleeee}\"}";
 		//Test
-		Result result = callActionWithUser(routes.ref.MappingController.update(mapping.getId()), postData("ppt", mapping.getPpt().getId() + "", "project", mapping.getProject().getId() + "", "url", url, "requestTemplate", requestTemplate));
+		Result result = callActionWithUser(routes.ref.MappingController.update(mapping.getId()), postData("name", "My Mapping", "ppt", mapping.getPpt().getId() + "", "project", mapping.getProject().getId() + "", "url", url, "requestTemplate", requestTemplate));
 		//Verification
 		assertThat(status(result)).isEqualTo(OK);
 		assertCheckJsonResponse(result, Json.parse("{ \"id\" : " + mapping.getId() + ",\n" +
+				"	\"name\":\"My Mapping\",\n" +
 				"	\"ppt\":{\"id\":" + mapping.getPpt().getId() + ",\"name\":\"My PPT\"},\n" +
 				"	\"project\":{\"id\":" + mapping.getProject().getId() + ",\"name\":\"My Project\"},\n" +
 				"	\"url\" : \"" + url + "\",\n" +
@@ -133,7 +138,7 @@ public class MappingControllerTest extends AbstractControllerTest {
 	@Test
 	public void testDeleteMapping() throws Throwable {
 		//Setup
-		Long mapping = AbstractTestDataCreator.createMappingWithTransaction("My PPT", "My Project", "/example/target9", "{}").getId();
+		Long mapping = AbstractTestDataCreator.createMappingWithTransaction("My Mapping", "My PPT", "My Project", "/example/target9", "{}").getId();
 		//Test
 		Result result = callActionWithUser(routes.ref.MappingController.delete(mapping));
 		//Verification

@@ -133,22 +133,23 @@ public abstract class AbstractTestDataCreator {
 		});
 	}
 
-	public static Mapping createMappingWithTransaction(String ppt, String project, String url, String requestTemplate) throws Throwable {
-		return JPA.withTransaction(() -> createMapping(ppt, project, url, requestTemplate));
+	public static Mapping createMappingWithTransaction(String name, String ppt, String project, String url, String requestTemplate) throws Throwable {
+		return JPA.withTransaction(() -> createMapping(name, ppt, project, url, requestTemplate));
 	}
 
-	public static Mapping createMapping(String ppt, String project, String url, String requestTemplate) throws Throwable {
+	public static Mapping createMapping(String name, String ppt, String project, String url, String requestTemplate) throws Throwable {
 		ProjectPlanningTool pptEntity = new ProjectPlanningTool();
 		pptEntity.setName(ppt);
 		Project projectEntity = new Project();
 		projectEntity.setName(project);
 		persistAndFlush(pptEntity, projectEntity);
-		return createMapping(pptEntity, projectEntity, url, requestTemplate);
+		return createMapping(name, pptEntity, projectEntity, url, requestTemplate);
 	}
 
-	public static Mapping createMapping(ProjectPlanningTool ppt, Project project, String url, String requestTemplate) throws Throwable {
+	public static Mapping createMapping(String name, ProjectPlanningTool ppt, Project project, String url, String requestTemplate) throws Throwable {
 		Mapping mapping = new Mapping();
 		mapping.setPpt(ppt);
+		mapping.setName(name);
 		mapping.setProject(project);
 		mapping.setUrl(url);
 		mapping.setRequestTemplate(requestTemplate);
