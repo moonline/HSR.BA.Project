@@ -35,6 +35,7 @@ module app.application {
 
 			$scope.targetPPTAccount = null;
 			$scope.currentRequestTemplate = null;
+			$scope.pptProject = "";
 
 			$scope.pptAccountRequestTemplates = [];
 			$scope.decisions = [];
@@ -45,6 +46,8 @@ module app.application {
 			$scope.exportDecisions = {};
 			$scope.exportRequests = [];
 
+			var processors: { [index: string]: any } = {};
+
 			var mappingRepository = persistenceService['mappingRepository'];
 			var pptAccountRepository: app.domain.repository.ppt.PPTAccountRepository = persistenceService['pptAccountRepository'];
 			var decisionRepository: app.domain.repository.dks.DecisionRepository = persistenceService['decisionRepository'];
@@ -52,6 +55,7 @@ module app.application {
 			var requestTemplateRepository = persistenceService['requestTemplateRepository'];
 			var projectRepository = persistenceService['projectRepository'];
 			var projectPlanningToolRepository = persistenceService['projectPlanningToolRepository'];
+			var processorRepository = persistenceService['processorRepository'];
 
 
 			$scope.operationState = app.application.ApplicationState.pending;
@@ -72,44 +76,70 @@ module app.application {
 						$scope.projects = projects;
 						$scope.currentProject = projects[0] || null;
 
-						decisionKnowledgeRepository.findAll(function(success, items) {
-							$scope.currentDks = <app.domain.model.dks.DecisionKnowledgeSystem>items[0];
+						processorRepository.findAll(function(success, processorList){
+							console.log(processorList);
+							processorList.forEach(function(processor) {
+								"use strict";
 
-							decisionRepository.host = $scope.currentDks.address;
-							decisionRepository.findAll(function(success, items){
-								$scope.decisions = items;
+								// evaluate processor from text -- eval is a critical function because of security
+								// but it gives the user the most powerful processor functionality
+								try {
+									var processorCode: string = null;
 
-								for(var di in $scope.decisions) {
-									var decision = $scope.decisions[di];
-									if($scope.decisions[di] && $scope.decisions[di].template) {
-										if(!$scope.decisionMappings[decision.template.id]) {
-											$scope.decisionMappings[decision.template.id] = { problem: decision.template, decisions: {} };
-										}
-										$scope.decisionMappings[decision.template.id]['decisions'][decision.id] = { decision: decision, taskTemplatesToExport: {}, mappings: {} };
-									}
+									var code = '(function () { return '+processor.code+' })()';
+									processorCode = eval.call(null, code);
+
+									processors[processor.name] = processorCode;
+								} catch (e) {
+									console.log(processor.name+"() processor is not valid code!");
+									// who cares. It's the problem of the user, if he writes incorrect processors
 								}
+							});
+							console.log(processors);
 
-								mappingRepository.findAll(function(success, items) {
-									$scope.mappings = items;
+							decisionKnowledgeRepository.findAll(function(success, items) {
+								$scope.currentDks = <app.domain.model.dks.DecisionKnowledgeSystem>items[0];
 
-									setTimeout(() => { $scope.operationState = app.application.ApplicationState.successful; $scope.$apply(); }, configuration.settings.messageBoxDelay);
+								decisionRepository.host = $scope.currentDks.address;
+								decisionRepository.findAll(function(success, items){
+									$scope.decisions = items;
 
-									for(var mi in $scope.mappings) {
-										var mapping = $scope.mappings[mi];
-										// only add mapping, if decision exist
-										if($scope.decisionMappings[mapping.dksNode]) {
-											for(var dmi in $scope.decisionMappings[mapping.dksNode]['decisions']) {
-												var decisionElement = $scope.decisionMappings[mapping.dksNode]['decisions'][dmi];
-												decisionElement.mappings[mapping.id] = mapping;
+									for(var di in $scope.decisions) {
+										var decision = $scope.decisions[di];
+										if($scope.decisions[di] && $scope.decisions[di].template) {
+											if(!$scope.decisionMappings[decision.template.id]) {
+												$scope.decisionMappings[decision.template.id] = { problem: decision.template, decisions: {} };
+											}
+											$scope.decisionMappings[decision.template.id]['decisions'][decision.id] = { decision: decision, taskTemplatesToExport: {}, mappings: {} };
+										}
+									}
+
+									mappingRepository.findAll(function(success, items) {
+										$scope.mappings = items;
+
+										setTimeout(() => { $scope.operationState = app.application.ApplicationState.successful; $scope.$apply(); }, configuration.settings.messageBoxDelay);
+
+										for(var mi in $scope.mappings) {
+											var mapping = $scope.mappings[mi];
+											// only add mapping, if decision exist
+											if($scope.decisionMappings[mapping.dksNode]) {
+												for(var dmi in $scope.decisionMappings[mapping.dksNode]['decisions']) {
+													var decisionElement = $scope.decisionMappings[mapping.dksNode]['decisions'][dmi];
+													decisionElement.mappings[mapping.id] = mapping;
+												}
 											}
 										}
-									}
+									});
 								});
 							});
 						});
 					});
 				});
 			});
+
+			$scope.setPPTProject = function(name: string) {
+				$scope.pptProject = name;
+			};
 
 			$scope.setRequestTemplate = function(requestTemplate: app.domain.model.ppt.RequestTemplate) {
 				$scope.currentRequestTemplate = requestTemplate;
@@ -146,6 +176,13 @@ module app.application {
 						Object.keys(decisionGroup.decisions[deKey].mappings).forEach(function(mKey) {
 							if(decisionGroup.decisions[deKey].taskTemplatesToExport[mKey] && decisionGroup.decisions[deKey].taskTemplatesToExport[mKey] === true) {
 								var mapping:app.domain.model.core.Mapping = decisionGroup.decisions[deKey].mappings[mKey];
+
+								// transform propertyValues list to dictionary to allow simple access using processor variables
+								mapping.taskTemplate['attributes'] = {};
+								mapping.taskTemplate.properties.forEach(function(taskPropertyValue, index){
+									mapping.taskTemplate['attributes'][taskPropertyValue.property.name.toLowerCase()] = taskPropertyValue.value;
+								});
+
 								if(!$scope.exportDecisions[deKey]) {
 									$scope.exportDecisions[deKey] = { decision: decision, mappings: [] };
 								}
@@ -154,14 +191,23 @@ module app.application {
 						});
 					});
 				});
+
+				console.log($scope.exportDecisions);
 				Object.keys($scope.exportDecisions).forEach(function(dKey){
 					var decision = $scope.exportDecisions[dKey].decision;
 					Object.keys($scope.exportDecisions[dKey].mappings).forEach(function(tKey){
 						var mapping = $scope.exportDecisions[dKey].mappings[tKey];
 
-						var exportDecisionData = { decision: decision, taskTemplate: mapping.taskTemplate, currentUser: authenticationService.loggedInUser };
+						var exportDecisionData = {
+							decision: decision,
+							taskTemplate: mapping.taskTemplate,
+							currentUser: authenticationService.loggedInUser,
+							project: $scope.currentProject,
+							pptProject: $scope.pptProject,
+							mappings: $scope.decisionMappings
+						};
 
-						var templateProcessor = new app.service.TemplateProcesser(exportDecisionData, $scope.currentRequestTemplate.requestBody, {});
+						var templateProcessor = new app.service.TemplateProcesser(exportDecisionData, $scope.currentRequestTemplate.requestBody, processors);
 						var renderedTemplate = templateProcessor.process();
 						$scope.exportRequests.push({
 							requestBody: templateProcessor.process(),

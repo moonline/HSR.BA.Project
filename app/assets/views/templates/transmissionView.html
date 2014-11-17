@@ -25,8 +25,12 @@
 						data-ng-options="pptAccountRequestTemplate.url for pptAccountRequestTemplate in pptAccountRequestTemplates"
 						data-ng-change="setRequestTemplate(currentRequestTemplate)"></select>
 				</div>
+				<div class="formLine">
+					<label>Project in project planning tool</label>
+					<input type="text" data-ng-model="pptProject" data-ng-change="setPPTProject(pptProject)" />
+				</div>
 
-				<button data-ng-disabled="!targetPPTAccount || !currentRequestTemplate || !currentRequestTemplate" class="action" data-ng-click="nextStep()">(=>) Select decisions</button>
+				<button data-ng-disabled="pptProject.length < 1 || !targetPPTAccount || !currentRequestTemplate || !currentRequestTemplate" class="action" data-ng-click="nextStep()">(=>) Select decisions</button>
 			</div>
 
 			<div class="wizardStep" data-step="DataSelection" data-ng-if="currentWizardStep == ExportWizardSteps.DataSelection">
