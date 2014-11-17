@@ -8,6 +8,7 @@ create table dksmapping (
 );
 create table mapping (
     id bigint not null,
+    name varchar(255),
     requesttemplate clob,
     url varchar(255),
     ppt_id bigint,

@@ -242,6 +242,7 @@ public class ExampleDataCreator {
 							project.setName("Example Project");
 							Mapping mapping = new Mapping();
 							mapping.setPpt(ppt);
+							mapping.setName("Mapping Name");
 							mapping.setProject(project);
 							mapping.setUrl(url);
 							mapping.setRequestTemplate(requestTemplate);
