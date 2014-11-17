@@ -24,20 +24,27 @@ public class MappingControllerTest extends AbstractControllerTest {
 	public void testCreateMappingWorking() throws Throwable {
 		//Setup
 		JPA.withTransaction(MAPPING_DAO::removeAll);
-		ProjectPlanningTool ppt = AbstractTestDataCreator.createProjectPlanningToolWithTransaction();
-		Project project = AbstractTestDataCreator.createProjectWithTransaction();
+		ProjectPlanningTool ppt = AbstractTestDataCreator.createProjectPlanningToolWithTransaction("My PPT");
+		Project project = AbstractTestDataCreator.createProjectWithTransaction("My Project");
 		//Test
-		Result result = callActionWithUser(routes.ref.MappingController.create(), postData("projectPlanningTool", ppt.getId() + "", "project", project.getId() + "", "url", "/post/target", "requestTemplate", "{\"name\":\"${title}\"}"));
+		Result result = callActionWithUser(routes.ref.MappingController.create(), postData("ppt", ppt.getId() + "", "project", project.getId() + "", "url", "/post/target", "requestTemplate", "{\"name\":\"${title}\"}"));
 		//Verification
 		assertThat(status(result)).isEqualTo(OK);
 		//noinspection Convert2MethodRef
 		List<Mapping> mappings = JPA.withTransaction(() -> MAPPING_DAO.readAll());
 		assertThat(mappings).hasSize(1);
 		Mapping mapping = mappings.get(0);
-		assertThat(mapping.getProjectPlanningTool().getId()).isEqualTo(ppt.getId());
+		assertThat(mapping.getPpt().getId()).isEqualTo(ppt.getId());
 		assertThat(mapping.getProject().getId()).isEqualTo(project.getId());
 		assertThat(mapping.getUrl()).isEqualTo("/post/target");
 		assertThat(mapping.getRequestTemplate()).isEqualTo("{\"name\":\"${title}\"}");
+		assertCheckJsonResponse(result, Json.parse("{\n" +
+				"	\"id\":" + mapping.getId() + ",\n" +
+				"	\"ppt\":{\"id\":" + mapping.getPpt().getId() + ",\"name\":\"My PPT\"},\n" +
+				"	\"project\":{\"id\":" + mapping.getProject().getId() + ",\"name\":\"My Project\"},\n" +
+				"	\"url\":\"/post/target\",\n" +
+				"	\"requestTemplate\":\"{\\\"name\\\":\\\"${title}\\\"}\"\n" +
+				"}"));
 	}
 
 	@Test
@@ -48,7 +55,7 @@ public class MappingControllerTest extends AbstractControllerTest {
 			Mapping mapping1 = AbstractTestDataCreator.createMapping("My PPT", "My Project", "/example/target", "{}");
 			return new Mapping[]{
 					mapping1,
-					AbstractTestDataCreator.createMapping(mapping1.getProjectPlanningTool(), mapping1.getProject(), "/another/example/target", "{\"name\":\"${title}\"}")
+					AbstractTestDataCreator.createMapping(mapping1.getPpt(), mapping1.getProject(), "/another/example/target", "{\"name\":\"${title}\"}")
 			};
 		});
 		//Test
@@ -58,13 +65,13 @@ public class MappingControllerTest extends AbstractControllerTest {
 		assertCheckJsonResponse(result, Json.parse("{\"items\":[" +
 				"	{" +
 				"		\"id\" : " + mappings[0].getId() + ",\n" +
-				"		\"projectPlanningTool\":{\"id\":" + mappings[0].getProjectPlanningTool().getId() + ",\"name\":\"My PPT\"},\n" +
+				"		\"ppt\":{\"id\":" + mappings[0].getPpt().getId() + ",\"name\":\"My PPT\"},\n" +
 				"		\"project\":{\"id\":" + mappings[0].getProject().getId() + ",\"name\":\"My Project\"},\n" +
 				"		\"url\":\"/example/target\",\n" +
 				"		\"requestTemplate\":\"{}\"\n" +
 				"    },{" +
 				"		\"id\" : " + mappings[1].getId() + ",\n" +
-				"		\"projectPlanningTool\":{\"id\":" + mappings[0].getProjectPlanningTool().getId() + ",\"name\":\"My PPT\"},\n" +
+				"		\"ppt\":{\"id\":" + mappings[0].getPpt().getId() + ",\"name\":\"My PPT\"},\n" +
 				"		\"project\":{\"id\":" + mappings[0].getProject().getId() + ",\"name\":\"My Project\"},\n" +
 				"		\"url\":\"/another/example/target\",\n" +
 				"		\"requestTemplate\":\"{\\\"name\\\":\\\"${title}\\\"}\"\n" +
@@ -83,7 +90,7 @@ public class MappingControllerTest extends AbstractControllerTest {
 		assertThat(status(result)).isEqualTo(OK);
 		assertCheckJsonResponse(result, Json.parse("{\n" +
 				"	\"id\" : " + mapping.getId() + ",\n" +
-				"	\"projectPlanningTool\":{\"id\":" + mapping.getProjectPlanningTool().getId() + ",\"name\":\"My PPT\"},\n" +
+				"	\"ppt\":{\"id\":" + mapping.getPpt().getId() + ",\"name\":\"My PPT\"},\n" +
 				"	\"project\":{\"id\":" + mapping.getProject().getId() + ",\"name\":\"My Project\"},\n" +
 				"	\"url\":\"/example/target\",\n" +
 				"	\"requestTemplate\":\"{}\"\n" +
@@ -102,22 +109,22 @@ public class MappingControllerTest extends AbstractControllerTest {
 	public void testUpdateMappingWorking() throws Throwable {
 		//Setup
 		Mapping mapping = AbstractTestDataCreator.createMappingWithTransaction("My PPT", "My Project", "/example/target", "{}");
-		Long ppt = mapping.getProjectPlanningTool().getId();
+		Long ppt = mapping.getPpt().getId();
 		Long project = mapping.getProject().getId();
 		String url = "/post/target2";
 		String requestTemplate = "{\"name\":\"${titleeee}\"}";
 		//Test
-		Result result = callActionWithUser(routes.ref.MappingController.update(mapping.getId()), postData("projectPlanningTool", mapping.getProjectPlanningTool().getId() + "", "project", mapping.getProject().getId() + "", "url", url, "requestTemplate", requestTemplate));
+		Result result = callActionWithUser(routes.ref.MappingController.update(mapping.getId()), postData("ppt", mapping.getPpt().getId() + "", "project", mapping.getProject().getId() + "", "url", url, "requestTemplate", requestTemplate));
 		//Verification
 		assertThat(status(result)).isEqualTo(OK);
 		assertCheckJsonResponse(result, Json.parse("{ \"id\" : " + mapping.getId() + ",\n" +
-				"	\"projectPlanningTool\":{\"id\":" + mapping.getProjectPlanningTool().getId() + ",\"name\":\"My PPT\"},\n" +
+				"	\"ppt\":{\"id\":" + mapping.getPpt().getId() + ",\"name\":\"My PPT\"},\n" +
 				"	\"project\":{\"id\":" + mapping.getProject().getId() + ",\"name\":\"My Project\"},\n" +
 				"	\"url\" : \"" + url + "\",\n" +
 				"	\"requestTemplate\" : \"{\\\"name\\\":\\\"${titleeee}\\\"}\"\n" +
 				"}"));
 		Mapping mappingInDB = JPA.withTransaction(() -> MAPPING_DAO.readById(mapping.getId()));
-		assertThat(mappingInDB.getProjectPlanningTool().getId()).isEqualTo(ppt);
+		assertThat(mappingInDB.getPpt().getId()).isEqualTo(ppt);
 		assertThat(mappingInDB.getProject().getId()).isEqualTo(project);
 		assertThat(mappingInDB.getUrl()).isEqualTo(url);
 		assertThat(mappingInDB.getRequestTemplate()).isEqualTo(requestTemplate);

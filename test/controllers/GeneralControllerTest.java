@@ -23,7 +23,7 @@ public class GeneralControllerTest extends AbstractControllerTest {
 		//Setup
 		Mapping mapping = AbstractTestDataCreator.createMappingWithTransaction("My PPT", "My Project", "/example/target", "{}");
 		JsonNode mappingAsJson = Json.parse("{ \"id\" : " + mapping.getId() + ",\n" +
-				"	\"projectPlanningTool\":{\"id\":" + mapping.getProjectPlanningTool().getId() + ",\"name\":\"My PPT\"},\n" +
+				"	\"ppt\":{\"id\":" + mapping.getPpt().getId() + ",\"name\":\"My PPT\"},\n" +
 				"	\"project\":{\"id\":" + mapping.getProject().getId() + ",\"name\":\"My Project\"},\n" +
 				"	\"url\" : \"/post/target2\",\n" +
 				"	\"requestTemplate\" : \"{\\\"name\\\":\\\"${titleeee}\\\"}\"\n" +
@@ -36,7 +36,7 @@ public class GeneralControllerTest extends AbstractControllerTest {
 		assertThat(status(result)).isEqualTo(OK);
 		assertCheckJsonResponse(result, mappingAsJson);
 		Mapping mappingInDB = JPA.withTransaction(() -> new MappingDAO().readById(mapping.getId()));
-		assertThat(mappingInDB.getProjectPlanningTool().getId()).isEqualTo(mapping.getProjectPlanningTool().getId());
+		assertThat(mappingInDB.getPpt().getId()).isEqualTo(mapping.getPpt().getId());
 		assertThat(mappingInDB.getProject().getId()).isEqualTo(mapping.getProject().getId());
 		assertThat(mappingInDB.getUrl()).isEqualTo("/post/target2");
 		assertThat(mappingInDB.getRequestTemplate()).isEqualTo("{\"name\":\"${titleeee}\"}");
@@ -49,7 +49,7 @@ public class GeneralControllerTest extends AbstractControllerTest {
 		Long oldProjectId = mapping.getProject().getId();
 		Long newProjectId = AbstractTestDataCreator.createProjectWithTransaction("New Project").getId();
 		JsonNode mappingAsJson = Json.parse("{ \"id\" : " + mapping.getId() + ",\n" +
-				"	\"projectPlanningTool\":{\"id\":" + mapping.getProjectPlanningTool().getId() + ",\"name\":\"My PPT\"},\n" +
+				"	\"ppt\":{\"id\":" + mapping.getPpt().getId() + ",\"name\":\"My PPT\"},\n" +
 				"	\"project\":{\"id\":" + newProjectId + ",\"name\":\"JUST SOMETHING ELSE HERE\"},\n" +
 				"	\"url\" : \"/post/target2\",\n" +
 				"	\"requestTemplate\" : \"{\\\"name\\\":\\\"${titleeee}\\\"}\"\n" +
@@ -74,7 +74,7 @@ public class GeneralControllerTest extends AbstractControllerTest {
 		Mapping mapping = AbstractTestDataCreator.createMappingWithTransaction("My PPT", "My Project", "/example/target", "{}");
 		Long newProjectId = AbstractTestDataCreator.createProjectWithTransaction("New Project").getId();
 		JsonNode mappingAsJson = Json.parse("{ \"id\" : " + mapping.getId() + ",\n" +
-				"	\"projectPlanningTool\":{\"id\":" + mapping.getProjectPlanningTool().getId() + ",\"name\":\"My PPT\"},\n" +
+				"	\"ppt\":{\"id\":" + mapping.getPpt().getId() + ",\"name\":\"My PPT\"},\n" +
 				"	\"project\":{\"id\":" + newProjectId + "},\n" + //no name parameter here
 				"	\"url\" : \"/post/target2\",\n" +
 				"	\"requestTemplate\" : \"{\\\"name\\\":\\\"${titleeee}\\\"}\"\n" +
@@ -86,7 +86,7 @@ public class GeneralControllerTest extends AbstractControllerTest {
 		//Verification
 		assertThat(status(result)).isEqualTo(OK);
 		assertCheckJsonResponse(result, Json.parse("{ \"id\" : " + mapping.getId() + ",\n" +
-				"	\"projectPlanningTool\":{\"id\":" + mapping.getProjectPlanningTool().getId() + ",\"name\":\"My PPT\"},\n" +
+				"	\"ppt\":{\"id\":" + mapping.getPpt().getId() + ",\"name\":\"My PPT\"},\n" +
 				"	\"project\":{\"id\":" + newProjectId + ",\"name\":null},\n" +
 				"	\"url\" : \"/post/target2\",\n" +
 				"	\"requestTemplate\" : \"{\\\"name\\\":\\\"${titleeee}\\\"}\"\n" +

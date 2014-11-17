@@ -20,7 +20,7 @@ public class MappingLogic implements CRUDLogicInterface<Mapping> {
 
 	@Override
 	public Mapping update(Mapping persistedEntity, Mapping postedEntity) {
-		persistedEntity.setProjectPlanningTool(postedEntity.getProjectPlanningTool());
+		persistedEntity.setPpt(postedEntity.getPpt());
 		persistedEntity.setProject(postedEntity.getProject());
 		persistedEntity.setUrl(postedEntity.getUrl());
 		persistedEntity.setRequestTemplate(postedEntity.getRequestTemplate());

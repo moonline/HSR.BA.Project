@@ -43,8 +43,12 @@ public abstract class AbstractTestDataCreator {
 	}
 
 	public static ProjectPlanningTool createProjectPlanningToolWithTransaction() throws Throwable {
+		return createProjectPlanningToolWithTransaction("My Project Planning Tool");
+	}
+
+	public static ProjectPlanningTool createProjectPlanningToolWithTransaction(String name) {
 		ProjectPlanningTool ppt = new ProjectPlanningTool();
-		ppt.setName("My Project Planning Tool");
+		ppt.setName(name);
 		persistAndFlushInTransaction(ppt);
 		return ppt;
 	}
@@ -144,7 +148,7 @@ public abstract class AbstractTestDataCreator {
 
 	public static Mapping createMapping(ProjectPlanningTool ppt, Project project, String url, String requestTemplate) throws Throwable {
 		Mapping mapping = new Mapping();
-		mapping.setProjectPlanningTool(ppt);
+		mapping.setPpt(ppt);
 		mapping.setProject(project);
 		mapping.setUrl(url);
 		mapping.setRequestTemplate(requestTemplate);

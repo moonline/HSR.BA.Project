@@ -50,10 +50,10 @@
 						</dd>
 						<dt>DKS link</dt>
 						<dd><a href="{{currentDksNode.self}}" target="_blank">{{currentDksNode.self}}</a></dd>
-						<dt>Options</dt>
-						<dd>
+						<dt data-ng-if="currentDksNode.alternatives">Options</dt>
+						<dd data-ng-if="currentDksNode.alternatives">
 							<ul>
-								<li data-ng-repeat="option in currentDksNode.options">
+								<li data-ng-repeat="option in currentDksNode.alternatives">
 									{{option.name}} [{{option.id}}]
 								</li>
 							</ul>
