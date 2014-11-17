@@ -69,12 +69,12 @@ INSERT INTO MAPPING (ID, REQUESTTEMPLATE, URL, PROJECT_ID, PPT_ID) VALUES (nextv
 
 -- Creating Processors
 INSERT INTO PROCESSOR (ID, CODE, NAME, PROJECT_ID) VALUES (nextval('entity_seq'),CONCAT('function(list) {
-',' 	var text = "";
+',' 	var text = ""&#SEMICOLON
 ','		Object.keys(list).forEach(function(key){
-','			text += key+": +"+list[key];
-','			if(key < list.length-1) { text += ", " ; }
-','		});
-','		return text;
+','			text += key+": +"+list[key]&#SEMICOLON
+','			if(key < list.length-1) { text += ", " &#SEMICOLON }
+','		})&#SEMICOLON
+','		return text&#SEMICOLON
 }'),'objecttostring',(SELECT id FROM PROJECT WHERE name='Project'));
 
 # --- !Downs

@@ -36,6 +36,7 @@ import logics.task.TaskPropertyLogic;
 import logics.task.TaskTemplateLogic;
 import logics.user.PPTAccountLogic;
 import logics.user.UserLogic;
+import models.ppt.Processor;
 import models.ppt.ProjectPlanningTool;
 import models.task.TaskProperty;
 import models.task.TaskPropertyValue;
@@ -45,6 +46,7 @@ import models.user.Project;
 import play.Application;
 import play.GlobalSettings;
 import play.data.format.Formatters;
+import play.db.jpa.JPA;
 import play.libs.F;
 import play.libs.Json;
 import play.mvc.Action;
@@ -99,6 +101,16 @@ public class Global extends GlobalSettings {
 		registerFormatters();
 		registerJsonObjectMappers();
 		initializeControllersRequiringParameters();
+		fixSQLInitializationBug();
+	}
+
+	private void fixSQLInitializationBug() {
+		JPA.withTransaction(() -> {
+			for (Processor processor : PROCESSOR_DAO.readAll()) {
+				processor.setCode(processor.getCode().replaceAll("&#SEMICOLON", ";"));
+				PROCESSOR_DAO.persist(processor);
+			}
+		});
 	}
 
 	private void registerJsonObjectMappers() {
