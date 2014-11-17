@@ -44,7 +44,7 @@ INSERT INTO TASKTEMPLATE (ID, NAME, PARENT_ID) VALUES (nextval('entity_seq'), 'I
 INSERT INTO TASKPROPERTYVALUE(ID, "VALUE", PROPERTY_ID, TASK_ID) VALUES (nextval('entity_seq'),'Sub Task',       (SELECT id FROM TASKPROPERTY WHERE name='Type'    ),(SELECT id FROM TASKTEMPLATE WHERE name='Hold decision meeting'));
 
 -- Creating Mappings
-INSERT INTO MAPPING (ID, REQUESTTEMPLATE, URL, PROJECT_ID, PROJECTPLANNINGTOOL_ID) VALUES (nextval('entity_seq'),CONCAT('{
+INSERT INTO MAPPING (ID, REQUESTTEMPLATE, URL, PROJECT_ID, PPT_ID) VALUES (nextval('entity_seq'),CONCAT('{
 ','	"fields": {
 ','		"project": {
 ','			"key": "$(projectKey)$"

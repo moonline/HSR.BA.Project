@@ -13,19 +13,19 @@ import javax.persistence.Table;
 public class Mapping extends AbstractEntity {
 
 	@ManyToOne
-	private ProjectPlanningTool projectPlanningTool;
+	private ProjectPlanningTool ppt;
 	@ManyToOne
 	private Project project;
 	private String url;
 	@Lob
 	private String requestTemplate;
 
-	public ProjectPlanningTool getProjectPlanningTool() {
-		return projectPlanningTool;
+	public ProjectPlanningTool getPpt() {
+		return ppt;
 	}
 
-	public void setProjectPlanningTool(ProjectPlanningTool projectPlanningTool) {
-		this.projectPlanningTool = projectPlanningTool;
+	public void setPpt(ProjectPlanningTool ppt) {
+		this.ppt = ppt;
 	}
 
 	public Project getProject() {
@@ -55,7 +55,7 @@ public class Mapping extends AbstractEntity {
 	@Override
 	public String toString() {
 		return "<Mapping " + getId() +
-				" (ppt=" + (projectPlanningTool == null ? "null" : projectPlanningTool.getId()) +
+				" (ppt=" + (ppt == null ? "null" : ppt.getId()) +
 				", project=" + (project == null ? "null" : project.getId()) +
 				", url=" + url +
 				", requestTemplate=" + requestTemplate + ")>";
