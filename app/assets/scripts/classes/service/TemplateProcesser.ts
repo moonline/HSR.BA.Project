@@ -24,6 +24,8 @@ module app.service {
 
 		public process(): string {
 			var template = this.template;
+			// ${variable.path.to.something}
+			template = this.parseVariables(template);
 			// $processorname:(param1, param2)$
 			template = this.parseProcessors(
 				template,

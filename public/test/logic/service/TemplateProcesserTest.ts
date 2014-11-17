@@ -222,11 +222,20 @@ module test.logic.service {
 				var template: string = "{\
 	\"assignee\": \"$concater:(var1, \":\", var2)$\",\
 	\"name\": \"$listConcater:(list,\"|\")$\",\
-	\"assignee\": \"$concater:(var1, \":\", var2)$\"\
+	\"assignee\": \"$concater:(var1, \":\", var2)$\",\
+	\"title\": \"${title.name}\",\
+	\"stakeHolder\": \"$concater:(title.name, \": \", ${varName.path})$\"\
 }";
 				var data:any = {
 					var1: 'irgendwas',
 					var2: 'nochwas',
+					varName: {
+						path: 'title.type'
+					},
+					title: {
+						name: 'auto',
+						type: 'gross'
+					},
 					list: [ 'eins', 'zwei', 'drei', 'vier']
 				};
 				var processors: { [index:string]: any} = {
@@ -247,7 +256,9 @@ module test.logic.service {
 				var expectedTemplate: string = "{\
 	\"assignee\": \"irgendwas:nochwas\",\
 	\"name\": \"eins|zwei|drei|vier\",\
-	\"assignee\": \"irgendwas:nochwas\"\
+	\"assignee\": \"irgendwas:nochwas\",\
+	\"title\": \"auto\",\
+	\"stakeHolder\": \"auto: gross\"\
 }";
 
 				expect(renderedTemplate).toEqual(expectedTemplate);

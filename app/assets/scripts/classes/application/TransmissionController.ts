@@ -10,6 +10,8 @@
 /// <reference path='../domain/repository/DecisionKnowledgeSystemRepository.ts' />
 /// <reference path='../domain/repository/PPTAccountRepository.ts' />
 
+/// <reference path='../service/TemplateProcesser.ts' />
+
 module app.application {
 	'use strict';
 
@@ -21,7 +23,7 @@ module app.application {
 		mappingRepository: app.domain.repository.core.MappingRepository;
 		$scope: any;
 
-		constructor($scope, $location, persistenceService, $http) {
+		constructor($scope, $location, persistenceService, authenticationService, $http) {
 			this.$scope = $scope;
 			$scope.ExportWizzardSteps = ExportWizzardSteps;
 			$scope.currentWizzardStep = ExportWizzardSteps.ToolSelection;
@@ -37,6 +39,8 @@ module app.application {
 			$scope.decisionMappings = {};
 			$scope.pptAccounts = [];
 			$scope.requestTemplates = [];
+			$scope.exportDecisions = {};
+			$scope.exportRequests = [];
 
 			var mappingRepository = persistenceService['mappingRepository'];
 			var pptAccountRepository: app.domain.repository.ppt.PPTAccountRepository = persistenceService['pptAccountRepository'];
@@ -56,8 +60,6 @@ module app.application {
 				$scope.currentDks = <app.domain.model.dks.DecisionKnowledgeSystem>items[0];
 
 				decisionRepository.host = $scope.currentDks.address;
-				//decisionRepository.proxy = null;
-				//problemRepository.host = $scope.currentDks.address;
 				decisionRepository.findAll(function(success, items){
 					$scope.decisions = items;
 
@@ -66,7 +68,7 @@ module app.application {
 						if(!$scope.decisionMappings[decision.template.id]) {
 							$scope.decisionMappings[decision.template.id] = { problem: decision.template, decisions: {} };
 						}
-						$scope.decisionMappings[decision.template.id]['decisions'][decision.id] = { decision: decision, decisionsToExport: {}, mappings: {} };
+						$scope.decisionMappings[decision.template.id]['decisions'][decision.id] = { decision: decision, taskTemplatesToExport: {}, mappings: {} };
 					}
 
 					mappingRepository.findAll(function(success, items) {
@@ -100,17 +102,15 @@ module app.application {
 			$scope.setCurrentRequestTemplate = function(ppt: app.domain.model.ppt.ProjectPlanningTool) {
 
 // TODO: remove this hack after ppt apiAccount api is fixed
-var requestTemplate = '{\
-	"fields": {\
-		"project": {\
-			"key": "TEST"\
-		},\
-		"assignee": "${assignee}",\
-		"description": "${description}",\
-		"issuetype": {\
-			"name": "${type}"\
-		}\
-	}\
+var requestTemplate = '{\n\
+	\t"fields": {\n\
+		\t\t"project": {\n\
+			\t\t\t"key": "TEST"\n\
+		\t\t},\n\
+		\t\t"title": "${taskTemplate.name}",\n\
+		\t\t"assignee": "${currentUser.userName}",\n\
+		\t\t"relatedDecision": "${decision.name}"\n\
+	\t}\n\
 }';
 				$scope.currentRequestTemplate = new app.domain.model.ppt.RequestTemplate(ppt, 'localhost:9920', requestTemplate);
 
@@ -122,7 +122,48 @@ var requestTemplate = '{\
 			};
 
 			$scope.processTaskTemplates = function() {
+				Object.keys($scope.decisionMappings).forEach(
+					function(dgKey) {
+						var decisionGroup: {
+							decisions: {
+								[index: number]: {
+									decisions: app.domain.model.dks.Decision;
+									mappings: { [index: number]: app.domain.model.core.Mapping }
+								}
+							};
+							decisionsToExport: { [index: number]: boolean };
+							problem: app.domain.model.dks.Problem
+						};
+					decisionGroup = $scope.decisionMappings[dgKey];
 
+					Object.keys(decisionGroup.decisions).forEach(function(deKey) {
+						var decision:app.domain.model.dks.Decision = decisionGroup.decisions[deKey].decision;
+
+						Object.keys(decisionGroup.decisions[deKey].mappings).forEach(function(mKey) {
+							if(decisionGroup.decisions[deKey].taskTemplatesToExport[mKey] && decisionGroup.decisions[deKey].taskTemplatesToExport[mKey] === true) {
+								var mapping:app.domain.model.core.Mapping = decisionGroup.decisions[deKey].mappings[mKey];
+								if(!$scope.exportDecisions[deKey]) {
+									$scope.exportDecisions[deKey] = { decision: decision, mappings: [] };
+								}
+								$scope.exportDecisions[deKey].mappings.push(mapping);
+							}
+						});
+					});
+				});
+				Object.keys($scope.exportDecisions).forEach(function(dKey){
+					var decision = $scope.exportDecisions[dKey].decision;
+					Object.keys($scope.exportDecisions[dKey].mappings).forEach(function(tKey){
+						var mapping = $scope.exportDecisions[dKey].mappings[tKey];
+
+						var exportDecisionData = { decision: decision, taskTemplate: mapping.taskTemplate, currentUser: authenticationService.loggedInUser };
+
+						var templateProcessor = new app.service.TemplateProcesser(exportDecisionData, $scope.currentRequestTemplate.requestBody, {});
+						var renderedTemplate = templateProcessor.process();
+						$scope.exportRequests.push(templateProcessor.process());
+
+						console.log(exportDecisionData, renderedTemplate);
+					});
+				});
 			};
 
 			$scope.nextStep = function() {
