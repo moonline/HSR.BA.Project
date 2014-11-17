@@ -16,7 +16,8 @@ module configuration {
 			list: { method: 'GET', url: '/project' }
 		},
 		projectPlanningTool: {
-			list: { method: 'GET', url: '/ppt' }
+			list: { method: 'GET', url: '/ppt' },
+			transmit: { method: 'POST', url: '/ppt/createPPTTask'}
 		},
 		mapping: {
 			list: { method: 'GET', url: '/dksMapping' },

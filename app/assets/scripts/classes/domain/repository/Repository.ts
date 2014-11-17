@@ -148,6 +148,34 @@ module app.domain.repository.core {
 			}, doCache);
 		}
 
+		/**
+		 * search in local cache for item because loading all elements
+		 * only to filter occours a lot of trafic
+		 */
+		public findOneByPropertyId(propertyName: string, property: any, callback: (success: boolean, item: T) => void, doCache: boolean = false): void {
+			this.findAll(function(success, items) {
+				var foundItem: T = null;
+				items.forEach(function(item){
+					if(item[propertyName] && item[propertyName].id && property.id && item[propertyName].id === property.id) {
+						foundItem = item;
+					}
+				});
+				callback(true, foundItem);
+			}, doCache);
+		}
+
+		public findByPropertyId(propertyName: string, property: any, callback: (success: boolean, items: T[]) => void, doCache: boolean = false): void {
+			this.findAll(function(success, items) {
+				var foundItems: T[] = [];
+				items.forEach(function(item){
+					if(item[propertyName] && item[propertyName].id && property.id && item[propertyName].id === property.id) {
+						foundItems.push(item);
+					}
+				});
+				callback(true, foundItems);
+			}, doCache);
+		}
+
 		public remove(item: T, callback: (success: boolean) => void): void {
 			if(!this.resources['remove']) {
 				throw new Error("Please configure a 'remove' resource for the" +this.type.name+" repository.");

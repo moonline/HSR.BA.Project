@@ -36,6 +36,7 @@ module app.application {
 			$scope.targetPPTAccount = null;
 			$scope.currentRequestTemplate = null;
 
+			$scope.pptAccountRequestTemplates = [];
 			$scope.decisions = [];
 			$scope.mappings = [];
 			$scope.decisionMappings = {};
@@ -49,6 +50,8 @@ module app.application {
 			var decisionRepository: app.domain.repository.dks.DecisionRepository = persistenceService['decisionRepository'];
 			var decisionKnowledgeRepository: app.domain.repository.dks.DecisionKnowledgeSystemRepository = persistenceService['decisionKnowledgeRepository'];
 			var requestTemplateRepository = persistenceService['requestTemplateRepository'];
+			var projectRepository = persistenceService['projectRepository'];
+			var projectPlanningToolRepository = persistenceService['projectPlanningToolRepository'];
 
 
 			$scope.operationState = app.application.ApplicationState.pending;
@@ -58,70 +61,68 @@ module app.application {
 					$scope.$apply();
 				}
 			}, 5000);
-			decisionKnowledgeRepository.findAll(function(success, items) {
-				$scope.currentDks = <app.domain.model.dks.DecisionKnowledgeSystem>items[0];
 
-				decisionRepository.host = $scope.currentDks.address;
-				decisionRepository.findAll(function(success, items){
-					$scope.decisions = items;
+			pptAccountRepository.findAll(function(success, pptAccounts) {
+				$scope.pptAccounts = pptAccounts;
 
-					for(var di in $scope.decisions) {
-						var decision = $scope.decisions[di];
-						if(!$scope.decisionMappings[decision.template.id]) {
-							$scope.decisionMappings[decision.template.id] = { problem: decision.template, decisions: {} };
-						}
-						$scope.decisionMappings[decision.template.id]['decisions'][decision.id] = { decision: decision, taskTemplatesToExport: {}, mappings: {} };
-					}
+				requestTemplateRepository.findAll(function(success, requestTemplates){
+					$scope.requestTemplates = requestTemplates;
 
-					mappingRepository.findAll(function(success, items) {
-						$scope.mappings = items;
+					projectRepository.findAll(function(success, projects){
+						$scope.projects = projects;
+						$scope.currentProject = projects[0] || null;
 
-						pptAccountRepository.findAll(function(success, pptAccounts) {
-							$scope.pptAccounts = pptAccounts;
+						decisionKnowledgeRepository.findAll(function(success, items) {
+							$scope.currentDks = <app.domain.model.dks.DecisionKnowledgeSystem>items[0];
 
-							requestTemplateRepository.findAll(function(success, requestTemplates){
-								$scope.requestTemplates = requestTemplates;
+							decisionRepository.host = $scope.currentDks.address;
+							decisionRepository.findAll(function(success, items){
+								$scope.decisions = items;
 
-								setTimeout(() => { $scope.operationState = app.application.ApplicationState.successful; $scope.$apply(); }, configuration.settings.messageBoxDelay);
+								for(var di in $scope.decisions) {
+									var decision = $scope.decisions[di];
+									if($scope.decisions[di] && $scope.decisions[di].template) {
+										if(!$scope.decisionMappings[decision.template.id]) {
+											$scope.decisionMappings[decision.template.id] = { problem: decision.template, decisions: {} };
+										}
+										$scope.decisionMappings[decision.template.id]['decisions'][decision.id] = { decision: decision, taskTemplatesToExport: {}, mappings: {} };
+									}
+								}
+
+								mappingRepository.findAll(function(success, items) {
+									$scope.mappings = items;
+
+									setTimeout(() => { $scope.operationState = app.application.ApplicationState.successful; $scope.$apply(); }, configuration.settings.messageBoxDelay);
+
+									for(var mi in $scope.mappings) {
+										var mapping = $scope.mappings[mi];
+										// only add mapping, if decision exist
+										if($scope.decisionMappings[mapping.dksNode]) {
+											for(var dmi in $scope.decisionMappings[mapping.dksNode]['decisions']) {
+												var decisionElement = $scope.decisionMappings[mapping.dksNode]['decisions'][dmi];
+												decisionElement.mappings[mapping.id] = mapping;
+											}
+										}
+									}
+								});
 							});
 						});
-
-						for(var mi in $scope.mappings) {
-							var mapping = $scope.mappings[mi];
-							// only add mapping, if decision exist
-							if($scope.decisionMappings[mapping.dksNode]) {
-								for(var dmi in $scope.decisionMappings[mapping.dksNode]['decisions']) {
-									var decisionElement = $scope.decisionMappings[mapping.dksNode]['decisions'][dmi];
-									decisionElement.mappings[mapping.id] = mapping;
-								}
-							}
-						}
-						console.log($scope.decisionMappings);
 					});
 				});
 			});
 
+			$scope.setRequestTemplate = function(requestTemplate: app.domain.model.ppt.RequestTemplate) {
+				$scope.currentRequestTemplate = requestTemplate;
+			};
+
 			$scope.setTarget = function(pptAccount: app.domain.model.ppt.PPTAccount) {
 				$scope.targetPPTAccount = pptAccount;
 
-// TODO: remove this hack after ppt apiAccount api is fixed
-var requestTemplate = '{\n\
-	\t"fields": {\n\
-		\t\t"project": {\n\
-			\t\t\t"key": "TEST"\n\
-		\t\t},\n\
-		\t\t"title": "${taskTemplate.name}",\n\
-		\t\t"assignee": "${currentUser.userName}",\n\
-		\t\t"relatedDecision": "${decision.name}"\n\
-	\t}\n\
-}';
-				$scope.currentRequestTemplate = new app.domain.model.ppt.RequestTemplate(pptAccount.ppt, 'localhost:9920', requestTemplate);
-
-				/*if(ppt) {
-					requestTemplateRepository.findOneBy('ppt', ppt, function(success: boolean, item: app.domain.model.ppt.RequestTemplate) {
-						$scope.currentRequestTemplate = item;
+				if(pptAccount.ppt) {
+					requestTemplateRepository.findByPropertyId('ppt', pptAccount.ppt, function(success: boolean, items: app.domain.model.ppt.RequestTemplate[]) {
+						$scope.pptAccountRequestTemplates = items;
 					}, true);
-				}*/
+				}
 			};
 
 			$scope.processTaskTemplates = function() {
@@ -173,18 +174,23 @@ var requestTemplate = '{\n\
 			};
 
 			$scope.transmit = function() {
-				var url = '/ppt/createPPTTask';
+				$scope.transmitOne($scope.exportRequests, 0);
+			};
 
-				$scope.exportRequests.forEach(function(exportRequest, index){
-					$http.post(
-						url,
-						{ account: $scope.targetPPTAccount, path: $scope.currentRequestTemplate.url, content: exportRequest.requestBody, taskTemplate: exportRequest.taskTemplate, "taskProperties[]":null, project: null }
-					).success(function(data, status, headers, config){
+			// Angular mixes request at near the same time, so serialize them
+			$scope.transmitOne = function(exportRequests, index) {
+				if(index < exportRequests.length) {
+					var exportRequest = exportRequests[index];
+					projectPlanningToolRepository.transmitTasks(exportRequest, $scope.targetPPTAccount, $scope.currentRequestTemplate.url, $scope.currentProject, function(success, data) {
+						if(success) {
 							exportRequest.exportState = app.application.ApplicationState.successful;
-						}.bind(this)).error(function(data, status, headers, config) {
+							$scope.transmitOne(exportRequests, index+1);
+						} else {
 							exportRequest.exportState = app.application.ApplicationState.failed;
-						}.bind(this));
-				});
+							$scope.transmitOne(exportRequests, index+1);
+						}
+					});
+				}
 			};
 
 			$scope.nextStep = function() {
