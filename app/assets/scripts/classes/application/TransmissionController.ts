@@ -17,7 +17,7 @@
 module app.application {
 	'use strict';
 
-	export enum ExportWizzardSteps {
+	export enum ExportWizardSteps {
 		ToolSelection, DataSelection, Transformation
 	}
 
@@ -27,8 +27,8 @@ module app.application {
 
 		constructor($scope, $location, persistenceService, authenticationService, $http) {
 			this.$scope = $scope;
-			$scope.ExportWizzardSteps = ExportWizzardSteps;
-			$scope.currentWizzardStep = ExportWizzardSteps.ToolSelection;
+			$scope.ExportWizardSteps = ExportWizardSteps;
+			$scope.currentWizardStep = ExportWizardSteps.ToolSelection;
 
 			$scope.ApplicationState = app.application.ApplicationState;
 			$scope.operationState = app.application.ApplicationState.waiting;
@@ -188,7 +188,7 @@ var requestTemplate = '{\n\
 			};
 
 			$scope.nextStep = function() {
-				$scope.currentWizzardStep++;
+				$scope.currentWizardStep++;
 			};
 		}
 	}
