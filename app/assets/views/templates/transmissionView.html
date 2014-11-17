@@ -16,11 +16,11 @@
 
 				<div class="formLine">
 					<label>Target system</label>
-					<select data-ng-model="targetPPT" data-ng-options="pptAccount.pptUrl for pptAccount in pptAccounts"
-						data-ng-change="setCurrentRequestTemplate(targetPPT);"></select>
+					<select data-ng-model="targetPPTAccount" data-ng-options="pptAccount.pptUrl for pptAccount in pptAccounts"
+						data-ng-change="setTarget(targetPPTAccount)"></select>
 				</div>
 
-				<button data-ng-disabled="!targetPPT || !currentRequestTemplate" class="action" data-ng-click="nextStep()">(=>) Select decisions</button>
+				<button data-ng-disabled="!targetPPTAccount || !currentRequestTemplate" class="action" data-ng-click="nextStep()">(=>) Select decisions</button>
 			</div>
 
 			<div class="wizzardStep" data-step="DataSelection" data-ng-if="currentWizzardStep == ExportWizzardSteps.DataSelection">
@@ -66,9 +66,12 @@
 
 			<div class="wizzardStep" data-step="Transformation" data-ng-if="currentWizzardStep == ExportWizzardSteps.Transformation">
 				<h2>Transformation</h2>
-				<div>
-					<pre data-ng-repeat="exportRequest in exportRequests">{{exportRequest}}</pre>
+				<div data-ng-repeat="exportRequest in exportRequests">
+					<h3>{{exportRequest.taskTemplate.name}} ({{exportRequest.decision.name}})</h3>
+					<pre>{{exportRequest.requestBody}}</pre>
 				</div>
+
+				<button class="action" data-ng-click="transmit()">Transmit to PPT ({{targetPPTAccount.pptUrl}})</button>
 			</div>
 		</form>
 

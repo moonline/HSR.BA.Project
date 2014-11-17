@@ -4,6 +4,8 @@
 /// <reference path='../domain/model/Decision.ts' />
 /// <reference path='../domain/model/Mapping.ts' />
 /// <reference path='../domain/model/RequestTemplate.ts' />
+/// <reference path='../domain/model/PPTAccount.ts' />
+/// <reference path='../domain/model/ProjectPlanningTool.ts' />
 
 /// <reference path='../domain/repository/MappingRepository.ts' />
 /// <reference path='../domain/repository/DecisionRepository.ts' />
@@ -31,7 +33,7 @@ module app.application {
 			$scope.ApplicationState = app.application.ApplicationState;
 			$scope.operationState = app.application.ApplicationState.waiting;
 
-			$scope.targetPPT = null;
+			$scope.targetPPTAccount = null;
 			$scope.currentRequestTemplate = null;
 
 			$scope.decisions = [];
@@ -99,7 +101,8 @@ module app.application {
 				});
 			});
 
-			$scope.setCurrentRequestTemplate = function(ppt: app.domain.model.ppt.ProjectPlanningTool) {
+			$scope.setTarget = function(pptAccount: app.domain.model.ppt.PPTAccount) {
+				$scope.targetPPTAccount = pptAccount;
 
 // TODO: remove this hack after ppt apiAccount api is fixed
 var requestTemplate = '{\n\
@@ -112,7 +115,7 @@ var requestTemplate = '{\n\
 		\t\t"relatedDecision": "${decision.name}"\n\
 	\t}\n\
 }';
-				$scope.currentRequestTemplate = new app.domain.model.ppt.RequestTemplate(ppt, 'localhost:9920', requestTemplate);
+				$scope.currentRequestTemplate = new app.domain.model.ppt.RequestTemplate(pptAccount.ppt, 'localhost:9920', requestTemplate);
 
 				/*if(ppt) {
 					requestTemplateRepository.findOneBy('ppt', ppt, function(success: boolean, item: app.domain.model.ppt.RequestTemplate) {
@@ -159,11 +162,13 @@ var requestTemplate = '{\n\
 
 						var templateProcessor = new app.service.TemplateProcesser(exportDecisionData, $scope.currentRequestTemplate.requestBody, {});
 						var renderedTemplate = templateProcessor.process();
-						$scope.exportRequests.push(templateProcessor.process());
-
-						console.log(exportDecisionData, renderedTemplate);
+						$scope.exportRequests.push({ requestBody: templateProcessor.process(), decision: decision, taskTemplate: mapping.taskTemplate });
 					});
 				});
+			};
+
+			$scope.transmit = function() {
+
 			};
 
 			$scope.nextStep = function() {
