@@ -66,10 +66,14 @@
 
 			<div class="wizzardStep" data-step="Transformation" data-ng-if="currentWizzardStep == ExportWizzardSteps.Transformation">
 				<h2>Transformation</h2>
-				<div data-ng-repeat="exportRequest in exportRequests">
-					<h3>{{exportRequest.taskTemplate.name}} ({{exportRequest.decision.name}})</h3>
-					<pre>{{exportRequest.requestBody}}</pre>
-				</div>
+				<ul>
+					<li data-ng-repeat="exportRequest in exportRequests">
+						<span>{{exportRequest.taskTemplate.name}} ({{exportRequest.decision.name}}) </span>
+						<span class="error" data-ng-if="exportRequest.exportState === ApplicationState.failed">Transmit failed</span>
+						<span class="success" data-ng-if="exportRequest.exportState === ApplicationState.success">Transmit successful</span>
+						<pre>{{exportRequest.requestBody}}</pre>
+					</li>
+				</ul>
 
 				<button class="action" data-ng-click="transmit()">Transmit to PPT ({{targetPPTAccount.pptUrl}})</button>
 			</div>
