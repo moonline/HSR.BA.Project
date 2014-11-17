@@ -59,10 +59,14 @@ public class PPTTaskLogic {
 		task.setFinalResponseContent(wsResponse.asJson());
 		TASK_DAO.persist(task);
 		for (TaskPropertyValue taskProperty : form.taskProperties) {
-			task.addProperty(taskProperty);
-			taskProperty.setTask(task);
-			TASK_PROPERTY_VALUE_DAO.persist(taskProperty);
+			TaskPropertyValue newTaskProperty = new TaskPropertyValue();
+			newTaskProperty.setProperty(taskProperty.getProperty());
+			newTaskProperty.setValue(taskProperty.getValue());
+			newTaskProperty.setTask(task);
+			task.addProperty(newTaskProperty);
+			TASK_PROPERTY_VALUE_DAO.persist(newTaskProperty);
 		}
+		TASK_PROPERTY_VALUE_DAO.flush();
 	}
 
 	@Deprecated
