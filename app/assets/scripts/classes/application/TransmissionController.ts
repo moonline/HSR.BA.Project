@@ -210,7 +210,7 @@ module app.application {
 						var templateProcessor = new app.service.TemplateProcesser(exportDecisionData, $scope.currentRequestTemplate.requestBody, processors);
 						var renderedTemplate = templateProcessor.process();
 						$scope.exportRequests.push({
-							requestBody: templateProcessor.process(),
+							requestBody: renderedTemplate,
 							decision: decision,
 							taskTemplate: mapping.taskTemplate,
 							exportState: app.application.ApplicationState.waiting

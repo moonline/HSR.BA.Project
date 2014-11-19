@@ -50,7 +50,13 @@ INSERT INTO MAPPING (ID, REQUESTTEMPLATE, URL, PROJECT_ID, PPT_ID) VALUES (nextv
 ','			"key": "${pptProject}"
 ','		},
 ','		"summary": "${taskTemplate.name}",
-',' 	"description": "${taskTemplate.attributes.description}. Decision: ${decision.name}, ${decision.self}, attributes: $objecttostring:(decision.attributes)$",
+',' 	"description": "${taskTemplate.attributes.description}.
+','
+','Decision: ${decision.name}
+','DKS link: ${decision.self}
+','Attributes:
+','$objecttostring:(decision.attributes, ": ", "
+','")$",
 ',' 	"duedate": "${taskTemplate.attributes.dueDate}",
 ',' 	"issuetype": {
 ','			"name": "${taskTemplate.attributes.type}"
@@ -68,13 +74,16 @@ INSERT INTO MAPPING (ID, REQUESTTEMPLATE, URL, PROJECT_ID, PPT_ID) VALUES (nextv
 }'),'/rest/api/2/issue',(SELECT id FROM PROJECT WHERE name='Project'),(SELECT id FROM PPT WHERE name='Project Planning Tool'));
 
 -- Creating Processors
-INSERT INTO PROCESSOR (ID, CODE, NAME, PROJECT_ID) VALUES (nextval('entity_seq'),CONCAT('function(list) {
-',' 	var text = ""&#SEMICOLON
-','		Object.keys(list).forEach(function(key){
-','			text += key+": +"+list[key]&#SEMICOLON
-','			if(key < list.length-1) { text += ", " &#SEMICOLON }
-','		})&#SEMICOLON
-','		return text&#SEMICOLON
+INSERT INTO PROCESSOR (ID, CODE, NAME, PROJECT_ID) VALUES (nextval('entity_seq'),CONCAT('function(list, separator1, separator2) {
+','	var separator1 = separator1 || ": "&#SEMICOLON
+','	var separator2 = separator2 || ", "&#SEMICOLON
+','	var text = ""&#SEMICOLON
+','	var keys = Object.keys(list)&#SEMICOLON
+','	keys.forEach(function(key, index){
+','		text += key+separator1+list[key]&#SEMICOLON
+','		if(index < keys.length-1) { text += separator2&#SEMICOLON }
+','	})&#SEMICOLON
+','	return text&#SEMICOLON
 }'),'objecttostring',(SELECT id FROM PROJECT WHERE name='Project'));
 
 # --- !Downs

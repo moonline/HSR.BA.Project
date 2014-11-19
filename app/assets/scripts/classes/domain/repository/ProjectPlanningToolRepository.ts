@@ -25,8 +25,7 @@ module app.domain.repository.ppt {
 					path: pptRequestPath,
 					content: exportRequest.requestBody,
 					taskTemplate: exportRequest.taskTemplate,
-					// TODO: remove this if API is fixed
-					"taskProperties[]":"53-Example Value",
+					"taskProperties[]":exportRequest.taskTemplate.properties,
 					project: project
 				}
 			).success(function(data, status, headers, config){
