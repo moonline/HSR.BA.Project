@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-	<title>EEPPI - Entwurfsentscheidungen als Projektplanungsinstrument</title>
+	<title>EEPPI - Design Decisions as Project Planning Instrument</title>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width">
 
@@ -19,7 +19,13 @@
 			<header data-region="north" data-layout="border">
 				<div class="headerPanel" data-region="north" data-layout="border">
 					<div data-region="middle" data-align="center">
-						<h1 data-region="west">EEPPI</h1>
+						<h1 data-region="west" class="eeppi" title="Entwurfsentscheidungen als Projektplanungsinstrument">
+							<strong>EEPPI</strong> -
+							D<strong>e</strong>sign
+							D<strong>e</strong>cisions as
+							<strong>P</strong>roject
+							<strong>P</strong>lanning
+							<strong>I</strong>nstrument</h1>
 						<button data-ng-if="authenticator.loggedInUser != null"
 							data-ng-click="logout()">Logout {{authenticator.loggedInUser.userName}}</button>
 						<form data-ng-if="authenticator.loggedInUser == null">
@@ -33,7 +39,7 @@
 				<nav class="mainNavigation" data-type="toolbar" data-region="south" data-layout="flow" data-flow-direction="row">
 					<ul>
 						<li class="{{ currentView == '/mapping' && 'current' || '' }}" data-ng-if="authenticator.loggedInUser != null">
-							<span class="icon" data-icon="link"></span><a href="#/mapping">Mapping</a>
+							<span class="icon" data-icon="link"></span><a href="#/mapping">Problems &amp; Task Templates</a>
 						</li>
 						<li class="{{ currentView == '/transmit' && 'current' || '' }}" data-ng-if="authenticator.loggedInUser != null">
 							<span class="icon" data-icon="transmit"></span><a href="#/transmission">Transmit</a>
