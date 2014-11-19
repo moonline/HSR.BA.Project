@@ -4,16 +4,16 @@ module configuration {
 			remoteProxy: { url: '/dks/getFromDKS?url={target}' }
 		},
 		problem: {
-			list: { method: 'GET', url: '/element' }
+			list: { method: 'GET', url: '/element?query=type%20is%20%22ProblemTemplate%22' }
 		},
 		decision: {
-			list: { method: 'GET', url: '/element' }
+			list: { method: 'GET', url: '/element?query=type%20is%20%22ProblemOccurrence%22' }
 		},
 		alternative: {
-			list: { method: 'GET', url: '/element?query=type is "OptionTemplate"' }
+			list: { method: 'GET', url: '/element?query=type%20is%20%22OptionTemplate%22' }
 		},
 		option: {
-			list: { method: 'GET', url: '/element?query=type is "OptionOccurrence"' }
+			list: { method: 'GET', url: '/element?query=type%20is%20%22OptionOccurrence%22' }
 		},
 		decisionKnowledgeSystem: {
 			list: { method: 'GET', url: '/public/temporaryDevelopmentData/dks/decisionKnowledgeSystem.json' }

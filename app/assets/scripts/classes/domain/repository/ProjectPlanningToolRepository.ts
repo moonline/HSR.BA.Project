@@ -25,7 +25,7 @@ module app.domain.repository.ppt {
 					path: pptRequestPath,
 					content: exportRequest.requestBody,
 					taskTemplate: exportRequest.taskTemplate,
-					"taskProperties[]":exportRequest.taskTemplate.properties,
+					taskProperties:exportRequest.taskTemplate.properties,
 					project: project
 				}
 			).success(function(data, status, headers, config){
