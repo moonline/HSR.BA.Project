@@ -49,17 +49,28 @@
 											<dt>Mapped task templates to transmit</dt>
 											<dd>
 												<ul>
-													<li data-ng-repeat="(mkey, mapping) in decisionElement.mappings">
+													<li data-ng-repeat="(mkey, decisionMapping) in decisionElement.mappings">
 														<input type="checkbox" data-ng-model="decisionElement.taskTemplatesToExport[mkey]" />&nbsp;
-														{{mapping.taskTemplate.name}} [#{{mapping.taskTemplate.id}}]
+														{{decisionMapping.taskTemplate.name}} [#{{decisionMapping.taskTemplate.id}}]
 													</li>
 												</ul>
 											</dd>
 											<dt>Alternatives</dt>
 											<dd>
 												<ul>
-													<li data-ng-repeat="alternative in decisionElement.decision.alternatives">
-														{{alternative.name}} [#{{alternative.id}}]
+													<li data-ng-repeat="(akey, alternativeElement) in decisionElement.alternatives">
+														{{alternativeElement.alternative.name}} [#{{alternativeElement.alternative.id}}]
+														<dl>
+															<dt>Mapped task templates to transmit</dt>
+															<dd>
+																<ul>
+																	<li data-ng-repeat="(amkey, alternativeMapping) in alternativeElement.mappings">
+																		<input type="checkbox" data-ng-model="alternativeElement.taskTemplatesToExport[amkey]" />&nbsp;
+																		{{alternativeMapping.taskTemplate.name}} [#{{alternativeMapping.taskTemplate.id}}]
+																	</li>
+																</ul>
+															</dd>
+														</dl>
 													</li>
 												</ul>
 											</dd>

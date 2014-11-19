@@ -77,7 +77,6 @@ module app.application {
 						$scope.currentProject = projects[0] || null;
 
 						processorRepository.findAll(function(success, processorList){
-							console.log(processorList);
 							processorList.forEach(function(processor) {
 								"use strict";
 
@@ -95,7 +94,6 @@ module app.application {
 									// who cares. It's the problem of the user, if he writes incorrect processors
 								}
 							});
-							console.log(processors);
 
 							decisionKnowledgeRepository.findAll(function(success, items) {
 								$scope.currentDks = <app.domain.model.dks.DecisionKnowledgeSystem>items[0];
@@ -104,13 +102,31 @@ module app.application {
 								decisionRepository.findAll(function(success, items){
 									$scope.decisions = items;
 
+									// fill decisions sorted by problem into decisionMappings
 									for(var di in $scope.decisions) {
 										var decision = $scope.decisions[di];
-										if($scope.decisions[di] && $scope.decisions[di].template) {
+										if(decision && decision.template) {
 											if(!$scope.decisionMappings[decision.template.id]) {
 												$scope.decisionMappings[decision.template.id] = { problem: decision.template, decisions: {} };
 											}
-											$scope.decisionMappings[decision.template.id]['decisions'][decision.id] = { decision: decision, taskTemplatesToExport: {}, mappings: {} };
+											$scope.decisionMappings[decision.template.id]['decisions'][decision.id] = {
+												decision: decision,
+												taskTemplatesToExport: {},
+												mappings: {},
+												alternatives: {}
+											};
+											// fill alternatives into decisionMappings[decision][alternatives]
+											for(var ai in decision.alternatives) {
+												var alternative = decision.alternatives[ai];
+												if(alternative && alternative.template) {
+													$scope.decisionMappings[decision.template.id]['decisions'][decision.id]['alternatives'][alternative.id] = {
+														alternative: alternative,
+														taskTemplatesToExport: {},
+														alternativeTemplate: alternative.template,
+														mappings: {}
+													};
+												}
+											}
 										}
 									}
 
@@ -127,8 +143,19 @@ module app.application {
 													var decisionElement = $scope.decisionMappings[mapping.dksNode]['decisions'][dmi];
 													decisionElement.mappings[mapping.id] = mapping;
 												}
+											// find alternatives with mappings
+											} else {
+												for(var pi in $scope.decisionMappings) {
+													for(var di in $scope.decisionMappings[pi]['decisions']) {
+														for(var ai in $scope.decisionMappings[pi]['decisions'][di]['alternatives']) {
+															var alternativeElement = $scope.decisionMappings[pi]['decisions'][di]['alternatives'][ai];
+															alternativeElement.mappings[mapping.id] = mapping;
+														}
+													}
+												}
 											}
 										}
+										console.log($scope.decisionMappings);
 									});
 								});
 							});
@@ -192,7 +219,6 @@ module app.application {
 					});
 				});
 
-				console.log($scope.exportDecisions);
 				Object.keys($scope.exportDecisions).forEach(function(dKey){
 					var decision = $scope.exportDecisions[dKey].decision;
 					Object.keys($scope.exportDecisions[dKey].mappings).forEach(function(tKey){

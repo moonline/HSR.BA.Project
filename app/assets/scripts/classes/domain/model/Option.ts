@@ -16,12 +16,12 @@ module app.domain.model.dks {
 			publicProperties: [
 				{ name: "id", type: Number, subType: null },
 				{ name: "self", type: String, subType: null },
-				{ name: "template", type: app.domain.model.dks.Problem, subType: null },
+				{ name: "template", type: app.domain.model.dks.Alternative, subType: null },
 				{ name: "state", type: String, subType: null }
 			]
 		};
 
-		public template: app.domain.model.dks.Problem;
+		public template: app.domain.model.dks.Alternative;
 		public state: string;
 
 		constructor(name: string, path: string[], attributes: Object, notes: string) {

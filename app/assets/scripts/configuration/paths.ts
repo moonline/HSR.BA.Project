@@ -9,6 +9,12 @@ module configuration {
 		decision: {
 			list: { method: 'GET', url: '/element' }
 		},
+		alternative: {
+			list: { method: 'GET', url: '/element?query=type is "OptionTemplate"' }
+		},
+		option: {
+			list: { method: 'GET', url: '/element?query=type is "OptionOccurrence"' }
+		},
 		decisionKnowledgeSystem: {
 			list: { method: 'GET', url: '/public/temporaryDevelopmentData/dks/decisionKnowledgeSystem.json' }
 		},
