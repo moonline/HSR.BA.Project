@@ -1,3 +1,4 @@
+@import "../crossBrowser.less";
 /**
 .------------------------------------------------------------------------.
 | data-layout="border"                                                   |
@@ -17,20 +18,20 @@
 '------------------------------------------------------------------------'
 */
 [data-layout="border"], [data-layout="border"] * {
-	box-sizing: border-box;
+	.boxSizing(border-box);
 }
 
 [data-layout="border"] {
 	width: 100%; 
-	display: flex; 
-	flex-direction: column; 
-	justify-content: space-between; 
+	.displayFlex;
+	.flexDirection(column);
+	.justifyContent(space-between);
 	
 	> [data-region="middle"] { 
-		height: 100%; 
-		display: flex; 
-		flex-direction: row; 
-		justify-content: space-between;
+		height: 100%;
+		.displayFlex;
+		.flexDirection(row);
+		.justifyContent(space-between);
 		
 		> [data-region="center"] { 
 			width: 100%; 
@@ -38,9 +39,9 @@
 	}
 
 	[data-region="center"], [data-region="middle"] {
-		&[data-align="start"] { align-items: flex-start; }
-		&[data-align="center"] { align-items: center; }
-		&[data-align="end"] { align-items: flex-end; }
+		&[data-align="start"] { .alignItems(flex-start); }
+		&[data-align="center"] { .alignItems(center); }
+		&[data-align="end"] { .alignItems(flex-end); }
 	}
 
 	> [data-region="north"] > * { 

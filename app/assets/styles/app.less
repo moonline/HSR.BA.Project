@@ -1,6 +1,8 @@
+@import "crossBrowser.less";
+
 /* variables */
 .blueGradient {
-	background: dodgerblue; background: linear-gradient(dodgerblue, steelblue); color: white;
+	.linearGradient(dodgerblue, steelblue); color: white;
 }
 
 
@@ -8,7 +10,7 @@
 /**
  * general
  */
-* { -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; padding: 0; margin: 0; text-indent: 0; text-align: left; }
+* { .boxSizing(border-box); padding: 0; margin: 0; text-indent: 0; text-align: left; }
 
 html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; }
 body, pre.multilineText, textarea { font-family: Arial, Helvetica, sans-serif; }
@@ -21,7 +23,11 @@ body, pre.multilineText, textarea { font-family: Arial, Helvetica, sans-serif; }
  * container
  */
 .headerPanel, footer { .blueGradient; color: white; padding: 0.5rem; }
-.headerPanel { border-bottom: 0.25rem solid black; }
+.headerPanel {
+	border-bottom: 0.25rem solid black;
+}
+#headerPanel[data-layout="border"] > [data-region="middle"][data-align="center"]  { heigth: auto; }
+
 
 .page { height: 100%; width: 100% }
 .area {
@@ -71,11 +77,11 @@ body, pre.multilineText, textarea { font-family: Arial, Helvetica, sans-serif; }
 	.accordion { padding: 0.5rem; }
 }
 
-.verticalFlex { display: flex; flex-direction: column; }
+.verticalFlex { .displayFlex; .flexDirection(column); }
 
-.taskTemplateList { flex-grow: 1; overflow-x: hidden; overflow-y: scroll; height: 5em; }
+.taskTemplateList { .flexGrow(1); overflow-x: hidden; overflow-y: scroll; height: 5em; }
 
-.taskTemplateDetail { align-self: flex-end; min-height: 38.2%; max-height: 62.8%; } //height min/max according to golden ratio
+.taskTemplateDetail { .alignSelf(flex-end); min-height: 38.2%; max-height: 62.8%; } //height min/max according to golden ratio
 
 [data-scroll="y"] { height: 100%; overflow-y: scroll; overflow-x: hidden; }
 
@@ -111,12 +117,8 @@ dl dt { font-weight: bold; }
 
 @media (min-width: 1200px) {
 	ul.twoColumns {
-		-moz-column-count: 2;
-		-moz-column-gap: 10px;
-		-webkit-column-count: 2;
-		-webkit-column-gap: 10px;
-		column-count: 2;
-		column-gap: 10px;
+		.columnCount(2);
+		.columnGap(2rem);
 		height: 100%;
 	}
 }
@@ -176,25 +178,25 @@ a {
 button {
 	display: inline-block;
 	padding: 0.3rem; line-height: 1em; padding-left: 0.5rem; padding-right: 0.5rem;
-	background: silver; background: linear-gradient(gainsboro, silver); border: none; color: black;
+	.linearGradient(gainsboro, silver); border: none; color: black;
 	border-radius: 0.2rem;
 	&:hover { color: white; }
 
 	&.action {
 		&.create, &.save {
-			background: green; background: linear-gradient(rgb(80,180,130),seagreen); color: white;
+			.linearGradient(rgb(80,180,130),seagreen); color: white;
 			&:hover { 	color: black; }
 		}
 		&.edit {
-			background: orange; background: linear-gradient(#F8B356, #DD852C); color: white;
+			.linearGradient(#F8B356, #DD852C); color: white;
 			&:hover { color: black; }
 		}
 		&.update {
-			background: cornflowerblue; background: linear-gradient(rgb(110,170,220), steelblue);color: white;
+			.linearGradient(rgb(110,170,220), steelblue);color: white;
 			&:hover { color: black; }
 		}
 		&.remove, &.warning {
-			background: maroon; background: linear-gradient(rgb(180,40,40), darkred); color: white;
+			.linearGradient(rgb(180,40,40), darkred); color: white;
 			&:hover { color: black; }
 		}
 	}
@@ -203,7 +205,7 @@ button {
 		&:hover { color: gray; }
 	}
 	&[disabled] {
-		background: silver!important; background: linear-gradient(gainsboro, silver)!important; border: none; color: gray;
+		.linearGradient(gainsboro, silver)!important; border: none; color: gray;
 		&:hover { border: none; }
 	}
 }
@@ -234,8 +236,8 @@ input, textarea {
 
 .formLine {
 	margin: 0.25rem 0;
-	display: flex; flex-wrap: nowrap; justify-content: spance-between; width: 100%;
-	align-items: flex-start;
+	.displayFlex; .flexWrap(nowrap); .justifyContent(spance-between); width: 100%;
+	.alignItems(flex-start);
 	&[data-columns="3"] {
 		> :nth-child(+1) { width: 30%; margin-right: 0.2rem; max-width: 15rem; }
 		> :nth-child(+2) { width: 50%; margin: 0 0.2rem; }
@@ -275,8 +277,8 @@ input, textarea {
 }
 select {
 	-webkit-appearance: none; -ms-appearance: none; -moz-appearance: none;  appearance: none;
-	background-color: silver; background: linear-gradient(gainsboro, silver); border: none; color: black;
-	border-radius: 0.2rem; border: none;
+	.linearGradient(gainsboro, silver); border: none; color: black;
+	border-radius: 0.2rem;
 	// Icon made by Freepik (href="http://www.freepik.com) from Flaticon (http://www.flaticon.com) is licensed under Creative Commons BY 3.0 (http://creativecommons.org/licenses/by/3.0/)
 	//background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgBAMAAACBVGfHAAAAA3NCSVQICAjb4U/gAAAACXBIWXMAAARuAAAEbgHQo7JoAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAB5QTFRF////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAhow4rQAAAAl0Uk5TAAwREiowWMPOLoJhMgAAAEhJREFUKFNjYBhCgCUNDgLAAoyVM6FghgFEiThMoBmqB6YEpgCuBKYApgShAKoEoQCiBFkBWAmyApASVAVAJagKgEoUGIYaAADIMSWmfFk62AAAAABJRU5ErkJgggeb100a48247b7100fa12d2df668b370f');
 	//background-repeat: no-repeat; background-position: 90% 60%; background-size: 1rem;
