@@ -30,7 +30,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.atLeastOnce;
 import static org.powermock.api.mockito.PowerMockito.*;
-import static play.mvc.Http.Status.OK;
+import static play.mvc.Http.Status.*;
 import static play.test.Helpers.callAction;
 import static play.test.Helpers.status;
 
@@ -151,6 +151,52 @@ public class ProjectPlanningToolControllerTest extends AbstractControllerTest {
 		assertThat(task.getFinalResponseStatus()).isEqualTo(resultStatus);
 		assertThat(task.getProject().getId()).isEqualTo(project.getId());
 		assertThat(task.getProperties()).hasSize(2);
+	}
+
+	@Test
+	public void createPPTTaskWithUnresponsiveTarget() throws Throwable {
+		//Setup
+		JPA.withTransaction(TASK_DAO::removeAll);
+		User user = AbstractTestDataCreator.createUserWithTransaction("User 1", "1");
+		TaskTemplate taskTemplate = AbstractTestDataCreator.createTaskTemplateWithTransaction("The Task Template");
+		TaskProperty taskProperty1 = AbstractTestDataCreator.createTaskPropertyWithTransaction("First Task Property");
+		TaskProperty taskProperty2 = AbstractTestDataCreator.createTaskPropertyWithTransaction("Second Task Property");
+		Project project = AbstractTestDataCreator.createProjectWithTransaction();
+		String baseUrl = "http://localhost:2345";
+		String urlPath = "/testPath";
+		String username = "admin";
+		String password = "1234";
+		String account = AbstractTestDataCreator.createPPTAccountWithTransaction(user, baseUrl, username, password).getId() + "";
+		String contentString = "{\"content\": \"Test content\"}";
+
+		//Test
+		Result result = callActionWithUser(routes.ref.ProjectPlanningToolController.createPPTTask(), user, postData("path", urlPath, "content", contentString, "account", account, "taskTemplate", taskTemplate.getId() + "", "project", project.getId() + "", "taskProperties[0]", taskProperty1.getId() + "-A value", "taskProperties[1]", taskProperty2.getId() + "-Another value"));
+
+		//Verification
+		assertThat(status(result)).isEqualTo(BAD_GATEWAY);
+	}
+
+	@Test
+	public void createPPTTaskWithInvisibleTarget() throws Throwable {
+		//Setup
+		JPA.withTransaction(TASK_DAO::removeAll);
+		User user = AbstractTestDataCreator.createUserWithTransaction("User 1", "1");
+		TaskTemplate taskTemplate = AbstractTestDataCreator.createTaskTemplateWithTransaction("The Task Template");
+		TaskProperty taskProperty1 = AbstractTestDataCreator.createTaskPropertyWithTransaction("First Task Property");
+		TaskProperty taskProperty2 = AbstractTestDataCreator.createTaskPropertyWithTransaction("Second Task Property");
+		Project project = AbstractTestDataCreator.createProjectWithTransaction();
+		String baseUrl = "http://192.168.253.253:3456";
+		String urlPath = "/testPath";
+		String username = "admin";
+		String password = "1234";
+		String account = AbstractTestDataCreator.createPPTAccountWithTransaction(user, baseUrl, username, password).getId() + "";
+		String contentString = "{\"content\": \"Test content\"}";
+
+		//Test
+		Result result = callActionWithUser(routes.ref.ProjectPlanningToolController.createPPTTask(), user, postData("path", urlPath, "content", contentString, "account", account, "taskTemplate", taskTemplate.getId() + "", "project", project.getId() + "", "taskProperties[0]", taskProperty1.getId() + "-A value", "taskProperties[1]", taskProperty2.getId() + "-Another value"));
+
+		//Verification
+		assertThat(status(result)).isIn(GATEWAY_TIMEOUT, BAD_GATEWAY);
 	}
 
 	@Test

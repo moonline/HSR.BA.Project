@@ -16,6 +16,9 @@ import play.libs.F;
 import play.mvc.Http;
 import play.mvc.Result;
 
+import java.net.ConnectException;
+import java.util.concurrent.TimeoutException;
+
 import static logics.docs.QueryExamples.Example;
 import static logics.docs.QueryParameters.Parameter;
 import static logics.docs.QueryResponses.Response;
@@ -87,6 +90,8 @@ public class ProjectPlanningToolController extends AbstractReadController {
 	@QueryDescription("Creates a Task on a remote Project Planning Tool Server and stores the creation on the server.")
 	@QueryResponses({
 			@Response(status = BAD_REQUEST, description = "If there is an error during preparation of the request for the remote server."),
+			@Response(status = BAD_GATEWAY, description = "If the remote server could not be found."),
+			@Response(status = GATEWAY_TIMEOUT, description = "If the remote server did not respond."),
 			@Response(status = 0, description = "The return value from the remote server is returned")
 	})
 	@QueryExamples({@Example(parameters = {"100", "/rest/api/2/issue/", "{\n" +
@@ -121,8 +126,16 @@ public class ProjectPlanningToolController extends AbstractReadController {
 			Http.Context.current.remove();
 			return JPA.withTransaction(() -> PPT_TASK_LOGIC.createPPTTask(form.get()));
 		}).map(wsResponse ->
-						status(wsResponse.getStatus(), wsResponse.asJson())
-		);
+						(Result) status(wsResponse.getStatus(), wsResponse.asJson())
+		).recover(throwable -> {
+			if (throwable instanceof ConnectException) {
+				return status(BAD_GATEWAY, jsonify("Could not connect to " + form.get().account.getPptUrl() + "."));
+			} else if (throwable instanceof TimeoutException) {
+				return status(GATEWAY_TIMEOUT, jsonify(form.get().account.getPptUrl() + " did not respond within " + ((TimeoutException) throwable)));
+			} else {
+				throw throwable;
+			}
+		});
 	}
 
 	@Override
