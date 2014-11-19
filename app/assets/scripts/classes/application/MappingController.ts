@@ -13,6 +13,7 @@
 /// <reference path='../domain/repository/MappingRepository.ts' />
 /// <reference path='../domain/repository/TaskTemplateRepository.ts' />
 /// <reference path='../domain/repository/TaskPropertyRepository.ts' />
+/// <reference path='../domain/repository/AlternativeRepository.ts' />
 /// <reference path='../domain/repository/DecisionKnowledgeSystemRepository.ts' />
 
 /// <reference path='../application/ApplicationState.ts' />
@@ -28,6 +29,7 @@ module app.application {
 			$scope.ApplicationState = app.application.ApplicationState;
 
 			var problemRepository: app.domain.repository.dks.ProblemRepository = persistenceService['problemRepository'];
+			var alternativeRepository: app.domain.repository.dks.AlternativeRepository = persistenceService['alternativeRepository'];
 			var taskPropertyRepository: app.domain.repository.core.TaskPropertyRepository = persistenceService['taskPropertyRepository'];
 			var taskTemplateRepository: app.domain.repository.core.TaskTemplateRepository =  persistenceService['taskTemplateRepository'];
 			var mappingRepository: app.domain.repository.core.MappingRepository = persistenceService['mappingRepository'];
@@ -62,7 +64,8 @@ module app.application {
 
 				$scope.problemsLoadingStatus = app.application.ApplicationState.pending;
 				problemRepository.host = $scope.currentDks.address;
-				problemRepository.findAll(function(success, items) {
+				alternativeRepository.host = $scope.currentDks.address;
+				problemRepository.findAllWithChildren(function(success, items) {
 					if(success) {
 						$scope.problems = items;
 						setTimeout(() => { $scope.problemsLoadingStatus = app.application.ApplicationState.successful; $scope.$apply(); }, configuration.settings.messageBoxDelay);

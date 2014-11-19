@@ -1,6 +1,7 @@
 /// <reference path='../test/libraries/declarations/jasmin/jasmine.d.ts' />
 /// <reference path='../test/logic/domain/repository/RepositoryTest.ts' />
 /// <reference path='../test/logic/domain/repository/TaskTemplateRepositoryTest.ts' />
+/// <reference path='../test/logic/domain/repository/ProblemRepositoryTest.ts' />
 /// <reference path='../test/logic/domain/repository/MappingRepositoryTest.ts' />
 /// <reference path='../test/logic/domain/factory/ObjectFactoryTest.ts' />
 /// <reference path='../test/logic/service/AuthenticationServiceTest.ts' />
@@ -15,6 +16,7 @@ module test {
 				test.logic.domain.repository.RepositoryTest();
 				test.logic.domain.repository.TaskTemplateRepositoryTest();
 				test.logic.domain.repository.MappingRepositoryTest();
+				test.logic.domain.repository.ProblemRepositoryTest();
 			});
 			describe("Factory test suite", function() {
 				test.logic.domain.factory.ObjectFactoryTest();
