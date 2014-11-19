@@ -135,13 +135,14 @@ a {
  * icons / symbols
  */
 .icon, .symbol {
+	width: 1rem; height: 1rem; display: inline-block;
 	&.big { font-size: 1.2rem; }
 	&.small { font-size: 0.8rem; }
 	&.extremeSmall { font-size: 0.6rem; }
 }
 .icon {
 	font-weight: bold; margin-right: 0.5rem;
-	&[data-icon] { width: 1rem; height: 1rem; display: inline-block; background-size: 1rem 1rem; }
+	&[data-icon] { background-size: 1rem 1rem; }
 	&[data-icon="settings"] {
 		// Icon made by Freepik (http://www.freepik.com) from Flaticon (http://www.flaticon.com)
 		//is licensed under Creative Commons BY 3.0 (http://creativecommons.org/licenses/by/3.0/)

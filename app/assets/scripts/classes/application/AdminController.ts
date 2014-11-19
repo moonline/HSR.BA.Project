@@ -162,6 +162,20 @@ module app.application {
                 return null;
 			};
 
+			$scope.updateWithCorrectPPT = function (toUpdatePPTEntity) {
+				toUpdatePPTEntity.ppt = $scope.findPPTInList(toUpdatePPTEntity.ppt);
+			};
+
+			//Finds the correct object instance for the given PPT to select it in the list
+			$scope.findPPTInList = function (expectedPPT:app.domain.model.ppt.ProjectPlanningTool) {
+				for (var index = 0; index < $scope.projectPlanningTools.length; ++index) {
+					if ($scope.projectPlanningTools[index].id == expectedPPT.id) {
+						return $scope.projectPlanningTools[index];
+					}
+				}
+				return expectedPPT;
+			};
+
 			$scope.setOperationFinishState = function(success: boolean) {
 				if(success) {
 					setTimeout(() => {
