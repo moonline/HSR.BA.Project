@@ -9,6 +9,7 @@
 
 /// <reference path='../domain/repository/MappingRepository.ts' />
 /// <reference path='../domain/repository/DecisionRepository.ts' />
+/// <reference path='../domain/repository/OptionRepository.ts' />
 /// <reference path='../domain/repository/DecisionKnowledgeSystemRepository.ts' />
 /// <reference path='../domain/repository/PPTAccountRepository.ts' />
 
@@ -51,6 +52,7 @@ module app.application {
 			var mappingRepository = persistenceService['mappingRepository'];
 			var pptAccountRepository: app.domain.repository.ppt.PPTAccountRepository = persistenceService['pptAccountRepository'];
 			var decisionRepository: app.domain.repository.dks.DecisionRepository = persistenceService['decisionRepository'];
+			var optionRepository: app.domain.repository.dks.OptionRepository = persistenceService['optionRepository'];
 			var decisionKnowledgeRepository: app.domain.repository.dks.DecisionKnowledgeSystemRepository = persistenceService['decisionKnowledgeRepository'];
 			var requestTemplateRepository = persistenceService['requestTemplateRepository'];
 			var projectRepository = persistenceService['projectRepository'];
@@ -99,7 +101,8 @@ module app.application {
 								$scope.currentDks = <app.domain.model.dks.DecisionKnowledgeSystem>items[0];
 
 								decisionRepository.host = $scope.currentDks.address;
-								decisionRepository.findAll(function(success, items){
+								optionRepository.host = $scope.currentDks.address;
+								decisionRepository.findAllWithNodesAndSubNodes('alternatives', optionRepository, function(success, items){
 									$scope.decisions = items;
 
 									// fill decisions sorted by problem into decisionMappings
@@ -149,7 +152,12 @@ module app.application {
 													for(var di in $scope.decisionMappings[pi]['decisions']) {
 														for(var ai in $scope.decisionMappings[pi]['decisions'][di]['alternatives']) {
 															var alternativeElement = $scope.decisionMappings[pi]['decisions'][di]['alternatives'][ai];
-															alternativeElement.mappings[mapping.id] = mapping;
+															// if the decision is solved - take only the chosen alternative, otherwise take all
+															if(alternativeElement.alternative.template.id == mapping.dksNode &&
+																($scope.decisionMappings[pi]['decisions'][di].decision.state != "Solved" ||
+																	alternativeElement.alternative.state == "Chosen")) {
+																alternativeElement.mappings[mapping.id] = mapping;
+															}
 														}
 													}
 												}
@@ -179,6 +187,15 @@ module app.application {
 					requestTemplateRepository.findByPropertyId('ppt', pptAccount.ppt, function(success: boolean, items: app.domain.model.ppt.RequestTemplate[]) {
 						$scope.pptAccountRequestTemplates = items;
 					}, true);
+				}
+			};
+
+			$scope.decisionChildrenVisibilityState = [];
+			$scope.toggleVisibilityState = function(index:number) {
+				if($scope.decisionChildrenVisibilityState[index]) {
+					$scope.decisionChildrenVisibilityState[index] = !$scope.decisionChildrenVisibilityState[index];
+				} else {
+					$scope.decisionChildrenVisibilityState[index] = true;
 				}
 			};
 

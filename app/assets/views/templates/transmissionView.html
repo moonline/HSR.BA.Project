@@ -1,4 +1,4 @@
-<div class="main" data-region="center" data-layout="border">
+<div class="main transmitView" data-region="center" data-layout="border">
 	<div data-scroll="y" data-region="center">
 		<div class="operationState">
 			<span class="messagebox error" data-ng-if="operationState === ApplicationState.failed">Loading of data failed. Maybe server is not available.</span>
@@ -35,50 +35,49 @@
 
 			<div class="wizardStep" data-step="DataSelection" data-ng-if="currentWizardStep == ExportWizardSteps.DataSelection">
 				<h2>Decision &amp; option selection</h2>
-				<ul data-type="list">
-					<li data-ng-repeat="(pkey, decisionGroup) in decisionMappings">
-						<dl>
-							<dt>Problem</dt>
-							<dd>{{decisionGroup.problem.name}} [#{{decisionGroup.problem.id}}]</dd>
-							<dt>Decisions</dt>
-							<dd>
-								<ul>
-									<li data-ng-repeat="(dkey,decisionElement) in decisionGroup.decisions">
-										{{decisionElement.decision.name}} [#{{decisionElement.decision.id}}]
-										<dl>
-											<dt>Mapped task templates to transmit</dt>
-											<dd>
-												<ul>
-													<li data-ng-repeat="(mkey, decisionMapping) in decisionElement.mappings">
-														<input type="checkbox" data-ng-model="decisionElement.taskTemplatesToExport[mkey]" />&nbsp;
-														{{decisionMapping.taskTemplate.name}} [#{{decisionMapping.taskTemplate.id}}]
-													</li>
-												</ul>
-											</dd>
-											<dt>Alternatives</dt>
-											<dd>
-												<ul>
-													<li data-ng-repeat="(akey, alternativeElement) in decisionElement.alternatives">
-														{{alternativeElement.alternative.name}} [#{{alternativeElement.alternative.id}}]
-														<dl>
-															<dt>Mapped task templates to transmit</dt>
-															<dd>
-																<ul>
-																	<li data-ng-repeat="(amkey, alternativeMapping) in alternativeElement.mappings">
-																		<input type="checkbox" data-ng-model="alternativeElement.taskTemplatesToExport[amkey]" />&nbsp;
-																		{{alternativeMapping.taskTemplate.name}} [#{{alternativeMapping.taskTemplate.id}}]
-																	</li>
-																</ul>
-															</dd>
-														</dl>
-													</li>
-												</ul>
-											</dd>
-										</dl>
-									</li>
-								</ul>
-							</dd>
-						</dl>
+				<ul data-type="list" class="problems">
+					<li data-ng-repeat="(pkey, decisionGroup) in decisionMappings" class="problemElement">
+						<span class="problem">{{decisionGroup.problem.name}} [#{{decisionGroup.problem.id}}]</span>
+						<ul class="decisions">
+							<li data-ng-repeat="(dkey,decisionElement) in decisionGroup.decisions">
+								{{decisionElement.decision.name}} [#{{decisionElement.decision.id}}]
+								<dl>
+									<dt>Mapped task templates to transmit</dt>
+									<dd>
+										<ul class="taskTemplates">
+											<li data-ng-repeat="(mkey, decisionMapping) in decisionElement.mappings">
+												<input type="checkbox" data-ng-model="decisionElement.taskTemplatesToExport[mkey]" />&nbsp;
+												{{decisionMapping.taskTemplate.name}} [#{{decisionMapping.taskTemplate.id}}]
+											</li>
+										</ul>
+									</dd>
+									<dt>Alternatives
+										<!--<button data-ng-click="toggleVisibilityState(dkey)" class="action">
+											<span data-ng-if="!decisionChildrenVisibilityState[dkey]" class="symbol extremeSmall">&#x25b2;</span>
+											<span data-ng-if="decisionChildrenVisibilityState[dkey]" class="symbol extremeSmall">&#x25bc;</span>
+										</button>-->
+									</dt>
+									<dd>
+										<ul class="alternatives">
+											<li data-ng-repeat="(akey, alternativeElement) in decisionElement.alternatives">
+												{{alternativeElement.alternative.name}} [#{{alternativeElement.alternative.id}}]
+												<dl>
+													<dt>Mapped task templates to transmit</dt>
+													<dd>
+														<ul class="taskTemplates">
+															<li data-ng-repeat="(amkey, alternativeMapping) in alternativeElement.mappings">
+																<input type="checkbox" data-ng-model="alternativeElement.taskTemplatesToExport[amkey]" />&nbsp;
+																{{alternativeMapping.taskTemplate.name}} [#{{alternativeMapping.taskTemplate.id}}]
+															</li>
+														</ul>
+													</dd>
+												</dl>
+											</li>
+										</ul>
+									</dd>
+								</dl>
+							</li>
+						</ul>
 					</li>
 				</ul>
 

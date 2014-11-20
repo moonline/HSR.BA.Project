@@ -14,7 +14,7 @@
 							<span class="name"><span class="typeDeclaration" title="Problem Template from DKS">&lt;PT&gt;</span> {{problem.name}}</span>
 						</div>
 						({{problem.alternatives.length}})
-						<button data-ng-click="toggleVisibilityState($index)" class="noButton" data-ng-if="problem.alternatives.length > 0">
+						<button data-ng-click="toggleVisibilityState($index)" class="action" data-ng-if="problem.alternatives.length > 0">
 							<span data-ng-if="!problemListChildrenVisibilityState[$index]" class="symbol extremeSmall">&#x25b2;</span>
 							<span data-ng-if="problemListChildrenVisibilityState[$index]" class="symbol extremeSmall">&#x25bc;</span>
 						</button>
