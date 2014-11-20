@@ -293,12 +293,20 @@ module app.application {
 			$scope.transmitOne = function(exportRequests, index) {
 				if(index < exportRequests.length) {
 					var exportRequest = exportRequests[index];
+
+					if(index >= 1 && exportRequests[index-1].requestData) {
+						var templateProcessor = new app.service.TemplateProcesser({ lastRequestData: exportRequests[index-1].requestData }, '', {});
+						exportRequest.requestBody = templateProcessor.parseSecondaryVariables(exportRequest.requestBody);
+					}
+
 					projectPlanningToolRepository.transmitTasks(exportRequest, $scope.targetPPTAccount, $scope.currentRequestTemplate.url, $scope.currentProject, function(success, data) {
 						if(success) {
 							exportRequest.exportState = app.application.ApplicationState.successful;
+							exportRequest.requestData = data;
 							$scope.transmitOne(exportRequests, index+1);
 						} else {
 							exportRequest.exportState = app.application.ApplicationState.failed;
+							exportRequest.requestData = data;
 							$scope.transmitOne(exportRequests, index+1);
 						}
 					});

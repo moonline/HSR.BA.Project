@@ -263,6 +263,71 @@ module test.logic.service {
 
 				expect(renderedTemplate).toEqual(expectedTemplate);
 			});
+
+			it("Process template 2 times using secondary variables", function() {
+				var template: string = "{\
+	\"assignee\": \"$concater:(var1, \":\", var2)$\",\
+	\"name\": \"$listConcater:(list,\"|\")$\",\
+	\"assignee\": \"$concater:(var1, \":\", var2)$\",\
+	\"title\": \"${title.name}\",\
+	\"parent\": \"$!{lastRequestData.id}\",\
+	\"stakeHolder\": \"$concater:(title.name, \": \", ${varName.path})$\"\
+}";
+				var data:any = {
+					var1: 'irgendwas',
+					var2: 'nochwas',
+					varName: {
+						path: 'title.type'
+					},
+					title: {
+						name: 'auto',
+						type: 'gross'
+					},
+					list: [ 'eins', 'zwei', 'drei', 'vier']
+				};
+				var processors: { [index:string]: any} = {
+					concater: function(text1, text2, text3) {
+						return text1+text2+text3;
+					},
+					listConcater: function(list, gap) {
+						var result: string = '';
+						for(var li in list) {
+							result += (li < list.length-1) ? list[li].toString()+gap : list[li].toString();
+						}
+						return result;
+					}
+				};
+
+				var processorService: app.service.TemplateProcesser = new app.service.TemplateProcesser(data, template, processors);
+				var renderedTemplate = processorService.process();
+				var expectedTemplate: string = "{\
+	\"assignee\": \"irgendwas:nochwas\",\
+	\"name\": \"eins|zwei|drei|vier\",\
+	\"assignee\": \"irgendwas:nochwas\",\
+	\"title\": \"auto\",\
+	\"parent\": \"$!{lastRequestData.id}\",\
+	\"stakeHolder\": \"auto: gross\"\
+}";
+
+				expect(renderedTemplate).toEqual(expectedTemplate);
+
+				var secondData = {
+					lastRequestData: { id: 5, name: "Auto 5" }
+				};
+
+				var secondProcessorService: app.service.TemplateProcesser = new app.service.TemplateProcesser(secondData, '', {});
+				var renderedExportTemplate = secondProcessorService.parseSecondaryVariables(expectedTemplate);
+				var expectedExportTemplate: string = "{\
+	\"assignee\": \"irgendwas:nochwas\",\
+	\"name\": \"eins|zwei|drei|vier\",\
+	\"assignee\": \"irgendwas:nochwas\",\
+	\"title\": \"auto\",\
+	\"parent\": \"5\",\
+	\"stakeHolder\": \"auto: gross\"\
+}";
+
+				expect(renderedExportTemplate).toEqual(expectedExportTemplate);
+			});
 		});
 	}
 }

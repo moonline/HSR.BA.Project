@@ -11,6 +11,7 @@ module app.service {
 		 *	 $processor:()$
 		 */
 		private variablePattern:string = '\\$\\{[\\w\\d\\.]*\\}';
+		private scondaryVariablePattern: string = '\\$\\!\\{[\\w\\d\\.]*\\}';
 		private processorPattern:string = '\\$\\w+:\\([^\\(\\)]*\\)\\$';
 		private processorNamePattern:string = '\\$\\w+:\\(';
 		private processorParameterPattern:string = ':\\([^\\(\\)]*\\)\\$';
@@ -127,6 +128,21 @@ module app.service {
 			return textToReplace;
 		}
 
+		public parseSecondaryVariables(text: string):string {
+			var regex: RegExp = new RegExp(this.scondaryVariablePattern);
+			var textToReplace = ""+text;
+
+			for(var match; match = regex.exec(textToReplace); ) {
+				var property: string = match[0].substring(3,match[0].length-1);
+				var replaceLength:number = match[0].length;
+				var index: number = match.index;
+
+				var replacer: string = this.findValuesInPath(property,this.data);
+				textToReplace = textToReplace.slice(0, index) + replacer + textToReplace.slice(index+replaceLength, textToReplace.length);
+			}
+			return textToReplace;
+		}
+
 		private findValuesInPath(path: string, data: Object): string {
 			var currentSegment:string = null;
 			var currentData = data;
@@ -136,7 +152,7 @@ module app.service {
 				for(var si in propertyPathSegments) {
 					currentSegment = propertyPathSegments[si];
 					if(si == propertyPathSegments.length-1) {
-						return (currentData[currentSegment] != undefined) ? <string>currentData[currentSegment] : "";
+						return (currentData && currentData[currentSegment] != undefined) ? <string>currentData[currentSegment] : "";
 					} else {
 						currentData = (currentData[currentSegment] != undefined) ? currentData[currentSegment] : null;
 					}
