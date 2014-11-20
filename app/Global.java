@@ -139,7 +139,7 @@ public class Global extends GlobalSettings {
 		Formatters.register(JsonNode.class, new Formatters.SimpleFormatter<JsonNode>() {
 			@Override
 			public JsonNode parse(String string, Locale l) throws ParseException {
-				return Json.toJson(string);
+				return Json.parse(string);
 			}
 
 			@Override

@@ -131,7 +131,7 @@ public class ProjectPlanningToolController extends AbstractReadController {
 			if (throwable instanceof ConnectException) {
 				return status(BAD_GATEWAY, jsonify("Could not connect to " + form.get().account.getPptUrl() + "."));
 			} else if (throwable instanceof TimeoutException) {
-				return status(GATEWAY_TIMEOUT, jsonify(form.get().account.getPptUrl() + " did not respond within " + ((TimeoutException) throwable)));
+				return status(GATEWAY_TIMEOUT, jsonify(form.get().account.getPptUrl() + " did not respond."));
 			} else {
 				throw throwable;
 			}

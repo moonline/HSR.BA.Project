@@ -50,9 +50,9 @@ create table project (
 );
 create table task (
     id bigint not null,
-    finalrequestcontent varchar(255),
+    finalrequestcontent clob,
     finalrequesturl varchar(255),
-    finalresponsecontent varchar(255),
+    finalresponsecontent clob,
     finalresponsestatus integer not null,
     createdfrom_id bigint,
     project_id bigint,
