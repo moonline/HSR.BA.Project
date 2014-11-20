@@ -124,7 +124,6 @@ module app.application {
 												if(alternative && alternative.template) {
 													$scope.decisionMappings[decision.template.id]['decisions'][decision.id]['alternatives'][alternative.id] = {
 														alternative: alternative,
-														taskTemplatesToExport: {},
 														alternativeTemplate: alternative.template,
 														mappings: {}
 													};
@@ -216,9 +215,10 @@ module app.application {
 
 					Object.keys(decisionGroup.decisions).forEach(function(deKey) {
 						var decision:app.domain.model.dks.Decision = decisionGroup.decisions[deKey].decision;
+						var taskTemplatesToExport = decisionGroup.decisions[deKey].taskTemplatesToExport;
 
 						Object.keys(decisionGroup.decisions[deKey].mappings).forEach(function(mKey) {
-							if(decisionGroup.decisions[deKey].taskTemplatesToExport[mKey] && decisionGroup.decisions[deKey].taskTemplatesToExport[mKey] === true) {
+							if(taskTemplatesToExport[mKey] && taskTemplatesToExport[mKey] === true) {
 								var mapping:app.domain.model.core.Mapping = decisionGroup.decisions[deKey].mappings[mKey];
 
 								// transform propertyValues list to dictionary to allow simple access using processor variables
@@ -228,10 +228,33 @@ module app.application {
 								});
 
 								if(!$scope.exportDecisions[deKey]) {
-									$scope.exportDecisions[deKey] = { decision: decision, mappings: [] };
+									$scope.exportDecisions[deKey] = { decision: decision, mappings: []};
 								}
 								$scope.exportDecisions[deKey].mappings.push(mapping);
 							}
+						});
+
+						Object.keys(decisionGroup.decisions[deKey].alternatives).forEach(function(aeKey) {
+							var alternative: app.domain.model.dks.Alternative = decisionGroup.decisions[deKey].alternatives[aeKey].alternative;
+
+							Object.keys(decisionGroup.decisions[deKey].alternatives[aeKey].mappings).forEach(function(amKey) {
+								if(taskTemplatesToExport[amKey] && taskTemplatesToExport[amKey] === true) {
+									var mapping:app.domain.model.core.Mapping = decisionGroup.decisions[deKey].alternatives[aeKey].mappings[amKey];
+
+									// transform propertyValues list to dictionary to allow simple access using processor variables
+									if(!mapping.taskTemplate['attributes']) {
+										mapping.taskTemplate['attributes'] = {};
+										mapping.taskTemplate.properties.forEach(function(taskPropertyValue, index){
+											mapping.taskTemplate['attributes'][taskPropertyValue.property.name.toLowerCase()] = taskPropertyValue.value;
+										});
+									}
+
+									if(!$scope.exportDecisions[aeKey]) {
+										$scope.exportDecisions[aeKey] = { decision: alternative, mappings: [] };
+									}
+									$scope.exportDecisions[aeKey].mappings.push(mapping);
+								}
+							});
 						});
 					});
 				});

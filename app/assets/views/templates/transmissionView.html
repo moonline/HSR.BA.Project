@@ -66,7 +66,7 @@
 													<dd>
 														<ul class="taskTemplates">
 															<li data-ng-repeat="(amkey, alternativeMapping) in alternativeElement.mappings">
-																<input type="checkbox" data-ng-model="alternativeElement.taskTemplatesToExport[amkey]" />&nbsp;
+																<input type="checkbox" data-ng-model="decisionElement.taskTemplatesToExport[amkey]" />&nbsp;
 																{{alternativeMapping.taskTemplate.name}} [#{{alternativeMapping.taskTemplate.id}}]
 															</li>
 														</ul>
