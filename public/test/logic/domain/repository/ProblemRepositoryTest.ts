@@ -44,20 +44,15 @@ module test.logic.domain.repository {
 					]
 				});
 
-				var repositories:{
-					alternativeRepository: app.domain.repository.dks.AlternativeRepository;
-					problemRepository: app.domain.repository.dks.ProblemRepository;
-				};
-				repositories = { alternativeRepository: null, problemRepository: null };
-				repositories.alternativeRepository = new app.domain.repository.dks.AlternativeRepository($http);
-				repositories.problemRepository = new app.domain.repository.dks.ProblemRepository($http,repositories	);
+				var alternativeRepository:app.domain.repository.dks.AlternativeRepository = new app.domain.repository.dks.AlternativeRepository($http);
+				var problemRepository:app.domain.repository.dks.ProblemRepository = new app.domain.repository.dks.ProblemRepository($http);
 
-				repositories.alternativeRepository.proxy = null;
-				repositories.problemRepository.proxy = null;
+				alternativeRepository.proxy = null;
+				problemRepository.proxy = null;
 
 				var status;
 				var problems;
-				repositories.problemRepository.findAllWithChildren(function(success, items) {
+				problemRepository.findAllWithNodesAndSubNodes<app.domain.model.dks.Alternative>('alternatives', alternativeRepository, function(success, items) {
 					status = success;
 					problems = items;
 				});

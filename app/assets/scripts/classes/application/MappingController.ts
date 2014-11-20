@@ -65,7 +65,7 @@ module app.application {
 				$scope.problemsLoadingStatus = app.application.ApplicationState.pending;
 				problemRepository.host = $scope.currentDks.address;
 				alternativeRepository.host = $scope.currentDks.address;
-				problemRepository.findAllWithChildren(function(success, items) {
+				problemRepository.findAllWithNodesAndSubNodes<app.domain.model.dks.Alternative>('alternatives', alternativeRepository, function(success, items) {
 					if(success) {
 						$scope.problems = items;
 						setTimeout(() => { $scope.problemsLoadingStatus = app.application.ApplicationState.successful; $scope.$apply(); }, configuration.settings.messageBoxDelay);

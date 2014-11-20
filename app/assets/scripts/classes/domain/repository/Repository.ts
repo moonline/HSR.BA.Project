@@ -217,5 +217,44 @@ module app.domain.repository.core {
 					callback(false, null);
 				});
 		}
+
+		public findAllWithNodesAndSubNodes<S extends app.domain.repository.core.PersistentEntity>(propertyName: string, repository: app.domain.repository.core.Repository<S>,
+			callback: (success: boolean, items: T[]) => void, doCache = false) {
+			var instance = this;
+
+			this.findAll(function(success, nodes) {
+				if(success) {
+					instance.findSubNodes(nodes, propertyName, repository, callback);
+				} else {
+					callback(false, []);
+				}
+			}, doCache);
+		}
+
+		public findSubNodes<S extends app.domain.repository.core.PersistentEntity>(
+				nodes: T[],
+				propertyName: string,
+				repository: app.domain.repository.core.Repository<S>,
+				callback: (success: boolean, items: T[]) => void, doCache = false) {
+			repository.findAll(function(success, subNodes){
+				if(success) {
+					var sortedSubNodes = {};
+					subNodes.forEach(function(subNode: any){
+						sortedSubNodes[subNode.id] = subNode;
+					});
+
+					nodes.forEach(function(node, nIndex){
+						if(node[propertyName]) {
+							node[propertyName].forEach(function(subNode: any, snIndex) {
+								nodes[nIndex][propertyName][snIndex] = sortedSubNodes[subNode.id];
+							});
+						}
+					});
+					callback(true, nodes);
+				} else {
+					callback(false, []);
+				}
+			}, doCache);
+		}
 	}
 }
