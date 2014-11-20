@@ -126,7 +126,7 @@ public class ProjectPlanningToolController extends AbstractReadController {
 			Http.Context.current.remove();
 			return JPA.withTransaction(() -> PPT_TASK_LOGIC.createPPTTask(form.get()));
 		}).map(wsResponse ->
-						(Result) status(wsResponse.getStatus(), wsResponse.asJson())
+						(Result) status(wsResponse.getFinalResponseStatus(), wsResponse.getFinalResponseContent())
 		).recover(throwable -> {
 			if (throwable instanceof ConnectException) {
 				return status(BAD_GATEWAY, jsonify("Could not connect to " + form.get().account.getPptUrl() + "."));

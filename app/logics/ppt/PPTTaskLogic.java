@@ -37,7 +37,7 @@ public class PPTTaskLogic {
 				.get(30, SECONDS);
 	}
 
-	public WSResponse createPPTTask(@NotNull CreatePPTTaskForm form) {
+	public Task createPPTTask(@NotNull CreatePPTTaskForm form) {
 		PPTAccount account = form.account;
 		String url = account.getPptUrl() + form.path;
 		WSResponse wsResponse = WS.url(url)
@@ -45,11 +45,10 @@ public class PPTTaskLogic {
 				.setAuth(account.getPptUsername(), account.getPptPassword())
 				.post(form.content)
 				.get(30, SECONDS);
-		createTaskForRequest(form, url, wsResponse);
-		return wsResponse;
+		return createTaskForRequest(form, url, wsResponse);
 	}
 
-	private void createTaskForRequest(CreatePPTTaskForm form, String url, WSResponse wsResponse) {
+	private Task createTaskForRequest(CreatePPTTaskForm form, String url, WSResponse wsResponse) {
 		Task task = new Task();
 		task.setCreatedFrom(form.taskTemplate);
 		task.setProject(form.project);
@@ -67,6 +66,7 @@ public class PPTTaskLogic {
 			TASK_PROPERTY_VALUE_DAO.persist(newTaskProperty);
 		}
 		TASK_PROPERTY_VALUE_DAO.flush();
+		return task;
 	}
 
 	@Deprecated

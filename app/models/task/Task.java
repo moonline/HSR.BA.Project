@@ -65,7 +65,7 @@ public class Task extends AbstractWork {
 	}
 
 	public JsonNode getFinalResponseContent() {
-		return Json.toJson(finalResponseContent);
+		return Json.parse(finalResponseContent);
 	}
 
 	public void setFinalResponseContent(JsonNode finalResponseContent) {

@@ -147,7 +147,7 @@ public class ProjectPlanningToolControllerTest extends AbstractControllerTest {
 		assertThat(task.getCreatedFrom().getId()).isEqualTo(taskTemplate.getId());
 		assertThat(task.getFinalRequestContent()).isEqualTo(contentString);
 		assertThat(task.getFinalRequestUrl()).isEqualTo(baseUrl + urlPath);
-		assertThat(Json.stringify(task.getFinalResponseContent())).isEqualTo("\"{\\\"result\\\":\\\"Check!\\\"}\"");
+		assertThat(Json.stringify(task.getFinalResponseContent())).isEqualTo("{\"result\":\"Check!\"}");
 		assertThat(task.getFinalResponseStatus()).isEqualTo(resultStatus);
 		assertThat(task.getProject().getId()).isEqualTo(project.getId());
 		assertThat(task.getProperties()).hasSize(2);
@@ -268,7 +268,7 @@ public class ProjectPlanningToolControllerTest extends AbstractControllerTest {
 		Task task = JPA.withTransaction(() -> TASK_DAO.readAll().get(0));
 		assertThat(task.getCreatedFrom().getId()).isEqualTo(11);
 		assertThat(task.getFinalRequestUrl()).isEqualTo(url);
-		assertThat(Json.stringify(task.getFinalResponseContent())).isEqualTo("\"{\\\"result\\\":\\\"Check!\\\"}\"");
+		assertThat(Json.stringify(task.getFinalResponseContent())).isEqualTo("{\"result\":\"Check!\"}");
 		assertThat(task.getFinalResponseStatus()).isEqualTo(resultStatus);
 		assertThat(task.getProject().getId()).isEqualTo(2);
 		assertThat(task.getProperties()).hasSize(2);
