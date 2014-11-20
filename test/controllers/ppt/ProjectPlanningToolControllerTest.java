@@ -216,6 +216,7 @@ public class ProjectPlanningToolControllerTest extends AbstractControllerTest {
 		//Setup
 		User user = AbstractTestDataCreator.createUserWithTransaction("User 1", "1");
 		String url = "http://localhost:9920/rest/api/2/issue";
+		Long account = AbstractTestDataCreator.createPPTAccountWithTransaction(user, "http://localhost:9920", "admin", "admin").getId();
 		JsonNode requestContent = Json.parse("{\n\t\"fields\": {\n\t\t\"project\": {\n\t\t\t\"key\": \"TEST\"\n\t\t},\n\t\t\"summary\": \"Define criterions\",\n \t\"description\": \".\\n\\nDecision: Session State Management\\nDKS link: http://localhost:9940/element/14\\nAttributes:\\nRevision Date: 2016-11-11\\nViewpoint: Scenario\\nIntellectual Property Rights: Unrestricted\\nDue Date: 2014-12-24\\nProject Stage: Inception\\nOrganisational Reach: Project\\nStakeholder Roles: Any\\nOwner Role: Lead Architect\",\n \t\"duedate\": \"\",\n \t\"issuetype\": {\n\t\t\t\"name\": \"Task\"\n\t\t},\n \t\"priority\": {\n\t\t\t\"name\": \"\"\n\t\t},\n \t\"assignee\": {\n\t\t\t\"name\": \"Project Planner\"\n\t\t},\n\t\t\"timetracking\": {\n\t\t\t\"originalEstimate\": \"\"\n\t\t}\n\t}\n}");
 		int resultStatus = 123;
 		JsonNode resultJson = Json.parse("{\"result\":\"Check!\"}");
@@ -234,7 +235,7 @@ public class ProjectPlanningToolControllerTest extends AbstractControllerTest {
 		Result result = callAction(routes.ref.ProjectPlanningToolController.createPPTTask(), new FakeRequest().withJsonBody(Json.parse("{" +
 				"	\"account\":{" +
 				"		\"pptPassword\":null," +
-				"		\"id\":4," +
+				"		\"id\":" + account + "," +
 				"		\"user\":{\"userName\":\"demo\",\"id\":3}," +
 				"		\"pptUrl\":\"http://localhost:9920\"," +
 				"		\"pptUsername\":\"admin\"," +
