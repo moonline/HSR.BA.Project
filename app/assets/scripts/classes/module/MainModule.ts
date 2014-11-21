@@ -41,8 +41,7 @@ module app.mod {
 					$location.path("/register");
 				});
 
-				// TODO: bind current view
-				$rootScope.currentView = '';
+				$rootScope.currentView = $location;
 
 				// make Status available in view
 				$rootScope.Status = app.application.Status;

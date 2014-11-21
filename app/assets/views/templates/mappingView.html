@@ -1,145 +1,147 @@
-	<div class="main" data-region="center" >
-	<div class="area mapping page" data-layout="flow" data-flow-direction="row" data-align="start">
-		<div class="column1 area pane" data-layout="flow" data-flow-direction="column" data-scroll="y">
-			<div class="areaContent">
-				<h2><span title="Problem Templates in DKS">Problems</span> <a href="{{currentDks.address}}" target="_blank" title="from DKS {{currentDks.address}}">(read only)</a> (&Sigma;:{{problems.length}})</h2>
+<div class="main area page mapping" data-layout="flow" data-flow-direction="row" data-align="start">
+	<div class="column1 area pane" data-layout="flow" data-flow-direction="column" data-scroll="y">
+		<div class="areaContent">
+			<h2><span title="Problem Templates in DKS">Problems</span> <a href="{{currentDks.address}}" target="_blank" title="from DKS {{currentDks.address}}">(read only)</a> (&Sigma;:{{problems.length}})</h2>
 
-				<span class="messagebox error" data-ng-if="problemsLoadingStatus === ApplicationState.failed">Loading of DKS elements failed. Maybe service is not available.</span>
-				<span class="messagebox pending" data-ng-if="problemsLoadingStatus === ApplicationState.pending">Loading ...</span>
+			<span class="messagebox error" data-ng-if="problemsLoadingStatus === ApplicationState.failed">Loading of DKS elements failed. Maybe service is not available.</span>
+			<span class="messagebox pending" data-ng-if="problemsLoadingStatus === ApplicationState.pending">Loading ...</span>
 
-				<ul data-type="list">
-					<li data-ng-repeat="problem in problems">
-						<div class="listElement" data-ng-click="setCurrentDksNode(problem)" data-state="{{problem == currentDksNode && 'selected' || '' }}">
-							<button class="action edit" title="View Details"><span class="icon iconOnly">&Xi;</span></button>
-							<span class="name"><span class="typeDeclaration" title="Problem Template from DKS">&lt;PT&gt;</span> {{problem.name}}</span>
-						</div>
-						({{problem.alternatives.length}})
-						<button data-ng-click="toggleVisibilityState($index)" class="action" data-ng-if="problem.alternatives.length > 0">
-							<span data-ng-if="!problemListChildrenVisibilityState[$index]" class="symbol extremeSmall">&#x25b2;</span>
-							<span data-ng-if="problemListChildrenVisibilityState[$index]" class="symbol extremeSmall">&#x25bc;</span>
-						</button>
-						<ul data-type="list" data-ng-if="problem.alternatives.length > 0 && problemListChildrenVisibilityState[$index]">
-							<li data-ng-repeat="alternative in problem.alternatives">
-								<div class="listElement" data-ng-click="setCurrentDksNode(alternative)" data-state="{{alternative == currentDksNode && 'selected' || '' }}">
-									<button class="action edit" title="View Details"><span class="icon iconOnly">&Xi;</span></button>
-									<span class="name"><span class="typeDeclaration" title="Option Template from DKS">&lt;OT&gt;</span> {{alternative.name}}</span>
-								</div>
-							</li>
-						</ul>
-					</li>
-				</ul>
-			</div>
-		</div>
-
-		<div class="column2 area pane" data-layout="flow" data-flow-direction="column" data-scroll="y">
-			<div class="areaContent">
-				<div class="ProblemDetail" data-ng-if="currentDksNode">
-					<h2>{{currentDksNode.name}} [#{{currentDksNode.id}}]</h2>
-					<dl>
-						<dt data-ng-if="currentDksNode.notes">Notes</dt>
-						<dd data-ng-if="currentDksNode.notes"><pre class="multilineText">{{currentDksNode.notes}}</pre></dd>
-						<dt>Path</dt>
-						<dd><span data-ng-repeat="pathSegment in currentDksNode.path">
-						<span class="pathDivider" data-ng-if="!$first">/</span><span class="pathSegment">{{pathSegment}}</span></span>
-						</dd>
-						<dt>Attributes</dt>
-						<dd>
-							<ul>
-								<li data-ng-repeat="(name, value) in currentDksNode.attributes">{{name}}: {{value}}</li>
-							</ul>
-						</dd>
-						<dt>DKS link</dt>
-						<dd><a href="{{currentDksNode.self}}" target="_blank">{{currentDksNode.self}}</a></dd>
-						<dt data-ng-if="currentDksNode.alternatives">Options</dt>
-						<dd data-ng-if="currentDksNode.alternatives">
-							<ul>
-								<li data-ng-repeat="option in currentDksNode.alternatives">
-									{{option.name}} [{{option.id}}]
-								</li>
-							</ul>
-						</dd>
-					</dl>
-
-					<h3>Mapping ({{currentDksNode.name}} &hArr; Task Templates)</h3>
-
-					<span class="messagebox error" data-ng-if="mappingsLoadingStatus === ApplicationState.failed">Loading of task mappings failed. Maybe server is not available.</span>
-					<span class="messagebox pending" data-ng-if="mappingsLoadingStatus === ApplicationState.pending">Loading ...</span>
-
-					<ul>
-						<li data-ng-repeat="mapping in currentMappings">
-							<button class="action remove" data-ng-click="removeMapping(mapping)"
-								title="Remove mapping "><span class="icon small iconOnly">&Chi;</span>
-							</button>
-							{{mapping.taskTemplate.name}} [{{mapping.taskTemplate.id}}]
+			<ul data-type="list">
+				<li data-ng-repeat="problem in problems  | orderBy:'name'">
+					<div class="listElement" data-ng-click="setCurrentDksNode(problem)" data-state="{{problem == currentDksNode && 'selected' || '' }}">
+						<button class="action edit" title="View Details"><span class="icon iconOnly">&Xi;</span></button>
+						<span class="name"><span class="typeDeclaration" title="Problem Template from DKS">&lt;PT&gt;</span> {{problem.name}}</span>
+					</div>
+					({{problem.alternatives.length}})
+					<button data-ng-click="toggleVisibilityState($index)" class="action" data-ng-if="problem.alternatives.length > 0">
+						<span data-ng-if="!problemListChildrenVisibilityState[$index]" class="symbol extremeSmall">&#x25b2;</span>
+						<span data-ng-if="problemListChildrenVisibilityState[$index]" class="symbol extremeSmall">&#x25bc;</span>
+					</button>
+					<ul data-type="list" data-ng-if="problem.alternatives.length > 0 && problemListChildrenVisibilityState[$index]">
+						<li data-ng-repeat="alternative in problem.alternatives">
+							<div class="listElement" data-ng-click="setCurrentDksNode(alternative)" data-state="{{alternative == currentDksNode && 'selected' || '' }}">
+								<button class="action edit" title="View Details"><span class="icon iconOnly">&Xi;</span></button>
+								<span class="name"><span class="typeDeclaration" title="Option Template from DKS">&lt;OT&gt;</span> {{alternative.name}}</span>
+							</div>
 						</li>
 					</ul>
-				</div>
-			</div>
+				</li>
+			</ul>
 		</div>
+	</div>
 
-		<div class="column3 area pane verticalFlex" data-layout="flow" data-flow-direction="column" data-scroll="y">
-			<div class="areaContent">
-				<h2>Task Templates (&Sigma;:{{taskTemplates.length}})</h2>
+	<div class="column2 area pane" data-layout="flow" data-flow-direction="column" data-scroll="y">
+		<div class="areaContent">
+			<div class="ProblemDetail" data-ng-if="currentDksNode">
+				<h2>{{currentDksNode.name}} [#{{currentDksNode.id}}]</h2>
+				<dl>
+					<dt data-ng-if="currentDksNode.notes">Notes</dt>
+					<dd data-ng-if="currentDksNode.notes"><pre class="multilineText">{{currentDksNode.notes}}</pre></dd>
+					<dt>Path</dt>
+					<dd><span data-ng-repeat="pathSegment in currentDksNode.path">
+					<span class="pathDivider" data-ng-if="!$first">/</span><span class="pathSegment">{{pathSegment}}</span></span>
+					</dd>
+					<dt>Attributes</dt>
+					<dd>
+						<ul>
+							<li data-ng-repeat="(name, value) in currentDksNode.attributes">{{name}}: {{value}}</li>
+						</ul>
+					</dd>
+					<dt>DKS link</dt>
+					<dd><a href="{{currentDksNode.self}}" target="_blank">{{currentDksNode.self}}</a></dd>
+					<dt data-ng-if="currentDksNode.alternatives">Options</dt>
+					<dd data-ng-if="currentDksNode.alternatives">
+						<ul>
+							<li data-ng-repeat="option in currentDksNode.alternatives">
+								<span data-ng-click="setCurrentDksNode(option)">
+									{{option.name}} [{{option.id}}]
+								</span>
+							</li>
+						</ul>
+					</dd>
+				</dl>
 
-				<span class="messagebox error" data-ng-if="taskTemplateLoadingStatus === ApplicationState.failed">Loading of task templates failed. Maybe server is not available.</span>
-				<span class="messagebox pending" data-ng-if="taskTemplateLoadingStatus === ApplicationState.pending">Loading ...</span>
-			</div>
-			<div class="taskTemplateList">
-				<ul data-type="list" class="twoColumns">
-					<li data-ng-repeat="template in taskTemplates"
-						data-state="{{template == currentTaskTemplate && 'selected' || '' }}">
-						<button class="action update" data-ng-if="currentDksNode"
-								data-ng-click="mapTaskTemplate(template)"
-								title="Map task template with decision knowledge system element">&lt; map
+				<h3>Mapping ({{currentDksNode.name}} &hArr; Task Templates)</h3>
+
+				<span class="messagebox error" data-ng-if="mappingsLoadingStatus === ApplicationState.failed">Loading of task mappings failed. Maybe server is not available.</span>
+				<span class="messagebox pending" data-ng-if="mappingsLoadingStatus === ApplicationState.pending">Loading ...</span>
+
+				<ul>
+					<li data-ng-repeat="mapping in currentMappings">
+						<button class="action remove" data-ng-click="removeMapping(mapping)"
+							title="Remove mapping "><span class="icon small iconOnly">&Chi;</span>
 						</button>
-						<span data-ng-click="setCurrentTaskTemplate(template)" title="Edit task template">
-							<button class="action edit">&#x270E;</button> {{template.name}}
+						<span data-ng-click="setCurrentTaskTemplate(mapping.taskTemplate)" title="Edit task template">
+							{{mapping.taskTemplate.name}} [{{mapping.taskTemplate.id}}]
 						</span>
 					</li>
 				</ul>
 			</div>
+		</div>
+	</div>
 
-			<div class="areaContent taskTemplateDetail">
-				<h3>Create new Task Template</h3>
-				<form>
-					<div class="formLine" data-columns="3">
-						<label>New Task Template</label>
-						<input type="text" name="createTaskTemplateName" data-ng-model="createTaskTemplateName" placeholder="Name" />
-						<button class="action create" data-ng-click="createNewTaskTemplate(createTaskTemplateName); createTaskTemplateName = '';"
-							title="Create a new Task Template">
-							<span class="icon">&#x2b;</span>Create
-						</button>
-					</div>
-					(i) Task Templates can not be deleted! <!--TODO: Explain, why Task Templates cannot be deleted -->
-				</form>
+	<div class="column3 area pane verticalFlex" data-layout="flow" data-flow-direction="column" data-scroll="y">
+		<div class="areaContent">
+			<h2>Task Templates (&Sigma;:{{taskTemplates.length}})</h2>
 
-				<h3 data-ng-if="currentTaskTemplate">{{currentTaskTemplate.name}} [{{currentTaskTemplate.id}}]</h3>
-				<form data-ng-if="currentTaskTemplate">
-					<div class="formLine" data-columns="3" data-ng-if="currentTaskTemplate.properties.length < taskProperties.length">
-						<select data-ng-model="newTaskProperty"
-								data-ng-options="taskProperty.name for taskProperty in taskProperties | filter:notYetUsed()"
-								onchange="document.getElementById('newTaskPropertyValue').focus()"></select>
-						<input id="newTaskPropertyValue" type="text" data-ng-disabled="!newTaskProperty" data-ng-model="newTaskPropertyValue" placeholder="New {{newTaskProperty.name}}"/>
-						<button data-ng-disabled="!newTaskProperty" class="action create" title="Add property"
-								data-ng-click="addPropertyValue(newTaskProperty, newTaskPropertyValue); newTaskPropertyValue = '';">
-							<span class="icon big">&#x2b;</span>Add
-						</button>
-					</div>
-					<div class="formLine" data-columns="3">
-						<label>Name</label>
-						<input type="text" data-ng-model="currentTaskTemplate.name" />
-						<span></span>
-					</div>
-					<div data-ng-repeat="propertyValue in currentTaskTemplate.properties" class="formLine" data-columns="3"	>
-						<label>{{propertyValue.property.name}}</label>
-						<input data-ng-model="propertyValue.value" />
-						<button class="action remove" data-ng-click="removePropertyValue(propertyValue)"
-								title="Remove property "><span class="icon big">&minus;</span>Remove
-						</button>
-					</div>
-					<button class="action update" data-ng-click="updateTaskTemplate()"><span class="icon">&#11015;</span>Save</button>
-				</form>
-			</div>
+			<span class="messagebox error" data-ng-if="taskTemplateLoadingStatus === ApplicationState.failed">Loading of task templates failed. Maybe server is not available.</span>
+			<span class="messagebox pending" data-ng-if="taskTemplateLoadingStatus === ApplicationState.pending">Loading ...</span>
+		</div>
+		<div class="taskTemplateList">
+			<ul data-type="list" class="twoColumns">
+				<li data-ng-repeat="template in taskTemplates | orderBy:'name'"
+					data-state="{{template.id == currentTaskTemplate.id && 'selected' || '' }}">
+					<button class="action update" data-ng-if="currentDksNode"
+							data-ng-click="mapTaskTemplate(template)"
+							title="Map task template with decision knowledge system element">&lt; map
+					</button>
+					<span data-ng-click="setCurrentTaskTemplate(template)" title="Edit task template">
+						<button class="action edit">&#x270E;</button> {{template.name}}
+					</span>
+				</li>
+			</ul>
+		</div>
+
+		<div class="areaContent taskTemplateDetail">
+			<h3>Create new Task Template</h3>
+			<form>
+				<div class="formLine" data-columns="3">
+					<label>New Task Template</label>
+					<input type="text" name="createTaskTemplateName" data-ng-model="createTaskTemplateName" placeholder="Name" />
+					<button class="action create" data-ng-click="createNewTaskTemplate(createTaskTemplateName); createTaskTemplateName = '';"
+						title="Create a new Task Template">
+						<span class="icon">&#x2b;</span>Create
+					</button>
+				</div>
+				(i) Task Templates can not be deleted! <!--TODO: Explain, why Task Templates cannot be deleted -->
+			</form>
+
+			<h3 data-ng-if="currentTaskTemplate">{{currentTaskTemplate.name}} [{{currentTaskTemplate.id}}]</h3>
+			<form data-ng-if="currentTaskTemplate">
+				<div class="formLine" data-columns="3" data-ng-if="currentTaskTemplate.properties.length < taskProperties.length">
+					<select data-ng-model="newTaskProperty"
+							data-ng-options="taskProperty.name for taskProperty in taskProperties | filter:notYetUsed()"
+							onchange="document.getElementById('newTaskPropertyValue').focus()"></select>
+					<input id="newTaskPropertyValue" type="text" data-ng-disabled="!newTaskProperty" data-ng-model="newTaskPropertyValue" placeholder="New {{newTaskProperty.name}}"/>
+					<button data-ng-disabled="!newTaskProperty" class="action create" title="Add property"
+							data-ng-click="addPropertyValue(newTaskProperty, newTaskPropertyValue); newTaskPropertyValue = '';">
+						<span class="icon big">&#x2b;</span>Add
+					</button>
+				</div>
+				<div class="formLine" data-columns="3">
+					<label>Name</label>
+					<input type="text" data-ng-model="currentTaskTemplate.name" />
+					<span></span>
+				</div>
+				<div data-ng-repeat="propertyValue in currentTaskTemplate.properties" class="formLine" data-columns="3"	>
+					<label>{{propertyValue.property.name}}</label>
+					<input data-ng-model="propertyValue.value" />
+					<button class="action remove" data-ng-click="removePropertyValue(propertyValue)"
+							title="Remove property "><span class="icon big">&minus;</span>Remove
+					</button>
+				</div>
+				<button class="action update" data-ng-click="updateTaskTemplate()"><span class="icon">&#11015;</span>Save</button>
+			</form>
 		</div>
 	</div>
 </div>

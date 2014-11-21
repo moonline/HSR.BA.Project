@@ -23,16 +23,10 @@ body, pre.multilineText, textarea { font-family: Arial, Helvetica, sans-serif; }
  * container
  */
 .headerPanel, footer { .blueGradient; color: white; padding: 0.5rem; }
-.headerPanel {
-	border-bottom: 0.25rem solid black;
-}
 #headerPanel[data-layout="border"] > [data-region="middle"][data-align="center"]  { heigth: auto; }
 
 
-.page { height: 100%; width: 100% }
 .area {
-	height: auto;
-
 	h2 { padding: 0.5rem; }
 
 	&.pane {
@@ -49,6 +43,7 @@ body, pre.multilineText, textarea { font-family: Arial, Helvetica, sans-serif; }
 	}
 
 	&.page {
+		height: 100%; width: 100%;
 		padding: 0;
 
 		&.mapping {
@@ -85,13 +80,20 @@ body, pre.multilineText, textarea { font-family: Arial, Helvetica, sans-serif; }
 
 [data-scroll="y"] { height: 100%; overflow-y: scroll; overflow-x: hidden; }
 
-div.main {  }
+.main { height: 100%; width: 100%; }
 
 nav.mainNavigation {
-	padding: 0.25rem 0.5rem 0.5rem 0.5rem; background: cadetblue;
+	padding: 0.25rem 0.5rem 0 0.5rem; background: steelblue;
+	border-bottom: 0.25rem solid black;
 	ul li {
+		background: lightsteelblue;
+		border-radius: 0.5rem 0.5rem 0 0;
+		padding: 0.5rem 1rem 0.25rem;
+		a { text-decoration: none; }
 		&.current {
-			a, a:link, a:hover { font-weight: bold; }
+			box-shadow: 0 0 0.5rem #2b2c34;
+			background: linear-gradient(lightsteelblue, #8094AE) repeat scroll 0% 0% transparent;
+			font-weight: bold;
 		}
 		display: inline-block; list-style-type: none; margin-right: 1rem;
 		.icon { margin-bottom: -0.1rem; }
@@ -326,13 +328,16 @@ select {
  */
 [data-ng-click] { cursor: pointer; }
 
-.success { background: seagreen; color: white; font-weight: bold; padding: 0.5rem; } //TODO replace by messagebox
-.error { background: maroon; color: white; font-weight: bold; } //TODO replace by messagebox
+.success { background: seagreen; color: white; font-weight: bold; padding: 0.5rem; }
+.error { background: maroon; color: white; font-weight: bold; }
+
+.areaContent { position: relative; }
 
 .messagebox {
+	position: absolute; width: 100%; box-sizing: content-box;
 	padding: 0.5rem; display: block; color: white; font-weight: bold;
 
-	&.error { background: maroon; }
-	&.pending, &.saving { background: seagreen; }
-	&.success { background: seagreen; }
+	&.error { background: rgba(128, 0, 0, 0.87); }
+	&.pending, &.saving { background: rgba(0, 128, 128, 0.87); }
+	&.success { background: rgba(46, 139, 87, 0.87); }
 }
