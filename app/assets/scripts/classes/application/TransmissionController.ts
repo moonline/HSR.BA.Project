@@ -115,6 +115,7 @@ module app.application {
 											$scope.decisionMappings[decision.template.id]['decisions'][decision.id] = {
 												decision: decision,
 												taskTemplatesToExport: {},
+												rootElementForSubNodes: null,
 												mappings: {},
 												alternatives: {}
 											};
@@ -223,15 +224,20 @@ module app.application {
 								var mapping:app.domain.model.core.Mapping = decisionGroup.decisions[deKey].mappings[mKey];
 
 								// transform propertyValues list to dictionary to allow simple access using processor variables
-								mapping.taskTemplate['attributes'] = {};
-								mapping.taskTemplate.properties.forEach(function(taskPropertyValue, index){
-									mapping.taskTemplate['attributes'][taskPropertyValue.property.name.toLowerCase()] = taskPropertyValue.value;
-								});
+								if(!mapping.taskTemplate['attributes']) {
+									mapping.taskTemplate['attributes'] = {};
+									mapping.taskTemplate.properties.forEach(function(taskPropertyValue, index){
+										mapping.taskTemplate['attributes'][taskPropertyValue.property.name.toLowerCase()] = taskPropertyValue.value;
+									});
+								}
 
 								if(!$scope.transmitNodes[deKey]) {
 									$scope.transmitNodes[deKey] = { node: decision, type: app.domain.model.dks.Decision, mappings: [], subNodes: {} };
 								}
 								$scope.transmitNodes[deKey].mappings.push(mapping);
+								if(mapping == decisionGroup.decisions[deKey].rootElementForSubNodes) {
+									$scope.transmitNodes[deKey].rootElementForSubNodes = mapping;
+								}
 							}
 						});
 
@@ -271,7 +277,7 @@ module app.application {
 				// parse templates
 				Object.keys($scope.transmitNodes).forEach(function(dKey){
 					var node = $scope.transmitNodes[dKey].node;
-					var exportRequest;
+					var exportRequest = <any>null;
 
 					Object.keys($scope.transmitNodes[dKey].mappings).forEach(function(tKey){
 						var mapping = $scope.transmitNodes[dKey].mappings[tKey];
@@ -287,13 +293,16 @@ module app.application {
 
 						var templateProcessor = new app.service.TemplateProcesser(exportDecisionData, $scope.currentRequestTemplate.requestBody, processors);
 						var renderedTemplate = templateProcessor.process();
-						exportRequest = {
+						var currentRequest = {
 							requestBody: renderedTemplate,
 							node: node,
 							taskTemplate: mapping.taskTemplate,
 							exportState: app.application.ApplicationState.waiting
 						};
-						$scope.exportRequests.push(exportRequest);
+						if($scope.transmitNodes[dKey].rootElementForSubNodes == mapping) {
+							exportRequest = currentRequest;
+						}
+						$scope.exportRequests.push(currentRequest);
 					});
 
 					Object.keys($scope.transmitNodes[dKey].subNodes).forEach(function(aKey){
@@ -314,13 +323,19 @@ module app.application {
 							var templateProcessor = new app.service.TemplateProcesser(exportDecisionData, $scope.currentRequestTemplate.requestBody, processors);
 							var renderedTemplate = templateProcessor.process();
 
-							if(!exportRequest.subRequests) { exportRequest.subRequests = []; }
-							exportRequest.subRequests.push({
+
+							var currentSubRequest = {
 								requestBody: renderedTemplate,
 								node: subNode,
 								taskTemplate: mapping.taskTemplate,
 								exportState: app.application.ApplicationState.waiting
-							});
+							};
+							if(exportRequest) {
+								if(!exportRequest.subRequests) { exportRequest.subRequests = []; }
+								exportRequest.subRequests.push(currentSubRequest);
+							} else {
+								$scope.exportRequests.push(currentSubRequest);
+							}
 						});
 					});
 				});
@@ -341,9 +356,8 @@ module app.application {
 					}
 
 					var templateProcessor = new app.service.TemplateProcesser({ parentRequestData: exportRequests[index].requestData || null }, exportRequest.requestBody, processors);
-					console.log(exportRequests[index].requestData);
 					exportRequest.requestBody = templateProcessor.processSecondary();
-					console.log(exportRequest.requestBody);
+
 
 					var nextRequest = index+1;
 					var nextSubRequest:number = null;
