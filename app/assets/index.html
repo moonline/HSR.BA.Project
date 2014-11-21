@@ -38,16 +38,16 @@
 
 				<nav class="mainNavigation" data-type="toolbar" data-region="south" data-layout="flow" data-flow-direction="row">
 					<ul>
-						<li class="{{ currentView == '/mapping' && 'current' || '' }}" data-ng-if="authenticator.loggedInUser != null">
+						<li class="{{ currentView.path() == '/mapping' && 'current' || '' }}" data-ng-if="authenticator.loggedInUser != null">
 							<span class="icon" data-icon="link"></span><a href="#/mapping">Problems &amp; Task Templates</a>
 						</li>
-						<li class="{{ currentView == '/transmit' && 'current' || '' }}" data-ng-if="authenticator.loggedInUser != null">
+						<li class="{{ currentView.path() == '/transmission' && 'current' || '' }}" data-ng-if="authenticator.loggedInUser != null">
 							<span class="icon" data-icon="transmit"></span><a href="#/transmission">Transmit</a>
 						</li>
-						<li class="{{ currentView == '/register' && 'current' || '' }}">
+						<li class="{{ currentView.path() == '/register' && 'current' || '' }}">
 							<span class="icon" data-icon="user"></span><a href="#/register">Account</a>
 						</li>
-						<li class="{{ currentView == '/admin' && 'current' || '' }}" data-ng-if="authenticator.loggedInUser != null">
+						<li class="{{ currentView.path() == '/admin' && 'current' || '' }}" data-ng-if="authenticator.loggedInUser != null">
 							<span class="icon" data-icon="settings"></span><a href="#/admin">Administration</a></li>
 					</ul>
 				</nav>

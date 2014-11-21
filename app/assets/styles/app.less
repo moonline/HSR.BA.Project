@@ -23,9 +23,6 @@ body, pre.multilineText, textarea { font-family: Arial, Helvetica, sans-serif; }
  * container
  */
 .headerPanel, footer { .blueGradient; color: white; padding: 0.5rem; }
-.headerPanel {
-	border-bottom: 0.25rem solid black;
-}
 #headerPanel[data-layout="border"] > [data-region="middle"][data-align="center"]  { heigth: auto; }
 
 
@@ -88,8 +85,13 @@ body, pre.multilineText, textarea { font-family: Arial, Helvetica, sans-serif; }
 div.main {  }
 
 nav.mainNavigation {
-	padding: 0.25rem 0.5rem 0.5rem 0.5rem; background: cadetblue;
+	padding: 0.25rem 0.5rem 0 0.5rem; background: steelblue;
+	border-bottom: 0.25rem solid black;
 	ul li {
+		background: lightsteelblue; border-radius: 0.5rem 0.5rem 0 0;
+		padding: 0.5rem 1rem 0.25rem;
+		margin-bottom: 0.25rem;
+		a { text-decoration: none; }
 		&.current {
 			a, a:link, a:hover { font-weight: bold; }
 		}
