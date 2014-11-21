@@ -22,6 +22,7 @@ module test.integration.application {
                 httpBackend.when('GET', '/taskTemplate').respond({});
                 httpBackend.when('GET', '/taskProperty').respond({});
                 httpBackend.when('GET', '/user/pptAccount').respond({});
+				httpBackend.when('GET', '/ppt').respond({});
                 httpBackend.when('GET', '/pptMapping').respond({});
                 httpBackend.when('GET', '/project').respond({"items": [
                     {"id": 59, "name": "Project"}
@@ -36,7 +37,8 @@ module test.integration.application {
                     requestTemplateRepository: new app.domain.repository.ppt.RequestTemplateRepository($http),
                     projectRepository: new app.domain.repository.core.ProjectRepository($http),
                     processorRepository: new app.domain.repository.core.ProcessorRepository($http),
-                    taskPropertyRepository: new app.domain.repository.core.TaskTemplateRepository($http)
+                    taskPropertyRepository: new app.domain.repository.core.TaskTemplateRepository($http),
+					projectPlanningToolRepository: new app.domain.repository.ppt.ProjectPlanningToolRepository($http)
                 };
             }));
 

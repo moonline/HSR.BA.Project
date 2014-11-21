@@ -1,6 +1,8 @@
+@import "crossBrowser.less";
+
 /* variables */
 .blueGradient {
-	background: dodgerblue; background: linear-gradient(dodgerblue, steelblue); color: white;
+	.linearGradient(dodgerblue, steelblue); color: white;
 }
 
 
@@ -8,23 +10,23 @@
 /**
  * general
  */
-* { -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; padding: 0; margin: 0; text-indent: 0; text-align: left; }
+* { .boxSizing(border-box); padding: 0; margin: 0; text-indent: 0; text-align: left; }
 
 html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; }
 body, pre.multilineText, textarea { font-family: Arial, Helvetica, sans-serif; }
 
+.eeppi strong { color: white; }
+.eeppi { color: lightsteelblue; }
 
 
 /**
  * container
  */
 .headerPanel, footer { .blueGradient; color: white; padding: 0.5rem; }
-.headerPanel { border-bottom: 0.25rem solid black; }
+#headerPanel[data-layout="border"] > [data-region="middle"][data-align="center"]  { heigth: auto; }
 
-.page { height: 100%; width: 100% }
+
 .area {
-	height: auto;
-
 	h2 { padding: 0.5rem; }
 
 	&.pane {
@@ -41,6 +43,7 @@ body, pre.multilineText, textarea { font-family: Arial, Helvetica, sans-serif; }
 	}
 
 	&.page {
+		height: 100%; width: 100%;
 		padding: 0;
 
 		&.mapping {
@@ -69,24 +72,45 @@ body, pre.multilineText, textarea { font-family: Arial, Helvetica, sans-serif; }
 	.accordion { padding: 0.5rem; }
 }
 
-.verticalFlex { display: flex; flex-direction: column; }
+.verticalFlex { .displayFlex; .flexDirection(column); }
 
-.taskTemplateList { flex-grow: 1; overflow-x: hidden; overflow-y: scroll; height: 5em; }
+.taskTemplateList { .flexGrow(1); overflow-x: hidden; overflow-y: scroll; height: 5em; }
 
-.taskTemplateDetail { align-self: flex-end; min-height: 38.2%; max-height: 62.8%; } //height min/max according to golden ratio
+.taskTemplateDetail { .alignSelf(flex-end); min-height: 38.2%; max-height: 62.8%; } //height min/max according to golden ratio
 
 [data-scroll="y"] { height: 100%; overflow-y: scroll; overflow-x: hidden; }
 
-div.main {  }
+.main { height: 100%; width: 100%; }
 
 nav.mainNavigation {
-	padding: 0.25rem 0.5rem 0.5rem 0.5rem; background: cadetblue;
+	padding: 0.25rem 0.5rem 0 0.5rem; background: steelblue;
+	border-bottom: 0.25rem solid black;
 	ul li {
+		background: lightsteelblue;
+		border-radius: 0.5rem 0.5rem 0 0;
+		padding: 0.5rem 1rem 0.25rem;
+		a { text-decoration: none; }
 		&.current {
-			a, a:link, a:hover { font-weight: bold; }
+			box-shadow: 0 0 0.5rem #2b2c34;
+			background: linear-gradient(lightsteelblue, #8094AE) repeat scroll 0% 0% transparent;
+			font-weight: bold;
 		}
 		display: inline-block; list-style-type: none; margin-right: 1rem;
 		.icon { margin-bottom: -0.1rem; }
+	}
+}
+
+
+.transmitView ul .problemElement {
+	background: aliceblue; padding: 0.5rem; list-style-type: none; margin: 0.5rem;
+
+	> .problem { display: block; background: skyblue; font-weight: bold; padding: 0.5rem; margin: -0.5rem -0.5rem 0.5rem; }
+	> .decisions { margin-left: 0;
+		> li > dl { margin-left: 1rem; }
+		.taskTemplates { margin-left: 0;
+			> li {list-style-type: none; }
+		}
+		.alternatives > li dl { margin-left: 1rem; }
 	}
 }
 
@@ -109,12 +133,8 @@ dl dt { font-weight: bold; }
 
 @media (min-width: 1200px) {
 	ul.twoColumns {
-		-moz-column-count: 2;
-		-moz-column-gap: 10px;
-		-webkit-column-count: 2;
-		-webkit-column-gap: 10px;
-		column-count: 2;
-		column-gap: 10px;
+		.columnCount(2);
+		.columnGap(2rem);
 		height: 100%;
 	}
 }
@@ -130,18 +150,21 @@ a {
 	&:hover { color: white; }
 }
 
+pre { overflow-x: scroll; }
+
 
 /**
  * icons / symbols
  */
 .icon, .symbol {
+	height: 0.9rem; display: inline-block;
 	&.big { font-size: 1.2rem; }
 	&.small { font-size: 0.8rem; }
 	&.extremeSmall { font-size: 0.6rem; }
 }
 .icon {
 	font-weight: bold; margin-right: 0.5rem;
-	&[data-icon] { width: 1rem; height: 1rem; display: inline-block; background-size: 1rem 1rem; }
+	&[data-icon] { width: 1rem; height: 1rem; background-size: 1rem 1rem; }
 	&[data-icon="settings"] {
 		// Icon made by Freepik (http://www.freepik.com) from Flaticon (http://www.flaticon.com)
 		//is licensed under Creative Commons BY 3.0 (http://creativecommons.org/licenses/by/3.0/)
@@ -173,25 +196,25 @@ a {
 button {
 	display: inline-block;
 	padding: 0.3rem; line-height: 1em; padding-left: 0.5rem; padding-right: 0.5rem;
-	background: silver; background: linear-gradient(gainsboro, silver); border: none; color: black;
+	.linearGradient(gainsboro, silver); border: none; color: black;
 	border-radius: 0.2rem;
 	&:hover { color: white; }
 
 	&.action {
 		&.create, &.save {
-			background: green; background: linear-gradient(rgb(80,180,130),seagreen); color: white;
+			.linearGradient(rgb(80,180,130),seagreen); color: white;
 			&:hover { 	color: black; }
 		}
 		&.edit {
-			background: orange; background: linear-gradient(#F8B356, #DD852C); color: white;
+			.linearGradient(#F8B356, #DD852C); color: white;
 			&:hover { color: black; }
 		}
 		&.update {
-			background: cornflowerblue; background: linear-gradient(rgb(110,170,220), steelblue);color: white;
+			.linearGradient(rgb(110,170,220), steelblue);color: white;
 			&:hover { color: black; }
 		}
 		&.remove, &.warning {
-			background: maroon; background: linear-gradient(rgb(180,40,40), darkred); color: white;
+			.linearGradient(rgb(180,40,40), darkred); color: white;
 			&:hover { color: black; }
 		}
 	}
@@ -200,7 +223,7 @@ button {
 		&:hover { color: gray; }
 	}
 	&[disabled] {
-		background: silver!important; background: linear-gradient(gainsboro, silver)!important; border: none; color: gray;
+		.linearGradient(gainsboro, silver)!important; border: none; color: gray;
 		&:hover { border: none; }
 	}
 }
@@ -231,8 +254,8 @@ input, textarea {
 
 .formLine {
 	margin: 0.25rem 0;
-	display: flex; flex-wrap: nowrap; justify-content: spance-between; width: 100%;
-	align-items: flex-start;
+	.displayFlex; .flexWrap(nowrap); .justifyContent(spance-between); width: 100%;
+	.alignItems(flex-start);
 	&[data-columns="3"] {
 		> :nth-child(+1) { width: 30%; margin-right: 0.2rem; max-width: 15rem; }
 		> :nth-child(+2) { width: 50%; margin: 0 0.2rem; }
@@ -258,11 +281,22 @@ input, textarea {
 		}
 		> :nth-child(+5), > :nth-child(+6) { width: 10%; max-width: 10rem; margin-left: 0.2rem; }
 	}
+	&[data-columns="7"] {
+		> :nth-child(+1) { width: 30%; margin-right: 0.2rem; max-width: 15rem; }
+		> :nth-child(+2) { width: 20%; margin: 0 0.2rem; }
+		> :nth-child(+3), > :nth-child(+4) {
+			width: 7.5%; margin: 0 0.1rem;
+		}
+		> :nth-child(+5) {
+			width: 15%; margin: 0 0.1rem;
+		}
+		> :nth-child(+6), > :nth-child(+7) { width: 10%; max-width: 10rem; margin-left: 0.2rem; }
+	}
 }
 select {
 	-webkit-appearance: none; -ms-appearance: none; -moz-appearance: none;  appearance: none;
-	background-color: silver; background: linear-gradient(gainsboro, silver); border: none; color: black;
-	border-radius: 0.2rem; border: none;
+	.linearGradient(gainsboro, silver); border: none; color: black;
+	border-radius: 0.2rem;
 	// Icon made by Freepik (href="http://www.freepik.com) from Flaticon (http://www.flaticon.com) is licensed under Creative Commons BY 3.0 (http://creativecommons.org/licenses/by/3.0/)
 	//background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgBAMAAACBVGfHAAAAA3NCSVQICAjb4U/gAAAACXBIWXMAAARuAAAEbgHQo7JoAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAB5QTFRF////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAhow4rQAAAAl0Uk5TAAwREiowWMPOLoJhMgAAAEhJREFUKFNjYBhCgCUNDgLAAoyVM6FghgFEiThMoBmqB6YEpgCuBKYApgShAKoEoQCiBFkBWAmyApASVAVAJagKgEoUGIYaAADIMSWmfFk62AAAAABJRU5ErkJgggeb100a48247b7100fa12d2df668b370f');
 	//background-repeat: no-repeat; background-position: 90% 60%; background-size: 1rem;
@@ -272,6 +306,20 @@ select {
 	}
 }
 
+/**
+ * Mapping
+ */
+.typeDeclaration { color: silver; font-size: smaller; }
+
+/**
+ * Transmit
+ */
+.exportProgressBar {
+	.blueGradient; height: auto !important; padding-bottom: 1rem; text-align: center;
+	> .arrows { color: silver; font-size: x-large; }
+}
+.currentStep_true { font-weight: bold; }
+.currentStep_false { color: silver; }
 
 
 
@@ -283,9 +331,13 @@ select {
 .success { background: seagreen; color: white; font-weight: bold; padding: 0.5rem; }
 .error { background: maroon; color: white; font-weight: bold; }
 
+.areaContent { position: relative; }
+
 .messagebox {
+	position: absolute; width: 100%; box-sizing: content-box;
 	padding: 0.5rem; display: block; color: white; font-weight: bold;
 
-	&.error { background: maroon; }
-	&.pending, &.saving { background: seagreen; }
+	&.error { background: rgba(128, 0, 0, 0.87); }
+	&.pending, &.saving { background: rgba(0, 128, 128, 0.87); }
+	&.success { background: rgba(46, 139, 87, 0.87); }
 }

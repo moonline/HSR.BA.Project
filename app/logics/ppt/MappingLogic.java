@@ -22,6 +22,7 @@ public class MappingLogic implements CRUDLogicInterface<Mapping> {
 	public Mapping update(Mapping persistedEntity, Mapping postedEntity) {
 		persistedEntity.setPpt(postedEntity.getPpt());
 		persistedEntity.setProject(postedEntity.getProject());
+		persistedEntity.setName(postedEntity.getName());
 		persistedEntity.setUrl(postedEntity.getUrl());
 		persistedEntity.setRequestTemplate(postedEntity.getRequestTemplate());
 		MAPPING_DAO.persist(persistedEntity);

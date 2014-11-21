@@ -44,7 +44,7 @@ public abstract class AbstractDAO<T> {
 
 	public T persist(T entity) {
 		JPA.em().persist(entity);
-		LOGGER.debug("created: " + entity);
+		LOGGER.debug("created/updated: " + entity);
 		return entity;
 	}
 

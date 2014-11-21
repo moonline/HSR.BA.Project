@@ -16,6 +16,9 @@
 /// <reference path='../../classes/domain/repository/RequestTemplateRepository.ts' />
 /// <reference path='../../classes/domain/repository/ProjectRepository.ts' />
 /// <reference path='../../classes/domain/repository/ProcessorRepository.ts' />
+/// <reference path='../../classes/domain/repository/ProjectPlanningToolRepository.ts' />
+/// <reference path='../../classes/domain/repository/AlternativeRepository.ts' />
+/// <reference path='../../classes/domain/repository/OptionRepository.ts' />
 
 /// <reference path='../../classes/service/AuthenticationService.ts' />
 
@@ -38,8 +41,7 @@ module app.mod {
 					$location.path("/register");
 				});
 
-				// TODO: bind current view
-				$rootScope.currentView = '';
+				$rootScope.currentView = $location;
 
 				// make Status available in view
 				$rootScope.Status = app.application.Status;
@@ -110,8 +112,8 @@ module app.mod {
 
 		private addControllers() {
 			this.module.controller('mappingController', ['$scope', '$location', '$http', 'persistenceService', app.application.MappingController]);
-			this.module.controller('transmissionController', ['$scope', '$location', 'persistenceService', '$http', app.application.TransmissionController]);
-			this.module.controller('registerController', ['$scope', '$location', '$http', 'persistenceService', app.application.RegisterController]);
+			this.module.controller('transmissionController', ['$scope', '$location', 'persistenceService', 'authenticationService', '$http', app.application.TransmissionController]);
+			this.module.controller('registerController', ['$scope', '$location', '$http', 'persistenceService', 'authenticationService', app.application.RegisterController]);
 			this.module.controller('adminController', ['$scope', '$location', '$http', 'persistenceService', 'authenticationService', app.application.AdminController]);
 			this.module.controller('dashboardController', ['$scope', '$location', '$http', 'persistenceService', app.application.DashboardController]);
 
@@ -119,18 +121,24 @@ module app.mod {
 
 		private addServices() {
 			this.module.service('persistenceService', ['$http', function($http) {
-				return {
+				var repositories = {
 					taskTemplateRepository: new app.domain.repository.core.TaskTemplateRepository($http),
 					taskPropertyRepository: new app.domain.repository.core.TaskPropertyRepository($http),
-					decisionRepository: new app.domain.repository.dks.DecisionRepository($http),
 					mappingRepository: new app.domain.repository.core.MappingRepository($http),
+					processorRepository: new app.domain.repository.core.ProcessorRepository($http),
+					projectRepository: new app.domain.repository.core.ProjectRepository($http),
+
 					decisionKnowledgeRepository: new app.domain.repository.dks.DecisionKnowledgeSystemRepository($http),
 					problemRepository: new app.domain.repository.dks.ProblemRepository($http),
+					alternativeRepository: new app.domain.repository.dks.AlternativeRepository($http),
+					decisionRepository: new app.domain.repository.dks.DecisionRepository($http),
+					optionRepository: new app.domain.repository.dks.OptionRepository($http),
+
 					pptAccountRepository: new app.domain.repository.ppt.PPTAccountRepository($http),
 					requestTemplateRepository: new app.domain.repository.ppt.RequestTemplateRepository($http),
-					processorRepository: new app.domain.repository.core.ProcessorRepository($http),
-					projectRepository: new app.domain.repository.core.ProjectRepository($http)
+					projectPlanningToolRepository: new app.domain.repository.ppt.ProjectPlanningToolRepository($http)
 				};
+				return repositories;
 			}]);
 
 			this.module.service('authenticationService', ['$http', '$rootScope', '$q', function($http, $rootScope, $q) {

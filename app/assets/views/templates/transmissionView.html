@@ -1,14 +1,136 @@
-<div class="main" data-region="center" data-layout="flow" data-flow-direction="column" data-align="start">
-	<form>
-		<input type="text" data-ng-model="url" /><br />
-		<textarea data-ng-model="data" ></textarea><br />
-		<button data-ng-click="render(data)">Render</button>
-		<button data-ng-if="output.length > 0" data-ng-click="transmit()">Transmit to PPT</button><br />
-		<span data-ng-if="trasmitCount > 0">{{transmitSuccessfullCount}} of {{trasmitCount}} successfull transmitted!</span>
-	</form>
-	<ul>
-		<li data-ng-repeat="decisionTemplates in output">
-			<pre data-ng-repeat="decisionTaskTemplate in decisionTemplates">{{decisionTaskTemplate}}</pre><br />
-		</ul>
-	</ul>
+<div class="main transmitView" data-region="center" data-layout="border">
+	<div data-scroll="y" data-region="center">
+		<div class="operationState">
+			<span class="messagebox error" data-ng-if="operationState === ApplicationState.failed">Loading of data failed. Maybe server is not available.</span>
+			<span class="messagebox pending" data-ng-if="operationState === ApplicationState.pending">Loading ...</span>
+			<span class="messagebox saving" data-ng-if="operationState === ApplicationState.saving">Saving ...</span>
+		</div>
+		<form class="wizard">
+			<div class="wizardStep" data-step="DataSelection"
+				 data-ng-if="currentWizardStep == ExportWizardSteps.ToolSelection">
+				<div class="requestTemplateState" data-ng-if="targetPPT">
+					<span class="messagebox error" data-ng-if="!currentRequestTemplate">No request template found assigned with this project planning tool. Please create one.</span>
+				</div>
+
+				<h2>Target selection</h2>
+
+				<div class="formLine">
+					<label>Target system</label>
+					<select data-ng-model="targetPPTAccount" data-ng-options="pptAccount.pptUrl for pptAccount in pptAccounts"
+						data-ng-change="setTarget(targetPPTAccount)"></select>
+				</div>
+				<div class="formLine">
+					<label>Request template to transmit</label>
+					<select data-ng-disabled="!targetPPTAccount" data-ng-model="currentRequestTemplate"
+						data-ng-options="pptAccountRequestTemplate.url for pptAccountRequestTemplate in pptAccountRequestTemplates"
+						data-ng-change="setRequestTemplate(currentRequestTemplate)"></select>
+				</div>
+				<div class="formLine">
+					<label>Project in project planning tool</label>
+					<input type="text" data-ng-model="pptProject" data-ng-change="setPPTProject(pptProject)" />
+				</div>
+
+				<button data-ng-disabled="pptProject.length < 1 || !targetPPTAccount || !currentRequestTemplate || !currentRequestTemplate" class="action" data-ng-click="nextStep()">(=>) Select decisions</button>
+			</div>
+
+			<div class="wizardStep" data-step="DataSelection" data-ng-if="currentWizardStep == ExportWizardSteps.DataSelection">
+				<h2>Decision &amp; option selection</h2>
+				<ul data-type="list" class="problems">
+					<li data-ng-repeat="(pkey, decisionGroup) in decisionMappings" class="problemElement">
+						<span class="problem">{{decisionGroup.problem.name}} [#{{decisionGroup.problem.id}}]</span>
+						<ul class="decisions">
+							<li data-ng-repeat="(dkey,decisionElement) in decisionGroup.decisions">
+								{{decisionElement.decision.name}} [#{{decisionElement.decision.id}}]
+								<dl>
+									<dt>Mapped task templates to transmit</dt>
+									<dd>
+										<ul class="taskTemplates">
+											<li data-ng-repeat="(mkey, decisionMapping) in decisionElement.mappings">
+												<input type="checkbox" data-ng-model="decisionElement.taskTemplatesToExport[mkey]" />&nbsp;
+												{{decisionMapping.taskTemplate.name}} [#{{decisionMapping.taskTemplate.id}}]
+											</li>
+										</ul>
+									</dd>
+									<dt>Alternatives
+										<!--<button data-ng-click="toggleVisibilityState(dkey)" class="action">
+											<span data-ng-if="!decisionChildrenVisibilityState[dkey]" class="symbol extremeSmall">&#x25b2;</span>
+											<span data-ng-if="decisionChildrenVisibilityState[dkey]" class="symbol extremeSmall">&#x25bc;</span>
+										</button>-->
+									</dt>
+									<dd>
+										<ul class="alternatives">
+											<li data-ng-repeat="(akey, alternativeElement) in decisionElement.alternatives">
+												{{alternativeElement.alternative.name}} [#{{alternativeElement.alternative.id}}]
+												<dl>
+													<dt>Mapped task templates to transmit</dt>
+													<dd>
+														<ul class="taskTemplates">
+															<li data-ng-repeat="(amkey, alternativeMapping) in alternativeElement.mappings">
+																<input type="checkbox" data-ng-model="decisionElement.taskTemplatesToExport[amkey]" />&nbsp;
+																{{alternativeMapping.taskTemplate.name}} [#{{alternativeMapping.taskTemplate.id}}]
+															</li>
+														</ul>
+													</dd>
+												</dl>
+											</li>
+										</ul>
+									</dd>
+								</dl>
+							</li>
+						</ul>
+					</li>
+				</ul>
+
+				<button class="action" data-ng-click="nextStep(); processTaskTemplates();">(=>) Transform selected decisions</button>
+			</div>
+
+			<div class="wizardStep" data-step="Transformation" data-ng-if="currentWizardStep == ExportWizardSteps.Transformation">
+				<h2>Transformation</h2>
+				<ul>
+					<li data-ng-repeat="exportRequest in exportRequests">
+						<span>{{exportRequest.taskTemplate.name}} ({{exportRequest.node.name}}) </span>
+						<span class="error" data-ng-if="exportRequest.exportState === ApplicationState.failed">
+							Transmit failed. Maybe there is an JSON syntax error. Please check your syntax:
+							<a href="http://json.parser.online.fr/">http://json.parser.online.fr/</a>
+						</span>
+						<span class="success" data-ng-if="exportRequest.exportState === ApplicationState.success">Transmit successful</span>
+						<pre>{{exportRequest.requestBody}}</pre>
+						<ul>
+							<li data-ng-repeat="subRequest in exportRequest.subRequests">
+								<span>{{subRequest.taskTemplate.name}} ({{subRequest.node.name}}) </span>
+								<span class="error" data-ng-if="exportRequest.exportState === ApplicationState.failed">
+									Transmit failed. Maybe there is an JSON syntax error. Please check your syntax:
+									<a href="http://json.parser.online.fr/">http://json.parser.online.fr/</a>
+								</span>
+								<span class="success" data-ng-if="exportRequest.exportState === ApplicationState.success">Transmit successful</span>
+								<pre>{{subRequest.requestBody}}</pre>
+							</li>
+						</ul>
+					</li>
+				</ul>
+
+				<button class="action" data-ng-click="transmit()">Transmit to PPT ({{targetPPTAccount.pptUrl}})</button>
+			</div>
+		</form>
+
+		<!--<form>
+			<input type="text" data-ng-model="url" /><br />
+			<textarea data-ng-model="data" ></textarea><br />
+			<button data-ng-click="render(data)">Render</button>
+			<button data-ng-if="output.length > 0" data-ng-click="transmit()">Transmit to PPT</button><br />
+			<span data-ng-if="trasmitCount > 0">{{transmitSuccessfullCount}} of {{trasmitCount}} successfull transmitted!</span>
+		</form>
+		<ul>
+			<li data-ng-repeat="decisionTemplates in output">
+				<pre data-ng-repeat="decisionTaskTemplate in decisionTemplates">{{decisionTaskTemplate}}</pre><br />
+			</ul>
+		</ul>-->
+	</div>
+	<div class="exportProgressBar" data-region="south">
+		<span class="currentStep_{{currentWizardStep == ExportWizardSteps.ToolSelection}}">Select Input Data</span>
+		<span class="arrows">&rarr;</span>
+		<span class="currentStep_{{currentWizardStep == ExportWizardSteps.DataSelection}}">Select Tasks to Export</span>
+		<span class="arrows">&rarr;</span>
+		<span class="currentStep_{{currentWizardStep == ExportWizardSteps.Transformation}}">Perform Export</span>
+	</div>
 </div>

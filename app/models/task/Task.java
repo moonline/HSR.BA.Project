@@ -5,6 +5,7 @@ import models.user.Project;
 import play.libs.Json;
 
 import javax.persistence.Entity;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -17,8 +18,10 @@ public class Task extends AbstractWork {
 	@ManyToOne
 	private Project project;
 	private String finalRequestUrl;
+	@Lob
 	private String finalRequestContent;
 	private int finalResponseStatus;
+	@Lob
 	private String finalResponseContent;
 
 	public TaskTemplate getCreatedFrom() {
@@ -62,7 +65,7 @@ public class Task extends AbstractWork {
 	}
 
 	public JsonNode getFinalResponseContent() {
-		return Json.toJson(finalResponseContent);
+		return Json.parse(finalResponseContent);
 	}
 
 	public void setFinalResponseContent(JsonNode finalResponseContent) {

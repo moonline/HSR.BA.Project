@@ -2,7 +2,6 @@
 
 /// <reference path='../domain/model/ProjectPlanningTool.ts' />
 /// <reference path='../domain/model/RequestTemplate.ts' />
-/// <reference path='../domain/model/PPTAccount.ts' />
 /// <reference path='../domain/model/Project.ts' />
 /// <reference path='../domain/model/Processor.ts' />
 
@@ -23,11 +22,11 @@ module app.application {
 			$scope.ApplicationState = app.application.ApplicationState;
 			$scope.operationState = app.application.ApplicationState.waiting;
 
-			var pptAccountRepository = persistenceService['pptAccountRepository'];
 			var taskPropertyRepository = persistenceService['taskPropertyRepository'];
 			var requestTemplateRepository = persistenceService['requestTemplateRepository'];
 			var projectRepository = persistenceService['projectRepository'];
             var processorRepository = persistenceService['processorRepository'];
+			var projectPlanningToolRepository = persistenceService['projectPlanningToolRepository'];
 
 			$scope.operationState = app.application.ApplicationState.pending;
 			setTimeout(() => { // set operation state to failed if no success after 4 seconds
@@ -40,21 +39,22 @@ module app.application {
 				$scope.taskProperties = taskProperties;
 
 				// prevent request mix of angular -> call sync instead of parallel async
-				pptAccountRepository.findAll(function(success, pptAccounts) {
-					$scope.pptAccounts = pptAccounts;
+				requestTemplateRepository.findAll(function(success, requestTemplates){
+					$scope.requestTemplates = requestTemplates;
 
-					requestTemplateRepository.findAll(function(success, requestTemplates){
-						$scope.requestTemplates = requestTemplates;
+					// TODO: projects redundance?
+					projectRepository.findAll(function(success, projects){
+						$scope.currentProject = projects[0];
 
-						// TODO: projects redundance?
-						projectRepository.findAll(function(success, projects){
-							$scope.currentProject = projects[0];
+						processorRepository.findAll(function(success, processors){
+							$scope.processors = processors;
 
-                            processorRepository.findAll(function(success, processors){
-                                $scope.processors = processors;
+							projectRepository.findAll(function(success, projects){
+								$scope.projects = projects;
 
-                                projectRepository.findAll(function(success, projects){
-                                    $scope.projects = projects;
+								projectPlanningToolRepository.findAll(function(success, ppts){
+									$scope.projectPlanningTools = ppts;
+
 									setTimeout(() => { $scope.operationState = app.application.ApplicationState.successful; $scope.$apply(); }, configuration.settings.messageBoxDelay);
 								});
 							});
@@ -118,35 +118,6 @@ module app.application {
 			};
 
 
-			/* ppt accounts */
-			$scope.createPPTAccount = function(pptUrl: string, userName: string, password: string, ppt: app.domain.model.ppt.ProjectPlanningTool) {
-				var pptAccount: app.domain.model.ppt.PPTAccount = new app.domain.model.ppt.PPTAccount(
-					authenticationService.currentUser, userName, pptUrl, ppt
-				);
-				pptAccount.pptPassword = password;
-				$scope.operationState = app.application.ApplicationState.saving;
-				pptAccountRepository.add(pptAccount, function(success: boolean, item: app.domain.model.ppt.PPTAccount) {
-					$scope.setOperationFinishState(success);
-				});
-			};
-
-			$scope.updatePPTAccount = function(pptAccount: app.domain.model.ppt.PPTAccount) {
-				// TODO remove this hack after api fix
-				(<any>pptAccount).ppt = 1;
-				$scope.operationState = app.application.ApplicationState.saving;
-				pptAccountRepository.update(pptAccount, function(success, item) {
-					$scope.setOperationFinishState(success);
-				});
-			};
-
-			$scope.removePPTAccount = function(pptAccount: app.domain.model.ppt.PPTAccount) {
-				$scope.operationState = app.application.ApplicationState.saving;
-				pptAccountRepository.remove(pptAccount, function(success){
-					$scope.setOperationFinishState(success);
-				});
-			};
-
-
 			/* processors */
 			$scope.createProcessor = function(newProcessorName: string, newProcessorProject: app.domain.model.core.Project, newProcessorCode: string) {
 				var processor: app.domain.model.core.Processor = new app.domain.model.core.Processor (newProcessorName, newProcessorProject, newProcessorCode);
@@ -191,6 +162,20 @@ module app.application {
                 return null;
 			};
 
+			$scope.updateWithCorrectPPT = function (toUpdatePPTEntity) {
+				toUpdatePPTEntity.ppt = $scope.findPPTInList(toUpdatePPTEntity.ppt);
+			};
+
+			//Finds the correct object instance for the given PPT to select it in the list
+			$scope.findPPTInList = function (expectedPPT:app.domain.model.ppt.ProjectPlanningTool) {
+				for (var index = 0; index < $scope.projectPlanningTools.length; ++index) {
+					if ($scope.projectPlanningTools[index].id == expectedPPT.id) {
+						return $scope.projectPlanningTools[index];
+					}
+				}
+				return expectedPPT;
+			};
+
 			$scope.setOperationFinishState = function(success: boolean) {
 				if(success) {
 					setTimeout(() => {
@@ -201,7 +186,7 @@ module app.application {
 						$scope.operationState = app.application.ApplicationState.failed; $scope.$apply();
 					}, configuration.settings.messageBoxDelay);
 				}
-			}
+			};
 		}
 	}
 }
