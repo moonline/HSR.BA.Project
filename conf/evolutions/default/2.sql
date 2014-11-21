@@ -50,21 +50,13 @@ INSERT INTO MAPPING (ID, REQUESTTEMPLATE, URL, PROJECT_ID, PPT_ID) VALUES (nextv
 ','			"key": "${pptProject}"
 ','		},
 ','		"summary": "${taskTemplate.name}",
-',' 	"description": "${taskTemplate.attributes.description}.
-','
-','Decision: ${decision.name}
-','DKS link: ${decision.self}
-','Attributes:
-','$objecttostring:(decision.attributes, ": ", "
-','")$",
-',' 	"duedate": "${taskTemplate.attributes.dueDate}",
-',' 	"issuetype": {
+','		"description": "${taskTemplate.attributes.description}. \\nDecision: ${decision.name}\\nDKS link: ${decision.self}\\nAttributes:\\n$objectToString:(decision.attributes, ": ", "\\n")$",
+','		$ifNotEmpty:(taskTemplate.attributes.dueDate," "duedate": "${taskTemplate.attributes.dueDate}",")$
+','		"issuetype": {
 ','			"name": "${taskTemplate.attributes.type}"
 ','		},
-',' 	"priority": {
-','			"name": "${taskTemplate.attributes.priority}"
-','		},
-',' 	"assignee": {
+','		$ifNotEmpty:(taskTemplate.attributes.priority, " "priority": {\n"name": "${taskTemplate.attributes.priority}"\n},")$
+','		"assignee": {
 ','			"name": "${taskTemplate.attributes.assignee}"
 ','		},
 ','		"timetracking": {
@@ -84,7 +76,15 @@ INSERT INTO PROCESSOR (ID, CODE, NAME, PROJECT_ID) VALUES (nextval('entity_seq')
 ','		if(index < keys.length-1) { text += separator2&#SEMICOLON }
 ','	})&#SEMICOLON
 ','	return text&#SEMICOLON
-}'),'objecttostring',(SELECT id FROM PROJECT WHERE name='Project'));
+}'),'objectToString',(SELECT id FROM PROJECT WHERE name='Project'));
+
+INSERT INTO PROCESSOR (ID, CODE, NAME, PROJECT_ID) VALUES (nextval('entity_seq'),CONCAT('function(value, structure) {
+','		if(value && structure && value.length > 0) {
+','			return structure&#SEMICOLON
+','		} else {
+','			return ''&#SEMICOLON
+','		}
+}'),'ifNotEmpty',(SELECT id FROM PROJECT WHERE name='Project'));
 
 # --- !Downs
 

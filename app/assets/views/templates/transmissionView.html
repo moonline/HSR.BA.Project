@@ -89,7 +89,8 @@
 				<ul>
 					<li data-ng-repeat="exportRequest in exportRequests">
 						<span>{{exportRequest.taskTemplate.name}} ({{exportRequest.decision.name}}) </span>
-						<span class="error" data-ng-if="exportRequest.exportState === ApplicationState.failed">Transmit failed</span>
+						<span class="error" data-ng-if="exportRequest.exportState === ApplicationState.failed">Transmit failed. Maybe there is an JSON syntax error.
+							Please check your syntax: <a href="http://json.parser.online.fr/">http://json.parser.online.fr/</a></span>
 						<span class="success" data-ng-if="exportRequest.exportState === ApplicationState.success">Transmit successful</span>
 						<pre>{{exportRequest.requestBody}}</pre>
 					</li>
