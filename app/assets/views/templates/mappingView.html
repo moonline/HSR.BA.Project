@@ -54,7 +54,9 @@
 						<dd data-ng-if="currentDksNode.alternatives">
 							<ul>
 								<li data-ng-repeat="option in currentDksNode.alternatives">
-									{{option.name}} [{{option.id}}]
+									<span data-ng-click="setCurrentDksNode(option)">
+										{{option.name}} [{{option.id}}]
+									</span>
 								</li>
 							</ul>
 						</dd>
@@ -70,7 +72,9 @@
 							<button class="action remove" data-ng-click="removeMapping(mapping)"
 								title="Remove mapping "><span class="icon small iconOnly">&Chi;</span>
 							</button>
-							{{mapping.taskTemplate.name}} [{{mapping.taskTemplate.id}}]
+							<span data-ng-click="setCurrentTaskTemplate(mapping.taskTemplate)" title="Edit task template">
+								{{mapping.taskTemplate.name}} [{{mapping.taskTemplate.id}}]
+							</span>
 						</li>
 					</ul>
 				</div>
@@ -87,7 +91,7 @@
 			<div class="taskTemplateList">
 				<ul data-type="list" class="twoColumns">
 					<li data-ng-repeat="template in taskTemplates"
-						data-state="{{template == currentTaskTemplate && 'selected' || '' }}">
+						data-state="{{template.id == currentTaskTemplate.id && 'selected' || '' }}">
 						<button class="action update" data-ng-if="currentDksNode"
 								data-ng-click="mapTaskTemplate(template)"
 								title="Map task template with decision knowledge system element">&lt; map
