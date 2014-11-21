@@ -113,7 +113,10 @@
 						<span class="icon">&#x2b;</span>Create
 					</button>
 				</div>
-				(i) Task Templates can not be deleted! <!--TODO: Explain, why Task Templates cannot be deleted -->
+				<span class="infoBox" title="Task Templates can't be removed because of its relations to DKS nodes (mappings) and exported tasks. Rename Task Templates to reuse it.">
+					<span class="icon info"  style="background: steelblue; color: white; border-radius: 2rem; width: 1.2rem; height: 1.1rem; text-align: center;">&#x2139;</span>
+					How to remove Task Templates?
+				</span>
 			</form>
 
 			<h3 data-ng-if="currentTaskTemplate">{{currentTaskTemplate.name}} [{{currentTaskTemplate.id}}]</h3>
