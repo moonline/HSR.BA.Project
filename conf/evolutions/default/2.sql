@@ -50,7 +50,7 @@ INSERT INTO MAPPING (ID, REQUESTTEMPLATE, URL, PROJECT_ID, PPT_ID) VALUES (nextv
 ','			"key": "${pptProject}"
 ','		},
 ','		"summary": "${taskTemplate.name}",
-','		"description": "${taskTemplate.attributes.description}. \\nDecision: ${decision.name}\\nDKS link: ${decision.self}\\nAttributes:\\n$objectToString:(decision.attributes, ": ", "\\n")$",
+','		"description": "${taskTemplate.attributes.description}. \nDecision: ${decision.name}\nDKS link: ${decision.self}\nAttributes:\n$objectToString:(decision.attributes, ": ", "\n")$",
 ','		$ifNotEmpty:(taskTemplate.attributes.dueDate," "duedate": "${taskTemplate.attributes.dueDate}",")$
 ','		"issuetype": {
 ','			"name": "${taskTemplate.attributes.type}"
