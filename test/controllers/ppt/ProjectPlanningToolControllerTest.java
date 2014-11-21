@@ -275,4 +275,60 @@ public class ProjectPlanningToolControllerTest extends AbstractControllerTest {
 		assertThat(task.getProperties()).hasSize(2);
 	}
 
+	@Test
+	public void createPPTTaskWithoutAnyTaskProperties() throws Throwable {
+		//Setup
+		JPA.withTransaction(TASK_DAO::removeAll);
+		User user = AbstractTestDataCreator.createUserWithTransaction("User 1", "1");
+		TaskTemplate taskTemplate = AbstractTestDataCreator.createTaskTemplateWithTransaction("The Task Template");
+		Project project = AbstractTestDataCreator.createProjectWithTransaction();
+		String baseUrl = "http://localhost:4321";
+		String urlPath = "/testPath";
+		String username = "admin";
+		String password = "1234";
+		String account = AbstractTestDataCreator.createPPTAccountWithTransaction(user, baseUrl, username, password).getId() + "";
+		String contentString = "{\"content\":\"Test content\"}";
+		int resultStatus = 123;
+		JsonNode resultJson = Json.parse("{\"result\":\"Check!\"}");
+
+		WSResponse response = mock(WSResponse.class);
+		when(response.getStatus()).thenReturn(resultStatus);
+		when(response.asJson()).thenReturn(resultJson);
+
+		WSRequestHolder wsURL = spy(WS.url(baseUrl + urlPath));
+		when(wsURL.post(Json.parse(contentString))).thenReturn(F.Promise.promise(() -> response));
+
+		spy(WS.class);
+		when(WS.url(baseUrl + urlPath)).thenReturn(wsURL);
+
+		//Test
+		Result result;
+		result = callAction(routes.ref.ProjectPlanningToolController.createPPTTask(), new FakeRequest().withJsonBody(Json.parse("{\n" +
+				"	\"path\":\"" + urlPath + "\",\n" +
+				"	\"content\":\"" + contentString.replaceAll("\"", "\\\\\\\"") + "\",\n" +
+				"	\"account\":" + account + ",\n" +
+				"	\"taskTemplate\":" + taskTemplate.getId() + ",\n" +
+				"	\"project\":" + project.getId() + ",\n" +
+				"	\"taskProperties\":[]\n" +
+				"}")).withSession(AuthenticationChecker.SESSION_USER_IDENTIFIER, user.getId() + ""));
+
+		//Verification
+		assertThat(status(result)).isEqualTo(resultStatus);
+		assertCheckJsonResponse(result, resultJson);
+
+		verifyStatic(atLeastOnce());
+		WS.url(baseUrl + urlPath);
+		verify(wsURL).setAuth(username, password);
+
+		Task task = JPA.withTransaction(() -> TASK_DAO.readAll().get(0));
+		assertThat(task.getCreatedFrom().getId()).isEqualTo(taskTemplate.getId());
+		assertThat(task.getFinalRequestContent()).isEqualTo(contentString);
+		assertThat(task.getFinalRequestUrl()).isEqualTo(baseUrl + urlPath);
+		assertThat(Json.stringify(task.getFinalResponseContent())).isEqualTo("{\"result\":\"Check!\"}");
+		assertThat(task.getFinalResponseStatus()).isEqualTo(resultStatus);
+		assertThat(task.getProject().getId()).isEqualTo(project.getId());
+		assertThat(task.getProperties()).isEmpty();
+	}
+
+
 }

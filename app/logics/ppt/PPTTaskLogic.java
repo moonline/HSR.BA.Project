@@ -15,6 +15,7 @@ import play.libs.Json;
 import play.libs.ws.WS;
 import play.libs.ws.WSResponse;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -111,8 +112,7 @@ public class PPTTaskLogic {
 		public JsonNode content;
 		@Constraints.Required
 		public Project project;
-		@Constraints.Required
-		public List<TaskPropertyValue> taskProperties;
+		public List<TaskPropertyValue> taskProperties = new ArrayList<>(0);
 
 		public void setTaskTemplate(TaskTemplate taskTemplate) {
 			this.taskTemplate = taskTemplate;
