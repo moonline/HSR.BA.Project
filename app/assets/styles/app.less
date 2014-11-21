@@ -326,13 +326,16 @@ select {
  */
 [data-ng-click] { cursor: pointer; }
 
-.success { background: seagreen; color: white; font-weight: bold; padding: 0.5rem; } //TODO replace by messagebox
-.error { background: maroon; color: white; font-weight: bold; } //TODO replace by messagebox
+.success { background: seagreen; color: white; font-weight: bold; padding: 0.5rem; }
+.error { background: maroon; color: white; font-weight: bold; }
+
+.areaContent { position: relative; }
 
 .messagebox {
+	position: absolute; width: 100%; box-sizing: content-box;
 	padding: 0.5rem; display: block; color: white; font-weight: bold;
 
-	&.error { background: maroon; }
-	&.pending, &.saving { background: seagreen; }
-	&.success { background: seagreen; }
+	&.error { background: rgba(128, 0, 0, 0.87); }
+	&.pending, &.saving { background: rgba(0, 128, 128, 0.87); }
+	&.success { background: rgba(46, 139, 87, 0.87); }
 }
