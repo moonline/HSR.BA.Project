@@ -8,7 +8,7 @@
 				<span class="messagebox pending" data-ng-if="problemsLoadingStatus === ApplicationState.pending">Loading ...</span>
 
 				<ul data-type="list">
-					<li data-ng-repeat="problem in problems">
+					<li data-ng-repeat="problem in problems  | orderBy:'name'">
 						<div class="listElement" data-ng-click="setCurrentDksNode(problem)" data-state="{{problem == currentDksNode && 'selected' || '' }}">
 							<button class="action edit" title="View Details"><span class="icon iconOnly">&Xi;</span></button>
 							<span class="name"><span class="typeDeclaration" title="Problem Template from DKS">&lt;PT&gt;</span> {{problem.name}}</span>
@@ -90,7 +90,7 @@
 			</div>
 			<div class="taskTemplateList">
 				<ul data-type="list" class="twoColumns">
-					<li data-ng-repeat="template in taskTemplates"
+					<li data-ng-repeat="template in taskTemplates | orderBy:'name'"
 						data-state="{{template.id == currentTaskTemplate.id && 'selected' || '' }}">
 						<button class="action update" data-ng-if="currentDksNode"
 								data-ng-click="mapTaskTemplate(template)"
