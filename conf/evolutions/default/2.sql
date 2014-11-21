@@ -21,27 +21,51 @@ INSERT INTO TASKPROPERTY (ID, NAME) VALUES
 
 -- Creating Task Templates
 INSERT INTO TASKTEMPLATE (ID, NAME, PARENT_ID) VALUES (nextval('entity_seq'), 'Define criterions', null);
-INSERT INTO TASKPROPERTYVALUE(ID, "VALUE", PROPERTY_ID, TASK_ID) VALUES (nextval('entity_seq'),'Project Planner',(SELECT id FROM TASKPROPERTY WHERE name='Assignee'),(SELECT id FROM TASKTEMPLATE WHERE name='Define criterions'));
-INSERT INTO TASKPROPERTYVALUE(ID, "VALUE", PROPERTY_ID, TASK_ID) VALUES (nextval('entity_seq'),'Task',           (SELECT id FROM TASKPROPERTY WHERE name='Type'    ),(SELECT id FROM TASKTEMPLATE WHERE name='Define criterions'));
-INSERT INTO DKSMAPPING(ID, TASKTEMPLATE_ID, DKSNODE) VALUES (nextval('entity_seq'), (SELECT id FROM TASKTEMPLATE WHERE name='Define criterions'),'3');
+INSERT INTO TASKPROPERTYVALUE(ID, "VALUE", PROPERTY_ID, TASK_ID) VALUES (nextval('entity_seq'),'Project Planner',
+	(SELECT id FROM TASKPROPERTY WHERE name='Assignee'),(SELECT id FROM TASKTEMPLATE WHERE name='Define criterions'));
+INSERT INTO TASKPROPERTYVALUE(ID, "VALUE", PROPERTY_ID, TASK_ID) VALUES (nextval('entity_seq'),'Task',
+	(SELECT id FROM TASKPROPERTY WHERE name='Type'    ),(SELECT id FROM TASKTEMPLATE WHERE name='Define criterions'));
+INSERT INTO DKSMAPPING(ID, TASKTEMPLATE_ID, DKSNODE) VALUES (nextval('entity_seq'),
+	(SELECT id FROM TASKTEMPLATE WHERE name='Define criterions'),'3');
+
+
+INSERT INTO TASKTEMPLATE (ID, NAME, PARENT_ID) VALUES (nextval('entity_seq'), 'Install DB', null);
+INSERT INTO TASKPROPERTYVALUE(ID, "VALUE", PROPERTY_ID, TASK_ID) VALUES (nextval('entity_seq'),'DB Developer',
+	(SELECT id FROM TASKPROPERTY WHERE name='Assignee'),(SELECT id FROM TASKTEMPLATE WHERE name='Install DB'));
+INSERT INTO TASKPROPERTYVALUE(ID, "VALUE", PROPERTY_ID, TASK_ID) VALUES (nextval('entity_seq'),'Task',
+	(SELECT id FROM TASKPROPERTY WHERE name='Type'    ),(SELECT id FROM TASKTEMPLATE WHERE name='Install DB'));
+
+INSERT INTO TASKTEMPLATE (ID, NAME, PARENT_ID) VALUES (nextval('entity_seq'), 'Install Server', null);
+INSERT INTO TASKPROPERTYVALUE(ID, "VALUE", PROPERTY_ID, TASK_ID) VALUES (nextval('entity_seq'),'Developer',
+	(SELECT id FROM TASKPROPERTY WHERE name='Assignee'),(SELECT id FROM TASKTEMPLATE WHERE name='Install Server'));
+INSERT INTO TASKPROPERTYVALUE(ID, "VALUE", PROPERTY_ID, TASK_ID) VALUES (nextval('entity_seq'),'Task',
+	(SELECT id FROM TASKPROPERTY WHERE name='Type'    ),(SELECT id FROM TASKTEMPLATE WHERE name='Install Server'));
 
 
 INSERT INTO TASKTEMPLATE (ID, NAME, PARENT_ID) VALUES (nextval('entity_seq'), 'Rank criterions', null);
-INSERT INTO TASKPROPERTYVALUE(ID, "VALUE", PROPERTY_ID, TASK_ID) VALUES (nextval('entity_seq'),'Customer',       (SELECT id FROM TASKPROPERTY WHERE name='Assignee'),(SELECT id FROM TASKTEMPLATE WHERE name='Rank criterions'));
-INSERT INTO TASKPROPERTYVALUE(ID, "VALUE", PROPERTY_ID, TASK_ID) VALUES (nextval('entity_seq'),'Task',           (SELECT id FROM TASKPROPERTY WHERE name='Type'    ),(SELECT id FROM TASKTEMPLATE WHERE name='Rank criterions'));
-INSERT INTO DKSMAPPING(ID, TASKTEMPLATE_ID, DKSNODE) VALUES (nextval('entity_seq'), (SELECT id FROM TASKTEMPLATE WHERE name='Rank criterions'),'3'), (nextval('entity_seq'), (SELECT id FROM TASKTEMPLATE WHERE name='Rank criterions'),'6');
+INSERT INTO TASKPROPERTYVALUE(ID, "VALUE", PROPERTY_ID, TASK_ID) VALUES (nextval('entity_seq'),'Customer',
+	(SELECT id FROM TASKPROPERTY WHERE name='Assignee'),(SELECT id FROM TASKTEMPLATE WHERE name='Rank criterions'));
+INSERT INTO TASKPROPERTYVALUE(ID, "VALUE", PROPERTY_ID, TASK_ID) VALUES (nextval('entity_seq'),'Task',
+	(SELECT id FROM TASKPROPERTY WHERE name='Type'    ),(SELECT id FROM TASKTEMPLATE WHERE name='Rank criterions'));
+INSERT INTO DKSMAPPING(ID, TASKTEMPLATE_ID, DKSNODE) VALUES (nextval('entity_seq'),
+	(SELECT id FROM TASKTEMPLATE WHERE name='Rank criterions'),'3'), (nextval('entity_seq'), (SELECT id FROM TASKTEMPLATE WHERE name='Rank criterions'),'6');
 
 INSERT INTO TASKTEMPLATE (ID, NAME, PARENT_ID) VALUES (nextval('entity_seq'), 'Define criterion values', null);
-INSERT INTO TASKPROPERTYVALUE(ID, "VALUE", PROPERTY_ID, TASK_ID) VALUES (nextval('entity_seq'),'Project Planner',(SELECT id FROM TASKPROPERTY WHERE name='Assignee'),(SELECT id FROM TASKTEMPLATE WHERE name='Define criterion values'));
-INSERT INTO TASKPROPERTYVALUE(ID, "VALUE", PROPERTY_ID, TASK_ID) VALUES (nextval('entity_seq'),'Task',           (SELECT id FROM TASKPROPERTY WHERE name='Type'    ),(SELECT id FROM TASKTEMPLATE WHERE name='Define criterion values'));
-INSERT INTO TASKPROPERTYVALUE(ID, "VALUE", PROPERTY_ID, TASK_ID) VALUES (nextval('entity_seq'),'Rank every item for every criterion.',           (SELECT id FROM TASKPROPERTY WHERE name='Description'),(SELECT id FROM TASKTEMPLATE WHERE name='Define criterion values'));
-INSERT INTO DKSMAPPING(ID, TASKTEMPLATE_ID, DKSNODE) VALUES (nextval('entity_seq'), (SELECT id FROM TASKTEMPLATE WHERE name='Define criterion values'),'3');
+INSERT INTO TASKPROPERTYVALUE(ID, "VALUE", PROPERTY_ID, TASK_ID) VALUES (nextval('entity_seq'),'Project Planner',
+	(SELECT id FROM TASKPROPERTY WHERE name='Assignee'),(SELECT id FROM TASKTEMPLATE WHERE name='Define criterion values'));
+INSERT INTO TASKPROPERTYVALUE(ID, "VALUE", PROPERTY_ID, TASK_ID) VALUES (nextval('entity_seq'),'Task',
+	(SELECT id FROM TASKPROPERTY WHERE name='Type'    ),(SELECT id FROM TASKTEMPLATE WHERE name='Define criterion values'));
+INSERT INTO TASKPROPERTYVALUE(ID, "VALUE", PROPERTY_ID, TASK_ID) VALUES (nextval('entity_seq'),'Rank every item for every criterion.',
+	(SELECT id FROM TASKPROPERTY WHERE name='Description'),(SELECT id FROM TASKTEMPLATE WHERE name='Define criterion values'));
+INSERT INTO DKSMAPPING(ID, TASKTEMPLATE_ID, DKSNODE) VALUES (nextval('entity_seq'),
+	(SELECT id FROM TASKTEMPLATE WHERE name='Define criterion values'),'3');
 
 INSERT INTO TASKTEMPLATE (ID, NAME, PARENT_ID) VALUES (nextval('entity_seq'), 'Hold decision meeting', null);
-INSERT INTO TASKPROPERTYVALUE(ID, "VALUE", PROPERTY_ID, TASK_ID) VALUES (nextval('entity_seq'),'Task',           (SELECT id FROM TASKPROPERTY WHERE name='Type'    ),(SELECT id FROM TASKTEMPLATE WHERE name='Hold decision meeting'));
+INSERT INTO TASKPROPERTYVALUE(ID, "VALUE", PROPERTY_ID, TASK_ID) VALUES (nextval('entity_seq'),'Task',
+	(SELECT id FROM TASKPROPERTY WHERE name='Type'    ),(SELECT id FROM TASKTEMPLATE WHERE name='Hold decision meeting'));
 
-INSERT INTO TASKTEMPLATE (ID, NAME, PARENT_ID) VALUES (nextval('entity_seq'), 'Invite to decision meeting', (SELECT id FROM TASKTEMPLATE WHERE name='Hold decision meeting'));
-INSERT INTO TASKPROPERTYVALUE(ID, "VALUE", PROPERTY_ID, TASK_ID) VALUES (nextval('entity_seq'),'Sub Task',       (SELECT id FROM TASKPROPERTY WHERE name='Type'    ),(SELECT id FROM TASKTEMPLATE WHERE name='Hold decision meeting'));
+INSERT INTO TASKTEMPLATE (ID, NAME, PARENT_ID) VALUES (nextval('entity_seq'), 'Invite to decision meeting',
+	(SELECT id FROM TASKTEMPLATE WHERE name='Hold decision meeting'));
 
 -- Creating Mappings / Request templates
 INSERT INTO MAPPING (ID, REQUESTTEMPLATE, URL, PROJECT_ID, PPT_ID) VALUES (nextval('entity_seq'),CONCAT('{
@@ -49,16 +73,19 @@ INSERT INTO MAPPING (ID, REQUESTTEMPLATE, URL, PROJECT_ID, PPT_ID) VALUES (nextv
 ','		"project": {
 ','			"key": "${pptProject}"
 ','		},
+','		$!ifElse:(parentRequestData.key," "parent": {
+','			"key": "$!{parentRequestData.key}"
+','		}\, ", "")$
 ','		"summary": "${taskTemplate.name}",
-','		"description": "${taskTemplate.attributes.description}. \nDecision: ${decision.name}\nDKS link: ${decision.self}\nAttributes:\n$objectToString:(decision.attributes, ": ", "\n")$",
-','		$ifNotEmpty:(taskTemplate.attributes.dueDate," "duedate": "${taskTemplate.attributes.dueDate}",")$
+','		"description": "${taskTemplate.attributes.description}. \nDecision: ${node.name}\nDKS link: ${node.self}\nAttributes:\n$objectToString:(node.attributes, ": ", "\n")$",
+','		$ifElse:(taskTemplate.attributes.dueDate," "duedate": "${taskTemplate.attributes.dueDate}"\, ", "")$
 ','		"issuetype": {
-','			"name": "${taskTemplate.attributes.type}"
+','			"name": "$!ifElse:(parentRequestData.key,"Sub-task", "${taskTemplate.attributes.type}")$"
 ','		},
-','		$ifNotEmpty:(taskTemplate.attributes.priority, " "priority": {\n"name": "${taskTemplate.attributes.priority}"\n},")$
-','		"assignee": {
+','		$ifElse:(taskTemplate.attributes.priority, " "priority": {\n"name": "${taskTemplate.attributes.priority}"\n}\, ", "")$
+','		$mapExistingAssignees:(taskTemplate.attributes.assignee, "Project Planner:admin|Customer:admin|Architect:admin"," "assignee": {
 ','			"name": "${taskTemplate.attributes.assignee}"
-','		},
+','		}\, ")$
 ','		"timetracking": {
 ','			"originalEstimate": "${taskTemplate.attributes.remainingEstimate}"
 ','		}
@@ -78,13 +105,32 @@ INSERT INTO PROCESSOR (ID, CODE, NAME, PROJECT_ID) VALUES (nextval('entity_seq')
 ','	return text&#SEMICOLON
 }'),'objectToString',(SELECT id FROM PROJECT WHERE name='Project'));
 
-INSERT INTO PROCESSOR (ID, CODE, NAME, PROJECT_ID) VALUES (nextval('entity_seq'),CONCAT('function(value, structure) {
-','		if(value && structure && value.length > 0) {
-','			return structure&#SEMICOLON
+INSERT INTO PROCESSOR (ID, CODE, NAME, PROJECT_ID) VALUES (nextval('entity_seq'),CONCAT('function(condition, ifField, elseField) {
+','		if(condition && ifField) {
+','			return ifField&#SEMICOLON
 ','		} else {
-','			return ''&#SEMICOLON
+','			return elseField&#SEMICOLON
 ','		}
-}'),'ifNotEmpty',(SELECT id FROM PROJECT WHERE name='Project'));
+}'),'ifElse',(SELECT id FROM PROJECT WHERE name='Project'));
+
+INSERT INTO PROCESSOR (ID, CODE, NAME, PROJECT_ID) VALUES (nextval('entity_seq'),CONCAT('function(assignee, existingAssignees, assigneeJSON) {
+','		if(assignee && existingAssignees && assigneeJSON) {
+','			var assigneeMappingList = existingAssignees.split("|")&#SEMICOLON
+','			var assigneeMapping = {}&#SEMICOLON
+','			for(var ami in assigneeMappingList) {
+','				var assigneeName = assigneeMappingList[ami].split(":")[0].trim()&#SEMICOLON
+','				assigneeMapping[assigneeName] = assigneeMappingList[ami].split(":")[1].trim()&#SEMICOLON
+','			}
+','			if(assigneeMapping[assignee]) {
+','				return assigneeJSON.replace(assignee, assigneeMapping[assignee])&#SEMICOLON
+','			} else {
+','				return ""&#SEMICOLON
+','			}
+','		} else {
+','			return ""&#SEMICOLON
+','		}
+}'),'mapExistingAssignees',(SELECT id FROM PROJECT WHERE name='Project'));
+
 
 # --- !Downs
 

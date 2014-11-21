@@ -220,10 +220,12 @@ module test.logic.service {
 
 			it("Process template", function() {
 				var template: string = "{\
-	\"assignee\": \"$concater:(var1, \":\", var2)$\",\
+	\"tula\": \"$concater:(var1, \":\", var2)$\",\
 	\"name\": \"$listConcater:(list,\"|\")$\",\
-	\"assignee\": \"$concater:(var1, \":\", var2)$\",\
+	\"iwo\": \"$concater:(var1, \":\", var2)$\",\
+	$mapExistingAssignees:(taskTemplate.assignee, \"Architect:bamboo|Project Manager:admin\", \"\"assignee\": \"${taskTemplate.assignee}\"\\,\")$\
 	\"title\": \"${title.name}\",\
+	$ifElse:(var5, \"\"conditional\": \"${title.name}\"\\,\", \"\")$\
 	\"stakeHolder\": \"$concater:(title.name, \": \", ${varName.path})$\"\
 }";
 				var data:any = {
@@ -236,7 +238,10 @@ module test.logic.service {
 						name: 'auto',
 						type: 'gross'
 					},
-					list: [ 'eins', 'zwei', 'drei', 'vier']
+					list: [ 'eins', 'zwei', 'drei', 'vier'],
+					taskTemplate: {
+						assignee: 'Project Manager'
+					}
 				};
 				var processors: { [index:string]: any} = {
 					concater: function(text1, text2, text3) {
@@ -248,29 +253,56 @@ module test.logic.service {
 							result += (li < list.length-1) ? list[li].toString()+gap : list[li].toString();
 						}
 						return result;
+					},
+					ifElse: function(condition, ifValue, elseValue) {
+						if(condition && ifValue) {
+							return ifValue;
+						} else {
+							return elseValue;
+						}
+					},
+					mapExistingAssignees: function(assignee, existingAssignees, assigneeJSON) {
+						if(assignee && existingAssignees && assigneeJSON) {
+							var assigneeMappingList = existingAssignees.split("|");
+							var assigneeMapping = {};
+							for(var ami in assigneeMappingList) {
+								var assigneeName = assigneeMappingList[ami].split(":")[0].trim();
+								assigneeMapping[assigneeName] = assigneeMappingList[ami].split(":")[1].trim();
+							}
+							if(assigneeMapping[assignee]) {
+								return assigneeJSON.replace(assignee, assigneeMapping[assignee]);
+							} else {
+								return "";
+							}
+						} else {
+							return "";
+						}
 					}
 				};
 
 				var processorService: app.service.TemplateProcesser = new app.service.TemplateProcesser(data, template, processors);
 				var renderedTemplate = processorService.process();
 				var expectedTemplate: string = "{\
-	\"assignee\": \"irgendwas:nochwas\",\
+	\"tula\": \"irgendwas:nochwas\",\
 	\"name\": \"eins|zwei|drei|vier\",\
-	\"assignee\": \"irgendwas:nochwas\",\
+	\"iwo\": \"irgendwas:nochwas\",\
+	\"assignee\": \"admin\",\
 	\"title\": \"auto\",\
+	\
 	\"stakeHolder\": \"auto: gross\"\
 }";
 
 				expect(renderedTemplate).toEqual(expectedTemplate);
 			});
 
-			it("Process template 2 times using secondary variables", function() {
+			it("Process template 2 times using secondary variables & processors", function() {
 				var template: string = "{\
 	\"assignee\": \"$concater:(var1, \":\", var2)$\",\
 	\"name\": \"$listConcater:(list,\"|\")$\",\
 	\"assignee\": \"$concater:(var1, \":\", var2)$\",\
 	\"title\": \"${title.name}\",\
 	\"parent\": \"$!{lastRequestData.id}\",\
+	\"parentKey\": \"$!concater:(lastRequestData.id, \"-\",lastRequestData.name)$\",\
 	\"stakeHolder\": \"$concater:(title.name, \": \", ${varName.path})$\"\
 }";
 				var data:any = {
@@ -306,23 +338,25 @@ module test.logic.service {
 	\"assignee\": \"irgendwas:nochwas\",\
 	\"title\": \"auto\",\
 	\"parent\": \"$!{lastRequestData.id}\",\
+	\"parentKey\": \"$!concater:(lastRequestData.id, \"-\",lastRequestData.name)$\",\
 	\"stakeHolder\": \"auto: gross\"\
 }";
 
 				expect(renderedTemplate).toEqual(expectedTemplate);
 
 				var secondData = {
-					lastRequestData: { id: 5, name: "Auto 5" }
+					lastRequestData: { id: 5, name: "Auto lila" }
 				};
 
-				var secondProcessorService: app.service.TemplateProcesser = new app.service.TemplateProcesser(secondData, '', {});
-				var renderedExportTemplate = secondProcessorService.parseSecondaryVariables(expectedTemplate);
+				var secondProcessorService: app.service.TemplateProcesser = new app.service.TemplateProcesser(secondData, expectedTemplate, processors);
+				var renderedExportTemplate = secondProcessorService.processSecondary();
 				var expectedExportTemplate: string = "{\
 	\"assignee\": \"irgendwas:nochwas\",\
 	\"name\": \"eins|zwei|drei|vier\",\
 	\"assignee\": \"irgendwas:nochwas\",\
 	\"title\": \"auto\",\
 	\"parent\": \"5\",\
+	\"parentKey\": \"5-Auto lila\",\
 	\"stakeHolder\": \"auto: gross\"\
 }";
 

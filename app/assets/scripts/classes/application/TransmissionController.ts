@@ -44,7 +44,7 @@ module app.application {
 			$scope.decisionMappings = {};
 			$scope.pptAccounts = [];
 			$scope.requestTemplates = [];
-			$scope.exportDecisions = {};
+			$scope.transmitNodes = {};
 			$scope.exportRequests = [];
 
 			var processors: { [index: string]: any } = {};
@@ -213,6 +213,7 @@ module app.application {
 						};
 					decisionGroup = $scope.decisionMappings[dgKey];
 
+					// decisions
 					Object.keys(decisionGroup.decisions).forEach(function(deKey) {
 						var decision:app.domain.model.dks.Decision = decisionGroup.decisions[deKey].decision;
 						var taskTemplatesToExport = decisionGroup.decisions[deKey].taskTemplatesToExport;
@@ -227,13 +228,14 @@ module app.application {
 									mapping.taskTemplate['attributes'][taskPropertyValue.property.name.toLowerCase()] = taskPropertyValue.value;
 								});
 
-								if(!$scope.exportDecisions[deKey]) {
-									$scope.exportDecisions[deKey] = { decision: decision, mappings: []};
+								if(!$scope.transmitNodes[deKey]) {
+									$scope.transmitNodes[deKey] = { node: decision, type: app.domain.model.dks.Decision, mappings: [], subNodes: {} };
 								}
-								$scope.exportDecisions[deKey].mappings.push(mapping);
+								$scope.transmitNodes[deKey].mappings.push(mapping);
 							}
 						});
 
+						// alternatives
 						Object.keys(decisionGroup.decisions[deKey].alternatives).forEach(function(aeKey) {
 							var alternative: app.domain.model.dks.Alternative = decisionGroup.decisions[deKey].alternatives[aeKey].alternative;
 
@@ -249,23 +251,33 @@ module app.application {
 										});
 									}
 
-									if(!$scope.exportDecisions[aeKey]) {
-										$scope.exportDecisions[aeKey] = { decision: alternative, mappings: [] };
+									if($scope.transmitNodes[deKey]) {
+										if(!$scope.transmitNodes[deKey].subNodes[aeKey]) {
+											$scope.transmitNodes[deKey].subNodes[aeKey] = { node: alternative, type: app.domain.model.dks.Option, mappings: []}
+										}
+										$scope.transmitNodes[deKey].subNodes[aeKey].mappings.push(mapping);
+									} else {
+										if(!$scope.transmitNodes[aeKey]) {
+											$scope.transmitNodes[aeKey] = { node: alternative, type: app.domain.model.dks.Option, mappings: [], subNodes: {} };
+										}
+										$scope.transmitNodes[aeKey].mappings.push(mapping);
 									}
-									$scope.exportDecisions[aeKey].mappings.push(mapping);
 								}
 							});
 						});
 					});
 				});
 
-				Object.keys($scope.exportDecisions).forEach(function(dKey){
-					var decision = $scope.exportDecisions[dKey].decision;
-					Object.keys($scope.exportDecisions[dKey].mappings).forEach(function(tKey){
-						var mapping = $scope.exportDecisions[dKey].mappings[tKey];
+				// parse templates
+				Object.keys($scope.transmitNodes).forEach(function(dKey){
+					var node = $scope.transmitNodes[dKey].node;
+					var exportRequest;
+
+					Object.keys($scope.transmitNodes[dKey].mappings).forEach(function(tKey){
+						var mapping = $scope.transmitNodes[dKey].mappings[tKey];
 
 						var exportDecisionData = {
-							decision: decision,
+							node: node,
 							taskTemplate: mapping.taskTemplate,
 							currentUser: authenticationService.loggedInUser,
 							project: $scope.currentProject,
@@ -275,39 +287,79 @@ module app.application {
 
 						var templateProcessor = new app.service.TemplateProcesser(exportDecisionData, $scope.currentRequestTemplate.requestBody, processors);
 						var renderedTemplate = templateProcessor.process();
-						$scope.exportRequests.push({
+						exportRequest = {
 							requestBody: renderedTemplate,
-							decision: decision,
+							node: node,
 							taskTemplate: mapping.taskTemplate,
 							exportState: app.application.ApplicationState.waiting
+						};
+						$scope.exportRequests.push(exportRequest);
+					});
+
+					Object.keys($scope.transmitNodes[dKey].subNodes).forEach(function(aKey){
+						var subNode = $scope.transmitNodes[dKey].subNodes[aKey].node;
+
+						Object.keys($scope.transmitNodes[dKey].subNodes[aKey].mappings).forEach(function(atKey){
+							var mapping = $scope.transmitNodes[dKey].subNodes[aKey].mappings[atKey];
+
+							var exportDecisionData = {
+								node: subNode,
+								taskTemplate: mapping.taskTemplate,
+								currentUser: authenticationService.loggedInUser,
+								project: $scope.currentProject,
+								pptProject: $scope.pptProject,
+								mappings: $scope.decisionMappings
+							};
+
+							var templateProcessor = new app.service.TemplateProcesser(exportDecisionData, $scope.currentRequestTemplate.requestBody, processors);
+							var renderedTemplate = templateProcessor.process();
+
+							if(!exportRequest.subRequests) { exportRequest.subRequests = []; }
+							exportRequest.subRequests.push({
+								requestBody: renderedTemplate,
+								node: subNode,
+								taskTemplate: mapping.taskTemplate,
+								exportState: app.application.ApplicationState.waiting
+							});
 						});
 					});
 				});
 			};
 
 			$scope.transmit = function() {
-				$scope.transmitOne($scope.exportRequests, 0);
+				$scope.transmitOne($scope.exportRequests, 0, null);
 			};
 
 			// Angular mixes request at near the same time, so serialize them
-			$scope.transmitOne = function(exportRequests, index) {
+			$scope.transmitOne = function(exportRequests, index, subIndex) {
 				if(index < exportRequests.length) {
-					var exportRequest = exportRequests[index];
-
-					if(index >= 1 && exportRequests[index-1].requestData) {
-						var templateProcessor = new app.service.TemplateProcesser({ lastRequestData: exportRequests[index-1].requestData }, '', {});
-						exportRequest.requestBody = templateProcessor.parseSecondaryVariables(exportRequest.requestBody);
+					var exportRequest;
+					if(subIndex == null) {
+						var exportRequest = exportRequests[index];
+					} else {
+						var exportRequest = exportRequests[index].subRequests[subIndex];
 					}
 
+					var templateProcessor = new app.service.TemplateProcesser({ parentRequestData: exportRequests[index].requestData || null }, exportRequest.requestBody, processors);
+					console.log(exportRequests[index].requestData);
+					exportRequest.requestBody = templateProcessor.processSecondary();
+					console.log(exportRequest.requestBody);
+
+					var nextRequest = index+1;
+					var nextSubRequest:number = null;
+					if(exportRequests[index].subRequests && subIndex < exportRequests[index].subRequests.length-1) {
+						nextRequest = index;
+						nextSubRequest = (subIndex == null) ? 0 : subIndex+1;
+					}
 					projectPlanningToolRepository.transmitTasks(exportRequest, $scope.targetPPTAccount, $scope.currentRequestTemplate.url, $scope.currentProject, function(success, data) {
 						if(success) {
 							exportRequest.exportState = app.application.ApplicationState.successful;
 							exportRequest.requestData = data;
-							$scope.transmitOne(exportRequests, index+1);
+							$scope.transmitOne(exportRequests, nextRequest, nextSubRequest);
 						} else {
 							exportRequest.exportState = app.application.ApplicationState.failed;
 							exportRequest.requestData = data;
-							$scope.transmitOne(exportRequests, index+1);
+							$scope.transmitOne(exportRequests, nextRequest, nextSubRequest);
 						}
 					});
 				}
