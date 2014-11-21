@@ -60,7 +60,7 @@ public class ProjectPlanningToolControllerTest extends AbstractControllerTest {
 		when(response.asJson()).thenReturn(resultJson);
 
 		WSRequestHolder wsURL = spy(WS.url(baseUrl + urlPath));
-		when(wsURL.post(Json.toJson(contentString))).thenReturn(F.Promise.promise(() -> response));
+		when(wsURL.post(Json.parse(contentString))).thenReturn(F.Promise.promise(() -> response));
 
 		spy(WS.class);
 		when(WS.url(baseUrl + urlPath)).thenReturn(wsURL);
@@ -100,7 +100,7 @@ public class ProjectPlanningToolControllerTest extends AbstractControllerTest {
 		String username = "admin";
 		String password = "1234";
 		String account = AbstractTestDataCreator.createPPTAccountWithTransaction(user, baseUrl, username, password).getId() + "";
-		String contentString = "{\"content\": \"Test content\"}";
+		String contentString = "{\"content\":\"Test content\"}";
 		int resultStatus = 123;
 		JsonNode resultJson = Json.parse("{\"result\":\"Check!\"}");
 
@@ -109,7 +109,7 @@ public class ProjectPlanningToolControllerTest extends AbstractControllerTest {
 		when(response.asJson()).thenReturn(resultJson);
 
 		WSRequestHolder wsURL = spy(WS.url(baseUrl + urlPath));
-		when(wsURL.post(Json.toJson(contentString))).thenReturn(F.Promise.promise(() -> response));
+		when(wsURL.post(Json.parse(contentString))).thenReturn(F.Promise.promise(() -> response));
 
 		spy(WS.class);
 		when(WS.url(baseUrl + urlPath)).thenReturn(wsURL);
@@ -145,9 +145,9 @@ public class ProjectPlanningToolControllerTest extends AbstractControllerTest {
 
 		Task task = JPA.withTransaction(() -> TASK_DAO.readAll().get(0));
 		assertThat(task.getCreatedFrom().getId()).isEqualTo(taskTemplate.getId());
-		assertThat(task.getFinalRequestContent()).isEqualTo("\"{\\\"content\\\": \\\"Test content\\\"}\"");
+		assertThat(task.getFinalRequestContent()).isEqualTo(contentString);
 		assertThat(task.getFinalRequestUrl()).isEqualTo(baseUrl + urlPath);
-		assertThat(Json.stringify(task.getFinalResponseContent())).isEqualTo("\"{\\\"result\\\":\\\"Check!\\\"}\"");
+		assertThat(Json.stringify(task.getFinalResponseContent())).isEqualTo("{\"result\":\"Check!\"}");
 		assertThat(task.getFinalResponseStatus()).isEqualTo(resultStatus);
 		assertThat(task.getProject().getId()).isEqualTo(project.getId());
 		assertThat(task.getProperties()).hasSize(2);
@@ -167,7 +167,7 @@ public class ProjectPlanningToolControllerTest extends AbstractControllerTest {
 		String username = "admin";
 		String password = "1234";
 		String account = AbstractTestDataCreator.createPPTAccountWithTransaction(user, baseUrl, username, password).getId() + "";
-		String contentString = "{\"content\": \"Test content\"}";
+		String contentString = "{\"content\":\"Test content\"}";
 
 		//Test
 		Result result = callActionWithUser(routes.ref.ProjectPlanningToolController.createPPTTask(), user, postData("path", urlPath, "content", contentString, "account", account, "taskTemplate", taskTemplate.getId() + "", "project", project.getId() + "", "taskProperties[0]", taskProperty1.getId() + "-A value", "taskProperties[1]", taskProperty2.getId() + "-Another value"));
@@ -190,7 +190,7 @@ public class ProjectPlanningToolControllerTest extends AbstractControllerTest {
 		String username = "admin";
 		String password = "1234";
 		String account = AbstractTestDataCreator.createPPTAccountWithTransaction(user, baseUrl, username, password).getId() + "";
-		String contentString = "{\"content\": \"Test content\"}";
+		String contentString = "{\"content\":\"Test content\"}";
 
 		//Test
 		Result result = callActionWithUser(routes.ref.ProjectPlanningToolController.createPPTTask(), user, postData("path", urlPath, "content", contentString, "account", account, "taskTemplate", taskTemplate.getId() + "", "project", project.getId() + "", "taskProperties[0]", taskProperty1.getId() + "-A value", "taskProperties[1]", taskProperty2.getId() + "-Another value"));
@@ -211,6 +211,68 @@ public class ProjectPlanningToolControllerTest extends AbstractControllerTest {
 				"}]}"));
 	}
 
+	@Test
+	public void createPPTTaskWithClientExampleRequest() throws Throwable {
+		//Setup
+		User user = AbstractTestDataCreator.createUserWithTransaction("User 1", "1");
+		String url = "http://localhost:9920/rest/api/2/issue";
+		Long account = AbstractTestDataCreator.createPPTAccountWithTransaction(user, "http://localhost:9920", "admin", "admin").getId();
+		JsonNode requestContent = Json.parse("{\n\t\"fields\": {\n\t\t\"project\": {\n\t\t\t\"key\": \"TEST\"\n\t\t},\n\t\t\"summary\": \"Define criterions\",\n \t\"description\": \".\\n\\nDecision: Session State Management\\nDKS link: http://localhost:9940/element/14\\nAttributes:\\nRevision Date: 2016-11-11\\nViewpoint: Scenario\\nIntellectual Property Rights: Unrestricted\\nDue Date: 2014-12-24\\nProject Stage: Inception\\nOrganisational Reach: Project\\nStakeholder Roles: Any\\nOwner Role: Lead Architect\",\n \t\"duedate\": \"\",\n \t\"issuetype\": {\n\t\t\t\"name\": \"Task\"\n\t\t},\n \t\"priority\": {\n\t\t\t\"name\": \"\"\n\t\t},\n \t\"assignee\": {\n\t\t\t\"name\": \"Project Planner\"\n\t\t},\n\t\t\"timetracking\": {\n\t\t\t\"originalEstimate\": \"\"\n\t\t}\n\t}\n}");
+		int resultStatus = 123;
+		JsonNode resultJson = Json.parse("{\"result\":\"Check!\"}");
 
+		WSResponse response = mock(WSResponse.class);
+		when(response.getStatus()).thenReturn(resultStatus);
+		when(response.asJson()).thenReturn(resultJson);
+
+		WSRequestHolder wsURL = spy(WS.url(url));
+		when(wsURL.post(requestContent)).thenReturn(F.Promise.promise(() -> response));
+
+		spy(WS.class);
+		when(WS.url(url)).thenReturn(wsURL);
+
+		//Test
+		Result result = callAction(routes.ref.ProjectPlanningToolController.createPPTTask(), new FakeRequest().withJsonBody(Json.parse("{" +
+				"	\"account\":{" +
+				"		\"pptPassword\":null," +
+				"		\"id\":" + account + "," +
+				"		\"user\":{\"userName\":\"demo\",\"id\":3}," +
+				"		\"pptUrl\":\"http://localhost:9920\"," +
+				"		\"pptUsername\":\"admin\"," +
+				"		\"ppt\":{\"id\":1,\"name\":\"Project Planning Tool\"}" +
+				"	}," +
+				"	\"path\":\"/rest/api/2/issue\"," +
+				"	\"content\":\"" + Json.stringify(requestContent).replaceAll("\\\\", "\\\\\\\\").replaceAll("\"", "\\\\\"") + "\"," +
+				"	\"taskTemplate\":{" +
+				"		\"id\":11," +
+				"		\"name\":\"Define criterions\"," +
+				"		\"properties\":[" +
+				"			{\"id\":12,\"property\":{\"id\":5,\"name\":\"Assignee\"},\"value\":\"Project Planner\"}," +
+				"			{\"id\":13,\"property\":{\"id\":6,\"name\":\"Type\"},\"value\":\"Task\"}" +
+				"		]," +
+				"		\"attributes\":{\"assignee\":\"Project Planner\",\"type\":\"Task\"}" +
+				"	}," +
+				"	\"taskProperties\":[" +
+				"		{\"id\":12,\"property\":{\"id\":5,\"name\":\"Assignee\"},\"value\":\"Project Planner\"}," +
+				"		{\"id\":13,\"property\":{\"id\":6,\"name\":\"Type\"},\"value\":\"Task\"}" +
+				"	]," +
+				"	\"project\":{\"id\":2,\"name\":\"Project\"}" +
+				"}")).withSession(AuthenticationChecker.SESSION_USER_IDENTIFIER, user.getId() + ""));
+
+		//Verification
+		assertThat(status(result)).isEqualTo(resultStatus);
+		assertCheckJsonResponse(result, resultJson);
+
+		verifyStatic(atLeastOnce());
+		WS.url(url);
+
+		Task task = JPA.withTransaction(() -> TASK_DAO.readAll().get(0));
+		assertThat(task.getCreatedFrom().getId()).isEqualTo(11);
+		assertThat(task.getFinalRequestUrl()).isEqualTo(url);
+		assertThat(Json.stringify(task.getFinalResponseContent())).isEqualTo("{\"result\":\"Check!\"}");
+		assertThat(task.getFinalResponseStatus()).isEqualTo(resultStatus);
+		assertThat(task.getProject().getId()).isEqualTo(2);
+		assertThat(task.getProperties()).hasSize(2);
+	}
 
 }

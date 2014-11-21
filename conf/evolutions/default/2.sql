@@ -88,6 +88,7 @@ INSERT INTO PROCESSOR (ID, CODE, NAME, PROJECT_ID) VALUES (nextval('entity_seq')
 
 # --- !Downs
 
+delete from task;
 delete from mapping;
 delete from processor;
 delete from pptaccount;

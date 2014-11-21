@@ -139,7 +139,7 @@ public class Global extends GlobalSettings {
 		Formatters.register(JsonNode.class, new Formatters.SimpleFormatter<JsonNode>() {
 			@Override
 			public JsonNode parse(String string, Locale l) throws ParseException {
-				return Json.toJson(string);
+				return Json.parse(string);
 			}
 
 			@Override
@@ -234,7 +234,7 @@ public class Global extends GlobalSettings {
 		CONTROLLERS.put(PPTAccountController.class, new PPTAccountController(PPT_ACCOUNT_DAO, PPT_ACCOUNT_LOGIC, AUTHENTICATION_CHECKER));
 		CONTROLLERS.put(UserController.class, new UserController(USER_LOGIC, AUTHENTICATION_CHECKER));
 		CONTROLLERS.put(TaskTemplateController.class, new TaskTemplateController(TASK_TEMPLATE_LOGIC, TASK_TEMPLATE_DAO, TASK_PROPERTY_VALUE_DAO));
-		CONTROLLERS.put(ProjectPlanningToolController.class, new ProjectPlanningToolController(PPT_TASK_LOGIC, PROJECT_PLANNING_TOOL_DAO));
+		CONTROLLERS.put(ProjectPlanningToolController.class, new ProjectPlanningToolController(PPT_TASK_LOGIC, PROJECT_PLANNING_TOOL_DAO, AUTHENTICATION_CHECKER, PPT_ACCOUNT_DAO));
 		CONTROLLERS.put(DecisionKnowledgeSystemController.class, new DecisionKnowledgeSystemController(DKS_LOGIC));
 		CONTROLLERS.put(AuthenticationChecker.Authenticator.class, AUTHENTICATION_CHECKER.new Authenticator());
 		CONTROLLERS.put(TaskPropertyController.class, new TaskPropertyController(TASK_PROPERTY_LOGIC, TASK_PROPERTY_DAO));

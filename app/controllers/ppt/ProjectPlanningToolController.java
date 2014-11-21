@@ -2,13 +2,16 @@ package controllers.ppt;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import controllers.AbstractReadController;
+import controllers.AuthenticationChecker;
 import controllers.GuaranteeAuthenticatedUser;
 import daos.ppt.ProjectPlanningToolDAO;
+import daos.user.PPTAccountDAO;
 import logics.docs.QueryDescription;
 import logics.docs.QueryExamples;
 import logics.docs.QueryParameters;
 import logics.docs.QueryResponses;
 import logics.ppt.PPTTaskLogic;
+import models.user.PPTAccount;
 import play.data.Form;
 import play.db.jpa.JPA;
 import play.db.jpa.Transactional;
@@ -27,10 +30,14 @@ public class ProjectPlanningToolController extends AbstractReadController {
 
 	private final PPTTaskLogic PPT_TASK_LOGIC;
 	private final ProjectPlanningToolDAO PROJECT_PLANNING_TOOL_DAO;
+	private final AuthenticationChecker AUTHENTICATION_CHECKER;
+	private final PPTAccountDAO PPT_ACCOUNT_DAO;
 
-	public ProjectPlanningToolController(PPTTaskLogic pptTaskLogic, ProjectPlanningToolDAO projectPlanningToolDao) {
+	public ProjectPlanningToolController(PPTTaskLogic pptTaskLogic, ProjectPlanningToolDAO projectPlanningToolDao, AuthenticationChecker authenticationChecker, PPTAccountDAO pptAccountDao) {
 		PPT_TASK_LOGIC = pptTaskLogic;
 		PROJECT_PLANNING_TOOL_DAO = projectPlanningToolDao;
+		AUTHENTICATION_CHECKER = authenticationChecker;
+		PPT_ACCOUNT_DAO = pptAccountDao;
 	}
 
 	@Transactional(readOnly = true)
@@ -119,23 +126,28 @@ public class ProjectPlanningToolController extends AbstractReadController {
 	})
 	public F.Promise<Result> createPPTTask() {
 		Form<PPTTaskLogic.CreatePPTTaskForm> form = Form.form(PPTTaskLogic.CreatePPTTaskForm.class).bindFromRequest();
-		if (form.hasErrors()) {
-			return F.Promise.pure(badRequest(form.errorsAsJson()));
-		}
-		return F.Promise.promise(() -> {
-			Http.Context.current.remove();
-			return JPA.withTransaction(() -> PPT_TASK_LOGIC.createPPTTask(form.get()));
-		}).map(wsResponse ->
-						(Result) status(wsResponse.getStatus(), wsResponse.asJson())
-		).recover(throwable -> {
-			if (throwable instanceof ConnectException) {
-				return status(BAD_GATEWAY, jsonify("Could not connect to " + form.get().account.getPptUrl() + "."));
-			} else if (throwable instanceof TimeoutException) {
-				return status(GATEWAY_TIMEOUT, jsonify(form.get().account.getPptUrl() + " did not respond within " + ((TimeoutException) throwable)));
+		if (!form.hasErrors()) {
+			PPTAccount account = PPT_ACCOUNT_DAO.readByUser(AUTHENTICATION_CHECKER.getLoggedInUser(ctx()), form.get().account.getId());
+			if (account == null) {
+				form.reject("account", "Could not find account on server");
 			} else {
-				throw throwable;
+				return F.Promise.promise(() -> {
+					Http.Context.current.remove();
+					return JPA.withTransaction(() -> PPT_TASK_LOGIC.createPPTTask(form.get(), account));
+				}).map(wsResponse ->
+								(Result) status(wsResponse.getFinalResponseStatus(), wsResponse.getFinalResponseContent())
+				).recover(throwable -> {
+					if (throwable instanceof ConnectException) {
+						return status(BAD_GATEWAY, jsonify("Could not connect to " + form.get().account.getPptUrl() + "."));
+					} else if (throwable instanceof TimeoutException) {
+						return status(GATEWAY_TIMEOUT, jsonify(form.get().account.getPptUrl() + " did not respond."));
+					} else {
+						throw throwable;
+					}
+				});
 			}
-		});
+		}
+		return F.Promise.pure(badRequest(form.errorsAsJson()));
 	}
 
 	@Override
