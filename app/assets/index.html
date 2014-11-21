@@ -15,7 +15,7 @@
 
 	</head>
 	<body>
-		<div class="page" data-layout="border">
+		<div data-layout="border" style="height: 100%;">
 			<header data-region="north" data-layout="border">
 				<div id="headerPanel" class="headerPanel" data-region="north" data-layout="border">
 					<div data-region="middle" data-align="center">
@@ -53,7 +53,9 @@
 				</nav>
 			</header>
 
-			<section data-region="middle" data-ng-view></section>
+			<div data-region="middle">
+				<section data-region="center" data-ng-view></section>
+			</div>
 
 			<footer data-region="south">
 				<p>&copy; EEPPI 2014</p>

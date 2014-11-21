@@ -8,7 +8,7 @@
 | | data-region="middle"                                               | |
 | | .--------------------.----------------------.--------------------. | |
 | | |                    |                      |                    | | |
-| | | data-region="west" | data-region="center" | data-region="west" | | |
+| | | data-region="west" | data-region="center" | data-region="east" | | |
 | | | data-align="?"     | data-align="?"       | data-align="?"     | | |
 | | |                    |                      |                    | | |
 | | '--------------------'----------------------'--------------------' | |
@@ -22,20 +22,20 @@
 }
 
 [data-layout="border"] {
-	width: 100%; 
 	.displayFlex;
 	.flexDirection(column);
 	.justifyContent(space-between);
-	
-	> [data-region="middle"] { 
-		height: 100%;
+
+	> [data-region] { width: 100%; } //north/middle/south
+	> [data-region="middle"] {
+		flex-grow: 1;
+
 		.displayFlex;
 		.flexDirection(row);
 		.justifyContent(space-between);
-		
-		> [data-region="center"] { 
-			width: 100%; 
-		}
+
+		> [data-region] { height: 100%; } //west/center/east
+		> [data-region="center"] { flex-grow: 1; }
 	}
 
 	[data-region="center"], [data-region="middle"] {
@@ -44,15 +44,4 @@
 		&[data-align="end"] { .alignItems(flex-end); }
 	}
 
-	> [data-region="north"] > * { 
-		width: 100%; 
-	}
-	> [data-region="middle"] {
-		> [data-region="west"] > * { height: 100%; }
-		> [data-region="center"] > * { width: 100%; height: 100%; }
-		> [data-region="east"] > * { height: 100%; }
-	}
-	> [data-region="south"] > * { 
-		width: 100%; 
-	}
 }
