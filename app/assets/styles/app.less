@@ -86,12 +86,14 @@ nav.mainNavigation {
 	padding: 0.25rem 0.5rem 0 0.5rem; background: steelblue;
 	border-bottom: 0.25rem solid black;
 	ul li {
-		background: lightsteelblue; border-radius: 0.5rem 0.5rem 0 0;
+		background: lightsteelblue;
+		border-radius: 0.5rem 0.5rem 0 0;
 		padding: 0.5rem 1rem 0.25rem;
-		margin-bottom: 0.25rem;
 		a { text-decoration: none; }
 		&.current {
-			a, a:link, a:hover { font-weight: bold; }
+			box-shadow: 0 0 0.5rem #2b2c34;
+			background: linear-gradient(lightsteelblue, #8094AE) repeat scroll 0% 0% transparent;
+			font-weight: bold;
 		}
 		display: inline-block; list-style-type: none; margin-right: 1rem;
 		.icon { margin-bottom: -0.1rem; }
