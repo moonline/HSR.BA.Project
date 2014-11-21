@@ -28,14 +28,14 @@
 
 	> [data-region] { width: 100%; } //north/middle/south
 	> [data-region="middle"] {
-		flex-grow: 1;
+		flex-grow: 1; flex-shrink: 1; overflow-y: scroll; -webkit-box-flex: 1;
 
 		.displayFlex;
 		.flexDirection(row);
 		.justifyContent(space-between);
 
 		> [data-region] { height: 100%; } //west/center/east
-		> [data-region="center"] { flex-grow: 1; }
+		> [data-region="center"] { flex-grow: 1;  flex-shrink: 1; overflow-x: scroll; }
 	}
 
 	[data-region="center"], [data-region="middle"] {

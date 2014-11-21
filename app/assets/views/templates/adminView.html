@@ -1,94 +1,91 @@
-<div class="main" data-region="center" data-layout="flow" data-flow-direction="column" data-align="start">
-	<div class="area page admin" data-scroll="y">
-		<div class="operationState">
-			<span class="messagebox error" data-ng-if="operationState === ApplicationState.failed">Loading of data failed. Maybe server is not available.</span>
-			<span class="messagebox pending" data-ng-if="operationState === ApplicationState.pending">Loading ...</span>
-			<span class="messagebox saving" data-ng-if="operationState === ApplicationState.saving">Saving ...</span>
-		</div>
-		<h2>Administration</h2>
+<div class="main area page admin">
+	<div class="operationState">
+		<span class="messagebox error" data-ng-if="operationState === ApplicationState.failed">Loading of data failed. Maybe server is not available.</span>
+		<span class="messagebox pending" data-ng-if="operationState === ApplicationState.pending">Loading ...</span>
+		<span class="messagebox saving" data-ng-if="operationState === ApplicationState.saving">Saving ...</span>
+	</div>
+	<h2>Administration</h2>
 
-		<div class="area accordion">
-			<h3>Manage Properties</h3>
-			<form>
-				<div class="formLine" data-columns="3">
-					<label>New Property</label>
-					<input type="text" name="newTaskPropertyName" data-ng-model="newTaskPropertyName" placeholder="Name" />
-					<button class="action create" data-ng-click="createTaskProperty(newTaskPropertyName); newTaskPropertyName = '';"
-							title="Create a new Property">
-						<span class="icon big">&#x2b;</span>Add
-					</button>
-				</div>
-				<div class="formLine" data-columns="3">
-					<select data-ng-model="toRenameProperty" data-ng-options="taskProperty.name for taskProperty in taskProperties" ></select>
-					<input data-ng-disabled="!toRenameProperty" data-ng-model="propertyNewName" placeholder="New Name" />
-					<button data-ng-disabled="!toRenameProperty" class="action update" data-ng-click="renameTaskProperty(toRenameProperty, propertyNewName); propertyNewName = ''; toRenameProperty = null;"
-							title="Update the Property">
-						<span class="icon">&#x270E;</span>Update
-					</button>
-				</div>
-			</form>
-		</div>
+	<div class="area accordion">
+		<h3>Manage Properties</h3>
+		<form>
+			<div class="formLine" data-columns="3">
+				<label>New Property</label>
+				<input type="text" name="newTaskPropertyName" data-ng-model="newTaskPropertyName" placeholder="Name" />
+				<button class="action create" data-ng-click="createTaskProperty(newTaskPropertyName); newTaskPropertyName = '';"
+						title="Create a new Property">
+					<span class="icon big">&#x2b;</span>Add
+				</button>
+			</div>
+			<div class="formLine" data-columns="3">
+				<select data-ng-model="toRenameProperty" data-ng-options="taskProperty.name for taskProperty in taskProperties" ></select>
+				<input data-ng-disabled="!toRenameProperty" data-ng-model="propertyNewName" placeholder="New Name" />
+				<button data-ng-disabled="!toRenameProperty" class="action update" data-ng-click="renameTaskProperty(toRenameProperty, propertyNewName); propertyNewName = ''; toRenameProperty = null;"
+						title="Update the Property">
+					<span class="icon">&#x270E;</span>Update
+				</button>
+			</div>
+		</form>
+	</div>
 
-		<div class="area accordion">
-			<h3>Manage Request Templates</h3>
-			<form>
-				<div class="formLine" data-columns="6">
-					<label>New Request Template</label>
-					<textarea name="newRequestTemplateBody" data-ng-model="newRequestTemplateBody" placeholder="Request Body"></textarea>
-					<input type="text" name="newRequestTemplateUrl" data-ng-model="newRequestTemplateUrl" placeholder="Request URL (relative, beginning with a slash)" />
-					<select data-ng-model="newRequestTemplatePPT" name="newRequestTemplatePPT" data-ng-options="projectPlanningTool.name for projectPlanningTool in projectPlanningTools" ></select>
-					<button class="action create" data-ng-click="addRequestTemplate(newRequestTemplatePPT, newRequestTemplateUrl, newRequestTemplateBody); newRequestTemplatePPT = null; newRequestTemplateUrl = ''; newRequestTemplateBody = '';"
-							title="Create a new Request Template">
-						<span class="icon big">&#x2b;</span>Add
-					</button>
-				</div>
-				<div class="formLine" data-columns="6">
-					<select data-ng-model="toUpdateRequest" data-ng-options="requestTemlate.url for requestTemlate in requestTemplates" data-ng-change="updateWithCorrectPPT(toUpdateRequest)"></select>
-					<textarea data-ng-disabled="!toUpdateRequest" name="requestTemplateNewBody" data-ng-model="toUpdateRequest.requestBody" placeholder="Request Body"></textarea>
-					<input data-ng-disabled="!toUpdateRequest" type="text" name="requestTemplateNewUrl" data-ng-model="toUpdateRequest.url" placeholder="Request URL (relative, beginning with a slash)" />
-					<select data-ng-disabled="!toUpdateRequest" name="requestTemplateNewPPT" data-ng-model="toUpdateRequest.ppt" data-ng-options="ppt.name for ppt in projectPlanningTools"></select>
-					<button data-ng-disabled="!toUpdateRequest" class="action update" data-ng-click="updateRequestTemplate(toUpdateRequest); requestTemplateNewName = ''; requestTemplateNewBody = ''; toUpdateRequest = null;"
-							title="Update the Request Template">
-						<span class="icon">&#x270E;</span>Update
-					</button>
-					<button data-ng-disabled="!toUpdateRequest" class="action remove" data-ng-click="removeRequestTemplate(toUpdateRequest); requestTemplateNewName = ''; requestTemplateNewBody = ''; toUpdateRequest = null;"
-							title="Remove the Request Template">
-						<span class="icon big">&minus;</span>Remove
-					</button>
-				</div>
-			</form>
-		</div>
+	<div class="area accordion">
+		<h3>Manage Request Templates</h3>
+		<form>
+			<div class="formLine" data-columns="6">
+				<label>New Request Template</label>
+				<textarea name="newRequestTemplateBody" data-ng-model="newRequestTemplateBody" placeholder="Request Body"></textarea>
+				<input type="text" name="newRequestTemplateUrl" data-ng-model="newRequestTemplateUrl" placeholder="Request URL (relative, beginning with a slash)" />
+				<select data-ng-model="newRequestTemplatePPT" name="newRequestTemplatePPT" data-ng-options="projectPlanningTool.name for projectPlanningTool in projectPlanningTools" ></select>
+				<button class="action create" data-ng-click="addRequestTemplate(newRequestTemplatePPT, newRequestTemplateUrl, newRequestTemplateBody); newRequestTemplatePPT = null; newRequestTemplateUrl = ''; newRequestTemplateBody = '';"
+						title="Create a new Request Template">
+					<span class="icon big">&#x2b;</span>Add
+				</button>
+			</div>
+			<div class="formLine" data-columns="6">
+				<select data-ng-model="toUpdateRequest" data-ng-options="requestTemlate.url for requestTemlate in requestTemplates" data-ng-change="updateWithCorrectPPT(toUpdateRequest)"></select>
+				<textarea data-ng-disabled="!toUpdateRequest" name="requestTemplateNewBody" data-ng-model="toUpdateRequest.requestBody" placeholder="Request Body"></textarea>
+				<input data-ng-disabled="!toUpdateRequest" type="text" name="requestTemplateNewUrl" data-ng-model="toUpdateRequest.url" placeholder="Request URL (relative, beginning with a slash)" />
+				<select data-ng-disabled="!toUpdateRequest" name="requestTemplateNewPPT" data-ng-model="toUpdateRequest.ppt" data-ng-options="ppt.name for ppt in projectPlanningTools"></select>
+				<button data-ng-disabled="!toUpdateRequest" class="action update" data-ng-click="updateRequestTemplate(toUpdateRequest); requestTemplateNewName = ''; requestTemplateNewBody = ''; toUpdateRequest = null;"
+						title="Update the Request Template">
+					<span class="icon">&#x270E;</span>Update
+				</button>
+				<button data-ng-disabled="!toUpdateRequest" class="action remove" data-ng-click="removeRequestTemplate(toUpdateRequest); requestTemplateNewName = ''; requestTemplateNewBody = ''; toUpdateRequest = null;"
+						title="Remove the Request Template">
+					<span class="icon big">&minus;</span>Remove
+				</button>
+			</div>
+		</form>
+	</div>
 
-        <div class="area accordion">
-            <h3>Manage Processors</h3>
-            <form>
-                <div class="formLine" data-columns="6">
-                    <label>New Processor</label>
-                    <input type="text" name="newProcessorName" data-ng-model="newProcessorName" placeholder="Name" />
-                    <select data-ng-model="newProcessorProject" name="newProcessorProject" data-ng-options="project.name for project in projects" ></select>
-                    <textarea name="newProcessorCode" data-ng-model="newProcessorCode" placeholder="Code"></textarea>
-                    <button class="action create" data-ng-click="createProcessor(newProcessorName, newProcessorProject, newProcessorCode); newProcessorName = ''; newProcessorProject = ''; newProcessorCode = '';"
-							title="Create a new Processor">
-                        <span class="icon big">&#x2b;</span>Add
-                    </button>
-                </div>
-                <div class="formLine" data-columns="6">
-                    <select data-ng-model="toUpdateProcessor" data-ng-options="processor.name for processor in processors" data-ng-change="showSelectedProcessor()"></select>
+	<div class="area accordion">
+		<h3>Manage Processors</h3>
+		<form>
+			<div class="formLine" data-columns="6">
+				<label>New Processor</label>
+				<input type="text" name="newProcessorName" data-ng-model="newProcessorName" placeholder="Name" />
+				<select data-ng-model="newProcessorProject" name="newProcessorProject" data-ng-options="project.name for project in projects" ></select>
+				<textarea name="newProcessorCode" data-ng-model="newProcessorCode" placeholder="Code"></textarea>
+				<button class="action create" data-ng-click="createProcessor(newProcessorName, newProcessorProject, newProcessorCode); newProcessorName = ''; newProcessorProject = ''; newProcessorCode = '';"
+						title="Create a new Processor">
+					<span class="icon big">&#x2b;</span>Add
+				</button>
+			</div>
+			<div class="formLine" data-columns="6">
+				<select data-ng-model="toUpdateProcessor" data-ng-options="processor.name for processor in processors" data-ng-change="showSelectedProcessor()"></select>
 
-                    <input type="text" data-ng-disabled="!toUpdateProcessor" name="processorNewName" data-ng-model="processorNewName" placeholder="Name" />
-                    <select data-ng-disabled="!toUpdateProcessor" data-ng-model="processorNewProject" name="processorNewProject" data-ng-options="project.name for project in projects" ></select>
-                    <textarea data-ng-disabled="!toUpdateProcessor" name="processorNewCode" data-ng-model="processorNewCode" placeholder="Code"></textarea>
-                    <button data-ng-disabled="!toUpdateProcessor" class="action update" data-ng-click="updateProcessor(toUpdateProcessor, processorNewName, processorNewProject, processorNewCode); toUpdateProcessor = ''; processorNewName = ''; processorNewProject = ''; processorNewCode = ''; toUpdateProcessor = null;"
-							title="Update the Processor">
-                        <span class="icon">&#x270E;</span>Update
-                    </button>
-                    <button data-ng-disabled="!toUpdateProcessor" class="action remove" data-ng-click="removeProcessor(toUpdateProcessor); toUpdateProcessor = null;"
-							title="Remove the Processor">
-                        <span class="icon big">&minus;</span>Remove
-                    </button>
-                </div>
-            </form>
-        </div>
-
-    </div>
+				<input type="text" data-ng-disabled="!toUpdateProcessor" name="processorNewName" data-ng-model="processorNewName" placeholder="Name" />
+				<select data-ng-disabled="!toUpdateProcessor" data-ng-model="processorNewProject" name="processorNewProject" data-ng-options="project.name for project in projects" ></select>
+				<textarea data-ng-disabled="!toUpdateProcessor" name="processorNewCode" data-ng-model="processorNewCode" placeholder="Code"></textarea>
+				<button data-ng-disabled="!toUpdateProcessor" class="action update" data-ng-click="updateProcessor(toUpdateProcessor, processorNewName, processorNewProject, processorNewCode); toUpdateProcessor = ''; processorNewName = ''; processorNewProject = ''; processorNewCode = ''; toUpdateProcessor = null;"
+						title="Update the Processor">
+					<span class="icon">&#x270E;</span>Update
+				</button>
+				<button data-ng-disabled="!toUpdateProcessor" class="action remove" data-ng-click="removeProcessor(toUpdateProcessor); toUpdateProcessor = null;"
+						title="Remove the Processor">
+					<span class="icon big">&minus;</span>Remove
+				</button>
+			</div>
+		</form>
+	</div>
 </div>
