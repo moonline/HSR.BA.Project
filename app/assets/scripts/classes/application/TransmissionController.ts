@@ -369,14 +369,21 @@ module app.application {
 						if(success) {
 							exportRequest.exportState = app.application.ApplicationState.successful;
 							exportRequest.requestData = data;
+							exportRequest.requestPrint = JSON.stringify(data);
 							$scope.transmitOne(exportRequests, nextRequest, nextSubRequest);
 						} else {
 							exportRequest.exportState = app.application.ApplicationState.failed;
 							exportRequest.requestData = data;
+							exportRequest.requestPrint = JSON.stringify(data);
 							$scope.transmitOne(exportRequests, nextRequest, nextSubRequest);
 						}
 					});
 				}
+			};
+
+			$scope.openRequestDetail = null;
+			$scope.toggleRequestDetails = function(detail) {
+				$scope.openRequestDetail = ($scope.openRequestDetail == detail) ? null : detail;
 			};
 
 			$scope.nextStep = function() {
