@@ -1,5 +1,11 @@
 # --- !Ups
 
+create table dks (
+    id bigint not null,
+    name varchar(255) not null,
+    url varchar(255) not null,
+    primary key (id)
+);
 create table dksmapping (
     id bigint not null,
     dksnode varchar(255) not null,
@@ -124,6 +130,7 @@ create sequence entity_seq;
 
 SET REFERENTIAL_INTEGRITY FALSE;
 
+drop table if exists dks;
 drop table if exists dksmapping;
 drop table if exists mapping;
 drop table if exists person;
