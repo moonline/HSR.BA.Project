@@ -17,6 +17,13 @@ GET		/ppt						@controllers.ppt.ProjectPlanningToolController.readAll()
 GET		/ppt/$id<[0-9]+>			@controllers.ppt.ProjectPlanningToolController.read(id: Long)
 POST	/ppt/sendToPPT				@controllers.ppt.ProjectPlanningToolController.sendToPPT()
 POST	/ppt/createPPTTask			@controllers.ppt.ProjectPlanningToolController.createPPTTask()
+
+POST	/dks						@controllers.dks.DecisionKnowledgeSystemController.create()
+GET		/dks						@controllers.dks.DecisionKnowledgeSystemController.readAll()
+GET		/dks/$id<[0-9]+>			@controllers.dks.DecisionKnowledgeSystemController.read(id: Long)
+POST	/dks/$id<[0-9]+>			@controllers.dks.DecisionKnowledgeSystemController.update(id: Long)
+DELETE	/dks/$id<[0-9]+>			@controllers.dks.DecisionKnowledgeSystemController.delete(id: Long)
+POST	/dks/$id<[0-9]+>/delete		@controllers.dks.DecisionKnowledgeSystemController.delete(id: Long)
 GET		/dks/getFromDKS				@controllers.dks.DecisionKnowledgeSystemController.getFromDKS(url: String)
 
 GET		/project					@controllers.user.ProjectController.readAll()

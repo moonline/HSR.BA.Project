@@ -2,6 +2,7 @@ package logics.docs;
 
 import daos.AbstractDAO;
 import daos.dks.DKSMappingDAO;
+import daos.dks.DecisionKnowledgeSystemDAO;
 import daos.ppt.MappingDAO;
 import daos.ppt.ProcessorDAO;
 import daos.ppt.ProjectPlanningToolDAO;
@@ -13,6 +14,7 @@ import daos.user.ProjectDAO;
 import daos.user.UserDAO;
 import logics.user.UserLogic;
 import models.dks.DKSMapping;
+import models.dks.DecisionKnowledgeSystem;
 import models.ppt.Mapping;
 import models.ppt.Processor;
 import models.ppt.ProjectPlanningTool;
@@ -44,6 +46,7 @@ public class ExampleDataCreator {
 	private final DKSMappingDAO DKS_MAPPING_DAO;
 	private final MappingDAO MAPPING_DAO;
 	private final ProjectDAO PROJECT_DAO;
+	private final DecisionKnowledgeSystemDAO DKS_DAO;
 
 
 	private Set<String> cache = new HashSet<>();
@@ -54,7 +57,7 @@ public class ExampleDataCreator {
 
 	public Long USER_ID;
 
-	public ExampleDataCreator(UserLogic userLogic, UserDAO userDao, PPTAccountDAO pptAccountDao, ProjectPlanningToolDAO projectPlanningToolDao, TaskTemplateDAO taskTemplateDao, TaskPropertyDAO taskPropertyDao, TaskPropertyValueDAO taskPropertyValueDao, DKSMappingDAO dksMappingDao, MappingDAO mappingDao, ProjectDAO projectDao, ProcessorDAO processorDAO) {
+	public ExampleDataCreator(UserLogic userLogic, UserDAO userDao, PPTAccountDAO pptAccountDao, ProjectPlanningToolDAO projectPlanningToolDao, TaskTemplateDAO taskTemplateDao, TaskPropertyDAO taskPropertyDao, TaskPropertyValueDAO taskPropertyValueDao, DKSMappingDAO dksMappingDao, MappingDAO mappingDao, ProjectDAO projectDao, ProcessorDAO processorDAO, DecisionKnowledgeSystemDAO dksDao) {
 		USER_DAO = userDao;
 		PPT_ACCOUNT_DAO = pptAccountDao;
 		JPA.withTransaction(new F.Callback0() {
@@ -83,6 +86,7 @@ public class ExampleDataCreator {
 		MAPPING_DAO = mappingDao;
 		PROJECT_DAO = projectDao;
 		PROCESSOR_DAO = processorDAO;
+		DKS_DAO = dksDao;
 	}
 
 	public void createExampleObject(String reference, boolean canBeCached) {
@@ -184,6 +188,20 @@ public class ExampleDataCreator {
 							return dksMapping.getId();
 						},
 						existingDKSMapping -> existingDKSMapping.getDksNode().equals(dksNode));
+				break;
+			case "DKS":
+				String dksName = "Example DKS";
+				String dksUrl = "http://an-example-dks.com";
+				objectCreator = new ExampleObjectCreator<>("DKS",
+						DKS_DAO,
+						() -> {
+							DecisionKnowledgeSystem dks = new DecisionKnowledgeSystem();
+							dks.setName(dksName);
+							dks.setUrl(dksUrl);
+							persist(dks);
+							return dks.getId();
+						},
+						existingDKS -> dksName.equals(existingDKS.getName()) && dksUrl.equals(existingDKS.getUrl()));
 				break;
 			case "DKSNODE":
 				objectCreator = new ExampleObjectCreator<DKSMapping>("DKSNode",

@@ -14,6 +14,7 @@ import controllers.user.PPTAccountController;
 import controllers.user.ProjectController;
 import controllers.user.UserController;
 import daos.dks.DKSMappingDAO;
+import daos.dks.DecisionKnowledgeSystemDAO;
 import daos.ppt.MappingDAO;
 import daos.ppt.ProcessorDAO;
 import daos.ppt.ProjectPlanningToolDAO;
@@ -69,6 +70,7 @@ import static play.mvc.Results.notFound;
 public class Global extends GlobalSettings {
 
 	private static final Logger LOGGER = new Logger("application.access");
+	private final DecisionKnowledgeSystemDAO DKS_DAO = new DecisionKnowledgeSystemDAO();
 	private final ProcessorDAO PROCESSOR_DAO = new ProcessorDAO();
 	private final TaskDAO TASK_DAO = new TaskDAO();
 	private final ProjectDAO PROJECT_DAO = new ProjectDAO();
@@ -83,7 +85,7 @@ public class Global extends GlobalSettings {
 
 	private final MappingLogic MAPPING_LOGIC = new MappingLogic(MAPPING_DAO);
 	private final TaskPropertyLogic TASK_PROPERTY_LOGIC = new TaskPropertyLogic(TASK_PROPERTY_DAO, TASK_PROPERTY_VALUE_DAO);
-	private final DecisionKnowledgeSystemLogic DKS_LOGIC = new DecisionKnowledgeSystemLogic();
+	private final DecisionKnowledgeSystemLogic DKS_LOGIC = new DecisionKnowledgeSystemLogic(DKS_DAO);
 	private final DKSMappingLogic DKS_MAPPING_LOGIC = new DKSMappingLogic(DKS_MAPPING_DAO);
 	private final PPTTaskLogic PPT_TASK_LOGIC = new PPTTaskLogic(TASK_DAO, TASK_PROPERTY_VALUE_DAO);
 	private final DocumentationLogic DOCUMENTATION_LOGIC = new DocumentationLogic();
@@ -230,12 +232,12 @@ public class Global extends GlobalSettings {
 	}
 
 	private void initializeControllersRequiringParameters() {
-		CONTROLLERS.put(DocumentationController.class, new DocumentationController(DOCUMENTATION_LOGIC, new ExampleDataCreator(USER_LOGIC, USER_DAO, PPT_ACCOUNT_DAO, PROJECT_PLANNING_TOOL_DAO, TASK_TEMPLATE_DAO, TASK_PROPERTY_DAO, TASK_PROPERTY_VALUE_DAO, DKS_MAPPING_DAO, MAPPING_DAO, PROJECT_DAO, PROCESSOR_DAO)));
+		CONTROLLERS.put(DocumentationController.class, new DocumentationController(DOCUMENTATION_LOGIC, new ExampleDataCreator(USER_LOGIC, USER_DAO, PPT_ACCOUNT_DAO, PROJECT_PLANNING_TOOL_DAO, TASK_TEMPLATE_DAO, TASK_PROPERTY_DAO, TASK_PROPERTY_VALUE_DAO, DKS_MAPPING_DAO, MAPPING_DAO, PROJECT_DAO, PROCESSOR_DAO, DKS_DAO)));
 		CONTROLLERS.put(PPTAccountController.class, new PPTAccountController(PPT_ACCOUNT_DAO, PPT_ACCOUNT_LOGIC, AUTHENTICATION_CHECKER));
 		CONTROLLERS.put(UserController.class, new UserController(USER_LOGIC, AUTHENTICATION_CHECKER));
 		CONTROLLERS.put(TaskTemplateController.class, new TaskTemplateController(TASK_TEMPLATE_LOGIC, TASK_TEMPLATE_DAO, TASK_PROPERTY_VALUE_DAO));
 		CONTROLLERS.put(ProjectPlanningToolController.class, new ProjectPlanningToolController(PPT_TASK_LOGIC, PROJECT_PLANNING_TOOL_DAO, AUTHENTICATION_CHECKER, PPT_ACCOUNT_DAO));
-		CONTROLLERS.put(DecisionKnowledgeSystemController.class, new DecisionKnowledgeSystemController(DKS_LOGIC));
+		CONTROLLERS.put(DecisionKnowledgeSystemController.class, new DecisionKnowledgeSystemController(DKS_LOGIC, DKS_DAO));
 		CONTROLLERS.put(AuthenticationChecker.Authenticator.class, AUTHENTICATION_CHECKER.new Authenticator());
 		CONTROLLERS.put(TaskPropertyController.class, new TaskPropertyController(TASK_PROPERTY_LOGIC, TASK_PROPERTY_DAO));
 		CONTROLLERS.put(DecisionKnowledgeSystemMappingController.class, new DecisionKnowledgeSystemMappingController(DKS_MAPPING_LOGIC, DKS_MAPPING_DAO));
