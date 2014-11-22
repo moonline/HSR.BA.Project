@@ -26,12 +26,12 @@ module test.integration.application {
 					taskTemplateRepository: new app.domain.repository.core.TaskTemplateRepository($http),
 					taskPropertyRepository: new app.domain.repository.core.TaskPropertyRepository($http),
 					mappingRepository: new app.domain.repository.core.MappingRepository($http),
-					decisionKnowledgeRepository: new app.domain.repository.dks.DecisionKnowledgeSystemRepository($http),
+					decisionKnowledgeSystemRepository: new app.domain.repository.dks.DecisionKnowledgeSystemRepository($http),
 					alternativeRepository : new app.domain.repository.dks.AlternativeRepository($http),
 					problemRepository: new app.domain.repository.dks.ProblemRepository($http)
 				};
 
-				persistenceService.decisionKnowledgeRepository.resources['list']['url'] = '/dks/decisionKnowledgeSystem';
+				persistenceService.decisionKnowledgeSystemRepository.resources['list']['url'] = '/dks/decisionKnowledgeSystem';
 				persistenceService.taskTemplateRepository.resources['list']['url'] = '/taskTemplate';
 				persistenceService.taskPropertyRepository.resources['list']['url'] = '/taskProperty';
 				persistenceService.mappingRepository.resources['list']['url'] = '/mapping';

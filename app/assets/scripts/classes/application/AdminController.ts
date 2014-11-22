@@ -27,6 +27,7 @@ module app.application {
 			var projectRepository = persistenceService['projectRepository'];
             var processorRepository = persistenceService['processorRepository'];
 			var projectPlanningToolRepository = persistenceService['projectPlanningToolRepository'];
+			var decisionKnowledgeSystemRepository = persistenceService['decisionKnowledgeSystemRepository'];
 
 			$scope.operationState = app.application.ApplicationState.pending;
 			setTimeout(() => { // set operation state to failed if no success after 4 seconds
@@ -55,7 +56,11 @@ module app.application {
 								projectPlanningToolRepository.findAll(function(success, ppts){
 									$scope.projectPlanningTools = ppts;
 
-									setTimeout(() => { $scope.operationState = app.application.ApplicationState.successful; $scope.$apply(); }, configuration.settings.messageBoxDelay);
+									decisionKnowledgeSystemRepository.findAll(function(success, dkss){
+										$scope.dkss = dkss;
+
+										setTimeout(() => { $scope.operationState = app.application.ApplicationState.successful; $scope.$apply(); }, configuration.settings.messageBoxDelay);
+									});
 								});
 							});
 						});
@@ -115,6 +120,15 @@ module app.application {
 						$scope.setOperationFinishState(success);
 					});
 				}
+			};
+
+
+			/* decision knowledge systems */
+			$scope.updateDKS = function(dks: app.domain.model.dks.DecisionKnowledgeSystem) {
+				$scope.operationState = app.application.ApplicationState.saving;
+				decisionKnowledgeSystemRepository.update(dks, function(success: boolean, item: app.domain.model.dks.DecisionKnowledgeSystem){
+					$scope.setOperationFinishState(success);
+				})
 			};
 
 

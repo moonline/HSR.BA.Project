@@ -93,4 +93,22 @@
 			</div>
 		</form>
 	</div>
+
+	<div class="area accordion">
+		<h3>Manage Decision Knowledge System</h3>
+		<form>
+			<div class="formLine" data-columns="4">
+				<select data-ng-model="toUpdateDKS" data-ng-options="dks.name for dks in dkss"></select>
+
+				<input type="text" data-ng-disabled="!toUpdateDKS" name="dksNewName" data-ng-model="toUpdateDKS.name" placeholder="Name" />
+				<input type="text" data-ng-disabled="!toUpdateDKS" name="dksNewUrl" data-ng-model="toUpdateDKS.url" placeholder="URL" />
+				<button data-ng-disabled="!toUpdateDKS" class="action update" data-ng-click="updateDKS(toUpdateDKS, processorNewName, processorNewProject, processorNewCode); toUpdateProcessor = ''; processorNewName = ''; processorNewProject = ''; processorNewCode = ''; toUpdateProcessor = null;"
+						title="Update the DKS">
+					<span class="icon">&#x270E;</span>Update
+				</button>
+			</div>
+		</form>
+	</div>
+	<div>&nbsp;</div>
+	<div>&nbsp;</div>
 </div>

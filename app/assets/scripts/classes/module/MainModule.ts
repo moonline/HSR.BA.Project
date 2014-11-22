@@ -128,7 +128,7 @@ module app.mod {
 					processorRepository: new app.domain.repository.core.ProcessorRepository($http),
 					projectRepository: new app.domain.repository.core.ProjectRepository($http),
 
-					decisionKnowledgeRepository: new app.domain.repository.dks.DecisionKnowledgeSystemRepository($http),
+					decisionKnowledgeSystemRepository: new app.domain.repository.dks.DecisionKnowledgeSystemRepository($http),
 					problemRepository: new app.domain.repository.dks.ProblemRepository($http),
 					alternativeRepository: new app.domain.repository.dks.AlternativeRepository($http),
 					decisionRepository: new app.domain.repository.dks.DecisionRepository($http),

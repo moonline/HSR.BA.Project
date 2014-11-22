@@ -1,7 +1,7 @@
 <div class="main area page mapping" data-layout="flow" data-flow-direction="row" data-align="start">
 	<div class="column1 area pane" data-layout="flow" data-flow-direction="column" data-scroll="y">
 		<div class="areaContent">
-			<h2><span title="Problem Templates in DKS">Problems</span> <a href="{{currentDks.address}}" target="_blank" title="from DKS {{currentDks.address}}">(read only)</a> (&Sigma;:{{problems.length}})</h2>
+			<h2><span title="Problem Templates in DKS">Problems</span> <a href="{{currentDks.url}}" target="_blank" title="from DKS {{currentDks.url}}">(read only)</a> (&Sigma;:{{problems.length}})</h2>
 
 			<span class="messagebox error" data-ng-if="problemsLoadingStatus === ApplicationState.failed">Loading of DKS elements failed. Maybe service is not available.</span>
 			<span class="messagebox pending" data-ng-if="problemsLoadingStatus === ApplicationState.pending">Loading ...</span>

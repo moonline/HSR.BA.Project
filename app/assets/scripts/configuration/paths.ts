@@ -16,7 +16,9 @@ module configuration {
 			list: { method: 'GET', url: '/element?query=type%20is%20%22OptionOccurrence%22' }
 		},
 		decisionKnowledgeSystem: {
-			list: { method: 'GET', url: '/public/temporaryDevelopmentData/dks/decisionKnowledgeSystem.json' }
+			list: { method: 'GET', url: '/dks' },
+			detail: { method: 'GET', url: '/dks/{id}' },
+			update: { method: 'POST', url: '/dks/{id}' }
 		},
 		project: {
 			list: { method: 'GET', url: '/project' }
