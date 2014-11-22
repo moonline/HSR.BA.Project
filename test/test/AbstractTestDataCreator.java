@@ -7,6 +7,7 @@ import daos.task.TaskTemplateDAO;
 import daos.user.UserDAO;
 import logics.user.UserLogic;
 import models.dks.DKSMapping;
+import models.dks.DecisionKnowledgeSystem;
 import models.ppt.Mapping;
 import models.ppt.Processor;
 import models.ppt.ProjectPlanningTool;
@@ -171,5 +172,15 @@ public abstract class AbstractTestDataCreator {
 		processor.setProject(project);
 		persistAndFlush(processor);
 		return processor;
+	}
+
+	public static DecisionKnowledgeSystem createDKSWithTransaction(String name) throws Throwable {
+		return JPA.withTransaction(() -> {
+			DecisionKnowledgeSystem dks = new DecisionKnowledgeSystem();
+			dks.setName(name);
+			dks.setUrl("http://" + name.toLowerCase() + ".com");
+			persistAndFlush(dks);
+			return dks;
+		});
 	}
 }

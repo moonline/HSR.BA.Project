@@ -31,6 +31,15 @@ module test.integration.application {
                     {"id": 4401, "name": "Test 1", "project": {"id": 59, "name": "Project"}, "code": "imagine example function here"},
                     {"id": 4404, "name": "Test 2", "project": {"id": 59, "name": "Project"}, "code": "function x(){anything};"}
                 ]});
+                httpBackend.when('GET','/dks').respond({
+                    "items": [
+                        {
+                            "id": 1,
+                            "name": "The DKS",
+                            "url": "http://localhost:9940"
+                        }
+                    ]
+                });
 
                 persistenceService = {
                     pptAccountRepository: new app.domain.repository.ppt.PPTAccountRepository($http),
@@ -38,6 +47,7 @@ module test.integration.application {
                     projectRepository: new app.domain.repository.core.ProjectRepository($http),
                     processorRepository: new app.domain.repository.core.ProcessorRepository($http),
                     taskPropertyRepository: new app.domain.repository.core.TaskTemplateRepository($http),
+                    decisionKnowledgeSystemRepository: new app.domain.repository.dks.DecisionKnowledgeSystemRepository($http),
 					projectPlanningToolRepository: new app.domain.repository.ppt.ProjectPlanningToolRepository($http)
                 };
             }));

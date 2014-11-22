@@ -33,7 +33,7 @@ module app.application {
 			var taskPropertyRepository: app.domain.repository.core.TaskPropertyRepository = persistenceService['taskPropertyRepository'];
 			var taskTemplateRepository: app.domain.repository.core.TaskTemplateRepository =  persistenceService['taskTemplateRepository'];
 			var mappingRepository: app.domain.repository.core.MappingRepository = persistenceService['mappingRepository'];
-			var devisionKnowledgeRepository: app.domain.repository.dks.DecisionKnowledgeSystemRepository = persistenceService['decisionKnowledgeRepository'];
+			var decisionKnowledgeRepository: app.domain.repository.dks.DecisionKnowledgeSystemRepository = persistenceService['decisionKnowledgeSystemRepository'];
 
 			$scope.taskTemplates = [];
 			$scope.taskTemplateLoadingStatus = app.application.ApplicationState.pending;
@@ -59,12 +59,12 @@ module app.application {
 			$scope.problems = [];
 			$scope.currentDksNode = null;
 			$scope.problemsLoadingStatus = app.application.ApplicationState.waiting;
-			devisionKnowledgeRepository.findAll(function(success, items) {
+			decisionKnowledgeRepository.findAll(function(success, items) {
 				$scope.currentDks = <app.domain.model.dks.DecisionKnowledgeSystem>items[0];
 
 				$scope.problemsLoadingStatus = app.application.ApplicationState.pending;
-				problemRepository.host = $scope.currentDks.address;
-				alternativeRepository.host = $scope.currentDks.address;
+				problemRepository.host = $scope.currentDks.url;
+				alternativeRepository.host = $scope.currentDks.url;
 				problemRepository.findAllWithNodesAndSubNodes<app.domain.model.dks.Alternative>('alternatives', alternativeRepository, function(success, items) {
 					if(success) {
 						$scope.problems = items;

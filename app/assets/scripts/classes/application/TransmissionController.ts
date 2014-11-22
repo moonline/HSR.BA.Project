@@ -53,7 +53,7 @@ module app.application {
 			var pptAccountRepository: app.domain.repository.ppt.PPTAccountRepository = persistenceService['pptAccountRepository'];
 			var decisionRepository: app.domain.repository.dks.DecisionRepository = persistenceService['decisionRepository'];
 			var optionRepository: app.domain.repository.dks.OptionRepository = persistenceService['optionRepository'];
-			var decisionKnowledgeRepository: app.domain.repository.dks.DecisionKnowledgeSystemRepository = persistenceService['decisionKnowledgeRepository'];
+			var decisionKnowledgeSystemRepository: app.domain.repository.dks.DecisionKnowledgeSystemRepository = persistenceService['decisionKnowledgeSystemRepository'];
 			var requestTemplateRepository = persistenceService['requestTemplateRepository'];
 			var projectRepository = persistenceService['projectRepository'];
 			var projectPlanningToolRepository = persistenceService['projectPlanningToolRepository'];
@@ -97,11 +97,11 @@ module app.application {
 								}
 							});
 
-							decisionKnowledgeRepository.findAll(function(success, items) {
+							decisionKnowledgeSystemRepository.findAll(function(success, items) {
 								$scope.currentDks = <app.domain.model.dks.DecisionKnowledgeSystem>items[0];
 
-								decisionRepository.host = $scope.currentDks.address;
-								optionRepository.host = $scope.currentDks.address;
+								decisionRepository.host = $scope.currentDks.url;
+								optionRepository.host = $scope.currentDks.url;
 								decisionRepository.findAllWithNodesAndSubNodes('alternatives', optionRepository, function(success, items){
 									$scope.decisions = items;
 

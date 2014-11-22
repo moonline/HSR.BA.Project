@@ -7,6 +7,7 @@ import daos.ppt.ProjectPlanningToolDAO;
 import daos.task.TaskDAO;
 import models.task.Task;
 import models.task.TaskProperty;
+import models.task.TaskPropertyValue;
 import models.task.TaskTemplate;
 import models.user.Project;
 import models.user.User;
@@ -217,6 +218,13 @@ public class ProjectPlanningToolControllerTest extends AbstractControllerTest {
 		User user = AbstractTestDataCreator.createUserWithTransaction("User 1", "1");
 		String url = "http://localhost:9920/rest/api/2/issue";
 		Long account = AbstractTestDataCreator.createPPTAccountWithTransaction(user, "http://localhost:9920", "admin", "admin").getId();
+		TaskPropertyValue[] taskPropertyValues = JPA.withTransaction(() -> {
+			TaskTemplate newTaskTemplate = AbstractTestDataCreator.createTaskTemplate("Define criterions");
+			return new TaskPropertyValue[]{
+					AbstractTestDataCreator.createTaskPropertyValue("Assignee", "Project Planner", newTaskTemplate),
+					AbstractTestDataCreator.createTaskPropertyValue("Task", "Type", newTaskTemplate)
+			};
+		});
 		JsonNode requestContent = Json.parse("{\n\t\"fields\": {\n\t\t\"project\": {\n\t\t\t\"key\": \"TEST\"\n\t\t},\n\t\t\"summary\": \"Define criterions\",\n \t\"description\": \".\\n\\nDecision: Session State Management\\nDKS link: http://localhost:9940/element/14\\nAttributes:\\nRevision Date: 2016-11-11\\nViewpoint: Scenario\\nIntellectual Property Rights: Unrestricted\\nDue Date: 2014-12-24\\nProject Stage: Inception\\nOrganisational Reach: Project\\nStakeholder Roles: Any\\nOwner Role: Lead Architect\",\n \t\"duedate\": \"\",\n \t\"issuetype\": {\n\t\t\t\"name\": \"Task\"\n\t\t},\n \t\"priority\": {\n\t\t\t\"name\": \"\"\n\t\t},\n \t\"assignee\": {\n\t\t\t\"name\": \"Project Planner\"\n\t\t},\n\t\t\"timetracking\": {\n\t\t\t\"originalEstimate\": \"\"\n\t\t}\n\t}\n}");
 		int resultStatus = 123;
 		JsonNode resultJson = Json.parse("{\"result\":\"Check!\"}");
@@ -244,17 +252,17 @@ public class ProjectPlanningToolControllerTest extends AbstractControllerTest {
 				"	\"path\":\"/rest/api/2/issue\"," +
 				"	\"content\":\"" + Json.stringify(requestContent).replaceAll("\\\\", "\\\\\\\\").replaceAll("\"", "\\\\\"") + "\"," +
 				"	\"taskTemplate\":{" +
-				"		\"id\":11," +
+				"		\"id\":" + taskPropertyValues[0].getTask().getId() + "," +
 				"		\"name\":\"Define criterions\"," +
 				"		\"properties\":[" +
-				"			{\"id\":12,\"property\":{\"id\":5,\"name\":\"Assignee\"},\"value\":\"Project Planner\"}," +
-				"			{\"id\":13,\"property\":{\"id\":6,\"name\":\"Type\"},\"value\":\"Task\"}" +
+				"			{\"id\":" + taskPropertyValues[0].getId() + ",\"property\":{\"id\":" + taskPropertyValues[0].getProperty().getId() + ",\"name\":\"Assignee\"},\"value\":\"Project Planner\"}," +
+				"			{\"id\":" + taskPropertyValues[1].getId() + ",\"property\":{\"id\":" + taskPropertyValues[1].getProperty().getId() + ",\"name\":\"Type\"},\"value\":\"Task\"}" +
 				"		]," +
 				"		\"attributes\":{\"assignee\":\"Project Planner\",\"type\":\"Task\"}" +
 				"	}," +
 				"	\"taskProperties\":[" +
-				"		{\"id\":12,\"property\":{\"id\":5,\"name\":\"Assignee\"},\"value\":\"Project Planner\"}," +
-				"		{\"id\":13,\"property\":{\"id\":6,\"name\":\"Type\"},\"value\":\"Task\"}" +
+				"		{\"id\":" + taskPropertyValues[0].getId() + "" + taskPropertyValues[0].getId() + ",\"property\":{\"id\":" + taskPropertyValues[0].getProperty().getId() + ",\"name\":\"Assignee\"},\"value\":\"Project Planner\"}," +
+				"		{\"id\":" + taskPropertyValues[1].getId() + "" + taskPropertyValues[1].getId() + ",\"property\":{\"id\":" + taskPropertyValues[1].getProperty().getId() + ",\"name\":\"Type\"},\"value\":\"Task\"}" +
 				"	]," +
 				"	\"project\":{\"id\":2,\"name\":\"Project\"}" +
 				"}")).withSession(AuthenticationChecker.SESSION_USER_IDENTIFIER, user.getId() + ""));
@@ -267,7 +275,7 @@ public class ProjectPlanningToolControllerTest extends AbstractControllerTest {
 		WS.url(url);
 
 		Task task = JPA.withTransaction(() -> TASK_DAO.readAll().get(0));
-		assertThat(task.getCreatedFrom().getId()).isEqualTo(11);
+		assertThat(task.getCreatedFrom().getId()).isEqualTo(taskPropertyValues[0].getTask().getId());
 		assertThat(task.getFinalRequestUrl()).isEqualTo(url);
 		assertThat(Json.stringify(task.getFinalResponseContent())).isEqualTo("{\"result\":\"Check!\"}");
 		assertThat(task.getFinalResponseStatus()).isEqualTo(resultStatus);
