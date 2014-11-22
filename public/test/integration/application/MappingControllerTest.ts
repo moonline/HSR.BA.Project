@@ -31,7 +31,7 @@ module test.integration.application {
 					problemRepository: new app.domain.repository.dks.ProblemRepository($http)
 				};
 
-				persistenceService.decisionKnowledgeSystemRepository.resources['list']['url'] = '/dks/decisionKnowledgeSystem';
+				persistenceService.decisionKnowledgeSystemRepository.resources['list']['url'] = '/dks';
 				persistenceService.taskTemplateRepository.resources['list']['url'] = '/taskTemplate';
 				persistenceService.taskPropertyRepository.resources['list']['url'] = '/taskProperty';
 				persistenceService.mappingRepository.resources['list']['url'] = '/mapping';
@@ -44,11 +44,12 @@ module test.integration.application {
 				httpBackend.when('GET','/mapping').respond({});
 
 
-				httpBackend.when('GET','/dks/decisionKnowledgeSystem').respond({
+				httpBackend.when('GET','/dks').respond({
 					"items": [
 						{
 							"id": 1,
-							"address": "http://localhost:9940"
+							"name": "The DKS",
+							"url": "http://localhost:9940"
 						}
 					]
 				});
@@ -83,7 +84,7 @@ module test.integration.application {
 				var controller: app.application.MappingController = new app.application.MappingController(scope, location, http, persistenceService);
 				httpBackend.flush();
 
-				var dkSystem = new app.domain.model.dks.DecisionKnowledgeSystem("http://localhost:9940"); dkSystem.id = 1;
+				var dkSystem = new app.domain.model.dks.DecisionKnowledgeSystem("The DKS", "http://localhost:9940"); dkSystem.id = 1;
 				expect(scope.currentDks).toEqual(dkSystem);
 
 				expect(scope.problems.length).toEqual(1);
