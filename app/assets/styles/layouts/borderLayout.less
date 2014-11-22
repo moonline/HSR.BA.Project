@@ -26,16 +26,23 @@
 	.flexDirection(column);
 	.justifyContent(space-between);
 
-	> [data-region] { width: 100%; } //north/middle/south
+	> [data-region] { width: 100%; -webkit-flex-grow: 1; -webkit-flex-shrink: 1; } //north/middle/south
+	> [data-region="middle"], > [data-region="middle"] > [data-region="center"] {
+		flex-grow: 1;
+		flex-shrink: 1;
+		box-flex: 1;
+		-webkit-box-flex: 1;
+		-webkit-flex-grow: 100;
+		-webkit-flex-shrink: 100;
+		-webkit-align-items: stretch;
+	}
 	> [data-region="middle"] {
-		flex-grow: 1; flex-shrink: 1; -webkit-box-flex: 1;
-
 		.displayFlex;
 		.flexDirection(row);
 		.justifyContent(space-between);
 
+		> [data-region="center"] { overflow-y: auto; width: 100%; }
 		> [data-region] { height: 100%; } //west/center/east
-		> [data-region="center"] { flex-grow: 1;  flex-shrink: 1; }
 	}
 
 	[data-region="center"], [data-region="middle"] {

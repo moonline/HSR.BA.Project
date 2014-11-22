@@ -15,28 +15,31 @@
 
 	</head>
 	<body>
-		<div data-layout="border" style="height: 100%;">
-			<header data-region="north" data-layout="border">
-				<div id="headerPanel" class="headerPanel" data-region="north" data-layout="border">
-					<div data-region="middle" data-align="center">
-						<h1 data-region="west" class="eeppi" title="Entwurfsentscheidungen als Projektplanungsinstrument">
-							<strong>EEPPI</strong> -
-							D<strong>e</strong>sign
-							D<strong>e</strong>cisions as
-							<strong>P</strong>roject
-							<strong>P</strong>lanning
-							<strong>I</strong>nstrument</h1>
-						<button data-ng-if="authenticator.loggedInUser != null"
-							data-ng-click="logout()">Logout {{authenticator.loggedInUser.userName}}</button>
-						<form data-ng-if="authenticator.loggedInUser == null">
-							<input class="{{loginStatus == Status.error && 'error' || '' }}" type="text" data-ng-model="username" placeholder="username" />
-							<input class="{{loginStatus == Status.error && 'error' || '' }}" type="password" data-ng-model="password" placeholder="password" />
-							<button data-ng-click="login(username, password)">Login</button>
-						</form>
-					</div>
+		<header data-layout="border">
+			<div id="headerPanel" class="headerPanel" data-region="middle">
+				<div data-region="west">
+					<h1 class="eeppi" title="Entwurfsentscheidungen als Projektplanungsinstrument">
+						<strong>EEPPI</strong> -
+						D<strong>e</strong>sign
+						D<strong>e</strong>cisions as
+						<strong>P</strong>roject
+						<strong>P</strong>lanning
+						<strong>I</strong>nstrument
+					</h1>
 				</div>
+				<div data-region="east">
+					<button data-ng-if="authenticator.loggedInUser != null"
+						data-ng-click="logout()">Logout {{authenticator.loggedInUser.userName}}</button>
+					<form data-ng-if="authenticator.loggedInUser == null">
+						<input class="{{loginStatus == Status.error && 'error' || '' }}" type="text" data-ng-model="username" placeholder="username" />
+						<input class="{{loginStatus == Status.error && 'error' || '' }}" type="password" data-ng-model="password" placeholder="password" />
+						<button data-ng-click="login(username, password)">Login</button>
+					</form>
+				</div>
+			</div>
 
-				<nav class="mainNavigation" data-type="toolbar" data-region="south" data-layout="flow" data-flow-direction="row">
+			<nav class="mainNavigation" data-type="toolbar" data-region="south" data-layout="flow" data-flow-direction="row">
+				<div>
 					<ul>
 						<li class="{{ currentView.path() == '/mapping' && 'current' || '' }}" data-ng-if="authenticator.loggedInUser != null">
 							<span class="icon" data-icon="link"></span><a href="#/mapping">Problems &amp; Task Templates</a>
@@ -50,17 +53,15 @@
 						<li class="{{ currentView.path() == '/admin' && 'current' || '' }}" data-ng-if="authenticator.loggedInUser != null">
 							<span class="icon" data-icon="settings"></span><a href="#/admin">Administration</a></li>
 					</ul>
-				</nav>
-			</header>
+				</div>
+			</nav>
+		</header>
 
-			<div data-region="middle">
-				<div data-region="center" data-ng-view></div>
-			</div>
+		<section data-ng-view></section>
 
-			<footer data-region="south">
-				<p>&copy; EEPPI 2014</p>
-			</footer>
-		</div>
+		<footer data-region="south">
+			<p>&copy; EEPPI 2014</p>
+		</footer>
 
 		<script src="/public/scripts/libraries/angularJs/angular.min.js" ></script>
 		<script src="/public/scripts/libraries/angularJs/angular-route.min.js" ></script>
