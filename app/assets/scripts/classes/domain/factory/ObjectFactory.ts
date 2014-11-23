@@ -34,6 +34,28 @@ module app.domain.factory {
 		}
 
 		/**
+		 * updates an object with some new data
+		 *
+		 * @param item the item to be updated
+		 * @param type e.g. String, Number, Object, Array, YourPrototype, ...
+		 * 	-> Own Prototypes must implement static property factoryConfiguration (core.FactoryConfiguration)
+		 * @param data e.g. { "id": 5, "name": "DummyObject" }
+		 * @returns {T}
+		 */
+		public static updateFromJson(item: any, type: any, data: any):any {
+			if(type.factoryConfiguration) {
+				type.factoryConfiguration.publicProperties.forEach(function(property){
+					if(data[property['name']]) {
+						item[property['name']] = ObjectFactory.createProperty(data[property['name']], property);
+					}
+				});
+				return item;
+			} else {
+				throw new Error("No factory configuration defined for class "+type.name+"!");
+			}
+		}
+
+		/**
 		 * create an object property from a data item
 		 *
 		 * @param dataItem e.g. "DummyObject1"
@@ -63,7 +85,7 @@ module app.domain.factory {
 
 		/**
 		 * This is not nice but it's the only way it works.
-		 * You can't user the type itself to instantiate an object body because
+		 * You can't use the type itself to instantiate an object body because
 		 * maybe some undefined properties will fail on access, so use an empty dummy class
 		 */
 		public static createObject(constructor, args):any {

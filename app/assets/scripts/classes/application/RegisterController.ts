@@ -16,6 +16,7 @@ module app.application {
 		authenticationService: app.service.AuthenticationService;
 
 		constructor($scope, $location, $http, persistenceService, authenticationService) {
+			$scope.ApplicationState = app.application.ApplicationState;
 			this.$scope = $scope;
 			this.authenticationService = authenticationService;
 			$scope.operationState = app.application.ApplicationState.waiting;
@@ -50,17 +51,16 @@ module app.application {
 			$scope.authenticator = authenticationService;
 			$scope.$watch('authenticator', function() {});
 
-			$scope.passwordChangeStatus = null;
-
 			$scope.registerStatus = null;
 
 			$scope.changePassword = function(oldPassword, newPassword, newPasswordRepeat) {
-				$scope.passwordChangeStatus = null;
+				$scope.changePasswordStatus = app.application.ApplicationState.saving;
 				this.authenticationService.changePassword(oldPassword, newPassword, newPasswordRepeat, function(success: boolean) {
 					if(success) {
-						$scope.passwordChangeStatus = app.application.Status.success;
+						$scope.changePasswordStatus = app.application.ApplicationState.successful;
+						setTimeout(() => { $scope.changePasswordStatus = null; $scope.$apply(); }, configuration.settings.successDelay);
 					} else {
-						$scope.passwordChangeStatus = app.application.Status.error;
+						$scope.changePasswordStatus = app.application.ApplicationState.failed;
 					}
 				});
 			}.bind(this);
@@ -87,23 +87,41 @@ module app.application {
 					authenticationService.currentUser, userName, pptUrl, ppt
 				);
 				pptAccount.pptPassword = password;
-				$scope.operationState = app.application.ApplicationState.saving;
+				$scope.pptAccountStatus = app.application.ApplicationState.saving;
 				pptAccountRepository.add(pptAccount, function (success:boolean, item:app.domain.model.ppt.PPTAccount) {
-					$scope.setOperationFinishState(success);
+					$scope.setPPTAccountFinishState(success);
 				});
 			};
 
 			$scope.updatePPTAccount = function (pptAccount:app.domain.model.ppt.PPTAccount) {
-				$scope.operationState = app.application.ApplicationState.saving;
-				pptAccountRepository.update(pptAccount, function (success, item) {
-					$scope.setOperationFinishState(success);
-				});
+				if($scope.hasPPTAccountChanged) {
+					$scope.hasPPTAccountChanged = false;
+					$scope.pptAccountStatus = app.application.ApplicationState.saving;
+					pptAccountRepository.update(pptAccount, function (success, item) {
+						$scope.setPPTAccountFinishState(success);
+					});
+				}
+			};
+
+			$scope.setPPTAccountFinishState = function(success: boolean) {
+				if(success) {
+					$scope.pptAccountStatus = app.application.ApplicationState.successful;
+					setTimeout(() => { $scope.pptAccountStatus = null; $scope.$apply(); }, configuration.settings.successDelay);
+				}else {
+					$scope.pptAccountStatus = app.application.ApplicationState.failed;
+				}
+			};
+
+			$scope.hasPPTAccountChanged = false;
+
+			$scope.pptAccountChanged = function() {
+				$scope.hasPPTAccountChanged = true;
 			};
 
 			$scope.removePPTAccount = function (pptAccount:app.domain.model.ppt.PPTAccount) {
-				$scope.operationState = app.application.ApplicationState.saving;
+				$scope.pptAccountStatus = app.application.ApplicationState.saving;
 				pptAccountRepository.remove(pptAccount, function (success) {
-					$scope.setOperationFinishState(success);
+					$scope.setPPTAccountFinishState(success);
 				});
 			};
 

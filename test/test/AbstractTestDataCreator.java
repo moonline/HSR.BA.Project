@@ -8,7 +8,7 @@ import daos.user.UserDAO;
 import logics.user.UserLogic;
 import models.dks.DKSMapping;
 import models.dks.DecisionKnowledgeSystem;
-import models.ppt.Mapping;
+import models.ppt.RequestTemplate;
 import models.ppt.Processor;
 import models.ppt.ProjectPlanningTool;
 import models.task.TaskProperty;
@@ -134,28 +134,28 @@ public abstract class AbstractTestDataCreator {
 		});
 	}
 
-	public static Mapping createMappingWithTransaction(String name, String ppt, String project, String url, String requestTemplate) throws Throwable {
-		return JPA.withTransaction(() -> createMapping(name, ppt, project, url, requestTemplate));
+	public static RequestTemplate createRequestTemplateWithTransaction(String name, String ppt, String project, String url, String requestBodyTemplate) throws Throwable {
+		return JPA.withTransaction(() -> createRequestTemplate(name, ppt, project, url, requestBodyTemplate));
 	}
 
-	public static Mapping createMapping(String name, String ppt, String project, String url, String requestTemplate) throws Throwable {
+	public static RequestTemplate createRequestTemplate(String name, String ppt, String project, String url, String requestBodyTemplate) throws Throwable {
 		ProjectPlanningTool pptEntity = new ProjectPlanningTool();
 		pptEntity.setName(ppt);
 		Project projectEntity = new Project();
 		projectEntity.setName(project);
 		persistAndFlush(pptEntity, projectEntity);
-		return createMapping(name, pptEntity, projectEntity, url, requestTemplate);
+		return createRequestTemplate(name, pptEntity, projectEntity, url, requestBodyTemplate);
 	}
 
-	public static Mapping createMapping(String name, ProjectPlanningTool ppt, Project project, String url, String requestTemplate) throws Throwable {
-		Mapping mapping = new Mapping();
-		mapping.setPpt(ppt);
-		mapping.setName(name);
-		mapping.setProject(project);
-		mapping.setUrl(url);
-		mapping.setRequestTemplate(requestTemplate);
-		persistAndFlush(mapping);
-		return mapping;
+	public static RequestTemplate createRequestTemplate(String name, ProjectPlanningTool ppt, Project project, String url, String requestBodyTemplate) throws Throwable {
+		RequestTemplate requestTemplate = new RequestTemplate();
+		requestTemplate.setPpt(ppt);
+		requestTemplate.setName(name);
+		requestTemplate.setProject(project);
+		requestTemplate.setUrl(url);
+		requestTemplate.setRequestBodyTemplate(requestBodyTemplate);
+		persistAndFlush(requestTemplate);
+		return requestTemplate;
 	}
 
 	public static Processor createProcessor(String name, String projectName, String code) {

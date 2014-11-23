@@ -70,8 +70,8 @@ INSERT INTO TASKPROPERTYVALUE(ID, "VALUE", PROPERTY_ID, TASK_ID) VALUES (nextval
 INSERT INTO TASKTEMPLATE (ID, NAME, PARENT_ID) VALUES (nextval('entity_seq'), 'Invite to decision meeting',
 	(SELECT id FROM TASKTEMPLATE WHERE name='Hold decision meeting'));
 
--- Creating Mappings / Request templates
-INSERT INTO MAPPING (ID, REQUESTTEMPLATE, URL, PROJECT_ID, PPT_ID) VALUES (nextval('entity_seq'),CONCAT('{
+-- Creating Request Templates
+INSERT INTO REQUESTTEMPLATE (ID, REQUESTBODYTEMPLATE, URL, PROJECT_ID, PPT_ID) VALUES (nextval('entity_seq'),CONCAT('{
 ','	"fields": {
 ','		"project": {
 ','			"key": "${pptProject}"
@@ -138,7 +138,7 @@ INSERT INTO PROCESSOR (ID, CODE, NAME, PROJECT_ID) VALUES (nextval('entity_seq')
 # --- !Downs
 
 delete from task;
-delete from mapping;
+delete from requesttemplate;
 delete from processor;
 delete from pptaccount;
 delete from person;

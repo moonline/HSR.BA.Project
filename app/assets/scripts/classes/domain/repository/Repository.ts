@@ -204,14 +204,11 @@ module app.domain.repository.core {
 			var method: string = this.resources['update']['method'].toLowerCase();
 			var url: string = this.getResourcePath('update').replace('{id}', item.id.toString());
 			var type = this.type;
-			var cache = this.itemCache;
 
 			this.httpService[method](url, JSON.stringify(item))
 				.success(function(data, status, headers, config) {
-					var newObject: T = app.domain.factory.ObjectFactory.createFromJson(type, data);
-					var cacheObjectIndex: number = cache.indexOf(item);
-					cache[cacheObjectIndex] = newObject;
-					callback(true, newObject);
+					app.domain.factory.ObjectFactory.updateFromJson(item, type, data);
+					callback(true, item);
 				})
 				.error(function(data, status, headers, config) {
 					callback(false, null);

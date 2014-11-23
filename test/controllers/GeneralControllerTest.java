@@ -1,9 +1,10 @@
 package controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import daos.ppt.MappingDAO;
+import controllers.ppt.routes;
+import daos.ppt.RequestTemplateDAO;
 import daos.user.ProjectDAO;
-import models.ppt.Mapping;
+import models.ppt.RequestTemplate;
 import org.junit.Test;
 import play.db.jpa.JPA;
 import play.libs.Json;
@@ -21,51 +22,51 @@ public class GeneralControllerTest extends AbstractControllerTest {
 	@Test
 	public void testUpdateWithJsonRequest() throws Throwable {
 		//Setup
-		Mapping mapping = AbstractTestDataCreator.createMappingWithTransaction("My Mapping", "My PPT", "My Project", "/example/target", "{}");
-		JsonNode mappingAsJson = Json.parse("{ \"id\" : " + mapping.getId() + ",\n" +
-				"	\"name\":\"My Mapping\",\n" +
-				"	\"ppt\":{\"id\":" + mapping.getPpt().getId() + ",\"name\":\"My PPT\"},\n" +
-				"	\"project\":{\"id\":" + mapping.getProject().getId() + ",\"name\":\"My Project\"},\n" +
+		RequestTemplate requestTemplate = AbstractTestDataCreator.createRequestTemplateWithTransaction("My RequestTemplate", "My PPT", "My Project", "/example/target", "{}");
+		JsonNode mappingAsJson = Json.parse("{ \"id\" : " + requestTemplate.getId() + ",\n" +
+				"	\"name\":\"My RequestTemplate\",\n" +
+				"	\"ppt\":{\"id\":" + requestTemplate.getPpt().getId() + ",\"name\":\"My PPT\"},\n" +
+				"	\"project\":{\"id\":" + requestTemplate.getProject().getId() + ",\"name\":\"My Project\"},\n" +
 				"	\"url\" : \"/post/target2\",\n" +
-				"	\"requestTemplate\" : \"{\\\"name\\\":\\\"${titleeee}\\\"}\"\n" +
+				"	\"requestBodyTemplate\" : \"{\\\"name\\\":\\\"${titleeee}\\\"}\"\n" +
 				"}");
 		String user = AbstractTestDataCreator.createUserWithTransaction("User 77", "1234").getId() + "";
 		//Test
 		FakeRequest requestParams = new FakeRequest().withJsonBody(mappingAsJson).withSession(AuthenticationChecker.SESSION_USER_IDENTIFIER, user);
-		Result result = callAction(controllers.ppt.routes.ref.MappingController.update(mapping.getId()), requestParams);
+		Result result = callAction(routes.ref.RequestTemplateController.update(requestTemplate.getId()), requestParams);
 		//Verification
 		assertThat(status(result)).isEqualTo(OK);
 		assertCheckJsonResponse(result, mappingAsJson);
-		Mapping mappingInDB = JPA.withTransaction(() -> new MappingDAO().readById(mapping.getId()));
-		assertThat(mappingInDB.getPpt().getId()).isEqualTo(mapping.getPpt().getId());
-		assertThat(mappingInDB.getProject().getId()).isEqualTo(mapping.getProject().getId());
-		assertThat(mappingInDB.getUrl()).isEqualTo("/post/target2");
-		assertThat(mappingInDB.getRequestTemplate()).isEqualTo("{\"name\":\"${titleeee}\"}");
+		RequestTemplate requestTemplateInDB = JPA.withTransaction(() -> new RequestTemplateDAO().readById(requestTemplate.getId()));
+		assertThat(requestTemplateInDB.getPpt().getId()).isEqualTo(requestTemplate.getPpt().getId());
+		assertThat(requestTemplateInDB.getProject().getId()).isEqualTo(requestTemplate.getProject().getId());
+		assertThat(requestTemplateInDB.getUrl()).isEqualTo("/post/target2");
+		assertThat(requestTemplateInDB.getRequestBodyTemplate()).isEqualTo("{\"name\":\"${titleeee}\"}");
 	}
 
 	@Test
 	public void testUpdateWithJsonRequestDoesNotUpdateReferencedItems() throws Throwable {
 		//Setup
-		Mapping mapping = AbstractTestDataCreator.createMappingWithTransaction("My Mapping", "My PPT", "My Project", "/example/target", "{}");
-		Long oldProjectId = mapping.getProject().getId();
+		RequestTemplate requestTemplate = AbstractTestDataCreator.createRequestTemplateWithTransaction("My Request Template", "My PPT", "My Project", "/example/target", "{}");
+		Long oldProjectId = requestTemplate.getProject().getId();
 		Long newProjectId = AbstractTestDataCreator.createProjectWithTransaction("New Project").getId();
-		JsonNode mappingAsJson = Json.parse("{ \"id\" : " + mapping.getId() + ",\n" +
-				"	\"name\":\"My Mapping\",\n" +
-				"	\"ppt\":{\"id\":" + mapping.getPpt().getId() + ",\"name\":\"My PPT\"},\n" +
+		JsonNode mappingAsJson = Json.parse("{ \"id\" : " + requestTemplate.getId() + ",\n" +
+				"	\"name\":\"My Request Template\",\n" +
+				"	\"ppt\":{\"id\":" + requestTemplate.getPpt().getId() + ",\"name\":\"My PPT\"},\n" +
 				"	\"project\":{\"id\":" + newProjectId + ",\"name\":\"JUST SOMETHING ELSE HERE\"},\n" +
 				"	\"url\" : \"/post/target2\",\n" +
-				"	\"requestTemplate\" : \"{\\\"name\\\":\\\"${titleeee}\\\"}\"\n" +
+				"	\"requestBodyTemplate\" : \"{\\\"name\\\":\\\"${titleeee}\\\"}\"\n" +
 				"}");
 		String user = AbstractTestDataCreator.createUserWithTransaction("User 77", "1234").getId() + "";
 		//Test
 		FakeRequest requestParams = new FakeRequest().withJsonBody(mappingAsJson).withSession(AuthenticationChecker.SESSION_USER_IDENTIFIER, user);
-		Result result = callAction(controllers.ppt.routes.ref.MappingController.update(mapping.getId()), requestParams);
+		Result result = callAction(controllers.ppt.routes.ref.RequestTemplateController.update(requestTemplate.getId()), requestParams);
 		//Verification
 		assertThat(status(result)).isEqualTo(OK);
 		assertCheckJsonResponse(result, mappingAsJson);
-		Mapping mappingInDB = JPA.withTransaction(() -> new MappingDAO().readById(mapping.getId()));
-		assertThat(mappingInDB.getProject().getId()).isEqualTo(newProjectId);
-		assertThat(mappingInDB.getProject().getName()).isEqualTo("New Project");
+		RequestTemplate requestTemplateInDB = JPA.withTransaction(() -> new RequestTemplateDAO().readById(requestTemplate.getId()));
+		assertThat(requestTemplateInDB.getProject().getId()).isEqualTo(newProjectId);
+		assertThat(requestTemplateInDB.getProject().getName()).isEqualTo("New Project");
 		assertThat(JPA.withTransaction(() -> new ProjectDAO().readById(oldProjectId)).getName()).isEqualToIgnoringCase("My Project");
 		assertThat(JPA.withTransaction(() -> new ProjectDAO().readById(newProjectId)).getName()).isEqualToIgnoringCase("New Project");
 	}
@@ -73,30 +74,30 @@ public class GeneralControllerTest extends AbstractControllerTest {
 	@Test
 	public void testUpdateWithJsonRequestDoNotRequireParametersButTheId() throws Throwable {
 		//Setup
-		Mapping mapping = AbstractTestDataCreator.createMappingWithTransaction("My Mapping", "My PPT", "My Project", "/example/target", "{}");
+		RequestTemplate requestTemplate = AbstractTestDataCreator.createRequestTemplateWithTransaction("My Request Template", "My PPT", "My Project", "/example/target", "{}");
 		Long newProjectId = AbstractTestDataCreator.createProjectWithTransaction("New Project").getId();
-		JsonNode mappingAsJson = Json.parse("{ \"id\" : " + mapping.getId() + ",\n" +
-				"	\"name\":\"My Mapping\",\n" +
-				"	\"ppt\":{\"id\":" + mapping.getPpt().getId() + ",\"name\":\"My PPT\"},\n" +
+		JsonNode mappingAsJson = Json.parse("{ \"id\" : " + requestTemplate.getId() + ",\n" +
+				"	\"name\":\"My Request Template\",\n" +
+				"	\"ppt\":{\"id\":" + requestTemplate.getPpt().getId() + ",\"name\":\"My PPT\"},\n" +
 				"	\"project\":{\"id\":" + newProjectId + "},\n" + //no name parameter here
 				"	\"url\" : \"/post/target2\",\n" +
-				"	\"requestTemplate\" : \"{\\\"name\\\":\\\"${titleeee}\\\"}\"\n" +
+				"	\"requestBodyTemplate\" : \"{\\\"name\\\":\\\"${titleeee}\\\"}\"\n" +
 				"}");
 		String user = AbstractTestDataCreator.createUserWithTransaction("User 77", "1234").getId() + "";
 		//Test
 		FakeRequest requestParams = new FakeRequest().withJsonBody(mappingAsJson).withSession(AuthenticationChecker.SESSION_USER_IDENTIFIER, user);
-		Result result = callAction(controllers.ppt.routes.ref.MappingController.update(mapping.getId()), requestParams);
+		Result result = callAction(controllers.ppt.routes.ref.RequestTemplateController.update(requestTemplate.getId()), requestParams);
 		//Verification
 		assertThat(status(result)).isEqualTo(OK);
-		assertCheckJsonResponse(result, Json.parse("{ \"id\" : " + mapping.getId() + ",\n" +
-				"	\"name\":\"My Mapping\",\n" +
-				"	\"ppt\":{\"id\":" + mapping.getPpt().getId() + ",\"name\":\"My PPT\"},\n" +
+		assertCheckJsonResponse(result, Json.parse("{ \"id\" : " + requestTemplate.getId() + ",\n" +
+				"	\"name\":\"My Request Template\",\n" +
+				"	\"ppt\":{\"id\":" + requestTemplate.getPpt().getId() + ",\"name\":\"My PPT\"},\n" +
 				"	\"project\":{\"id\":" + newProjectId + ",\"name\":null},\n" +
 				"	\"url\" : \"/post/target2\",\n" +
-				"	\"requestTemplate\" : \"{\\\"name\\\":\\\"${titleeee}\\\"}\"\n" +
+				"	\"requestBodyTemplate\" : \"{\\\"name\\\":\\\"${titleeee}\\\"}\"\n" +
 				"}"));
-		Mapping mappingInDB = JPA.withTransaction(() -> new MappingDAO().readById(mapping.getId()));
-		assertThat(mappingInDB.getProject().getId()).isEqualTo(newProjectId);
+		RequestTemplate requestTemplateInDB = JPA.withTransaction(() -> new RequestTemplateDAO().readById(requestTemplate.getId()));
+		assertThat(requestTemplateInDB.getProject().getId()).isEqualTo(newProjectId);
 	}
 
 }

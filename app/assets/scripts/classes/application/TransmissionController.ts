@@ -291,7 +291,7 @@ module app.application {
 							mappings: $scope.decisionMappings
 						};
 
-						var templateProcessor = new app.service.TemplateProcesser(exportDecisionData, $scope.currentRequestTemplate.requestBody, processors);
+						var templateProcessor = new app.service.TemplateProcesser(exportDecisionData, $scope.currentRequestTemplate.requestBodyTemplate, processors);
 						var renderedTemplate = templateProcessor.process();
 						var currentRequest = {
 							requestBody: renderedTemplate,
@@ -320,7 +320,7 @@ module app.application {
 								mappings: $scope.decisionMappings
 							};
 
-							var templateProcessor = new app.service.TemplateProcesser(exportDecisionData, $scope.currentRequestTemplate.requestBody, processors);
+							var templateProcessor = new app.service.TemplateProcesser(exportDecisionData, $scope.currentRequestTemplate.requestBodyTemplate, processors);
 							var renderedTemplate = templateProcessor.process();
 
 

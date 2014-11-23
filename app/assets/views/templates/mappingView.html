@@ -65,7 +65,9 @@
 
 				<span class="messagebox error" data-ng-if="mappingsLoadingStatus === ApplicationState.failed">Loading of task mappings failed. Maybe server is not available.</span>
 				<span class="messagebox pending" data-ng-if="mappingsLoadingStatus === ApplicationState.pending">Loading ...</span>
-
+				<span class="messagebox saving" data-ng-if="mappingsSavingStatus === ApplicationState.saving">Saving ...</span>
+				<span class="messagebox success" data-ng-if="mappingsSavingStatus === ApplicationState.successful">Saved successfully</span>
+				<span class="messagebox error" data-ng-if="mappingsSavingStatus === ApplicationState.failed">Could not save! Please try again, reload the page or file a bug report.</span>
 				<ul>
 					<li data-ng-repeat="mapping in currentMappings">
 						<button class="action remove" data-ng-click="removeMapping(mapping)"
@@ -120,6 +122,11 @@
 			</form>
 
 			<h3 data-ng-if="currentTaskTemplate">{{currentTaskTemplate.name}} [{{currentTaskTemplate.id}}]</h3>
+			<div class="operationState">
+				<span class="messagebox saving" data-ng-if="taskTemplateSavingStatus === ApplicationState.saving">Saving ...</span>
+				<span class="messagebox success" data-ng-if="taskTemplateSavingStatus === ApplicationState.successful">Saved successfully!</span>
+				<span class="messagebox error" data-ng-if="taskTemplateSavingStatus === ApplicationState.failed">Could not save! Please try again, reload the page or file a bug report.</span>
+			</div>
 			<form data-ng-if="currentTaskTemplate">
 				<div class="formLine" data-columns="3" data-ng-if="currentTaskTemplate.properties.length < taskProperties.length">
 					<select data-ng-model="newTaskProperty"
@@ -133,17 +140,16 @@
 				</div>
 				<div class="formLine" data-columns="3">
 					<label>Name</label>
-					<input type="text" data-ng-model="currentTaskTemplate.name" />
+					<input type="text" data-ng-model="currentTaskTemplate.name" data-ng-blur="updateTaskTemplate()" data-ng-change="taskTemplateChanged()"/>
 					<span></span>
 				</div>
 				<div data-ng-repeat="propertyValue in currentTaskTemplate.properties" class="formLine" data-columns="3"	>
 					<label>{{propertyValue.property.name}}</label>
-					<input data-ng-model="propertyValue.value" />
+					<input data-ng-model="propertyValue.value" data-ng-blur="updateTaskTemplate()" data-ng-change="taskTemplateChanged()"/>
 					<button class="action remove" data-ng-click="removePropertyValue(propertyValue)"
 							title="Remove property "><span class="icon big">&minus;</span>Remove
 					</button>
 				</div>
-				<button class="action update" data-ng-click="updateTaskTemplate()"><span class="icon">&#11015;</span>Save</button>
 			</form>
 		</div>
 	</div>

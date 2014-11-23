@@ -5,7 +5,7 @@ import controllers.AuthenticationChecker;
 import controllers.dks.DecisionKnowledgeSystemController;
 import controllers.dks.DecisionKnowledgeSystemMappingController;
 import controllers.docs.DocumentationController;
-import controllers.ppt.MappingController;
+import controllers.ppt.RequestTemplateController;
 import controllers.ppt.ProcessorController;
 import controllers.ppt.ProjectPlanningToolController;
 import controllers.task.TaskPropertyController;
@@ -15,7 +15,7 @@ import controllers.user.ProjectController;
 import controllers.user.UserController;
 import daos.dks.DKSMappingDAO;
 import daos.dks.DecisionKnowledgeSystemDAO;
-import daos.ppt.MappingDAO;
+import daos.ppt.RequestTemplateDAO;
 import daos.ppt.ProcessorDAO;
 import daos.ppt.ProjectPlanningToolDAO;
 import daos.task.TaskDAO;
@@ -30,7 +30,7 @@ import logics.dks.DKSMappingLogic;
 import logics.dks.DecisionKnowledgeSystemLogic;
 import logics.docs.DocumentationLogic;
 import logics.docs.ExampleDataCreator;
-import logics.ppt.MappingLogic;
+import logics.ppt.RequestTemplateLogic;
 import logics.ppt.PPTTaskLogic;
 import logics.ppt.ProcessorLogic;
 import logics.task.TaskPropertyLogic;
@@ -74,7 +74,7 @@ public class Global extends GlobalSettings {
 	private final ProcessorDAO PROCESSOR_DAO = new ProcessorDAO();
 	private final TaskDAO TASK_DAO = new TaskDAO();
 	private final ProjectDAO PROJECT_DAO = new ProjectDAO();
-	private final MappingDAO MAPPING_DAO = new MappingDAO();
+	private final RequestTemplateDAO REQUEST_TEMPLATE_DAO = new RequestTemplateDAO();
 	private final TaskPropertyDAO TASK_PROPERTY_DAO = new TaskPropertyDAO();
 	private final TaskPropertyValueDAO TASK_PROPERTY_VALUE_DAO = new TaskPropertyValueDAO();
 	private final DKSMappingDAO DKS_MAPPING_DAO = new DKSMappingDAO();
@@ -83,7 +83,7 @@ public class Global extends GlobalSettings {
 	private final UserDAO USER_DAO = new UserDAO();
 	private final PPTAccountDAO PPT_ACCOUNT_DAO = new PPTAccountDAO();
 
-	private final MappingLogic MAPPING_LOGIC = new MappingLogic(MAPPING_DAO);
+	private final RequestTemplateLogic REQUEST_TEMPLATE_LOGIC = new RequestTemplateLogic(REQUEST_TEMPLATE_DAO);
 	private final TaskPropertyLogic TASK_PROPERTY_LOGIC = new TaskPropertyLogic(TASK_PROPERTY_DAO, TASK_PROPERTY_VALUE_DAO);
 	private final DecisionKnowledgeSystemLogic DKS_LOGIC = new DecisionKnowledgeSystemLogic(DKS_DAO);
 	private final DKSMappingLogic DKS_MAPPING_LOGIC = new DKSMappingLogic(DKS_MAPPING_DAO);
@@ -232,7 +232,7 @@ public class Global extends GlobalSettings {
 	}
 
 	private void initializeControllersRequiringParameters() {
-		CONTROLLERS.put(DocumentationController.class, new DocumentationController(DOCUMENTATION_LOGIC, new ExampleDataCreator(USER_LOGIC, USER_DAO, PPT_ACCOUNT_DAO, PROJECT_PLANNING_TOOL_DAO, TASK_TEMPLATE_DAO, TASK_PROPERTY_DAO, TASK_PROPERTY_VALUE_DAO, DKS_MAPPING_DAO, MAPPING_DAO, PROJECT_DAO, PROCESSOR_DAO, DKS_DAO)));
+		CONTROLLERS.put(DocumentationController.class, new DocumentationController(DOCUMENTATION_LOGIC, new ExampleDataCreator(USER_LOGIC, USER_DAO, PPT_ACCOUNT_DAO, PROJECT_PLANNING_TOOL_DAO, TASK_TEMPLATE_DAO, TASK_PROPERTY_DAO, TASK_PROPERTY_VALUE_DAO, DKS_MAPPING_DAO, REQUEST_TEMPLATE_DAO, PROJECT_DAO, PROCESSOR_DAO, DKS_DAO)));
 		CONTROLLERS.put(PPTAccountController.class, new PPTAccountController(PPT_ACCOUNT_DAO, PPT_ACCOUNT_LOGIC, AUTHENTICATION_CHECKER));
 		CONTROLLERS.put(UserController.class, new UserController(USER_LOGIC, AUTHENTICATION_CHECKER));
 		CONTROLLERS.put(TaskTemplateController.class, new TaskTemplateController(TASK_TEMPLATE_LOGIC, TASK_TEMPLATE_DAO, TASK_PROPERTY_VALUE_DAO));
@@ -241,7 +241,7 @@ public class Global extends GlobalSettings {
 		CONTROLLERS.put(AuthenticationChecker.Authenticator.class, AUTHENTICATION_CHECKER.new Authenticator());
 		CONTROLLERS.put(TaskPropertyController.class, new TaskPropertyController(TASK_PROPERTY_LOGIC, TASK_PROPERTY_DAO));
 		CONTROLLERS.put(DecisionKnowledgeSystemMappingController.class, new DecisionKnowledgeSystemMappingController(DKS_MAPPING_LOGIC, DKS_MAPPING_DAO));
-		CONTROLLERS.put(MappingController.class, new MappingController(MAPPING_LOGIC, MAPPING_DAO));
+		CONTROLLERS.put(RequestTemplateController.class, new RequestTemplateController(REQUEST_TEMPLATE_LOGIC, REQUEST_TEMPLATE_DAO));
 		CONTROLLERS.put(ProjectController.class, new ProjectController(PROJECT_DAO));
 		CONTROLLERS.put(ProcessorController.class, new ProcessorController(PROCESSOR_LOGIC, PROCESSOR_DAO));
 	}

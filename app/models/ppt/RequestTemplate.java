@@ -9,8 +9,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "mapping")
-public class Mapping extends AbstractEntity {
+@Table(name = "requesttemplate")
+public class RequestTemplate extends AbstractEntity {
 
 	@ManyToOne
 	private ProjectPlanningTool ppt;
@@ -19,7 +19,7 @@ public class Mapping extends AbstractEntity {
 	private String name;
 	private String url;
 	@Lob
-	private String requestTemplate;
+	private String requestBodyTemplate;
 
 	public ProjectPlanningTool getPpt() {
 		return ppt;
@@ -53,21 +53,21 @@ public class Mapping extends AbstractEntity {
 		this.url = url;
 	}
 
-	public String getRequestTemplate() {
-		return requestTemplate;
+	public String getRequestBodyTemplate() {
+		return requestBodyTemplate;
 	}
 
-	public void setRequestTemplate(String requestTemplate) {
-		this.requestTemplate = requestTemplate;
+	public void setRequestBodyTemplate(String requestTemplate) {
+		this.requestBodyTemplate = requestTemplate;
 	}
 
 	@Override
 	public String toString() {
-		return "<Mapping " + getId() +
+		return "<Request Template " + getId() +
 				" (ppt=" + (ppt == null ? "null" : ppt.getId()) +
 				", project=" + (project == null ? "null" : project.getId()) +
 				", url=" + url +
-				", requestTemplate=" + requestTemplate + ")>";
+				", requestTemplate=" + requestBodyTemplate + ")>";
 	}
 
 }
