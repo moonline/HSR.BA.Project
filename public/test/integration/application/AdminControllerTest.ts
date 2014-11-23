@@ -82,7 +82,7 @@ module test.integration.application {
                 expect(scope.processors.length).toBeGreaterThan(0);
                 var processor:app.domain.model.core.Processor = scope.processors[0];
                 scope.toUpdateProcessor = processor;
-                scope.showSelectedProcessor();
+                scope.updateWithCorrectProjectAndPPT(scope.toUpdateProcessor);
                 expect(scope.toUpdateProcessor.name).toBe(processor.name);
                 expect(scope.toUpdateProcessor.project.id).toBe(processor.project.id);
                 expect(scope.toUpdateProcessor.code).toBe(processor.code);
