@@ -1,4 +1,4 @@
-<div class="main transmitView" data-layout="border">
+<div class="main transmitView area page" data-layout="border">
 	<div data-region="middle">
 		<div data-region="center">
 			<div class="operationState">
@@ -7,7 +7,7 @@
 				<span class="messagebox saving" data-ng-if="operationState === ApplicationState.saving">Saving ...</span>
 			</div>
 			<form class="wizard">
-				<div class="wizardStep" data-step="DataSelection"
+				<div class="wizardStep area pane" data-step="DataSelection"
 					 data-ng-if="currentWizardStep == ExportWizardSteps.ToolSelection">
 					<div class="requestTemplateState" data-ng-if="targetPPT">
 						<span class="messagebox error" data-ng-if="!currentRequestTemplate">No request template found assigned with this project planning tool. Please create one.</span>
@@ -17,31 +17,41 @@
 
 					<div class="formLine">
 						<label>Target system</label>
-						<select data-ng-model="targetPPTAccount" data-ng-options="pptAccount.pptUrl for pptAccount in pptAccounts"
+						<select title="Choose the target project planning tool to transmit tasks" data-ng-model="targetPPTAccount" data-ng-options="pptAccount.pptUrl for pptAccount in pptAccounts"
 							data-ng-change="setTarget(targetPPTAccount)"></select>
 					</div>
 					<div class="formLine">
 						<label>Request template to transmit</label>
-						<select data-ng-disabled="!targetPPTAccount" data-ng-model="currentRequestTemplate"
+						<select title="Choose the request template to rendering transmitting requests" data-ng-disabled="!targetPPTAccount" data-ng-model="currentRequestTemplate"
 							data-ng-options="pptAccountRequestTemplate.url for pptAccountRequestTemplate in pptAccountRequestTemplates"
 							data-ng-change="setRequestTemplate(currentRequestTemplate)"></select>
 					</div>
 					<div class="formLine">
 						<label>Project in project planning tool</label>
-						<input type="text" data-ng-model="pptProject" data-ng-change="setPPTProject(pptProject)" />
+						<input title="Project value has to match with the field of the project in the project planning tool you mapped in the request template." type="text" data-ng-model="pptProject" data-ng-change="setPPTProject(pptProject)" />
 					</div>
 
-					<button data-ng-disabled="pptProject.length < 1 || !targetPPTAccount || !currentRequestTemplate || !currentRequestTemplate" class="action" data-ng-click="nextStep()">(=>) Select decisions</button>
+					<button data-ng-disabled="pptProject.length < 1 || !targetPPTAccount || !currentRequestTemplate || !currentRequestTemplate"
+							class="action update" data-ng-click="nextStep()" title="Forward to next step"><span class="icon">&#x21e8;</span> Select decisions</button>
+
+					<div class="exportProgressBar">
+						<span class="currentStep">Select Input Data</span><span class="arrows">&#x21e8;</span>
+						<span class="futureStep">Select Tasks to Export</span><span class="arrows">&#x21e8;</span>
+						<span class="futureStep">Perform Export</span>
+					</div>
 				</div>
 
-				<div class="wizardStep" data-step="DataSelection" data-ng-if="currentWizardStep == ExportWizardSteps.DataSelection">
+				<div class="wizardStep area pane" data-step="DataSelection" data-ng-if="currentWizardStep == ExportWizardSteps.DataSelection">
 					<h2>Decision &amp; option selection</h2>
 					<ul data-type="list" class="problems">
 						<li data-ng-repeat="(pkey, decisionGroup) in decisionMappings" class="problemElement">
-							<span class="problem">{{decisionGroup.problem.name}} [#{{decisionGroup.problem.id}}]</span>
+							<span class="problem">{{decisionGroup.problem.name}}
+								<span class="typeDeclaration" title="Problem Template from DSK">&lt;PT&gt;</span> [#{{decisionGroup.problem.id}}]
+							</span>
 							<ul class="decisions">
 								<li data-ng-repeat="(dkey,decisionElement) in decisionGroup.decisions">
-									{{decisionElement.decision.name}} [#{{decisionElement.decision.id}}]
+									{{decisionElement.decision.name}}
+									<span class="typeDeclaration" title="Problem Occurence from DSK">&lt;PO&gt;</span> [#{{decisionElement.decision.id}}]
 									<dl>
 										<dt>Mapped task templates to transmit</dt>
 										<dd>
@@ -51,9 +61,11 @@
 														   data-ng-model="decisionElement.rootElementForSubNodes" data-ng-value="null">
 													No root element for subtasks</li>
 												<li data-ng-repeat="(mkey, decisionMapping) in decisionElement.mappings">
-													<input title="Set ad root element for subtasks (tasks of options)" type="radio" data-ng-model="decisionElement.rootElementForSubNodes" data-ng-value="decisionMapping" data-ng-disabled="!decisionElement.taskTemplatesToExport[mkey]">
+													<input title="Use as root element for subtasks (tasks of options)" type="radio" data-ng-model="decisionElement.rootElementForSubNodes" data-ng-value="decisionMapping" data-ng-disabled="!decisionElement.taskTemplatesToExport[mkey]">
 													<input title="Transmit this task" type="checkbox" data-ng-model="decisionElement.taskTemplatesToExport[mkey]" />&nbsp;
-													{{decisionMapping.taskTemplate.name}} [#{{decisionMapping.taskTemplate.id}}]
+													{{decisionMapping.taskTemplate.name}}
+													<span class="typeDeclaration" title="Task Template from EEPPI">&lt;TT&gt;</span>&nbsp;
+													[#{{decisionMapping.taskTemplate.id}}]
 												</li>
 											</ul>
 										</dd>
@@ -66,14 +78,18 @@
 										<dd>
 											<ul class="alternatives">
 												<li data-ng-repeat="(akey, alternativeElement) in decisionElement.alternatives">
-													{{alternativeElement.alternative.name}} [#{{alternativeElement.alternative.id}}]
+													{{alternativeElement.alternative.name}}
+													<span class="typeDeclaration" title="Option Occurence from DSK">&lt;OO&gt;</span>&nbsp;
+													[#{{alternativeElement.alternative.id}}]
 													<dl>
 														<dt>Mapped task templates to transmit</dt>
 														<dd>
 															<ul class="taskTemplates">
 																<li data-ng-repeat="(amkey, alternativeMapping) in alternativeElement.mappings">
 																	<input type="checkbox" data-ng-model="decisionElement.taskTemplatesToExport[amkey]" />&nbsp;
-																	{{alternativeMapping.taskTemplate.name}} [#{{alternativeMapping.taskTemplate.id}}]
+																	{{alternativeMapping.taskTemplate.name}}
+																	<span class="typeDeclaration" title="Task Template from EEPPI">&lt;TT&gt;</span>&nbsp;
+																	[#{{alternativeMapping.taskTemplate.id}}]
 																</li>
 															</ul>
 														</dd>
@@ -87,10 +103,18 @@
 						</li>
 					</ul>
 
-					<button class="action" data-ng-click="nextStep(); processTaskTemplates();">(=>) Transform selected decisions</button>
+					<button class="action update" data-ng-click="nextStep(); processTaskTemplates();">
+						<span class="icon">&#x21e8;</span>Transform selected decisions
+					</button>
+
+					<div class="exportProgressBar">
+						<span class="passedStep">Select Input Data</span><span class="arrows">&#x21e8;</span>
+						<span class="currentStep">Select Tasks to Export</span><span class="arrows">&#x21e8;</span>
+						<span class="futureStep">Perform Export</span>
+					</div>
 				</div>
 
-				<div class="wizardStep" data-step="Transformation" data-ng-if="currentWizardStep == ExportWizardSteps.Transformation">
+				<div class="wizardStep area pane	" data-step="Transformation" data-ng-if="currentWizardStep == ExportWizardSteps.Transformation">
 					<h2>Transformation</h2>
 					<ul class="requests">
 						<!-- openRequestDetail -->
@@ -152,18 +176,15 @@
 						</li>
 					</ul>
 
-					<button class="action" data-ng-click="transmit()">Transmit to PPT ({{targetPPTAccount.pptUrl}})</button>
+					<button class="action update" data-ng-click="transmit()">Transmit to PPT ({{targetPPTAccount.pptUrl}})</button>
+
+					<div class="exportProgressBar">
+						<span class="passedStep">Select Input Data</span><span class="arrows">&#x21e8;</span>
+						<span class="passedStep">Select Tasks to Export</span><span class="arrows">&#x21e8;</span>
+						<span class="currentStep">Perform Export</span>
+					</div>
 				</div>
 			</form>
-		</div>
-	</div>
-	<div class="exportProgressBar" data-region="south">
-		<div>
-			<span class="currentStep_{{currentWizardStep == ExportWizardSteps.ToolSelection}}">Select Input Data</span>
-			<span class="arrows">&rarr;</span>
-			<span class="currentStep_{{currentWizardStep == ExportWizardSteps.DataSelection}}">Select Tasks to Export</span>
-			<span class="arrows">&rarr;</span>
-			<span class="currentStep_{{currentWizardStep == ExportWizardSteps.Transformation}}">Perform Export</span>
 		</div>
 	</div>
 </div>

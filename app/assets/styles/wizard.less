@@ -1,11 +1,44 @@
+@import "crossBrowser.less";
+
 .wizardStep {
-	margin: 0.5rem; padding: 0.5rem; border-radius: 0.5rem;
-	background: rgb(240, 248, 255);
-	box-shadow: 0px 0px 0.25rem #C0C0C0;
+	overflow: hidden;
 
 	.formLine {
 
 		label {	width: 20rem; }
 		input, select { width: 15rem; }
+		select { min-height: 1.5rem; }
+	}
+
+	.exportProgressBar {
+		margin: 0.5em -0.5rem -0.5rem -0.5rem;
+		padding: 0.5rem;
+	}
+
+	.exportProgressBar {
+		padding: 0.75rem 1rem;
+		.linearGradient(rgb(51, 136, 215),rgb(67, 130, 184)); height: auto !important; text-align: left;
+
+		.arrows { font-size: x-large; padding: 0 1rem; color: black; height: 1rem;
+			display: inline-block; vertical-align: middle; position: relative; top: -0.4rem;
+		}
+
+		.currentStep { font-weight: bold; color: white; }
+		.futureStep, .passedStep { color: silver; }
+	}
+
+	.typeDeclaration { color: gray; }
+
+	ul .problemElement {
+		list-style-type: none;
+
+		> .problem { display: block; background: #6EAADC; font-weight: bold; padding: 0.5rem; margin: -0.5rem -0.5rem 0.5rem -0.5rem; }
+		> .decisions { margin-left: 0;
+			> li > dl { margin-left: 1rem; margin-bottom: 1rem; }
+			.taskTemplates { margin-left: 0;
+				> li {list-style-type: none; }
+			}
+			.alternatives > li dl { margin-left: 1rem; }
+		}
 	}
 }
