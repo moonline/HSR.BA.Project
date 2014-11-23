@@ -32,7 +32,9 @@
 					</div>
 
 					<button data-ng-disabled="pptProject.length < 1 || !targetPPTAccount || !currentRequestTemplate || !currentRequestTemplate"
-							class="action update" data-ng-click="nextStep()" title="Forward to next step"><span class="icon">&#x21e8;</span> Select decisions</button>
+							class="action update" data-ng-click="nextStep()" title="Forward to next step">
+						<span class="icon">&#x21e8;</span> Select decisions
+					</button>
 
 					<div class="exportProgressBar">
 						<span class="currentStep">Select Input Data</span><span class="arrows">&#x21e8;</span>
@@ -42,7 +44,7 @@
 				</div>
 
 				<div class="wizardStep area pane" data-step="DataSelection" data-ng-if="currentWizardStep == ExportWizardSteps.DataSelection">
-					<h2>Decision &amp; option selection</h2>
+					<h2>Decision &amp; Option selection</h2>
 					<ul data-type="list" class="problems">
 						<li data-ng-repeat="(pkey, decisionGroup) in decisionMappings" class="problemElement">
 							<span class="problem">{{decisionGroup.problem.name}}
@@ -103,7 +105,8 @@
 						</li>
 					</ul>
 
-					<button class="action update" data-ng-click="nextStep(); processTaskTemplates();">
+					<button class="action update" data-ng-click="nextStep(); processTaskTemplates();"
+						title="Render requests for selected Task templates">
 						<span class="icon">&#x21e8;</span>Transform selected decisions
 					</button>
 
@@ -120,23 +123,23 @@
 						<!-- openRequestDetail -->
 						<li data-ng-repeat="exportRequest in exportRequests">
 							<dl>
-								<dt>{{exportRequest.taskTemplate.name}} ({{exportRequest.node.name}})
+								<dt class="request">{{exportRequest.taskTemplate.name}} ({{exportRequest.node.name}})
 									<button data-ng-click="toggleRequestDetails($index+'RQ')" class="action">
 										<span data-ng-if="openRequestDetail != $index+'RQ'" class="symbol extremeSmall">&#x25bc; Show request</span>
 										<span data-ng-if="openRequestDetail == $index+'RQ'" class="symbol extremeSmall">&#x25b2; Hide request</span>
 									</button>
-								</dt>
-								<dd data-ng-if="openRequestDetail == $index+'RQ'"><pre>{{exportRequest.requestBody}}</pre></dd>
-								<dt>
-									<span class="error" data-ng-if="exportRequest.exportState === ApplicationState.failed">Transmit failed.</span>
-									<span class="pending" data-ng-if="exportRequest.exportState === ApplicationState.pending">Transmitting ...</span>
-									<span class="success" data-ng-if="exportRequest.exportState === ApplicationState.success">Transmit successful</span>
-									<button data-ng-click="toggleRequestDetails($index+'RS')" class="action">
+									<button data-ng-if="exportRequest.exportState" data-ng-click="toggleRequestDetails($index+'RS')" class="action">
 										<span data-ng-if="openRequestDetail != $index+'RS'" class="symbol extremeSmall">&#x25bc; Show response</span>
 										<span data-ng-if="openRequestDetail == $index+'RS'" class="symbol extremeSmall">&#x25b2; Hide response</span>
 									</button>
 								</dt>
-								<dd data-ng-if="openRequestDetail == $index+'RS'">
+								<dd data-ng-if="openRequestDetail == $index+'RQ'"><pre>{{exportRequest.requestBody}}</pre></dd>
+								<dt data-ng-if="exportRequest.exportState" class="response">
+									<span class="error" data-ng-if="exportRequest.exportState === ApplicationState.failed">Transmit failed.</span>
+									<span class="pending" data-ng-if="exportRequest.exportState === ApplicationState.pending">Transmitting ...</span>
+									<span class="success" data-ng-if="exportRequest.exportState === ApplicationState.success">Transmit successful</span>
+								</dt>
+								<dd data-ng-if="exportRequest.exportState && openRequestDetail == $index+'RS'">
 									<span data-ng-if="exportRequest.exportState === ApplicationState.failed">
 										Transmit failed. Maybe there is an JSON syntax error. Please check your syntax:
 										<a href="http://json.parser.online.fr/">http://json.parser.online.fr/</a>
@@ -147,21 +150,21 @@
 							<ul class="subRequests">
 								<li data-ng-repeat="subRequest in exportRequest.subRequests">
 									<dl class="">
-										<dt>{{subRequest.taskTemplate.name}} ({{subRequest.node.name}})
+										<dt class="request">{{exportRequest.taskTemplate.name}} &gt; {{subRequest.taskTemplate.name}} ({{subRequest.node.name}})
 											<button data-ng-click="toggleRequestDetails($index+'SRQ')" class="action">
 												<span data-ng-if="openRequestDetail != $index+'SRQ'" class="symbol extremeSmall">&#x25bc; Show request</span>
 												<span data-ng-if="openRequestDetail == $index+'SRQ'" class="symbol extremeSmall">&#x25b2; Hide request</span>
 											</button>
-										</dt>
-										<dd data-ng-if="openRequestDetail == $index+'SRQ'"><pre>{{subRequest.requestBody}}</pre></dd>
-										<dt>
-											<span class="error" data-ng-if="subRequest.exportState === ApplicationState.failed">Transmit failed.</span>
-											<span class="pending" data-ng-if="subRequest.exportState === ApplicationState.pending">Transmitting ...</span>
-											<span class="success" data-ng-if="subRequest.exportState === ApplicationState.success">Transmit successful</span>
-											<button data-ng-click="toggleRequestDetails($index+'SRS')" class="action">
+											<button data-ng-if="subRequest.exportState"> data-ng-click="toggleRequestDetails($index+'SRS')" class="action">
 												<span data-ng-if="openRequestDetail != $index+'SRS'" class="symbol extremeSmall">&#x25bc; Show response</span>
 												<span data-ng-if="openRequestDetail == $index+'SRS'" class="symbol extremeSmall">&#x25b2; Hide response</span>
 											</button>
+										</dt>
+										<dd data-ng-if="openRequestDetail == $index+'SRQ'"><pre>{{subRequest.requestBody}}</pre></dd>
+										<dt class="response">
+											<span class="error" data-ng-if="subRequest.exportState === ApplicationState.failed">Transmit failed.</span>
+											<span class="pending" data-ng-if="subRequest.exportState === ApplicationState.pending">Transmitting ...</span>
+											<span class="success" data-ng-if="subRequest.exportState === ApplicationState.success">Transmit successful</span>
 										</dt>
 										<dd data-ng-if="openRequestDetail == $index+'SRS'">
 											<span data-ng-if="subRequest.exportState === ApplicationState.failed">
@@ -176,7 +179,7 @@
 						</li>
 					</ul>
 
-					<button class="action update" data-ng-click="transmit()">Transmit to PPT ({{targetPPTAccount.pptUrl}})</button>
+					<button class="action update" data-ng-click="transmit()"><span class="icon" data-icon="transmit"></span> Transmit to PPT ({{targetPPTAccount.pptUrl}})</button>
 
 					<div class="exportProgressBar">
 						<span class="passedStep">Select Input Data</span><span class="arrows">&#x21e8;</span>
