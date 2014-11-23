@@ -81,89 +81,116 @@ module app.application {
 				newRequestTemplate.project = $scope.currentProject;
 				(<any>newRequestTemplate).requestTemplate = newRequestTemplate.requestBody;
 
-				$scope.operationState = app.application.ApplicationState.saving;
+				$scope.manageRequestTemplatesStatus = app.application.ApplicationState.saving;
 				requestTemplateRepository.add(newRequestTemplate, function(success: boolean, item: app.domain.model.ppt.RequestTemplate){
-					$scope.setOperationFinishState(success);
+					$scope.setOperationFinishState(success, 'manageRequestTemplatesStatus');
 				})
 			};
 
 			$scope.updateRequestTemplate = function(requestTemplate: app.domain.model.ppt.RequestTemplate) {
-				(<any>requestTemplate).requestTemplate = requestTemplate.requestBody;
+				if($scope.hasToUpdateRequestTemplateChanged) {
+					$scope.hasToUpdateRequestTemplateChanged = false;
+					(<any>requestTemplate).requestTemplate = requestTemplate.requestBody;
 
-				$scope.operationState = app.application.ApplicationState.saving;
-				requestTemplateRepository.update(requestTemplate, function(success: boolean, item: app.domain.model.ppt.RequestTemplate){
-					$scope.setOperationFinishState(success);
-				})
+					$scope.manageRequestTemplatesStatus = app.application.ApplicationState.saving;
+					requestTemplateRepository.update(requestTemplate, function(success: boolean, item: app.domain.model.ppt.RequestTemplate){
+						$scope.setOperationFinishState(success, 'manageRequestTemplatesStatus');
+					})
+				}
 			};
 
 			$scope.removeRequestTemplate = function(requestTemplate: app.domain.model.ppt.RequestTemplate) {
-				$scope.operationState = app.application.ApplicationState.saving;
+				$scope.manageRequestTemplatesStatus = app.application.ApplicationState.saving;
 				requestTemplateRepository.remove(requestTemplate, function(success: boolean){
-					$scope.setOperationFinishState(success);
+					$scope.setOperationFinishState(success, 'manageRequestTemplatesStatus');
 				})
+			};
+
+			$scope.hasToUpdateRequestTemplateChanged = false;
+
+			$scope.toUpdateRequestTemplateChanged = function() {
+				$scope.hasToUpdateRequestTemplateChanged = true;
 			};
 
 
 			/* task properties */
 			$scope.createTaskProperty = function(newTaskPropertyName: string) {
-				$scope.operationState = app.application.ApplicationState.saving;
+				$scope.managePropertiesStatus = app.application.ApplicationState.saving;
 				taskPropertyRepository.add(new app.domain.model.core.TaskProperty(newTaskPropertyName), function(success, property) {
-					$scope.setOperationFinishState(success);
+					$scope.setOperationFinishState(success, 'managePropertiesStatus');
 				});
 			};
 
-			$scope.renameTaskProperty = function(property: app.domain.model.core.TaskProperty, newName: string) {
-				if(property && newName) {
-					property.name = newName;
-					$scope.operationState = app.application.ApplicationState.saving;
-					taskPropertyRepository.update(property, function(success, property) {
-						$scope.setOperationFinishState(success);
+			$scope.renameTaskProperty = function(property: app.domain.model.core.TaskProperty) {
+				if($scope.hasToUpdatePropertyChanged) {
+					$scope.hasToUpdatePropertyChanged = false;
+					$scope.managePropertiesStatus = app.application.ApplicationState.saving;
+					taskPropertyRepository.update(property, function (success, property) {
+						$scope.setOperationFinishState(success, 'managePropertiesStatus');
 					});
 				}
+			};
+
+			$scope.hasToUpdatePropertyChanged = false;
+
+			$scope.toUpdatePropertyChanged = function() {
+				$scope.hasToUpdatePropertyChanged = true;
 			};
 
 
 			/* decision knowledge systems */
 			$scope.updateDKS = function(dks: app.domain.model.dks.DecisionKnowledgeSystem) {
-				$scope.operationState = app.application.ApplicationState.saving;
-				decisionKnowledgeSystemRepository.update(dks, function(success: boolean, item: app.domain.model.dks.DecisionKnowledgeSystem){
-					$scope.setOperationFinishState(success);
-				})
+				if($scope.hasToUpdateDKSChanged) {
+					$scope.hasToUpdateDKSChanged = false;
+					$scope.manageDKSStatus = app.application.ApplicationState.saving;
+					decisionKnowledgeSystemRepository.update(dks, function (success:boolean, item:app.domain.model.dks.DecisionKnowledgeSystem) {
+						$scope.setOperationFinishState(success, 'manageDKSStatus');
+					})
+				}
+			};
+
+			$scope.hasToUpdateDKSChanged = false;
+
+			$scope.toUpdateDKSChanged = function() {
+				$scope.hasToUpdateDKSChanged = true;
 			};
 
 
 			/* processors */
 			$scope.createProcessor = function(newProcessorName: string, newProcessorProject: app.domain.model.core.Project, newProcessorCode: string) {
 				var processor: app.domain.model.core.Processor = new app.domain.model.core.Processor (newProcessorName, newProcessorProject, newProcessorCode);
-				$scope.operationState = app.application.ApplicationState.saving;
+				$scope.manageProcessorsStatus = app.application.ApplicationState.saving;
 				processorRepository.add(processor, function(success: boolean, item: app.domain.model.core.Processor) {
-					$scope.setOperationFinishState(success);
+					$scope.setOperationFinishState(success, 'manageProcessorsStatus');
 				});
                 return processor;
 			};
 
-			$scope.updateProcessor = function(processor: app.domain.model.core.Processor, newProcessorName: string, newProcessorProject: app.domain.model.core.Project, newProcessorCode: string) {
-				$scope.operationState = app.application.ApplicationState.saving;
-                processor.name = newProcessorName;
-                processor.project = newProcessorProject;
-                processor.code = newProcessorCode;
-                processorRepository.update(processor, function(success: boolean, item: app.domain.model.core.Processor) {
-					$scope.setOperationFinishState(success);
-				});
+			$scope.updateProcessor = function(processor: app.domain.model.core.Processor) {
+				if($scope.hasToUpdateProcessorChanged) {
+					$scope.hasToUpdateProcessorChanged = false;
+					$scope.manageProcessorsStatus = app.application.ApplicationState.saving;
+					processorRepository.update(processor, function (success:boolean, item:app.domain.model.core.Processor) {
+						$scope.setOperationFinishState(success, 'manageProcessorsStatus');
+					});
+				}
 			};
 
 			$scope.removeProcessor = function(processor: app.domain.model.core.Processor) {
-				$scope.operationState = app.application.ApplicationState.saving;
+				$scope.manageProcessorsStatus = app.application.ApplicationState.saving;
                 processorRepository.remove(processor, function(success: boolean){
-					$scope.setOperationFinishState(success);
+					$scope.setOperationFinishState(success, 'manageProcessorsStatus');
 				});
 			};
 
+			$scope.hasToUpdateProcessorChanged = false;
+
+			$scope.toUpdateProcessorChanged = function() {
+				$scope.hasToUpdateProcessorChanged = true;
+			};
+
             $scope.showSelectedProcessor = function() {
-                var toUpdateProcessor = $scope["toUpdateProcessor"];
-                $scope.processorNewName = toUpdateProcessor.name;
-                $scope.processorNewProject = $scope.findProjectInList(toUpdateProcessor.project);
-                $scope.processorNewCode = toUpdateProcessor.code;
+                $scope["toUpdateProcessor"].project = $scope.findProjectInList($scope["toUpdateProcessor"].project);
             };
 
             //Finds the correct object instance for the given project to select it in the list
@@ -190,15 +217,12 @@ module app.application {
 				return expectedPPT;
 			};
 
-			$scope.setOperationFinishState = function(success: boolean) {
+			$scope.setOperationFinishState = function(success: boolean, state: string) {
 				if(success) {
-					setTimeout(() => {
-						$scope.operationState = app.application.ApplicationState.successful; $scope.$apply();
-					}, configuration.settings.messageBoxDelay);
+					$scope[state] = app.application.ApplicationState.successful;
+					setTimeout(() => { $scope[state] = null; $scope.$apply(); }, configuration.settings.successDelay);
 				} else {
-					setTimeout(() => {
-						$scope.operationState = app.application.ApplicationState.failed; $scope.$apply();
-					}, configuration.settings.messageBoxDelay);
+					$scope[state] = app.application.ApplicationState.failed;
 				}
 			};
 		}

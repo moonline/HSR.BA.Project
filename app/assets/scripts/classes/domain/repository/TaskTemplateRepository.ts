@@ -11,7 +11,7 @@ module app.domain.repository.core {
 			this.resources = configuration.paths.taskTemplate;
 		}
 
-		public updateProperties(taskTemplate: app.domain.model.core.TaskTemplate, callback: (status: boolean) => void) {
+		public updateProperties(taskTemplate: app.domain.model.core.TaskTemplate, callback: (success: boolean) => void) {
 			if(!this.resources['updateProperty']) {
 				throw new Error("Please configure a 'updateProperty' resource for the TaskTemplateRepository repository.");
 			}

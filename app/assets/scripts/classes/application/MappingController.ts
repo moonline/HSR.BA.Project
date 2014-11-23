@@ -123,8 +123,9 @@ module app.application {
 			
 			$scope.createNewTaskTemplate = function(name: string) {
 				var newTaskTemplate: app.domain.model.core.TaskTemplate = new app.domain.model.core.TaskTemplate(name);
+				$scope.taskTemplateSavingStatus = app.application.ApplicationState.saving;
 				taskTemplateRepository.add(newTaskTemplate, function(success, item) {
-					// TODO: add operationState
+					$scope.setTaskTemplateSavingCompletedStatus(success);
 					if(success) { $scope.currentTaskTemplate = item; }
 				});
 			};
@@ -133,41 +134,70 @@ module app.application {
 				if($scope.currentTaskTemplate) {
 					var taskPropertyValue: app.domain.model.core.TaskPropertyValue = new app.domain.model.core.TaskPropertyValue(property, value);
 					(<app.domain.model.core.TaskTemplate>$scope.currentTaskTemplate).addProperty(taskPropertyValue);
+					$scope.taskTemplateSavingStatus = app.application.ApplicationState.saving;
 					taskTemplateRepository.addPropertyValue($scope.currentTaskTemplate, taskPropertyValue, function(success, item){
-						//TODO: add operationState
+						$scope.setTaskTemplateSavingCompletedStatus(success);
 					});
+				}
+			};
+
+			$scope.setTaskTemplateSavingCompletedStatus = function(success: boolean) {
+				if(success) {
+					$scope.taskTemplateSavingStatus = app.application.ApplicationState.successful;
+
+					setTimeout(() => { $scope.taskTemplateSavingStatus = null; $scope.$apply(); }, configuration.settings.successDelay);
+				}else{
+					$scope.taskTemplateSavingStatus = app.application.ApplicationState.failed;
 				}
 			};
 			
 			$scope.removePropertyValue = function(propertyValue: app.domain.model.core.TaskPropertyValue) {
 				if($scope.currentTaskTemplate) {
 					$scope.currentTaskTemplate.removeProperty(propertyValue);
+					$scope.taskTemplateSavingStatus = app.application.ApplicationState.saving;
 					taskTemplateRepository.removePropertyValue($scope.currentTaskTemplate, propertyValue, function(success, taskTemplate){
-						// TODO: add operationState
+						$scope.setTaskTemplateSavingCompletedStatus(success);
 					});
 				}
 			};
 
 			$scope.updateTaskTemplate = function() {
-				// TODO: add operationState
-				taskTemplateRepository.update($scope.currentTaskTemplate, function(status, item){});
-				taskTemplateRepository.updateProperties($scope.currentTaskTemplate, function(status){});
+				if($scope.hasTaskTemplateChanged == true) {
+					$scope.hasTaskTemplateChanged = false;
+					$scope.taskTemplateSavingStatus = app.application.ApplicationState.saving;
+					taskTemplateRepository.update($scope.currentTaskTemplate, function(success: boolean, item){
+						if(success) {
+							taskTemplateRepository.updateProperties($scope.currentTaskTemplate, function (success:boolean) {
+								$scope.setTaskTemplateSavingCompletedStatus(success);
+							});
+						} else {
+							$scope.taskTemplateSavingStatus = app.application.ApplicationState.failed;
+						}
+					});
+				}
+			};
+
+			$scope.hasTaskTemplateChanged = false;
+
+			$scope.taskTemplateChanged = function() {
+				$scope.hasTaskTemplateChanged = true;
 			};
 
 
 			/* mappings */
 			$scope.mapTaskTemplate = function(taskTemplate: app.domain.model.core.TaskTemplate) {
 				if($scope.currentDksNode) {
-					$scope.mappingsLoadingStatus = app.application.ApplicationState.pending;
+					$scope.mappingsSavingStatus = app.application.ApplicationState.saving;
 					var newMapping: app.domain.model.core.Mapping = new app.domain.model.core.Mapping($scope.currentDksNode.id, taskTemplate);
 					// TODO: fix operationState
 					mappingRepository.add(newMapping, function(success, item){
 						mappingRepository.findByDksNode($scope.currentDksNode, function(success, mappings) {
 							if(success) {
 								$scope.currentMappings = mappings;
-								setTimeout(() => { $scope.mappingsLoadingStatus = app.application.ApplicationState.successful; $scope.$apply(); }, configuration.settings.messageBoxDelay);
+								$scope.mappingsSavingStatus = app.application.ApplicationState.successful;
+								setTimeout(() => { $scope.mappingsSavingStatus = null; $scope.$apply(); }, configuration.settings.successDelay);
 							} else {
-								setTimeout(() => { $scope.mappingsLoadingStatus = app.application.ApplicationState.failed; $scope.$apply(); }, configuration.settings.messageBoxDelay);
+								$scope.mappingsSavingStatus = app.application.ApplicationState.failed;
 							}
 						});
 					});
@@ -175,15 +205,15 @@ module app.application {
 			};
 
 			$scope.removeMapping = function(mapping: app.domain.model.core.Mapping) {
-				$scope.mappingsLoadingStatus = app.application.ApplicationState.pending;
-				// TODO: add operationState
+				$scope.mappingsSavingStatus = app.application.ApplicationState.saving;
 				mappingRepository.remove(mapping, function(success) {
 					mappingRepository.findByDksNode($scope.currentDksNode, function(success, mappings) {
 						if(mappings) {
 							$scope.currentMappings = mappings;
-							setTimeout(() => { $scope.mappingsLoadingStatus = app.application.ApplicationState.successful; $scope.$apply(); }, configuration.settings.messageBoxDelay);
+							$scope.mappingsSavingStatus = app.application.ApplicationState.successful;
+							setTimeout(() => { $scope.mappingsSavingStatus = null; $scope.$apply(); }, configuration.settings.successDelay);
 						} else {
-							setTimeout(() => { $scope.mappingsLoadingStatus = app.application.ApplicationState.failed; $scope.$apply(); }, configuration.settings.messageBoxDelay);
+							$scope.mappingsSavingStatus = app.application.ApplicationState.failed;
 						}
 					});
 				})
