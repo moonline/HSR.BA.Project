@@ -189,7 +189,6 @@ module app.application {
 				if($scope.currentDksNode) {
 					$scope.mappingsSavingStatus = app.application.ApplicationState.saving;
 					var newMapping: app.domain.model.core.Mapping = new app.domain.model.core.Mapping($scope.currentDksNode.id, taskTemplate);
-					// TODO: fix operationState
 					mappingRepository.add(newMapping, function(success, item){
 						mappingRepository.findByDksNode($scope.currentDksNode, function(success, mappings) {
 							if(success) {
@@ -217,7 +216,16 @@ module app.application {
 						}
 					});
 				})
-			}
+			};
+
+			$scope.hasMappingFor = function (taskTemplate:app.domain.model.core.TaskTemplate) {
+				for (var i = 0; i < $scope.currentMappings.length; i++) {
+					if ($scope.currentMappings[i].taskTemplate.id == taskTemplate.id) {
+						return true;
+					}
+				}
+				return false;
+			};
 		}
 	}
 }

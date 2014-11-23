@@ -13,7 +13,8 @@
 						<span class="name"><span class="typeDeclaration" title="Problem Template from DKS">&lt;PT&gt;</span> {{problem.name}}</span>
 					</div>
 					({{problem.alternatives.length}})
-					<button data-ng-click="toggleVisibilityState($index)" class="action" data-ng-if="problem.alternatives.length > 0">
+					<button data-ng-click="toggleVisibilityState($index)" class="action" data-ng-if="problem.alternatives.length > 0"
+							title="{{problemListChildrenVisibilityState[$index]?'Hide':'Show'}} Options for this Problem">
 						<span data-ng-if="!problemListChildrenVisibilityState[$index]" class="symbol extremeSmall">&#x25b2;</span>
 						<span data-ng-if="problemListChildrenVisibilityState[$index]" class="symbol extremeSmall">&#x25bc;</span>
 					</button>
@@ -93,9 +94,9 @@
 			<ul data-type="list" class="twoColumns">
 				<li data-ng-repeat="template in taskTemplates | orderBy:'name'"
 					data-state="{{template.id == currentTaskTemplate.id && 'selected' || '' }}">
-					<button class="action update" data-ng-if="currentDksNode"
+					<button class="action update" data-ng-if="currentDksNode" data-ng-disabled="hasMappingFor(template)"
 							data-ng-click="mapTaskTemplate(template)"
-							title="Map task template with decision knowledge system element">&lt; map
+							title="{{hasMappingFor(template)?'There is already a mapping for this Task Template':'Map this Task Template with the selected DKS element'}}">&lt; map
 					</button>
 					<span data-ng-click="setCurrentTaskTemplate(template)" title="Edit task template">
 						<button class="action edit">&#x270E;</button> {{template.name}}
