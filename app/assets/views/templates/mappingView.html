@@ -65,7 +65,9 @@
 
 				<span class="messagebox error" data-ng-if="mappingsLoadingStatus === ApplicationState.failed">Loading of task mappings failed. Maybe server is not available.</span>
 				<span class="messagebox pending" data-ng-if="mappingsLoadingStatus === ApplicationState.pending">Loading ...</span>
-
+				<span class="messagebox saving" data-ng-if="mappingsSavingStatus === ApplicationState.saving">Saving ...</span>
+				<span class="messagebox success" data-ng-if="mappingsSavingStatus === ApplicationState.successful">Saved successfully</span>
+				<span class="messagebox error" data-ng-if="mappingsSavingStatus === ApplicationState.failed">Could not save! Please try again, reload the page or file a bug report.</span>
 				<ul>
 					<li data-ng-repeat="mapping in currentMappings">
 						<button class="action remove" data-ng-click="removeMapping(mapping)"

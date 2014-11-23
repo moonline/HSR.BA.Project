@@ -187,16 +187,17 @@ module app.application {
 			/* mappings */
 			$scope.mapTaskTemplate = function(taskTemplate: app.domain.model.core.TaskTemplate) {
 				if($scope.currentDksNode) {
-					$scope.mappingsLoadingStatus = app.application.ApplicationState.pending;
+					$scope.mappingsSavingStatus = app.application.ApplicationState.saving;
 					var newMapping: app.domain.model.core.Mapping = new app.domain.model.core.Mapping($scope.currentDksNode.id, taskTemplate);
 					// TODO: fix operationState
 					mappingRepository.add(newMapping, function(success, item){
 						mappingRepository.findByDksNode($scope.currentDksNode, function(success, mappings) {
 							if(success) {
 								$scope.currentMappings = mappings;
-								setTimeout(() => { $scope.mappingsLoadingStatus = app.application.ApplicationState.successful; $scope.$apply(); }, configuration.settings.messageBoxDelay);
+								$scope.mappingsSavingStatus = app.application.ApplicationState.successful;
+								setTimeout(() => { $scope.mappingsSavingStatus = null; $scope.$apply(); }, configuration.settings.successDelay);
 							} else {
-								setTimeout(() => { $scope.mappingsLoadingStatus = app.application.ApplicationState.failed; $scope.$apply(); }, configuration.settings.messageBoxDelay);
+								$scope.mappingsSavingStatus = app.application.ApplicationState.failed;
 							}
 						});
 					});
@@ -204,15 +205,15 @@ module app.application {
 			};
 
 			$scope.removeMapping = function(mapping: app.domain.model.core.Mapping) {
-				$scope.mappingsLoadingStatus = app.application.ApplicationState.pending;
-				// TODO: add operationState
+				$scope.mappingsSavingStatus = app.application.ApplicationState.saving;
 				mappingRepository.remove(mapping, function(success) {
 					mappingRepository.findByDksNode($scope.currentDksNode, function(success, mappings) {
 						if(mappings) {
 							$scope.currentMappings = mappings;
-							setTimeout(() => { $scope.mappingsLoadingStatus = app.application.ApplicationState.successful; $scope.$apply(); }, configuration.settings.messageBoxDelay);
+							$scope.mappingsSavingStatus = app.application.ApplicationState.successful;
+							setTimeout(() => { $scope.mappingsSavingStatus = null; $scope.$apply(); }, configuration.settings.successDelay);
 						} else {
-							setTimeout(() => { $scope.mappingsLoadingStatus = app.application.ApplicationState.failed; $scope.$apply(); }, configuration.settings.messageBoxDelay);
+							$scope.mappingsSavingStatus = app.application.ApplicationState.failed;
 						}
 					});
 				})
