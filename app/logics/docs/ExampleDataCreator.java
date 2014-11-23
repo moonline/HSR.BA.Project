@@ -3,7 +3,7 @@ package logics.docs;
 import daos.AbstractDAO;
 import daos.dks.DKSMappingDAO;
 import daos.dks.DecisionKnowledgeSystemDAO;
-import daos.ppt.MappingDAO;
+import daos.ppt.RequestTemplateDAO;
 import daos.ppt.ProcessorDAO;
 import daos.ppt.ProjectPlanningToolDAO;
 import daos.task.TaskPropertyDAO;
@@ -15,7 +15,7 @@ import daos.user.UserDAO;
 import logics.user.UserLogic;
 import models.dks.DKSMapping;
 import models.dks.DecisionKnowledgeSystem;
-import models.ppt.Mapping;
+import models.ppt.RequestTemplate;
 import models.ppt.Processor;
 import models.ppt.ProjectPlanningTool;
 import models.task.TaskProperty;
@@ -44,7 +44,7 @@ public class ExampleDataCreator {
 	private final TaskPropertyDAO TASK_PROPERTY_DAO;
 	private final TaskPropertyValueDAO TASK_PROPERTY_VALUE_DAO;
 	private final DKSMappingDAO DKS_MAPPING_DAO;
-	private final MappingDAO MAPPING_DAO;
+	private final RequestTemplateDAO REQUEST_TEMPLATE_DAO;
 	private final ProjectDAO PROJECT_DAO;
 	private final DecisionKnowledgeSystemDAO DKS_DAO;
 
@@ -57,7 +57,7 @@ public class ExampleDataCreator {
 
 	public Long USER_ID;
 
-	public ExampleDataCreator(UserLogic userLogic, UserDAO userDao, PPTAccountDAO pptAccountDao, ProjectPlanningToolDAO projectPlanningToolDao, TaskTemplateDAO taskTemplateDao, TaskPropertyDAO taskPropertyDao, TaskPropertyValueDAO taskPropertyValueDao, DKSMappingDAO dksMappingDao, MappingDAO mappingDao, ProjectDAO projectDao, ProcessorDAO processorDAO, DecisionKnowledgeSystemDAO dksDao) {
+	public ExampleDataCreator(UserLogic userLogic, UserDAO userDao, PPTAccountDAO pptAccountDao, ProjectPlanningToolDAO projectPlanningToolDao, TaskTemplateDAO taskTemplateDao, TaskPropertyDAO taskPropertyDao, TaskPropertyValueDAO taskPropertyValueDao, DKSMappingDAO dksMappingDao, RequestTemplateDAO requestTemplateDao, ProjectDAO projectDao, ProcessorDAO processorDAO, DecisionKnowledgeSystemDAO dksDao) {
 		USER_DAO = userDao;
 		PPT_ACCOUNT_DAO = pptAccountDao;
 		JPA.withTransaction(new F.Callback0() {
@@ -83,7 +83,7 @@ public class ExampleDataCreator {
 		TASK_PROPERTY_DAO = taskPropertyDao;
 		TASK_PROPERTY_VALUE_DAO = taskPropertyValueDao;
 		DKS_MAPPING_DAO = dksMappingDao;
-		MAPPING_DAO = mappingDao;
+		REQUEST_TEMPLATE_DAO = requestTemplateDao;
 		PROJECT_DAO = projectDao;
 		PROCESSOR_DAO = processorDAO;
 		DKS_DAO = dksDao;
@@ -248,26 +248,26 @@ public class ExampleDataCreator {
 						},
 						existingProcessor -> existingProcessor.getName().equals(name) && existingProcessor.getCode().equals(code));
 				break;
-			case "PPTMAPPING":
+			case "REQUESTTEMPLATE":
 				String url = "/example/endpoint";
 				String requestTemplate = "{\"name\":\"${title}\"}";
 				objectCreator = new ExampleObjectCreator<>("Mapping",
-						MAPPING_DAO,
+						REQUEST_TEMPLATE_DAO,
 						() -> {
 							ProjectPlanningTool ppt = new ProjectPlanningTool();
 							ppt.setName("Example PPT");
 							Project project = new Project();
 							project.setName("Example Project");
-							Mapping mapping = new Mapping();
+							RequestTemplate mapping = new RequestTemplate();
 							mapping.setPpt(ppt);
-							mapping.setName("Mapping Name");
+							mapping.setName("My Request Template");
 							mapping.setProject(project);
 							mapping.setUrl(url);
-							mapping.setRequestTemplate(requestTemplate);
+							mapping.setRequestBodyTemplate(requestTemplate);
 							persist(ppt, project, mapping);
 							return mapping.getId();
 						},
-						existingPPTMapping -> existingPPTMapping.getUrl().equals(url) && existingPPTMapping.getRequestTemplate().equals(requestTemplate));
+						existingRequestTemplate -> existingRequestTemplate.getUrl().equals(url) && existingRequestTemplate.getRequestBodyTemplate().equals(requestTemplate));
 				break;
 			case "PROJECT":
 				String projectName = "The Example Project";

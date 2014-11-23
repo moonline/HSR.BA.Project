@@ -12,15 +12,6 @@ create table dksmapping (
     tasktemplate_id bigint not null,
     primary key (id)
 );
-create table mapping (
-    id bigint not null,
-    name varchar(255),
-    requesttemplate clob,
-    url varchar(255),
-    ppt_id bigint,
-    project_id bigint,
-    primary key (id)
-);
 create table person (
     id bigint not null,
     name varchar(255),
@@ -52,6 +43,15 @@ create table processor (
 create table project (
     id bigint not null,
     name varchar(255),
+    primary key (id)
+);
+create table requesttemplate (
+    id bigint not null,
+    name varchar(255),
+    requestbodytemplate clob,
+    url varchar(255),
+    ppt_id bigint,
+    project_id bigint,
     primary key (id)
 );
 create table task (
@@ -87,14 +87,6 @@ alter table dksmapping
     add constraint fk_p46gjuvoa8bfdl1x58lmmc8fg
     foreign key (tasktemplate_id)
     references tasktemplate;
-alter table mapping
-    add constraint fk_8olrrhqn1iq72l3c1syqovivq
-    foreign key (ppt_id)
-    references ppt;
-alter table mapping
-    add constraint fk_odpw0yawpljxoiw7nxo2ci9ep
-    foreign key (project_id)
-    references project;
 alter table pptaccount
     add constraint fk_ah1kp16nv53avs0s61b0qfje2
     foreign key (ppt_id)
@@ -105,6 +97,14 @@ alter table pptaccount
     references person;
 alter table processor
     add constraint fk_ic7kyrx0xecunb6vhg8yywsyf
+    foreign key (project_id)
+    references project;
+alter table requesttemplate
+    add constraint fk_5fq6dt4ye8g20s1h1vauu20by
+    foreign key (ppt_id)
+    references ppt;
+alter table requesttemplate
+    add constraint fk_kbgcehunh1y5pjk5w4mcta1wv
     foreign key (project_id)
     references project;
 alter table task
@@ -132,12 +132,12 @@ SET REFERENTIAL_INTEGRITY FALSE;
 
 drop table if exists dks;
 drop table if exists dksmapping;
-drop table if exists mapping;
 drop table if exists person;
 drop table if exists ppt;
 drop table if exists pptaccount;
 drop table if exists processor;
 drop table if exists project;
+drop table if exists requesttemplate;
 drop table if exists task;
 drop table if exists taskproperty;
 drop table if exists taskpropertyvalue;

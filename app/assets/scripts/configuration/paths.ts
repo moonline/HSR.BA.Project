@@ -66,11 +66,11 @@ module configuration {
 			remove: { method: 'POST', url: '/taskProperty/{id}/delete' }
 		},
 		requestTemplate: {
-			list: { method: 'GET', url: '/pptMapping' },
-			detail: { method: 'GET', url: '/pptMapping/{id}' },
-			create: { method: 'POST', url: '/pptMapping' },
-			update: { method: 'POST', url: '/pptMapping/{id}' },
-			remove: { method: 'POST', url: '/pptMapping/{id}/delete' }
+			list: { method: 'GET', url: '/requestTemplate' },
+			detail: { method: 'GET', url: '/requestTemplate/{id}' },
+			create: { method: 'POST', url: '/requestTemplate' },
+			update: { method: 'POST', url: '/requestTemplate/{id}' },
+			remove: { method: 'POST', url: '/requestTemplate/{id}/delete' }
 		},
 		user: {
 			login: { method: 'POST', url: '/user/login' },

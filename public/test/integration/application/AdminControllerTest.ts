@@ -23,7 +23,7 @@ module test.integration.application {
                 httpBackend.when('GET', '/taskProperty').respond({});
                 httpBackend.when('GET', '/user/pptAccount').respond({});
 				httpBackend.when('GET', '/ppt').respond({});
-                httpBackend.when('GET', '/pptMapping').respond({});
+                httpBackend.when('GET', '/requestTemplate').respond({});
                 httpBackend.when('GET', '/project').respond({"items": [
                     {"id": 59, "name": "Project"}
                 ]});

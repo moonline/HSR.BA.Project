@@ -76,10 +76,9 @@ module app.application {
 
 
 			/* request templates */
-			$scope.addRequestTemplate = function(ppt: app.domain.model.ppt.ProjectPlanningTool, url: string, requestBody: string) {
-				var newRequestTemplate = new app.domain.model.ppt.RequestTemplate(ppt, url, requestBody);
+			$scope.addRequestTemplate = function(ppt: app.domain.model.ppt.ProjectPlanningTool, url: string, requestBodyTemplate: string) {
+				var newRequestTemplate = new app.domain.model.ppt.RequestTemplate(ppt, url, requestBodyTemplate);
 				newRequestTemplate.project = $scope.currentProject;
-				(<any>newRequestTemplate).requestTemplate = newRequestTemplate.requestBody;
 
 				$scope.manageRequestTemplatesStatus = app.application.ApplicationState.saving;
 				requestTemplateRepository.add(newRequestTemplate, function(success: boolean, item: app.domain.model.ppt.RequestTemplate){
@@ -90,7 +89,6 @@ module app.application {
 			$scope.updateRequestTemplate = function(requestTemplate: app.domain.model.ppt.RequestTemplate) {
 				if($scope.hasToUpdateRequestTemplateChanged) {
 					$scope.hasToUpdateRequestTemplateChanged = false;
-					(<any>requestTemplate).requestTemplate = requestTemplate.requestBody;
 
 					$scope.manageRequestTemplatesStatus = app.application.ApplicationState.saving;
 					requestTemplateRepository.update(requestTemplate, function(success: boolean, item: app.domain.model.ppt.RequestTemplate){
