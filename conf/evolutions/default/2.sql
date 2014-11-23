@@ -71,7 +71,7 @@ INSERT INTO TASKTEMPLATE (ID, NAME, PARENT_ID) VALUES (nextval('entity_seq'), 'I
 	(SELECT id FROM TASKTEMPLATE WHERE name='Hold decision meeting'));
 
 -- Creating Request Templates
-INSERT INTO REQUESTTEMPLATE (ID, REQUESTBODYTEMPLATE, URL, PROJECT_ID, PPT_ID) VALUES (nextval('entity_seq'),CONCAT('{
+INSERT INTO REQUESTTEMPLATE (ID, NAME, REQUESTBODYTEMPLATE, URL, PROJECT_ID, PPT_ID) VALUES (nextval('entity_seq'),'Jira Request Template',CONCAT('{
 ','	"fields": {
 ','		"project": {
 ','			"key": "${pptProject}"

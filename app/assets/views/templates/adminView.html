@@ -7,12 +7,33 @@
 	<h2>Administration</h2>
 
 	<div class="area accordion">
-		<h3>Manage Properties</h3>
+		<h3>Manage Decision Knowledge Systems (DKS)</h3>
+		<div class="operationState">
+			<span class="messagebox saving" data-ng-if="manageDKSStatus === ApplicationState.saving">Saving ...</span>
+			<span class="messagebox success" data-ng-if="manageDKSStatus === ApplicationState.successful">Saved successfully!</span>
+			<span class="messagebox error" data-ng-if="manageDKSStatus === ApplicationState.failed">Could not save! Please try again, reload the page or file a bug report.</span>
+		</div>
+		<p class="description">A DKS is the source of all your Problems and Options. It is only read, noting is written to it. In this version of EEPPI only one DKS is supported, however you can change it's URL here.</p>
+		<form>
+			<div class="formLine" data-columns="4">
+				<select data-ng-model="toUpdateDKS" data-ng-options="dks.name for dks in dkss"></select>
+
+				<input type="text" data-ng-disabled="!toUpdateDKS" name="dksNewName" data-ng-model="toUpdateDKS.name" placeholder="Name"
+					   data-ng-change="toUpdateDKSChanged()" data-ng-blur="updateDKS(toUpdateDKS)"/>
+				<input type="text" data-ng-disabled="!toUpdateDKS" name="dksNewUrl" data-ng-model="toUpdateDKS.url" placeholder="URL"
+					   data-ng-change="toUpdateDKSChanged()" data-ng-blur="updateDKS(toUpdateDKS)"/>
+			</div>
+		</form>
+	</div>
+
+	<div class="area accordion">
+		<h3>Manage Task Template Properties</h3>
 		<div class="operationState">
 			<span class="messagebox saving" data-ng-if="managePropertiesStatus === ApplicationState.saving">Saving ...</span>
 			<span class="messagebox success" data-ng-if="managePropertiesStatus === ApplicationState.successful">Saved successfully!</span>
-			<span class="messagebox error inline" data-ng-if="managePropertiesStatus === ApplicationState.failed">Could not save! Please try again, reload the page or file a bug report.</span>
+			<span class="messagebox error" data-ng-if="managePropertiesStatus === ApplicationState.failed">Could not save! Please try again, reload the page or file a bug report.</span>
 		</div>
+		<p class="description">Task Template Properties are the different properties a Task Template can possess. Task Templates always have a name and you can enrich them here with additional Properties.</p>
 		<form>
 			<div class="formLine" data-columns="3">
 				<label>New Property</label>
@@ -31,8 +52,25 @@
 
 		<span class="infoBox" title="Task Template Properties can't be removed because of its relations to Task Templates and exported tasks. Rename Task Template Properties to reuse it.">
 			<span class="icon info"  style="background: steelblue; color: white; border-radius: 2rem; width: 1.2rem; height: 1.1rem; text-align: center;">&#x2139;</span>
-			How to remove Task Template properties?
+			How to remove Task Template Properties?
 		</span>
+	</div>
+
+	<div class="area accordion">
+		<h3>Manage Projects</h3>
+		<p class="description">
+			You can group your work into different Projects and provide access to these to different people. You could manage them here.
+			However, in this version of EEPPI only one Project is supported and it can't be changed.
+		</p>
+	</div>
+
+	<div class="area accordion">
+		<h3>Manage Project Planning Tools (PPT)</h3>
+		<p class="description">
+			EEPPI supports different PPTs. If you have more than one type of them (e.g. Jira and Redmine) you can configure different PPTs here.
+			However, this is only the type not the concrete instance. Information for the concrete instance are configured in <a href="#/register">PPT Accounts</a>.
+			However, in this version of EEPPI only one PPT is supported and it can't be changed.
+		</p>
 	</div>
 
 	<div class="area accordion">
@@ -40,27 +78,43 @@
 		<div class="operationState">
 			<span class="messagebox saving" data-ng-if="manageRequestTemplatesStatus === ApplicationState.saving">Saving ...</span>
 			<span class="messagebox success" data-ng-if="manageRequestTemplatesStatus === ApplicationState.successful">Saved successfully!</span>
-			<span class="messagebox error inline" data-ng-if="manageRequestTemplatesStatus === ApplicationState.failed">Could not save! Please try again, reload the page or file a bug report.</span>
+			<span class="messagebox error" data-ng-if="manageRequestTemplatesStatus === ApplicationState.failed">Could not save! Please try again, reload the page or file a bug report.</span>
+		</div>
+		<div class="description">
+			EEPPI works with different Project Planning Tools and Project Planning Tool configurations.
+			However, it needs a template to know how to create requests to generate a task in your Project Planning Tool.
+			You can define such Request Templates here.
+			All Project Planning Tools are supported, if they can create tasks over a web request with <a href="http://en.wikipedia.org/wiki/Basic_access_authentication" target="_blank">HTTP basic authentication</a> and a <a href="http://www.json.org/JSONRequest.html" target="_blank">JSON request</a>.
+			For example <a href="https://www.atlassian.com/software/jira" target="_blank">Jira</a> and <a href="http://www.redmine.org/" target="_blank">Redmine</a> are supported.
+			In the <strong>Request Body Template</strong> you should provide a Json to perform the request to the PPT. In Request Body Template you can:
+			<ul>
+				<li>include variables with <strong>${<span class="light">Variable name</span>}</strong>. "taskTemplate", "node", "pptProject" and in post Processors also "parentRequestData" can be used. You can access their properties with the "."-operator (e.g. ${taskTemplate.name}).</li>
+				<li>call Processors with <strong>$<span class="light">Processor name</span>:(<span class="light">parameter</span>, <span class="light">another parameter</span>, <span class="light">...</span>)$</strong>. Parameters can be variables and/or <strong>"<span class="light">strings</span>"</strong>. Strings may contain anything other than commas (,) including any quote characters (' " « »).</li>
+				<li>call post Processors almost like Processors with <strong>$<span style="font-size: larger; font-weight: bolder;">!</span><span class="light">Processor name</span>:(<span class="light">parameter</span>, <span class="light">another parameter</span>, <span class="light">...</span>)$</strong> (note the exclamation mark). However, they are only processed after the parent Tasks request was executed. The result of the parent Tasks request can then be accessed with the variable "parentRequestData".</li>
+			</ul>
 		</div>
 		<form>
 			<div class="formLine" data-columns="7">
 				<label>New Request Template</label>
 				<input type="text" name="newRequestTemplateName" data-ng-model="newRequestTemplateName" placeholder="Name"/>
 				<input type="text" name="newRequestTemplateUrl" data-ng-model="newRequestTemplateUrl" placeholder="Request URL (relative, beginning with a slash)" />
-				<select data-ng-model="newRequestTemplatePPT" name="newRequestTemplatePPT" data-ng-options="projectPlanningTool.name for projectPlanningTool in projectPlanningTools" ></select>
+				<select name="newRequestTemplateProject" data-ng-model="newRequestTemplateProject" data-ng-options="project.name for project in projects" ></select>
+				<select name="newRequestTemplatePPT" data-ng-model="newRequestTemplatePPT" data-ng-options="projectPlanningTool.name for projectPlanningTool in projectPlanningTools" ></select>
 				<textarea name="newRequestTemplateBodyTemplate" data-ng-model="newRequestTemplateBodyTemplate" placeholder="Request Body Template"
 						  onfocus="this.style.minHeight='15rem';" onblur="this.style.minHeight='inherit';"></textarea>
-				<button class="action create" data-ng-click="addRequestTemplate(newRequestTemplatePPT, newRequestTemplateUrl, newRequestTemplateBodyTemplate); newRequestTemplatePPT = null; newRequestTemplateUrl = ''; newRequestTemplateBodyTemplate = '';"
+				<button class="action create" data-ng-click="addRequestTemplate(newRequestTemplateName, newRequestTemplateUrl, newRequestTemplateProject, newRequestTemplatePPT, newRequestTemplateBodyTemplate); newRequestTemplateName = ''; newRequestTemplateUrl = ''; newRequestTemplateProject = null; newRequestTemplatePPT = null; newRequestTemplateBodyTemplate = '';"
 						title="Create a new Request Template">
 					<span class="icon big">&#x2b;</span>Add
 				</button>
 			</div>
 			<div class="formLine" data-columns="7">
-				<select data-ng-model="toUpdateRequestTemplate" data-ng-options="requestTemlate.name for requestTemlate in requestTemplates" data-ng-change="updateWithCorrectPPT(toUpdateRequestTemplate)"></select>
+				<select data-ng-model="toUpdateRequestTemplate" data-ng-options="requestTemlate.name for requestTemlate in requestTemplates" data-ng-change="updateWithCorrectProjectAndPPT(toUpdateRequestTemplate)"></select>
 				<input data-ng-disabled="!toUpdateRequestTemplate" type="text" name="requestTemplateNewName" data-ng-model="toUpdateRequestTemplate.name" placeholder="Name"
 					   data-ng-change="toUpdateRequestTemplateChanged()" data-ng-blur="updateRequestTemplate(toUpdateRequestTemplate)"/>
 				<input data-ng-disabled="!toUpdateRequestTemplate" type="text" name="requestTemplateNewUrl" data-ng-model="toUpdateRequestTemplate.url" placeholder="Request URL (relative, beginning with a slash)"
 					   data-ng-change="toUpdateRequestTemplateChanged()" data-ng-blur="updateRequestTemplate(toUpdateRequestTemplate)"/>
+				<select data-ng-disabled="!toUpdateRequestTemplate" data-ng-model="toUpdateRequestTemplate.project" name="requestTemplateNewProject" data-ng-options="project.name for project in projects"
+						data-ng-change="toUpdateRequestTemplateChanged()" data-ng-blur="updateRequestTemplate(toUpdateRequestTemplate)"></select>
 				<select data-ng-disabled="!toUpdateRequestTemplate" name="requestTemplateNewPPT" data-ng-model="toUpdateRequestTemplate.ppt" data-ng-options="ppt.name for ppt in projectPlanningTools"
 						data-ng-change="toUpdateRequestTemplateChanged()" data-ng-blur="updateRequestTemplate(toUpdateRequestTemplate)"></select>
 				<textarea data-ng-disabled="!toUpdateRequestTemplate" name="requestTemplateNewBodyTemplate" data-ng-model="toUpdateRequestTemplate.requestBodyTemplate" placeholder="Request Body Template"
@@ -79,10 +133,14 @@
 		<div class="operationState">
 			<span class="messagebox saving" data-ng-if="manageProcessorsStatus === ApplicationState.saving">Saving ...</span>
 			<span class="messagebox success" data-ng-if="manageProcessorsStatus === ApplicationState.successful">Saved successfully!</span>
-			<span class="messagebox error inline" data-ng-if="manageProcessorsStatus === ApplicationState.failed">Could not save! Please try again, reload the page or file a bug report.</span>
+			<span class="messagebox error" data-ng-if="manageProcessorsStatus === ApplicationState.failed">Could not save! Please try again, reload the page or file a bug report.</span>
 		</div>
+		<p class="description">
+			Processors are normal JavaScript functions enabling the Request Template to perform complex operations. You can manage them here.
+			The code should have the format <strong>function(<span class="light">optionally some parameters</span>){<span class="light">var code = "fancy"; return code;</span>}</strong> and it should return a string.
+		</p>
 		<form>
-			<div class="formLine" data-columns="6">
+			<div class="formLine" data-columns="5">
 				<label>New Processor</label>
 				<input type="text" name="newProcessorName" data-ng-model="newProcessorName" placeholder="Name" />
 				<select data-ng-model="newProcessorProject" name="newProcessorProject" data-ng-options="project.name for project in projects" ></select>
@@ -93,8 +151,8 @@
 					<span class="icon big">&#x2b;</span>Add
 				</button>
 			</div>
-			<div class="formLine" data-columns="6">
-				<select data-ng-model="toUpdateProcessor" data-ng-options="processor.name for processor in processors" data-ng-change="showSelectedProcessor()"></select>
+			<div class="formLine" data-columns="5">
+				<select data-ng-model="toUpdateProcessor" data-ng-options="processor.name for processor in processors" data-ng-change="updateWithCorrectProjectAndPPT(toUpdateProcessor)"></select>
 
 				<input type="text" data-ng-disabled="!toUpdateProcessor" name="processorNewName" data-ng-model="toUpdateProcessor.name" placeholder="Name"
 					   data-ng-change="toUpdateProcessorChanged()" data-ng-blur="updateProcessor(toUpdateProcessor)"/>
@@ -111,24 +169,6 @@
 		</form>
 	</div>
 
-	<div class="area accordion">
-		<h3>Manage Decision Knowledge System</h3>
-		<div class="operationState">
-			<span class="messagebox saving" data-ng-if="manageDKSStatus === ApplicationState.saving">Saving ...</span>
-			<span class="messagebox success" data-ng-if="manageDKSStatus === ApplicationState.successful">Saved successfully!</span>
-			<span class="messagebox error inline" data-ng-if="manageDKSStatus === ApplicationState.failed">Could not save! Please try again, reload the page or file a bug report.</span>
-		</div>
-		<form>
-			<div class="formLine" data-columns="4">
-				<select data-ng-model="toUpdateDKS" data-ng-options="dks.name for dks in dkss"></select>
-
-				<input type="text" data-ng-disabled="!toUpdateDKS" name="dksNewName" data-ng-model="toUpdateDKS.name" placeholder="Name"
-					   data-ng-change="toUpdateDKSChanged()" data-ng-blur="updateDKS(toUpdateDKS)"/>
-				<input type="text" data-ng-disabled="!toUpdateDKS" name="dksNewUrl" data-ng-model="toUpdateDKS.url" placeholder="URL"
-					   data-ng-change="toUpdateDKSChanged()" data-ng-blur="updateDKS(toUpdateDKS)"/>
-			</div>
-		</form>
-	</div>
 	<div>&nbsp;</div>
 	<div>&nbsp;</div>
 </div>

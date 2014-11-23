@@ -76,8 +76,8 @@ module app.application {
 
 
 			/* request templates */
-			$scope.addRequestTemplate = function(ppt: app.domain.model.ppt.ProjectPlanningTool, url: string, requestBodyTemplate: string) {
-				var newRequestTemplate = new app.domain.model.ppt.RequestTemplate(ppt, url, requestBodyTemplate);
+			$scope.addRequestTemplate = function(name: string, url: string, project: app.domain.model.core.Project, ppt: app.domain.model.ppt.ProjectPlanningTool, requestBodyTemplate: string) {
+				var newRequestTemplate = new app.domain.model.ppt.RequestTemplate(name, url, ppt, project, requestBodyTemplate);
 				newRequestTemplate.project = $scope.currentProject;
 
 				$scope.manageRequestTemplatesStatus = app.application.ApplicationState.saving;
@@ -187,22 +187,23 @@ module app.application {
 				$scope.hasToUpdateProcessorChanged = true;
 			};
 
-            $scope.showSelectedProcessor = function() {
-                $scope["toUpdateProcessor"].project = $scope.findProjectInList($scope["toUpdateProcessor"].project);
-            };
-
-            //Finds the correct object instance for the given project to select it in the list
-            $scope.findProjectInList = function(expectedProject: app.domain.model.core.Project) {
-                for(var index=0;index<$scope.projects.length;++index) {
-                    if($scope.projects[index].id==expectedProject["id"]) {
-                        return $scope.projects[index];
-                    }
-                }
-                return null;
+			$scope.updateWithCorrectProjectAndPPT = function (toUpdateEntity) {
+				if(toUpdateEntity.hasOwnProperty('ppt')) {
+					toUpdateEntity.ppt = $scope.findPPTInList(toUpdateEntity.ppt);
+				}
+				if(toUpdateEntity.hasOwnProperty('project')) {
+					toUpdateEntity.project = $scope.findProjectInList(toUpdateEntity.project);
+				}
 			};
 
-			$scope.updateWithCorrectPPT = function (toUpdatePPTEntity) {
-				toUpdatePPTEntity.ppt = $scope.findPPTInList(toUpdatePPTEntity.ppt);
+            //Finds the correct object instance for the given project to select it in the list
+			$scope.findProjectInList = function (expectedProject:app.domain.model.core.Project) {
+				for (var index = 0; index < $scope.projects.length; ++index) {
+					if ($scope.projects[index].id == expectedProject.id) {
+						return $scope.projects[index];
+					}
+				}
+				return expectedProject;
 			};
 
 			//Finds the correct object instance for the given PPT to select it in the list
