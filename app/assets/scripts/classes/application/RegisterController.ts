@@ -56,12 +56,13 @@ module app.application {
 			$scope.registerStatus = null;
 
 			$scope.changePassword = function(oldPassword, newPassword, newPasswordRepeat) {
-				$scope.passwordChangeStatus = null;
+				$scope.changePasswordStatus = app.application.ApplicationState.saving;
 				this.authenticationService.changePassword(oldPassword, newPassword, newPasswordRepeat, function(success: boolean) {
 					if(success) {
-						$scope.passwordChangeStatus = app.application.Status.success;
+						$scope.changePasswordStatus = app.application.ApplicationState.successful;
+						setTimeout(() => { $scope.changePasswordStatus = null; $scope.$apply(); }, configuration.settings.successDelay);
 					} else {
-						$scope.passwordChangeStatus = app.application.Status.error;
+						$scope.changePasswordStatus = app.application.ApplicationState.failed;
 					}
 				});
 			}.bind(this);

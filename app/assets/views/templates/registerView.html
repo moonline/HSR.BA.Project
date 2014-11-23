@@ -33,6 +33,11 @@
 
 	<div class="area accordion" data-ng-if="authenticator.loggedInUser != null">
 		<h3>Change EEPPI Password</h3>
+		<div class="operationState inline">
+			<span class="messagebox saving" data-ng-if="changePasswordStatus === ApplicationState.saving">Changing Password ...</span>
+			<span class="messagebox success" data-ng-if="changePasswordStatus === ApplicationState.successful">Password changed successfully!</span>
+			<span class="messagebox error" data-ng-if="changePasswordStatus === ApplicationState.failed">Could not change Password! Maybe the new Passwords differ?</span>
+		</div>
 		<form>
 			<div class="formLine" data-columns="5">
 				<label>Change Password</label>
@@ -49,7 +54,7 @@
 
 	<div class="area accordion" data-ng-if="authenticator.loggedInUser != null">
 		<h3>Manage Project Planning Tool (PPT) Accounts</h3>
-		<div class="operationState">
+		<div class="operationState inline">
 			<span class="messagebox saving" data-ng-if="pptAccountStatus === ApplicationState.saving">Saving ...</span>
 			<span class="messagebox success" data-ng-if="pptAccountStatus === ApplicationState.successful">Saved successfully!</span>
 			<span class="messagebox error" data-ng-if="pptAccountStatus === ApplicationState.failed">Could not save! Please try again, reload the page or file a bug report.</span>
