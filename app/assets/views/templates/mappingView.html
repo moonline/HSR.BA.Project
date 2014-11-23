@@ -18,7 +18,7 @@
 						<span data-ng-if="problemListChildrenVisibilityState[$index]" class="symbol extremeSmall">&#x25bc;</span>
 					</button>
 					<ul data-type="list" data-ng-if="problem.alternatives.length > 0 && problemListChildrenVisibilityState[$index]">
-						<li data-ng-repeat="alternative in problem.alternatives">
+						<li data-ng-repeat="alternative in problem.alternatives | orderBy:'name'">
 							<div class="listElement" data-ng-click="setCurrentDksNode(alternative)" data-state="{{alternative == currentDksNode && 'selected' || '' }}">
 								<button class="action edit" title="View Details"><span class="icon iconOnly">&Xi;</span></button>
 								<span class="name"><span class="typeDeclaration" title="Option Template from DKS">&lt;OT&gt;</span> {{alternative.name}}</span>
@@ -52,7 +52,7 @@
 					<dt data-ng-if="currentDksNode.alternatives">Options</dt>
 					<dd data-ng-if="currentDksNode.alternatives">
 						<ul>
-							<li data-ng-repeat="option in currentDksNode.alternatives">
+							<li data-ng-repeat="option in currentDksNode.alternatives | orderBy:'name'">
 								<span data-ng-click="setCurrentDksNode(option)">
 									{{option.name}} [{{option.id}}]
 								</span>
@@ -69,7 +69,7 @@
 				<span class="messagebox success" data-ng-if="mappingsSavingStatus === ApplicationState.successful">Saved successfully</span>
 				<span class="messagebox error" data-ng-if="mappingsSavingStatus === ApplicationState.failed">Could not save! Please try again, reload the page or file a bug report.</span>
 				<ul>
-					<li data-ng-repeat="mapping in currentMappings">
+					<li data-ng-repeat="mapping in currentMappings | orderBy:'name'">
 						<button class="action remove" data-ng-click="removeMapping(mapping)"
 							title="Remove mapping "><span class="icon small iconOnly">&Chi;</span>
 						</button>
@@ -130,7 +130,7 @@
 			<form data-ng-if="currentTaskTemplate">
 				<div class="formLine" data-columns="3" data-ng-if="currentTaskTemplate.properties.length < taskProperties.length">
 					<select data-ng-model="newTaskProperty"
-							data-ng-options="taskProperty.name for taskProperty in taskProperties | filter:notYetUsed()"
+							data-ng-options="taskProperty.name for taskProperty in taskProperties | filter:notYetUsed() | orderBy:'name'"
 							onchange="document.getElementById('newTaskPropertyValue').focus()"></select>
 					<input id="newTaskPropertyValue" type="text" data-ng-disabled="!newTaskProperty" data-ng-model="newTaskPropertyValue" placeholder="New {{newTaskProperty.name}}"/>
 					<button data-ng-disabled="!newTaskProperty" class="action create" title="Add property"
@@ -143,7 +143,7 @@
 					<input type="text" data-ng-model="currentTaskTemplate.name" data-ng-blur="updateTaskTemplate()" data-ng-change="taskTemplateChanged()"/>
 					<span></span>
 				</div>
-				<div data-ng-repeat="propertyValue in currentTaskTemplate.properties" class="formLine" data-columns="3"	>
+				<div data-ng-repeat="propertyValue in currentTaskTemplate.properties | orderBy:'name'" class="formLine" data-columns="3"	>
 					<label>{{propertyValue.property.name}}</label>
 					<input data-ng-model="propertyValue.value" data-ng-blur="updateTaskTemplate()" data-ng-change="taskTemplateChanged()"/>
 					<button class="action remove" data-ng-click="removePropertyValue(propertyValue)"
