@@ -54,10 +54,10 @@
 
 	<div class="area accordion" data-ng-if="authenticator.loggedInUser != null">
 		<h3>Manage Project Planning Tool (PPT) Accounts</h3>
-		<div class="operationState inline">
+		<div class="operationState">
 			<span class="messagebox saving" data-ng-if="pptAccountStatus === ApplicationState.saving">Saving ...</span>
 			<span class="messagebox success" data-ng-if="pptAccountStatus === ApplicationState.successful">Saved successfully!</span>
-			<span class="messagebox error" data-ng-if="pptAccountStatus === ApplicationState.failed">Could not save! Please try again, reload the page or file a bug report.</span>
+			<span class="messagebox error inline" data-ng-if="pptAccountStatus === ApplicationState.failed">Could not save! Please try again, reload the page or file a bug report.</span>
 		</div>
 		<form>
 			<div class="formLine" data-columns="6">
