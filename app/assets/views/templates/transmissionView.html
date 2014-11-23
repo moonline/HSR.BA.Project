@@ -155,7 +155,7 @@
 												<span data-ng-if="openRequestDetail != $index+'SRQ'" class="symbol extremeSmall">&#x25bc; Show request</span>
 												<span data-ng-if="openRequestDetail == $index+'SRQ'" class="symbol extremeSmall">&#x25b2; Hide request</span>
 											</button>
-											<button data-ng-if="subRequest.exportState"> data-ng-click="toggleRequestDetails($index+'SRS')" class="action">
+											<button data-ng-if="subRequest.exportState" data-ng-click="toggleRequestDetails($index+'SRS')" class="action">
 												<span data-ng-if="openRequestDetail != $index+'SRS'" class="symbol extremeSmall">&#x25bc; Show response</span>
 												<span data-ng-if="openRequestDetail == $index+'SRS'" class="symbol extremeSmall">&#x25b2; Hide response</span>
 											</button>
