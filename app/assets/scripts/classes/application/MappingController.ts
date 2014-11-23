@@ -123,8 +123,9 @@ module app.application {
 			
 			$scope.createNewTaskTemplate = function(name: string) {
 				var newTaskTemplate: app.domain.model.core.TaskTemplate = new app.domain.model.core.TaskTemplate(name);
+				$scope.taskTemplateSavingStatus = app.application.ApplicationState.saving;
 				taskTemplateRepository.add(newTaskTemplate, function(success, item) {
-					// TODO: add operationState
+					$scope.setTaskTemplateSavingCompletedStatus(success);
 					if(success) { $scope.currentTaskTemplate = item; }
 				});
 			};
