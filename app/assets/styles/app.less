@@ -246,40 +246,8 @@ input, textarea {
 
 .formLine {
 	margin: 0.25rem 0;
-	.displayFlex; .flexWrap(nowrap); .justifyContent(spance-between); width: 100%;
+	.displayFlex; .flexWrap(nowrap); width: 100%;
 	.alignItems(flex-start);
-	//First:
-	&[data-columns] > :nth-child(+1) { width: 15%; margin-right: 0.2rem; max-width: 15rem; }
-	//Last:
-	&[data-columns="3"] > :nth-child(+3), &[data-columns="4"] > :nth-child(+4), &[data-columns="5"] > :nth-child(+5), &[data-columns="6"] > :nth-child(+6), &[data-columns="7"] > :nth-child(+7) {
-		width: 10%; max-width: 10rem; margin-left: 0.2rem;
-	}
-	//Rest:
-	&[data-columns="3"] {
-		> :nth-child(+2) { width: 75%; margin: 0 0.2rem; .boxSizing(content-box); padding-right: 1.1rem; }
-	}
-	&[data-columns="4"] {
-		> :nth-child(+2) { width: 10%; margin: 0 0.2rem; }
-		> :nth-child(+3) { width: 65%; margin: 0 0.2rem; .boxSizing(content-box); padding-right: 0.7rem; }
-	}
-	&[data-columns="5"] {
-		> :nth-child(+2) { width: 10%; margin: 0 0.2rem; }
-		> :nth-child(+3) { width: 30%; margin: 0 0.2rem; .boxSizing(content-box); padding-right: 0.8rem; }
-		> :nth-child(+4) { width: 35%; margin: 0 0.2rem; }
-	}
-	&[data-columns="6"] {
-		> :nth-child(+2) { width: 10%; margin: 0 0.2rem; }
-		> :nth-child(+3), > :nth-child(+4) {
-			width: 15%; margin: 0 0.2rem; .boxSizing(content-box); padding-right: 0;
-		}
-		> :nth-child(+5) { width: 35%; margin: 0 0.2rem; }
-	}
-	&[data-columns="7"] {
-		> :nth-child(+2), > :nth-child(+3), > :nth-child(+4), > :nth-child(+5) {
-			width: 10%; margin: 0 0.2rem;
-		}
-		> :nth-child(+6) { width: 35%; margin: 0 0.2rem; }
-	}
 }
 select {
 	-webkit-appearance: none; -ms-appearance: none; -moz-appearance: none;  appearance: none;
@@ -298,6 +266,38 @@ select {
  * Mapping
  */
 .typeDeclaration { color: silver; font-size: smaller; }
+.mapping .formLine {
+	&[data-columns="3"] {
+		> :nth-child(+1) { width: 30%; margin: 0 0.2rem; max-width: 15rem; }
+		> :nth-child(+2) { width: 50%; margin: 0 0.2rem; }
+		> :nth-child(+3) { width: 20%; margin: 0 0.2rem; }
+	}
+}
+
+/**
+ * Register
+ */
+.register .formLine {
+	//First:
+	&[data-columns] > :nth-child(+1) { width: 15%; margin-right: 0.2rem; max-width: 15rem; }
+	//Last:
+	&[data-columns="5"] > :nth-child(+5), &[data-columns="6"] > :nth-child(+6) {
+		width: 10%; max-width: 10rem; margin-left: 0.2rem;
+	}
+	//Rest:
+	&[data-columns="5"] {
+		> :nth-child(+2) { width: 10%; margin: 0 0.2rem; }
+		> :nth-child(+3) { width: 30%; margin: 0 0.2rem; .boxSizing(content-box); padding-right: 0.8rem; }
+		> :nth-child(+4) { width: 35%; margin: 0 0.2rem; }
+	}
+	&[data-columns="6"] {
+		> :nth-child(+2) { width: 10%; margin: 0 0.2rem; }
+		> :nth-child(+3), > :nth-child(+4) {
+			width: 15%; margin: 0 0.2rem; .boxSizing(content-box); padding-right: 0;
+		}
+		> :nth-child(+5) { width: 35%; margin: 0 0.2rem; }
+	}
+}
 
 
 /**
@@ -305,7 +305,33 @@ select {
  */
 .description { margin: 1rem 0; color: #6EAADC; }
 .description ul li { list-style-type: disc;}
-
+.admin .formLine {
+	//First:
+	&[data-columns] > :nth-child(+1) { width: 15%; margin-right: 0.2rem; max-width: 15rem; }
+	//Last:
+	&[data-columns="3"] > :nth-child(+3), &[data-columns="4"] > :nth-child(+4), &[data-columns="5"] > :nth-child(+5), &[data-columns="7"] > :nth-child(+7) {
+		width: 10%; max-width: 10rem; margin-left: 0.2rem;
+	}
+	//Rest:
+	&[data-columns="3"] { //Task Template Properties
+		> :nth-child(+2) { width: 75%; margin: 0 0.2rem; .boxSizing(content-box); padding-right: 1.1rem; }
+	}
+	&[data-columns="4"] { //DKS
+		> :nth-child(+2) { width: 10%; margin: 0 0.2rem; }
+		> :nth-child(+3) { width: 65%; margin: 0 0.2rem; .boxSizing(content-box); padding-right: 0.7rem; }
+	}
+	&[data-columns="5"] { //Processors
+		> :nth-child(+2) { width: 10%; margin: 0 0.2rem; }
+		> :nth-child(+3) { width: 30%; margin: 0 0.2rem; .boxSizing(content-box); padding-right: 0.8rem; }
+		> :nth-child(+4) { width: 35%; margin: 0 0.2rem; }
+	}
+	&[data-columns="7"] { //Request Templates
+		> :nth-child(+2), > :nth-child(+3), > :nth-child(+4), > :nth-child(+5) {
+			width: 10%; margin: 0 0.2rem;
+		}
+		> :nth-child(+6) { width: 35%; margin: 0 0.2rem; }
+	}
+}
 /**
  * application state
  */
@@ -317,6 +343,7 @@ select {
 .areaContent { position: relative; }
 
 .messagebox {
+	font-size: smaller;
 	position: absolute; width: 100%; box-sizing: content-box;
 	padding: 0.5rem; display: block; color: white; font-weight: bold;
 
