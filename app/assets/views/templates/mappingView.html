@@ -120,6 +120,11 @@
 			</form>
 
 			<h3 data-ng-if="currentTaskTemplate">{{currentTaskTemplate.name}} [{{currentTaskTemplate.id}}]</h3>
+			<div class="operationState">
+				<span class="messagebox saving" data-ng-if="taskTemplateSavingStatus === ApplicationState.saving">Saving ...</span>
+				<span class="messagebox success" data-ng-if="taskTemplateSavingStatus === ApplicationState.successful">Saved successfully!</span>
+				<span class="messagebox error" data-ng-if="taskTemplateSavingStatus === ApplicationState.failed">Could not save! Please try again, reload the page or file a bug report.</span>
+			</div>
 			<form data-ng-if="currentTaskTemplate">
 				<div class="formLine" data-columns="3" data-ng-if="currentTaskTemplate.properties.length < taskProperties.length">
 					<select data-ng-model="newTaskProperty"

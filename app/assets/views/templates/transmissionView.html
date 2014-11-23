@@ -106,7 +106,7 @@
 								<dt>
 									<span class="error" data-ng-if="exportRequest.exportState === ApplicationState.failed">Transmit failed.</span>
 									<span class="pending" data-ng-if="exportRequest.exportState === ApplicationState.pending">Transmitting ...</span>
-									<span class="success" data-ng-if="exportRequest.exportState === ApplicationState.success">Transmit successful</span>
+									<span class="success" data-ng-if="exportRequest.exportState === ApplicationState.successful">Transmit successful</span>
 									<button data-ng-click="toggleRequestDetails($index+'RS')" class="action">
 										<span data-ng-if="openRequestDetail != $index+'RS'" class="symbol extremeSmall">&#x25bc; Show response</span>
 										<span data-ng-if="openRequestDetail == $index+'RS'" class="symbol extremeSmall">&#x25b2; Hide response</span>
@@ -133,7 +133,7 @@
 										<dt>
 											<span class="error" data-ng-if="subRequest.exportState === ApplicationState.failed">Transmit failed.</span>
 											<span class="pending" data-ng-if="subRequest.exportState === ApplicationState.pending">Transmitting ...</span>
-											<span class="success" data-ng-if="subRequest.exportState === ApplicationState.success">Transmit successful</span>
+											<span class="success" data-ng-if="subRequest.exportState === ApplicationState.successful">Transmit successful</span>
 											<button data-ng-click="toggleRequestDetails($index+'SRS')" class="action">
 												<span data-ng-if="openRequestDetail != $index+'SRS'" class="symbol extremeSmall">&#x25bc; Show response</span>
 												<span data-ng-if="openRequestDetail == $index+'SRS'" class="symbol extremeSmall">&#x25b2; Hide response</span>

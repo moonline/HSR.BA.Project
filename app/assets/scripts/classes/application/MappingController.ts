@@ -133,17 +133,29 @@ module app.application {
 				if($scope.currentTaskTemplate) {
 					var taskPropertyValue: app.domain.model.core.TaskPropertyValue = new app.domain.model.core.TaskPropertyValue(property, value);
 					(<app.domain.model.core.TaskTemplate>$scope.currentTaskTemplate).addProperty(taskPropertyValue);
+					$scope.taskTemplateSavingStatus = app.application.ApplicationState.saving;
 					taskTemplateRepository.addPropertyValue($scope.currentTaskTemplate, taskPropertyValue, function(success, item){
-						//TODO: add operationState
+						$scope.setTaskTemplateSavingCompletedStatus(success);
 					});
+				}
+			};
+
+			$scope.setTaskTemplateSavingCompletedStatus = function(success: boolean) {
+				if(success) {
+					$scope.taskTemplateSavingStatus = app.application.ApplicationState.successful;
+
+					setTimeout(() => { $scope.taskTemplateSavingStatus = null; $scope.$apply(); }, configuration.settings.successDelay);
+				}else{
+					$scope.taskTemplateSavingStatus = app.application.ApplicationState.failed;
 				}
 			};
 			
 			$scope.removePropertyValue = function(propertyValue: app.domain.model.core.TaskPropertyValue) {
 				if($scope.currentTaskTemplate) {
 					$scope.currentTaskTemplate.removeProperty(propertyValue);
+					$scope.taskTemplateSavingStatus = app.application.ApplicationState.saving;
 					taskTemplateRepository.removePropertyValue($scope.currentTaskTemplate, propertyValue, function(success, taskTemplate){
-						// TODO: add operationState
+						$scope.setTaskTemplateSavingCompletedStatus(success);
 					});
 				}
 			};
@@ -151,9 +163,16 @@ module app.application {
 			$scope.updateTaskTemplate = function() {
 				if($scope.hasTaskTemplateChanged == true) {
 					$scope.hasTaskTemplateChanged = false;
-					// TODO: add operationState
-					taskTemplateRepository.update($scope.currentTaskTemplate, function(status, item){});
-					taskTemplateRepository.updateProperties($scope.currentTaskTemplate, function(status){});
+					$scope.taskTemplateSavingStatus = app.application.ApplicationState.saving;
+					taskTemplateRepository.update($scope.currentTaskTemplate, function(success: boolean, item){
+						if(success) {
+							taskTemplateRepository.updateProperties($scope.currentTaskTemplate, function (success:boolean) {
+								$scope.setTaskTemplateSavingCompletedStatus(success);
+							});
+						} else {
+							$scope.taskTemplateSavingStatus = app.application.ApplicationState.failed;
+						}
+					});
 				}
 			};
 
