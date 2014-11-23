@@ -51,8 +51,6 @@ module app.application {
 			$scope.authenticator = authenticationService;
 			$scope.$watch('authenticator', function() {});
 
-			$scope.passwordChangeStatus = null;
-
 			$scope.registerStatus = null;
 
 			$scope.changePassword = function(oldPassword, newPassword, newPasswordRepeat) {
@@ -121,9 +119,9 @@ module app.application {
 			};
 
 			$scope.removePPTAccount = function (pptAccount:app.domain.model.ppt.PPTAccount) {
-				$scope.operationState = app.application.ApplicationState.saving;
+				$scope.pptAccountStatus = app.application.ApplicationState.saving;
 				pptAccountRepository.remove(pptAccount, function (success) {
-					$scope.setOperationFinishState(success);
+					$scope.setPPTAccountFinishState(success);
 				});
 			};
 

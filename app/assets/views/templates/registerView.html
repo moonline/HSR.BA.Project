@@ -2,8 +2,6 @@
 	<div class="operationState">
 		<span class="messagebox success" data-ng-if="(registerStatus === Status.success) && (authenticator.loggedInUser == null)">Registration successful.</span>
 		<span class="messagebox error" data-ng-if="(registerStatus === Status.error) && (authenticator.loggedInUser == null)">Registration failed.</span>
-		<span class="messagebox success" data-ng-if="(passwordChangeStatus === Status.success) && (authenticator.loggedInUser != null)">Password changed successful.</span>
-		<span class="messagebox error" data-ng-if="(passwordChangeStatus === Status.error) && (authenticator.loggedInUser != null)">Password change failed.</span>
 	</div>
 	<h2>Account</h2>
 
