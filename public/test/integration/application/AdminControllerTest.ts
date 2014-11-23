@@ -83,11 +83,16 @@ module test.integration.application {
                 var processor:app.domain.model.core.Processor = scope.processors[0];
                 scope.toUpdateProcessor = processor;
                 scope.showSelectedProcessor();
-                expect(scope.processorNewName).toBe(processor.name);
-                expect(scope.processorNewProject.id).toBe(processor.project.id);
-                expect(scope.processorNewCode).toBe(processor.code);
+                expect(scope.toUpdateProcessor.name).toBe(processor.name);
+                expect(scope.toUpdateProcessor.project.id).toBe(processor.project.id);
+                expect(scope.toUpdateProcessor.code).toBe(processor.code);
 
-                scope.updateProcessor(scope.toUpdateProcessor, "Test3", scope.processorNewProject, "function y();");
+                scope.toUpdateProcessor.name = "Test3";
+                scope.toUpdateProcessor.project = scope.projects[0];
+                scope.toUpdateProcessor.code = "function y();";
+                scope.hasToUpdateProcessorChanged = true;
+                scope.updateProcessor(scope.toUpdateProcessor);
+
                 httpBackend.expectPOST('/processor/4401', '{"id":4401,"name":"Test3","project":{"id":59,"name":"Project"},"code":"function y();"}').respond({});
                 httpBackend.flush();
             });
