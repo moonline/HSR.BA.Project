@@ -149,9 +149,18 @@ module app.application {
 			};
 
 			$scope.updateTaskTemplate = function() {
-				// TODO: add operationState
-				taskTemplateRepository.update($scope.currentTaskTemplate, function(status, item){});
-				taskTemplateRepository.updateProperties($scope.currentTaskTemplate, function(status){});
+				if($scope.hasTaskTemplateChanged == true) {
+					$scope.hasTaskTemplateChanged = false;
+					// TODO: add operationState
+					taskTemplateRepository.update($scope.currentTaskTemplate, function(status, item){});
+					taskTemplateRepository.updateProperties($scope.currentTaskTemplate, function(status){});
+				}
+			};
+
+			$scope.hasTaskTemplateChanged = false;
+
+			$scope.taskTemplateChanged = function() {
+				$scope.hasTaskTemplateChanged = true;
 			};
 
 
