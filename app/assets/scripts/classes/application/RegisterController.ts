@@ -54,6 +54,8 @@ module app.application {
 
 			$scope.registerStatus = null;
 
+			$scope.pptAccountStatus = null;
+
 			$scope.changePassword = function(oldPassword, newPassword, newPasswordRepeat) {
 				$scope.passwordChangeStatus = null;
 				this.authenticationService.changePassword(oldPassword, newPassword, newPasswordRepeat, function(success: boolean) {
@@ -94,10 +96,19 @@ module app.application {
 			};
 
 			$scope.updatePPTAccount = function (pptAccount:app.domain.model.ppt.PPTAccount) {
-				$scope.operationState = app.application.ApplicationState.saving;
-				pptAccountRepository.update(pptAccount, function (success, item) {
-					$scope.setOperationFinishState(success);
-				});
+				if($scope.hasPPTAccountChanged) {
+					$scope.hasPPTAccountChanged = false;
+					$scope.operationState = app.application.ApplicationState.saving;
+					pptAccountRepository.update(pptAccount, function (success, item) {
+						$scope.setOperationFinishState(success);
+					});
+				}
+			};
+
+			$scope.hasPPTAccountChanged = false;
+
+			$scope.pptAccountChanged = function() {
+				$scope.hasPPTAccountChanged = true;
 			};
 
 			$scope.removePPTAccount = function (pptAccount:app.domain.model.ppt.PPTAccount) {
