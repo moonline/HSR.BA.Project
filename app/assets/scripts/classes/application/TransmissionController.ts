@@ -42,7 +42,7 @@ module app.application {
 
 			$scope.pptAccountRequestTemplates = [];
 			$scope.decisions = [];
-			$scope.mappings = [];
+			$scope.orderedMappings = {};
 			$scope.decisionMappings = {};
 			$scope.pptAccounts = [];
 			$scope.requestTemplates = [];
@@ -100,10 +100,10 @@ module app.application {
 									self.orderDecisionsByProblem($scope);
 
 									mappingRepository.findAll(function(success, items) {
-										$scope.mappings = items;
+										self.orderMappingsAndSubMappings(items, $scope.orderedMappings);
 
 										setTimeout(() => { $scope.operationState = app.application.ApplicationState.successful; $scope.$apply(); }, configuration.settings.messageBoxDelay);
-										self.findDecisionsWithMappings($scope);
+										self.findDecisionsWithMappings($scope.orderedMappings, $scope.decisionMappings);
 									});
 								});
 							});
@@ -237,6 +237,28 @@ module app.application {
 			};
 		}
 
+		orderMappingsAndSubMappings(mappings: app.domain.model.core.Mapping[], targetCollection: any) {
+			mappings.forEach(function (currentMapping) {
+				if (currentMapping.taskTemplate.parent == null) {
+					if (!targetCollection[currentMapping.id]) {
+						targetCollection[currentMapping.id] = { mapping: null, subMappings: {}, subMappingsToExport: []};
+					}
+					targetCollection[currentMapping.id].mapping = currentMapping;
+
+				} else { // find parent mappings
+					var parentTaskTemplateId = currentMapping.taskTemplate.parent.id;
+					mappings.forEach(function (mapping) {
+						if (mapping.taskTemplate.id == parentTaskTemplateId) {
+							if (!targetCollection[mapping.id]) {
+								targetCollection[mapping.id] = { mapping: null, subMappings: {}, subMappingsToExport: []};
+							}
+							targetCollection[mapping.id].subMappings[currentMapping.id] = currentMapping;
+						}
+					});
+				}
+			});
+		}
+
 		evaluateProcessors(processorList, processors) {
 			processorList.forEach(function (processor) {
 				"use strict";
@@ -286,26 +308,27 @@ module app.application {
 			}
 		}
 
-		findDecisionsWithMappings($scope) {
-			for (var mi in $scope.mappings) {
-				var mapping = $scope.mappings[mi];
+		// TODO: refactor all functions using $scope.decisionMappings after this function to user decisionElement.mappings[i].mapping instead of decisionElement.mappings[i]
+		findDecisionsWithMappings(mappingCollection, decisionMappingCollection) {
+			for (var mi in mappingCollection) {
+				var mappingElement = mappingCollection[mi];
 				// only add mapping, if decision exist
-				if ($scope.decisionMappings[mapping.dksNode]) {
-					for (var dmi in $scope.decisionMappings[mapping.dksNode]['decisions']) {
-						var decisionElement = $scope.decisionMappings[mapping.dksNode]['decisions'][dmi];
-						decisionElement.mappings[mapping.id] = mapping;
+				if (decisionMappingCollection[mappingElement.mapping.dksNode]) {
+					for (var dmi in decisionMappingCollection[mappingElement.mapping.dksNode]['decisions']) {
+						var decisionElement = decisionMappingCollection[mappingElement.mapping.dksNode]['decisions'][dmi];
+						decisionElement.mappings[mappingElement.mapping.id] = mappingElement;
 					}
 					// find alternatives with mappings
 				} else {
-					for (var pi in $scope.decisionMappings) {
-						for (var di in $scope.decisionMappings[pi]['decisions']) {
-							for (var ai in $scope.decisionMappings[pi]['decisions'][di]['alternatives']) {
-								var alternativeElement = $scope.decisionMappings[pi]['decisions'][di]['alternatives'][ai];
+					for (var pi in decisionMappingCollection) {
+						for (var di in decisionMappingCollection[pi]['decisions']) {
+							for (var ai in decisionMappingCollection[pi]['decisions'][di]['alternatives']) {
+								var alternativeElement = decisionMappingCollection[pi]['decisions'][di]['alternatives'][ai];
 								// if the decision is solved - take only the chosen alternative, otherwise take all
-								if (alternativeElement.alternative.template.id == mapping.dksNode &&
-									($scope.decisionMappings[pi]['decisions'][di].decision.state != "Solved" ||
+								if (alternativeElement.alternative.template.id == mappingElement.mapping.dksNode &&
+									(decisionMappingCollection[pi]['decisions'][di].decision.state != "Solved" ||
 										alternativeElement.alternative.state == "Chosen")) {
-									alternativeElement.mappings[mapping.id] = mapping;
+									alternativeElement.mappings[mappingElement.mapping.id] = mappingElement;
 								}
 							}
 						}
@@ -371,7 +394,6 @@ module app.application {
 			var renderedTemplate;
 			try {
 				renderedTemplate = templateProcessor.process();
-				var renderedTemplate = templateProcessor.process();
 				var currentRequest = {
 					requestBody: renderedTemplate,
 					node: node,
