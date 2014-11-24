@@ -38,7 +38,7 @@ module app.application {
 
 			$scope.targetPPTAccount = null;
 			$scope.currentRequestTemplate = null;
-			$scope.pptProject = "";
+			$scope.pptProject = "TEST"; //TODO: revert
 
 			$scope.pptAccountRequestTemplates = [];
 			$scope.decisions = [];
@@ -140,6 +140,82 @@ module app.application {
 				} else {
 					$scope.decisionChildrenVisibilityState[index] = true;
 				}
+			};
+
+			$scope.getRequiredTableRowsForDecision=function(decisionGroup) {
+				var rows:number = 0;
+				Object.keys(decisionGroup.decisions).forEach(function (deKey) {
+					rows = rows + 1; // No root element for subtasks
+					var decisionElement = decisionGroup.decisions[deKey];
+					Object.keys(decisionElement.mappings).forEach(function (mKey) {
+						rows = rows + 1; // Decision Tasks
+						var decisionMapping = decisionElement.mappings[mKey];
+					});
+					Object.keys(decisionElement.alternatives).forEach(function (aKey) {
+						var alternativeElement = decisionElement.alternatives[aKey];
+						rows = rows + 1; // Alternative
+						Object.keys(alternativeElement.mappings).forEach(function (amKey) {
+							rows = rows + 1; // Alternative Tasks
+							var alternativeMapping = alternativeElement.mappings[amKey];
+						});
+					});
+				});
+				return rows;
+			};
+
+			// Creates a simpler hierarchy containing only: decision mappings and decision groups in the first index and all mappings in the second
+			$scope.flattenDecisionAndOptionSelection= function (decisionMappings) {
+				var rows = [];
+				var lastProblem = null;
+				var lastDecision = null;
+				var lastAlternative = null;
+				Object.keys(decisionMappings).forEach(function (dmKey) {
+					var decisionGroup = decisionMappings[dmKey];
+					Object.keys(decisionGroup.decisions).forEach(function (deKey) {
+						var decisionElement = decisionGroup.decisions[deKey];
+						rows.push({
+							problem: decisionGroup,
+							firstProblem: lastProblem != decisionGroup,
+							decision: decisionElement,
+							firstDecision: lastDecision != decisionElement,
+							alternative: null,
+							firstAlternative: lastAlternative != null,
+							mapping: null
+						});
+						lastProblem = decisionGroup;
+						lastDecision = decisionElement;
+						lastAlternative = null;
+						Object.keys(decisionElement.mappings).forEach(function (mKey) {
+							var decisionMapping = decisionElement.mappings[mKey];
+							rows.push({
+								problem: decisionGroup,
+								firstProblem: false,
+								decision: decisionElement,
+								firstDecision: false,
+								alternative: null,
+								firstAlternative: false,
+								mapping: decisionMapping
+							});
+						});
+						Object.keys(decisionElement.alternatives).forEach(function (aKey) {
+							var alternativeElement = decisionElement.alternatives[aKey];
+							Object.keys(alternativeElement.mappings).forEach(function (amKey) {
+								var alternativeMapping = alternativeElement.mappings[amKey];
+								rows.push({
+									problem: decisionGroup,
+									firstProblem: false,
+									decision: decisionElement,
+									firstDecision: false,
+									alternative: alternativeElement,
+									firstAlternative: lastAlternative != alternativeMapping,
+									mapping: alternativeMapping
+								});
+								lastAlternative = alternativeMapping;
+							});
+						});
+					});
+				});
+				return rows;
 			};
 
 			$scope.processTaskTemplates = function() {

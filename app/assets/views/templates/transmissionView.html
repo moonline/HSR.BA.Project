@@ -46,59 +46,30 @@
 				<div class="wizardStep area pane" data-step="DataSelection" data-ng-if="currentWizardStep == ExportWizardSteps.DataSelection">
 					<h2>Decision &amp; Option selection</h2>
 					<table border="1">
-						<tr data-ng-repeat="(pkey, decisionGroup) in decisionMappings">
-							<td rowspan="{{decisionGroup.decisions.length}}">{{decisionGroup.problem.name}}</td>
-							<td rowspan="{{decisionGroup.decisions.length}}" class="typeDeclaration" title="Problem Template from DSK">&lt;PT&gt;</td>
-							<td rowspan="{{decisionGroup.decisions.length}}">[#{{decisionGroup.problem.id}}]</td>
-							<td data-ng-repeat-start="(dkey,decisionElement) in decisionGroup.decisions"> {{decisionElement.decision.name}}</td>
-							<td class="typeDeclaration" title="Problem Occurence from DSK">&lt;PO&gt;</td>
-							<td>[#{{decisionElement.decision.id}}]</td>
-							<td data-ng-repeat-end>
-								<table border="1">
-									<tr>
-										<th>Mapped task templates to transmit</th>
-										<td class="taskTemplates">
-											<table border="1">
-												<tr>
-													<td colspan="5"><input title="Transmit subtasks (tasks of options) as normal tasks (no root element)" type="radio"
-																		   data-ng-model="decisionElement.rootElementForSubNodes" data-ng-value="null">
-														No root element for subtasks</td>
-												</tr>
-												<tr data-ng-repeat="(mkey, decisionMapping) in decisionElement.mappings">
-													<td><input title="Use as root element for subtasks (tasks of options)" type="radio" data-ng-model="decisionElement.rootElementForSubNodes" data-ng-value="decisionMapping" data-ng-disabled="!decisionElement.taskTemplatesToExport[mkey]"></td>
-													<td><input title="Transmit this task" type="checkbox" data-ng-model="decisionElement.taskTemplatesToExport[mkey]" /></td>
-													<td>{{decisionMapping.taskTemplate.name}}</td>
-													<td class="typeDeclaration" title="Task Template from EEPPI">&lt;TT&gt;</td>
-													<td>[#{{decisionMapping.taskTemplate.id}}]</td>
-												</tr>
-											</table>
-										</td>
-									</tr>
-									<tr>
-										<th>Alternatives</th>
-										<td>
-											<table border="1">
-												<tr data-ng-repeat="(akey, alternativeElement) in decisionElement.alternatives">
-													<td>{{alternativeElement.alternative.name}}</td>
-													<td class="typeDeclaration" title="Option Occurence from DSK">&lt;OO&gt;</td>
-													<td>[#{{alternativeElement.alternative.id}}]</td>
-													<td>
-														<table border="1">
-															<tr><th colspan="4">Mapped task templates to transmit</th></tr>
-															<tr class="taskTemplates" data-ng-repeat="(amkey, alternativeMapping) in alternativeElement.mappings">
-																<td><input type="checkbox" data-ng-model="decisionElement.taskTemplatesToExport[amkey]" /></td>
-																<td>{{alternativeMapping.taskTemplate.name}}</td>
-																<td class="typeDeclaration" title="Task Template from EEPPI">&lt;TT&gt;</td>
-																<td>[#{{alternativeMapping.taskTemplate.id}}]</td>
-															</tr>
-														</table>
-													</td>
-												</tr>
-											</table>
-										</td>
-									</tr>
-								</table>
-							</td>
+						<tr>
+							<th>Problem</th>
+							<th>Decision</th>
+							<th>Level</th>
+							<th>Alternative</th>
+							<th>Parent?</th>
+							<th>Export?</th>
+							<th>Task</th>
+						</tr>
+						<tr data-ng-repeat="problemsAndDecisions in flattenDecisionAndOptionSelection(decisionMappings)">
+							<td>{{problemsAndDecisions.problem.problem.name}} <span>[#{{problemsAndDecisions.problem.problem.id}}]</span></td>
+							<td>{{problemsAndDecisions.decision.decision.name}} <span>[#{{problemsAndDecisions.decision.decision.id}}]</span></td>
+
+							<td data-ng-if="!problemsAndDecisions.alternative" colspan="2">Mapped task templates to transmit</td>
+							<td data-ng-if="problemsAndDecisions.alternative">Alternatives</td>
+							<td data-ng-if="problemsAndDecisions.alternative">{{problemsAndDecisions.alternative.alternative.name}} <span>#{{problemsAndDecisions.alternative.alternative.id}}]</span></td>
+
+							<td data-ng-if="!problemsAndDecisions.alternative && !problemsAndDecisions.mapping" colspan="4"><input title="Transmit subtasks (tasks of options) as normal tasks (no root element)" type="radio" data-ng-model="problemsAndDecisions.decision.rootElementForSubNodes" data-ng-value="null">No root element for subtasks</td>
+							<td data-ng-if="!problemsAndDecisions.alternative && problemsAndDecisions.mapping"><input title="Use as root element for subtasks (tasks of options)" type="radio" data-ng-model="problemsAndDecisions.decision.rootElementForSubNodes" data-ng-value="problemsAndDecisions.mapping" data-ng-disabled="!decisionElement.taskTemplatesToExport[mkey]"></td>
+							<td data-ng-if="problemsAndDecisions.alternative && problemsAndDecisions.mapping"></td>
+							<td data-ng-if="problemsAndDecisions.mapping"><input title="Transmit this task" type="checkbox" data-ng-model="decisionElement.taskTemplatesToExport[mkey]" /></td>
+
+							<td data-ng-if="problemsAndDecisions.mapping">{{problemsAndDecisions.mapping.mapping.taskTemplate.name}} <span>[#{{problemsAndDecisions.mapping.mapping.taskTemplate.id}}]</span></td>
+						</tr>
 					</table>
 
 					<button class="action update" data-ng-click="nextStep(); processTaskTemplates();"
