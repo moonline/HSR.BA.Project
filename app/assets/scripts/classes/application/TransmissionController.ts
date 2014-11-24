@@ -46,6 +46,7 @@ module app.application {
 			$scope.requestTemplates = [];
 			$scope.transmitNodes = {};
 			$scope.exportRequests = [];
+			$scope.transformationErrors = [];
 
 			var processors: { [index: string]: any } = {};
 
@@ -92,7 +93,7 @@ module app.application {
 
 									processors[processor.name] = processorCode;
 								} catch (e) {
-									console.log(processor.name+"() processor is not valid code!");
+									console.error(processor.name+"() processor is not valid code!");
 									// who cares. It's the problem of the user, if he writes incorrect processors
 								}
 							});
@@ -163,7 +164,6 @@ module app.application {
 												}
 											}
 										}
-										console.log($scope.decisionMappings);
 									});
 								});
 							});
@@ -277,7 +277,6 @@ module app.application {
 				// parse templates
 				Object.keys($scope.transmitNodes).forEach(function(dKey){
 					var node = $scope.transmitNodes[dKey].node;
-					console.log(node);
 					var exportRequest = <any>null;
 
 					Object.keys($scope.transmitNodes[dKey].mappings).forEach(function(tKey){
@@ -293,17 +292,23 @@ module app.application {
 						};
 
 						var templateProcessor = new app.service.TemplateProcesser(exportDecisionData, $scope.currentRequestTemplate.requestBodyTemplate, processors);
-						var renderedTemplate = templateProcessor.process();
-						var currentRequest = {
-							requestBody: renderedTemplate,
-							node: node,
-							taskTemplate: mapping.taskTemplate,
-							exportState: app.application.ApplicationState.waiting
-						};
-						if($scope.transmitNodes[dKey].rootElementForSubNodes == mapping) {
-							exportRequest = currentRequest;
+						var renderedTemplate;
+						try {
+							renderedTemplate = templateProcessor.process();
+							var renderedTemplate = templateProcessor.process();
+							var currentRequest = {
+								requestBody: renderedTemplate,
+								node: node,
+								taskTemplate: mapping.taskTemplate,
+								exportState: app.application.ApplicationState.waiting
+							};
+							if($scope.transmitNodes[dKey].rootElementForSubNodes == mapping) {
+								exportRequest = currentRequest;
+							}
+							$scope.exportRequests.push(currentRequest);
+						} catch (error) {
+							$scope.transformationErrors.push("Errors occured during executing processors. Please check the code of your processors!");
 						}
-						$scope.exportRequests.push(currentRequest);
 					});
 
 					Object.keys($scope.transmitNodes[dKey].subNodes).forEach(function(aKey){
@@ -322,20 +327,25 @@ module app.application {
 							};
 
 							var templateProcessor = new app.service.TemplateProcesser(exportDecisionData, $scope.currentRequestTemplate.requestBodyTemplate, processors);
-							var renderedTemplate = templateProcessor.process();
+							var renderedTemplate;
+							try {
+								renderedTemplate = templateProcessor.process();
 
 
-							var currentSubRequest = {
-								requestBody: renderedTemplate,
-								node: subNode,
-								taskTemplate: mapping.taskTemplate,
-								exportState: app.application.ApplicationState.waiting
-							};
-							if(exportRequest) {
-								if(!exportRequest.subRequests) { exportRequest.subRequests = []; }
-								exportRequest.subRequests.push(currentSubRequest);
-							} else {
-								$scope.exportRequests.push(currentSubRequest);
+								var currentSubRequest = {
+									requestBody: renderedTemplate,
+									node: subNode,
+									taskTemplate: mapping.taskTemplate,
+									exportState: app.application.ApplicationState.waiting
+								};
+								if(exportRequest) {
+									if(!exportRequest.subRequests) { exportRequest.subRequests = []; }
+									exportRequest.subRequests.push(currentSubRequest);
+								} else {
+									$scope.exportRequests.push(currentSubRequest);
+								}
+							} catch (error) {
+								$scope.transformationErrors.push("Errors occured during executing processors. Please check the code of your processors!");
 							}
 						});
 					});
@@ -357,8 +367,11 @@ module app.application {
 					}
 
 					var templateProcessor = new app.service.TemplateProcesser({ parentRequestData: exportRequests[index].requestData || null }, exportRequest.requestBody, processors);
-					exportRequest.requestBody = templateProcessor.processSecondary();
-
+					try {
+						exportRequest.requestBody = templateProcessor.processSecondary();
+					} catch (error) {
+						$scope.transformationErrors.push("Errors occured during executing processors. Please check the code of your processors!");
+					}
 
 					var nextRequest = index+1;
 					var nextSubRequest:number = null;

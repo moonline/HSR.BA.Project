@@ -120,6 +120,12 @@
 
 				<div class="wizardStep area pane	" data-step="Transformation" data-ng-if="currentWizardStep == ExportWizardSteps.Transformation">
 					<h2>Transformation</h2>
+					<div class="transformationErrors">
+						<div data-ng-repeat="transformationError in transformationErrors">
+							<span class="messagebox inline error">{{transformationError}}</span>
+						</div>
+					</div>
+
 					<ul class="requests">
 						<!-- openRequestDetail -->
 						<li data-ng-repeat="exportRequest in exportRequests">
