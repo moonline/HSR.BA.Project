@@ -84,13 +84,21 @@
 			EEPPI works with different Project Planning Tools and Project Planning Tool configurations.
 			However, it needs a template to know how to create requests to generate a task in your Project Planning Tool.
 			You can define such Request Templates here.
-			All Project Planning Tools are supported, if they can create tasks over a web request with <a href="http://en.wikipedia.org/wiki/Basic_access_authentication" target="_blank">HTTP basic authentication</a> and a <a href="http://www.json.org/JSONRequest.html" target="_blank">JSON request</a>.
+			All Project Planning Tools are supported, if they can create tasks using a web request with <a href="http://en.wikipedia.org/wiki/Basic_access_authentication" target="_blank">HTTP basic authentication</a> and using <a href="http://www.json.org/JSONRequest.html" target="_blank">JSON request</a> format.
 			For example <a href="https://www.atlassian.com/software/jira" target="_blank">Jira</a> and <a href="http://www.redmine.org/" target="_blank">Redmine</a> are supported.
 			In the <strong>Request Body Template</strong> you should provide a Json to perform the request to the PPT. In Request Body Template you can:
 			<ul>
-				<li>include variables with <strong>${<span class="light">Variable name</span>}</strong>. "taskTemplate", "node", "pptProject" and in post Processors also "parentRequestData" can be used. You can access their properties with the "."-operator (e.g. ${taskTemplate.name}).</li>
-				<li>call Processors with <strong>$<span class="light">Processor name</span>:(<span class="light">parameter</span>, <span class="light">another parameter</span>, <span class="light">...</span>)$</strong>. Parameters can be variables and/or <strong>"<span class="light">strings</span>"</strong>. Strings may contain anything other than commas (,) including any quote characters (' " « »).</li>
-				<li>call post Processors almost like Processors with <strong>$<span style="font-size: larger; font-weight: bolder;">!</span><span class="light">Processor name</span>:(<span class="light">parameter</span>, <span class="light">another parameter</span>, <span class="light">...</span>)$</strong> (note the exclamation mark). However, they are only processed after the parent Tasks request was executed. The result of the parent Tasks request can then be accessed with the variable "parentRequestData".</li>
+				<li>include variables with <strong>${<span class="light">variable.path.to.property</span>}</strong>.
+					"taskTemplate", "node", "pptProject" and in post Processors "parentRequestData" can be used.
+					You can access their properties with the "."-operator (e.g. ${taskTemplate.name}).</li>
+				<li>call Processors with <strong>$<span class="light">processorName</span>:(<span class="light">parameter.path.to.property</span>, <span class="light">anotherParameter</span>, "<span class="light">stringParameter</span>", <span class="light">...</span>)$</strong>.
+					Parameters can be variable paths or <strong>"<span class="light">strings</span>"</strong>.
+					Strings may contain anything other than <span class="light">"</span><strong>,</strong><span class="light">", "</span><strong>:(</strong><span class="light">" and "</span><strong>)$</strong><span class="light">"</span>.
+					However, you can use quote characters (' " « »).</li>
+				<li>call post Processors and post Variable (parentRequestData) almost like Processors with <strong>$<span style="font-size: larger; font-weight: bolder;">!</span><span class="light">processorName</span>:(<span class="light">parameter.path.to.property</span>, <span class="light">anotherParameter</span>, "<span class="light">stringParameter</span>", <span class="light">...</span>)$</strong> (note the exclamation mark).
+					Post Processors are Processors which are only processed, after the parent request was executed and they can include the parent request result.
+					However, they are only processed after the parent Tasks request was executed.
+					The result of the parent Tasks request can then be accessed with the variable "parentRequestData".</li>
 			</ul>
 		</div>
 		<form>
