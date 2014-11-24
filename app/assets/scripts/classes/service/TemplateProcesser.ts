@@ -128,7 +128,14 @@ module app.service {
 
 			if(this.processors[processorName]) {
 				var method = this.processors[processorName];
-				return (method.apply(this,parameterList)).toString();
+				var result;
+				try {
+					result = method.apply(this,parameterList);
+				} catch (error) {
+					console.error("Execution of processor '"+processorName+"' failed. Please check your processor code.", error);
+					throw new Error("Execution of processor '"+processorName+"' failed. Please check your processor code.");
+				}
+				return result.toString();
 			} else {
 				return '';
 			}
