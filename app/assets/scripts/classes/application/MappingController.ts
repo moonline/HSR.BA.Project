@@ -51,27 +51,25 @@ module app.application {
 
 				taskPropertyRepository.findAll(function(success, taskProperties) {
 					$scope.taskProperties = taskProperties;
-				});
-			});
 
+					$scope.problems = [];
+					$scope.currentDksNode = null;
+					$scope.problemsLoadingStatus = app.application.ApplicationState.waiting;
+					decisionKnowledgeRepository.findAll(function(success, items) {
+						$scope.currentDks = <app.domain.model.dks.DecisionKnowledgeSystem>items[0];
 
-
-			$scope.problems = [];
-			$scope.currentDksNode = null;
-			$scope.problemsLoadingStatus = app.application.ApplicationState.waiting;
-			decisionKnowledgeRepository.findAll(function(success, items) {
-				$scope.currentDks = <app.domain.model.dks.DecisionKnowledgeSystem>items[0];
-
-				$scope.problemsLoadingStatus = app.application.ApplicationState.pending;
-				problemRepository.host = $scope.currentDks.url;
-				alternativeRepository.host = $scope.currentDks.url;
-				problemRepository.findAllWithNodesAndSubNodes<app.domain.model.dks.Alternative>('alternatives', alternativeRepository, function(success, items) {
-					if(success) {
-						$scope.problems = items;
-						setTimeout(() => { $scope.problemsLoadingStatus = app.application.ApplicationState.successful; $scope.$apply(); }, configuration.settings.messageBoxDelay);
-					} else {
-						setTimeout(() => { $scope.problemsLoadingStatus = app.application.ApplicationState.failed; $scope.$apply(); }, configuration.settings.messageBoxDelay);
-					}
+						$scope.problemsLoadingStatus = app.application.ApplicationState.pending;
+						problemRepository.host = $scope.currentDks.url;
+						alternativeRepository.host = $scope.currentDks.url;
+						problemRepository.findAllWithNodesAndSubNodes<app.domain.model.dks.Alternative>('alternatives', alternativeRepository, function(success, items) {
+							if(success) {
+								$scope.problems = items;
+								setTimeout(() => { $scope.problemsLoadingStatus = app.application.ApplicationState.successful; $scope.$apply(); }, configuration.settings.messageBoxDelay);
+							} else {
+								setTimeout(() => { $scope.problemsLoadingStatus = app.application.ApplicationState.failed; $scope.$apply(); }, configuration.settings.messageBoxDelay);
+							}
+						});
+					});
 				});
 			});
 
