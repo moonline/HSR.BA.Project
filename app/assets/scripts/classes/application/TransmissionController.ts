@@ -277,6 +277,7 @@ module app.application {
 				// parse templates
 				Object.keys($scope.transmitNodes).forEach(function(dKey){
 					var node = $scope.transmitNodes[dKey].node;
+					console.log(node);
 					var exportRequest = <any>null;
 
 					Object.keys($scope.transmitNodes[dKey].mappings).forEach(function(tKey){
@@ -365,6 +366,7 @@ module app.application {
 						nextRequest = index;
 						nextSubRequest = (subIndex == null) ? 0 : subIndex+1;
 					}
+					exportRequest.exportState = app.application.ApplicationState.pending;
 					projectPlanningToolRepository.transmitTasks(exportRequest, $scope.targetPPTAccount, $scope.currentRequestTemplate.url, $scope.currentProject, function(success, data) {
 						if(success) {
 							exportRequest.exportState = app.application.ApplicationState.successful;

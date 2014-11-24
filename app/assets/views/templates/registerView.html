@@ -76,7 +76,7 @@
 				</button>
 			</div>
 			<div class="formLine" data-columns="6">
-				<select data-ng-model="toUpdatePPTAccount" data-ng-options="pptAccount.pptUsername for pptAccount in pptAccounts" data-ng-change="showSelectedPPTAccount(toUpdatePPTAccount)"></select>
+				<select data-ng-model="toUpdatePPTAccount" data-ng-options="pptAccount as (pptAccount.pptUrl + ':' + pptAccount.pptUsername) for pptAccount in pptAccounts" data-ng-change="showSelectedPPTAccount(toUpdatePPTAccount)"></select>
 				<input data-ng-disabled="!toUpdatePPTAccount" type="text" name="toUpdatePPTAccountUrl" data-ng-model="toUpdatePPTAccount.pptUrl" placeholder="PPT Domain (e.g. http://example.com:8080)"
 					   data-ng-blur="updatePPTAccount(toUpdatePPTAccount)" data-ng-change="pptAccountChanged()"/>
 				<input data-ng-disabled="!toUpdatePPTAccount" type="text" name="toUpdatePPTAccountUsername" data-ng-model="toUpdatePPTAccount.pptUsername" placeholder="PPT Username"

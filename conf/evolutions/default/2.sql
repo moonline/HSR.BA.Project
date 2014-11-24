@@ -91,7 +91,8 @@ INSERT INTO REQUESTTEMPLATE (ID, NAME, REQUESTBODYTEMPLATE, URL, PROJECT_ID, PPT
 ','		}\, ")$
 ','		"timetracking": {
 ','			"originalEstimate": "${taskTemplate.attributes.remainingEstimate}"
-','		}
+','		},
+','		"labels": ["$tagedValue:(node.attributes,"Intellectual Property Rights")$", "$tagedValue:(node.attributes,"Project Stage")$", "createdByEEPPI"]
 ','	}
 }'),'/rest/api/2/issue',(SELECT id FROM PROJECT WHERE name='Project'),(SELECT id FROM PPT WHERE name='Project Planning Tool'));
 
@@ -134,6 +135,10 @@ INSERT INTO PROCESSOR (ID, CODE, NAME, PROJECT_ID) VALUES (nextval('entity_seq')
 ','		}
 }'),'mapExistingAssignees',(SELECT id FROM PROJECT WHERE name='Project'));
 
+
+INSERT INTO PROCESSOR (ID, CODE, NAME, PROJECT_ID) VALUES (nextval('entity_seq'),CONCAT('function(values, name) {
+','		return values[name]&#SEMICOLON
+}'),'tagedValue',(SELECT id FROM PROJECT WHERE name='Project'));
 
 # --- !Downs
 
