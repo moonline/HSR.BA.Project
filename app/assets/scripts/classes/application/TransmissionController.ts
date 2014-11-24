@@ -37,7 +37,7 @@ module app.application {
 			$scope.operationState = app.application.ApplicationState.waiting;
 
 			$scope.targetPPTAccount = null;
-			$scope.currentRequestTemplate = null;
+			$scope.requestTemplate = null;
 			$scope.pptProject = "TEST"; //TODO: revert
 
 			$scope.pptAccountRequestTemplates = [];
@@ -116,10 +116,6 @@ module app.application {
 				$scope.pptProject = name;
 			};
 
-			$scope.setRequestTemplate = function(requestTemplate: app.domain.model.ppt.RequestTemplate) {
-				$scope.currentRequestTemplate = requestTemplate;
-			};
-
 			$scope.setTarget = function(pptAccount: app.domain.model.ppt.PPTAccount) {
 				$scope.targetPPTAccount = pptAccount;
 
@@ -127,7 +123,7 @@ module app.application {
 					requestTemplateRepository.findByPropertyId('ppt', pptAccount.ppt, function(success: boolean, items: app.domain.model.ppt.RequestTemplate[]) {
 						$scope.pptAccountRequestTemplates = items;
 						if(items.length==1) {
-							$scope.currentRequestTemplate = items[0];
+							$scope.requestTemplate = items[0];
 						}
 					}, true);
 				}
@@ -287,7 +283,7 @@ module app.application {
 						nextSubRequest = (subIndex == null) ? 0 : subIndex+1;
 					}
 					exportRequest.exportState = app.application.ApplicationState.pending;
-					projectPlanningToolRepository.transmitTasks(exportRequest, $scope.targetPPTAccount, $scope.currentRequestTemplate.url, $scope.currentProject, function(success, data) {
+					projectPlanningToolRepository.transmitTasks(exportRequest, $scope.targetPPTAccount, $scope.requestTemplate.url, $scope.currentProject, function(success, data) {
 						if(success) {
 							exportRequest.exportState = app.application.ApplicationState.successful;
 							exportRequest.requestData = data;
@@ -428,7 +424,7 @@ module app.application {
 					mappings: $scope.decisionMappings
 				};
 
-				var templateProcessor = new app.service.TemplateProcesser(exportDecisionData, $scope.currentRequestTemplate.requestBodyTemplate, processors);
+				var templateProcessor = new app.service.TemplateProcesser(exportDecisionData, $scope.requestTemplate.requestBodyTemplate, processors);
 				var renderedTemplate;
 				try {
 					renderedTemplate = templateProcessor.process();
@@ -466,7 +462,7 @@ module app.application {
 				mappings: $scope.decisionMappings
 			};
 
-			var templateProcessor = new app.service.TemplateProcesser(exportDecisionData, $scope.currentRequestTemplate.requestBodyTemplate, processors);
+			var templateProcessor = new app.service.TemplateProcesser(exportDecisionData, $scope.requestTemplate.requestBodyTemplate, processors);
 			var renderedTemplate;
 			try {
 				renderedTemplate = templateProcessor.process();

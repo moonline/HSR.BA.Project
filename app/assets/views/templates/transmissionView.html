@@ -9,7 +9,7 @@
 			<form class="wizard">
 				<div class="wizardStep area pane" data-step="ToolSelection" data-ng-if="currentWizardStep == ExportWizardSteps.ToolSelection">
 					<div class="requestTemplateState" data-ng-if="targetPPT">
-						<span class="messagebox error" data-ng-if="!currentRequestTemplate">No request template found assigned with this project planning tool. Please create one.</span>
+						<span class="messagebox error" data-ng-if="!requestTemplate">No request template found assigned with this project planning tool. Please create one.</span>
 					</div>
 
 					<h2>Target selection</h2>
@@ -21,17 +21,16 @@
 					</div>
 					<div class="formLine">
 						<label>Request template to transmit</label>
-						<select title="Choose the request template to rendering transmitting requests" data-ng-disabled="!targetPPTAccount" data-ng-model="currentRequestTemplate"
-								data-ng-options="pptAccountRequestTemplate.name for pptAccountRequestTemplate in pptAccountRequestTemplates"
-								data-ng-change="setRequestTemplate(currentRequestTemplate)"></select>
-						<span data-ng-if="targetPPTAccount && currentRequestTemplate">&nbsp;&rarr;&nbsp;{{targetPPTAccount.pptUrl}}{{currentRequestTemplate.url}}</span>
+						<select title="Choose the request template to rendering transmitting requests" data-ng-disabled="!targetPPTAccount" data-ng-model="requestTemplate"
+								data-ng-options="pptAccountRequestTemplate.name for pptAccountRequestTemplate in pptAccountRequestTemplates"></select>
+						<span data-ng-if="targetPPTAccount && requestTemplate">&nbsp;&rarr;&nbsp;{{targetPPTAccount.pptUrl}}{{requestTemplate.url}}</span>
 					</div>
 					<div class="formLine">
 						<label>Project in project planning tool</label>
 						<input title="Project value has to match with the field of the project in the project planning tool you mapped in the request template." type="text" data-ng-model="pptProject" data-ng-change="setPPTProject(pptProject)" />
 					</div>
 
-					<button data-ng-disabled="pptProject.length < 1 || !targetPPTAccount || !currentRequestTemplate || !currentRequestTemplate"
+					<button data-ng-disabled="pptProject.length < 1 || !targetPPTAccount || !requestTemplate"
 							class="action update" data-ng-click="nextStep()" title="Forward to next step">
 						<span class="icon">&#x21e8;</span> Select decisions
 					</button>
