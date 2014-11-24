@@ -7,8 +7,7 @@
 				<span class="messagebox saving" data-ng-if="operationState === ApplicationState.saving">Saving ...</span>
 			</div>
 			<form class="wizard">
-				<div class="wizardStep area pane" data-step="DataSelection"
-					 data-ng-if="currentWizardStep == ExportWizardSteps.ToolSelection">
+				<div class="wizardStep area pane" data-step="ToolSelection" data-ng-if="currentWizardStep == ExportWizardSteps.ToolSelection">
 					<div class="requestTemplateState" data-ng-if="targetPPT">
 						<span class="messagebox error" data-ng-if="!currentRequestTemplate">No request template found assigned with this project planning tool. Please create one.</span>
 					</div>
@@ -118,7 +117,7 @@
 					</div>
 				</div>
 
-				<div class="wizardStep area pane	" data-step="Transformation" data-ng-if="currentWizardStep == ExportWizardSteps.Transformation">
+				<div class="wizardStep area pane" data-step="Transformation" data-ng-if="currentWizardStep == ExportWizardSteps.Transformation">
 					<h2>Transformation</h2>
 					<ul class="requests">
 						<!-- openRequestDetail -->

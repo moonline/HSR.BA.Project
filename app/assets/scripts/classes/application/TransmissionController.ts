@@ -68,11 +68,15 @@ module app.application {
 				}
 			}, 5000);
 
-			pptAccountRepository.findAll(function(success, pptAccounts) {
-				$scope.pptAccounts = pptAccounts;
+			requestTemplateRepository.findAll(function(success, requestTemplates){
+				$scope.requestTemplates = requestTemplates;
 
-				requestTemplateRepository.findAll(function(success, requestTemplates){
-					$scope.requestTemplates = requestTemplates;
+				pptAccountRepository.findAll(function(success, pptAccounts) {
+					$scope.pptAccounts = pptAccounts;
+					if (pptAccounts.length == 1) {
+						$scope.targetPPTAccount = pptAccounts[0];
+						$scope.setTarget($scope.targetPPTAccount);
+					}
 
 					projectRepository.findAll(function(	success, projects){
 						$scope.projects = projects;
@@ -163,7 +167,6 @@ module app.application {
 												}
 											}
 										}
-										console.log($scope.decisionMappings);
 									});
 								});
 							});
@@ -186,6 +189,9 @@ module app.application {
 				if(pptAccount.ppt) {
 					requestTemplateRepository.findByPropertyId('ppt', pptAccount.ppt, function(success: boolean, items: app.domain.model.ppt.RequestTemplate[]) {
 						$scope.pptAccountRequestTemplates = items;
+						if(items.length==1) {
+							$scope.currentRequestTemplate = items[0];
+						}
 					}, true);
 				}
 			};
