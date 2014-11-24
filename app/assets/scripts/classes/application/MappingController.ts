@@ -114,6 +114,27 @@ module app.application {
 					}
 				};
 			};
+			// filter Task Templates that are a Sub Task
+			$scope.isNotSubtask = function () {
+				return function (item) {
+					return item.parent === null;
+				};
+			};
+			// filter itself
+			$scope.isNotSelf = function () {
+				return function (item) {
+					return item !== $scope.currentTaskTemplate;
+				};
+			};
+
+			$scope.isParentTask = function (potentialParent:app.domain.model.core.TaskTemplate) {
+				for (var i = 0; i < $scope.taskTemplates.length; i++) {
+					if ($scope.taskTemplates[i].parent && ($scope.taskTemplates[i].parent.id == potentialParent.id)) {
+						return true;
+					}
+				}
+				return false;
+			};
 
 			$scope.setCurrentTaskTemplate = function(taskTemplate) {
 				$scope.updateWithCorrectParent(taskTemplate);
@@ -176,6 +197,11 @@ module app.application {
 						$scope.setTaskTemplateSavingCompletedStatus(success);
 					});
 				}
+			};
+
+			$scope.forceUpdateTaskTemplate = function() {
+				$scope.taskTemplateChanged();
+				$scope.updateTaskTemplate();
 			};
 
 			$scope.updateTaskTemplate = function() {
