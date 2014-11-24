@@ -118,9 +118,28 @@ module app.application {
 			};
 
 			$scope.setCurrentTaskTemplate = function(taskTemplate) {
+				$scope.updateWithCorrectParent(taskTemplate);
 				$scope.currentTaskTemplate = taskTemplate;
 			};
-			
+
+			$scope.updateWithCorrectParent = function (toUpdateEntity) {
+				if(toUpdateEntity.hasOwnProperty('parent')) {
+					toUpdateEntity.parent = $scope.findTaskTemplateInList(toUpdateEntity.parent);
+				}
+			};
+
+			//Finds the correct object instance for the given project to select it in the list
+			$scope.findTaskTemplateInList = function (expectedParent:app.domain.model.core.TaskTemplate) {
+				if (!expectedParent) return expectedParent;
+				for (var index = 0; index < $scope.taskTemplates.length; ++index) {
+					if ($scope.taskTemplates[index].id == expectedParent.id) {
+						return $scope.taskTemplates[index];
+					}
+				}
+				return expectedParent;
+			};
+
+
 			$scope.createNewTaskTemplate = function(name: string) {
 				var newTaskTemplate: app.domain.model.core.TaskTemplate = new app.domain.model.core.TaskTemplate(name);
 				$scope.taskTemplateSavingStatus = app.application.ApplicationState.saving;
@@ -168,6 +187,7 @@ module app.application {
 					taskTemplateRepository.update($scope.currentTaskTemplate, function(success: boolean, item){
 						if(success) {
 							taskTemplateRepository.updateProperties($scope.currentTaskTemplate, function (success:boolean) {
+								if(success) $scope.updateWithCorrectParent($scope.currentTaskTemplate);
 								$scope.setTaskTemplateSavingCompletedStatus(success);
 							});
 						} else {

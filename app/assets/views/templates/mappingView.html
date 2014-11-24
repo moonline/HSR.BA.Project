@@ -144,6 +144,12 @@
 					<input type="text" data-ng-model="currentTaskTemplate.name" data-ng-blur="updateTaskTemplate()" data-ng-change="taskTemplateChanged()"/>
 					<span></span>
 				</div>
+				<div class="formLine" data-columns="3">
+					<label>Parent</label>
+					<select data-ng-model="currentTaskTemplate.parent" data-ng-blur="updateTaskTemplate()" data-ng-change="taskTemplateChanged()"
+							data-ng-options="taskTemplate.name for taskTemplate in taskTemplates | orderBy:'name'"></select>
+					<span></span>
+				</div>
 				<div data-ng-repeat="propertyValue in currentTaskTemplate.properties | orderBy:'name'" class="formLine" data-columns="3"	>
 					<label>{{propertyValue.property.name}}</label>
 					<input data-ng-model="propertyValue.value" data-ng-blur="updateTaskTemplate()" data-ng-change="taskTemplateChanged()"/>

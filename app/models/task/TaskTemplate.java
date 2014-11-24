@@ -3,6 +3,7 @@ package models.task;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import models.dks.DKSMapping;
 import play.data.validation.Constraints;
+import play.data.validation.ValidationError;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -48,9 +49,11 @@ public class TaskTemplate extends AbstractWork {
 	}
 
 	@SuppressWarnings("UnusedDeclaration") //Used by Play Framework to validate form
-	public String validate() {
+	public List<ValidationError> validate() {
 		if (parent != null && parent.getParent() != null) {
-			return "Can not create sub-sub-task (two layers).";
+			List<ValidationError> errorList = new ArrayList<>(1);
+			errorList.add(new ValidationError("parent", "Can not create sub-sub-task (two layers)."));
+			return errorList;
 		}
 		return null;
 	}

@@ -11,17 +11,22 @@ module app.domain.model.core {
 				{ name: "name", type: String, subType: null },
 				{ name: "properties", type: Array, subType: app.domain.model.core.TaskPropertyValue }
 			],
-			publicProperties: [{ name: "id", type: Number, subType: null }]
+			publicProperties: [
+				{ name: "parent", type: Object, subType: null },
+				{ name: "id", type: Number, subType: null }
+			]
 		};
 
 		public id;
         public name:string;
         public properties: app.domain.model.core.TaskPropertyValue[];
+		public parent:app.domain.model.core.TaskTemplate;
 
         constructor(name: string, properties: app.domain.model.core.TaskPropertyValue[] = []) {
 			this.id = Math.round(Math.random()*1000000);
 			this.name = name;
             this.properties = properties;
+			this.parent = null;
         }
 
 		public getPropertyValuesByProperty(): {[index: string]: app.domain.model.core.TaskPropertyValue } {
