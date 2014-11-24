@@ -138,7 +138,7 @@ INSERT INTO PROCESSOR (ID, CODE, NAME, PROJECT_ID) VALUES (nextval('entity_seq')
 
 INSERT INTO PROCESSOR (ID, CODE, NAME, PROJECT_ID) VALUES (nextval('entity_seq'),CONCAT('function(values, name) {
 ','		return values[name]&#SEMICOLON
-}'),'$tagedValue',(SELECT id FROM PROJECT WHERE name='Project'));
+}'),'tagedValue',(SELECT id FROM PROJECT WHERE name='Project'));
 
 # --- !Downs
 
