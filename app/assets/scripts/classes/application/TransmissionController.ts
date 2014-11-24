@@ -43,6 +43,7 @@ module app.application {
 			$scope.pptAccountRequestTemplates = [];
 			$scope.decisions = [];
 			$scope.mappings = [];
+			$scope.orderedMappings = {};
 			$scope.decisionMappings = {};
 			$scope.pptAccounts = [];
 			$scope.requestTemplates = [];
@@ -101,6 +102,8 @@ module app.application {
 
 									mappingRepository.findAll(function(success, items) {
 										$scope.mappings = items;
+
+										self.orderMappingsAndSubMappings(items, $scope.orderedMappings);
 
 										setTimeout(() => { $scope.operationState = app.application.ApplicationState.successful; $scope.$apply(); }, configuration.settings.messageBoxDelay);
 										self.findDecisionsWithMappings($scope);
@@ -237,6 +240,28 @@ module app.application {
 			};
 		}
 
+		orderMappingsAndSubMappings(mappings: app.domain.model.core.Mapping[], targetCollection: any) {
+			mappings.forEach(function (currentMapping) {
+				if (currentMapping.taskTemplate.parent == null) {
+					if (!targetCollection[currentMapping.id]) {
+						targetCollection[currentMapping.id] = { mapping: null, subMappings: {}};
+					}
+					targetCollection[currentMapping.id].mapping = currentMapping;
+
+				} else { // find parent mappings
+					var parentTaskTemplateId = currentMapping.taskTemplate.parent.id;
+					mappings.forEach(function (mapping) {
+						if (mapping.taskTemplate.id == parentTaskTemplateId) {
+							if (!targetCollection[mapping.id]) {
+								targetCollection[mapping.id] = { mapping: null, subMappings: {}};
+							}
+							targetCollection[mapping.id].subMappings[currentMapping.id] = currentMapping;
+						}
+					});
+				}
+			});
+		}
+
 		evaluateProcessors(processorList, processors) {
 			processorList.forEach(function (processor) {
 				"use strict";
@@ -371,7 +396,6 @@ module app.application {
 			var renderedTemplate;
 			try {
 				renderedTemplate = templateProcessor.process();
-				var renderedTemplate = templateProcessor.process();
 				var currentRequest = {
 					requestBody: renderedTemplate,
 					node: node,
