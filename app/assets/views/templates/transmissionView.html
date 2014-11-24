@@ -17,13 +17,13 @@
 					<div class="formLine">
 						<label>Target system</label>
 						<select title="Choose the target project planning tool to transmit tasks" data-ng-model="targetPPTAccount" data-ng-options="pptAccount.pptUrl for pptAccount in pptAccounts"
-							data-ng-change="setTarget(targetPPTAccount)"></select>
+								data-ng-change="setTarget(targetPPTAccount)"></select>
 					</div>
 					<div class="formLine">
 						<label>Request template to transmit</label>
 						<select title="Choose the request template to rendering transmitting requests" data-ng-disabled="!targetPPTAccount" data-ng-model="currentRequestTemplate"
-							data-ng-options="pptAccountRequestTemplate.name for pptAccountRequestTemplate in pptAccountRequestTemplates"
-							data-ng-change="setRequestTemplate(currentRequestTemplate)"></select>
+								data-ng-options="pptAccountRequestTemplate.name for pptAccountRequestTemplate in pptAccountRequestTemplates"
+								data-ng-change="setRequestTemplate(currentRequestTemplate)"></select>
 						<span data-ng-if="targetPPTAccount && currentRequestTemplate">&nbsp;&rarr;&nbsp;{{targetPPTAccount.pptUrl}}{{currentRequestTemplate.url}}</span>
 					</div>
 					<div class="formLine">
@@ -45,68 +45,64 @@
 
 				<div class="wizardStep area pane" data-step="DataSelection" data-ng-if="currentWizardStep == ExportWizardSteps.DataSelection">
 					<h2>Decision &amp; Option selection</h2>
-					<ul data-type="list" class="problems">
-						<li data-ng-repeat="(pkey, decisionGroup) in decisionMappings" class="problemElement">
-							<span class="problem">{{decisionGroup.problem.name}}
-								<span class="typeDeclaration" title="Problem Template from DSK">&lt;PT&gt;</span> [#{{decisionGroup.problem.id}}]
-							</span>
-							<ul class="decisions">
-								<li data-ng-repeat="(dkey,decisionElement) in decisionGroup.decisions">
-									{{decisionElement.decision.name}}
-									<span class="typeDeclaration" title="Problem Occurence from DSK">&lt;PO&gt;</span> [#{{decisionElement.decision.id}}]
-									<dl>
-										<dt>Mapped task templates to transmit</dt>
-										<dd>
-											<ul class="taskTemplates">
-												<li>
-													<input title="Transmit subtasks (tasks of options) as normal tasks (no root element)" type="radio"
-														   data-ng-model="decisionElement.rootElementForSubNodes" data-ng-value="null">
-													No root element for subtasks</li>
-												<li data-ng-repeat="(mkey, decisionMapping) in decisionElement.mappings">
-													<input title="Use as root element for subtasks (tasks of options)" type="radio" data-ng-model="decisionElement.rootElementForSubNodes" data-ng-value="decisionMapping" data-ng-disabled="!decisionElement.taskTemplatesToExport[mkey]">
-													<input title="Transmit this task" type="checkbox" data-ng-model="decisionElement.taskTemplatesToExport[mkey]" />&nbsp;
-													{{decisionMapping.taskTemplate.name}}
-													<span class="typeDeclaration" title="Task Template from EEPPI">&lt;TT&gt;</span>&nbsp;
-													[#{{decisionMapping.taskTemplate.id}}]
-												</li>
-											</ul>
-										</dd>
-										<dt>Alternatives
-											<!--<button data-ng-click="toggleVisibilityState(dkey)" class="action">
-												<span data-ng-if="!decisionChildrenVisibilityState[dkey]" class="symbol extremeSmall">&#x25b2;</span>
-												<span data-ng-if="decisionChildrenVisibilityState[dkey]" class="symbol extremeSmall">&#x25bc;</span>
-											</button>-->
-										</dt>
-										<dd>
-											<ul class="alternatives">
-												<li data-ng-repeat="(akey, alternativeElement) in decisionElement.alternatives">
-													{{alternativeElement.alternative.name}}
-													<span class="typeDeclaration" title="Option Occurence from DSK">&lt;OO&gt;</span>&nbsp;
-													[#{{alternativeElement.alternative.id}}]
-													<dl>
-														<dt>Mapped task templates to transmit</dt>
-														<dd>
-															<ul class="taskTemplates">
-																<li data-ng-repeat="(amkey, alternativeMapping) in alternativeElement.mappings">
-																	<input type="checkbox" data-ng-model="decisionElement.taskTemplatesToExport[amkey]" />&nbsp;
-																	{{alternativeMapping.taskTemplate.name}}
-																	<span class="typeDeclaration" title="Task Template from EEPPI">&lt;TT&gt;</span>&nbsp;
-																	[#{{alternativeMapping.taskTemplate.id}}]
-																</li>
-															</ul>
-														</dd>
-													</dl>
-												</li>
-											</ul>
-										</dd>
-									</dl>
-								</li>
-							</ul>
-						</li>
-					</ul>
+					<table border="1">
+						<tr data-ng-repeat="(pkey, decisionGroup) in decisionMappings">
+							<td rowspan="{{decisionGroup.decisions.length}}">{{decisionGroup.problem.name}}</td>
+							<td rowspan="{{decisionGroup.decisions.length}}" class="typeDeclaration" title="Problem Template from DSK">&lt;PT&gt;</td>
+							<td rowspan="{{decisionGroup.decisions.length}}">[#{{decisionGroup.problem.id}}]</td>
+							<td data-ng-repeat-start="(dkey,decisionElement) in decisionGroup.decisions"> {{decisionElement.decision.name}}</td>
+							<td class="typeDeclaration" title="Problem Occurence from DSK">&lt;PO&gt;</td>
+							<td>[#{{decisionElement.decision.id}}]</td>
+							<td data-ng-repeat-end>
+								<table border="1">
+									<tr>
+										<th>Mapped task templates to transmit</th>
+										<td class="taskTemplates">
+											<table border="1">
+												<tr>
+													<td colspan="5"><input title="Transmit subtasks (tasks of options) as normal tasks (no root element)" type="radio"
+																		   data-ng-model="decisionElement.rootElementForSubNodes" data-ng-value="null">
+														No root element for subtasks</td>
+												</tr>
+												<tr data-ng-repeat="(mkey, decisionMapping) in decisionElement.mappings">
+													<td><input title="Use as root element for subtasks (tasks of options)" type="radio" data-ng-model="decisionElement.rootElementForSubNodes" data-ng-value="decisionMapping" data-ng-disabled="!decisionElement.taskTemplatesToExport[mkey]"></td>
+													<td><input title="Transmit this task" type="checkbox" data-ng-model="decisionElement.taskTemplatesToExport[mkey]" /></td>
+													<td>{{decisionMapping.taskTemplate.name}}</td>
+													<td class="typeDeclaration" title="Task Template from EEPPI">&lt;TT&gt;</td>
+													<td>[#{{decisionMapping.taskTemplate.id}}]</td>
+												</tr>
+											</table>
+										</td>
+									</tr>
+									<tr>
+										<th>Alternatives</th>
+										<td>
+											<table border="1">
+												<tr data-ng-repeat="(akey, alternativeElement) in decisionElement.alternatives">
+													<td>{{alternativeElement.alternative.name}}</td>
+													<td class="typeDeclaration" title="Option Occurence from DSK">&lt;OO&gt;</td>
+													<td>[#{{alternativeElement.alternative.id}}]</td>
+													<td>
+														<table border="1">
+															<tr><th colspan="4">Mapped task templates to transmit</th></tr>
+															<tr class="taskTemplates" data-ng-repeat="(amkey, alternativeMapping) in alternativeElement.mappings">
+																<td><input type="checkbox" data-ng-model="decisionElement.taskTemplatesToExport[amkey]" /></td>
+																<td>{{alternativeMapping.taskTemplate.name}}</td>
+																<td class="typeDeclaration" title="Task Template from EEPPI">&lt;TT&gt;</td>
+																<td>[#{{alternativeMapping.taskTemplate.id}}]</td>
+															</tr>
+														</table>
+													</td>
+												</tr>
+											</table>
+										</td>
+									</tr>
+								</table>
+							</td>
+					</table>
 
 					<button class="action update" data-ng-click="nextStep(); processTaskTemplates();"
-						title="Render requests for selected Task templates">
+							title="Render requests for selected Task templates">
 						<span class="icon">&#x21e8;</span>Transform selected decisions
 					</button>
 
@@ -119,6 +115,12 @@
 
 				<div class="wizardStep area pane" data-step="Transformation" data-ng-if="currentWizardStep == ExportWizardSteps.Transformation">
 					<h2>Transformation</h2>
+					<div class="transformationErrors">
+						<div data-ng-repeat="transformationError in transformationErrors">
+							<span class="messagebox inline error">{{transformationError}}</span>
+						</div>
+					</div>
+
 					<ul class="requests">
 						<!-- openRequestDetail -->
 						<li data-ng-repeat="exportRequest in exportRequests">
