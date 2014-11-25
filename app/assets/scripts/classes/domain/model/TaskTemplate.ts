@@ -12,7 +12,7 @@ module app.domain.model.core {
 				{ name: "properties", type: Array, subType: app.domain.model.core.TaskPropertyValue }
 			],
 			publicProperties: [
-				{ name: "parent", type: app.domain.model.core.TaskTemplate, subType: null },
+				{ name: "parent", type: Object, subType: null },
 				{ name: "id", type: Number, subType: null }
 			]
 		};

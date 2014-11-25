@@ -27,7 +27,7 @@
 					</div>
 					<div class="formLine">
 						<label>Project in project planning tool</label>
-						<input title="Project value has to match with the field of the project in the project planning tool you mapped in the request template." type="text" data-ng-model="pptProject" data-ng-change="setPPTProject(pptProject)" />
+						<input title="Project value has to match with the field of the project in the project planning tool you mapped in the request template." type="text" data-ng-model="pptProject"/>
 					</div>
 
 					<button data-ng-disabled="pptProject.length < 1 || !targetPPTAccount || !requestTemplate"
@@ -44,37 +44,50 @@
 
 				<div class="wizardStep area pane" data-step="DataSelection" data-ng-if="currentWizardStep == ExportWizardSteps.DataSelection">
 					<h2>Decision &amp; Option selection</h2>
+
 					<table border="1">
-						<tr>
-							<th>Problem</th>
-							<th>Decision</th>
-							<th>Level</th>
-							<th>Alternative</th>
-							<th>Parent?</th>
-							<th>Export?</th>
-							<th>Task</th>
-						</tr>
-						<tr data-ng-repeat="problemsAndDecisions in flattenDecisionAndOptionSelection(decisionMappings)">
-							<td>{{problemsAndDecisions.problem.problem.name}} <span>[#{{problemsAndDecisions.problem.problem.id}}]</span></td>
-							<td>{{problemsAndDecisions.decision.decision.name}} <span>[#{{problemsAndDecisions.decision.decision.id}}]</span></td>
-
-							<td data-ng-if="!problemsAndDecisions.alternative" colspan="2">Mapped task templates to transmit</td>
-							<td data-ng-if="problemsAndDecisions.alternative">Alternatives</td>
-							<td data-ng-if="problemsAndDecisions.alternative">{{problemsAndDecisions.alternative.alternative.name}} <span>#{{problemsAndDecisions.alternative.alternative.id}}]</span></td>
-
-							<td data-ng-if="!problemsAndDecisions.alternative && !problemsAndDecisions.mapping" colspan="4"><input title="Transmit subtasks (tasks of options) as normal tasks (no root element)" type="radio" data-ng-model="problemsAndDecisions.decision.rootElementForSubNodes" data-ng-value="null">No root element for subtasks</td>
-							<td data-ng-if="!problemsAndDecisions.alternative && problemsAndDecisions.mapping"><input title="Use as root element for subtasks (tasks of options)" type="radio" data-ng-model="problemsAndDecisions.decision.rootElementForSubNodes" data-ng-value="problemsAndDecisions.mapping" data-ng-disabled="!decisionElement.taskTemplatesToExport[mkey]"></td>
-							<td data-ng-if="problemsAndDecisions.alternative && problemsAndDecisions.mapping"></td>
-							<td data-ng-if="problemsAndDecisions.mapping"><input title="Transmit this task" type="checkbox" data-ng-model="decisionElement.taskTemplatesToExport[mkey]" /></td>
-
-							<td data-ng-if="problemsAndDecisions.mapping">{{problemsAndDecisions.mapping.mapping.taskTemplate.name}} <span>[#{{problemsAndDecisions.mapping.mapping.taskTemplate.id}}]</span></td>
+						<tr data-ng-repeat="aMappingInformation in allMappingInformation">
+							<td>{{aMappingInformation.decision.name}}</td>
+							<td>{{aMappingInformation.mapping.taskTemplate.name}}</td>
+							<td><input title="Transmit this task" type="checkbox" data-ng-model="aMappingInformation.shouldExport" /></td>
+							<td>{{aMappingInformation.alternative.name}}</td>
+							<td><select title="TODO" data-ng-model="aMappingInformation.selectedParent" data-ng-options="parent.taskTemplate.name for parent in aMappingInformation.possibleParents"></select></td>
 						</tr>
 					</table>
+
+					<!--<table border="1">-->
+						<!--<tr>-->
+							<!--<th>Problem</th>-->
+							<!--<th>Decision</th>-->
+							<!--<th>Level</th>-->
+							<!--<th>Alternative</th>-->
+							<!--<th>Parent?</th>-->
+							<!--<th>Export?</th>-->
+							<!--<th>Task</th>-->
+						<!--</tr>-->
+						<!--<tr data-ng-repeat="problemsAndDecisions in flattenDecisionAndOptionSelection(decisionMappings)">-->
+							<!--<td>{{problemsAndDecisions.problem.problem.name}} <span>[#{{problemsAndDecisions.problem.problem.id}}]</span></td>-->
+							<!--<td>{{problemsAndDecisions.decision.decision.name}} <span>[#{{problemsAndDecisions.decision.decision.id}}]</span></td>-->
+
+							<!--<td data-ng-if="!problemsAndDecisions.alternative" colspan="2">Mapped task templates to transmit</td>-->
+							<!--<td data-ng-if="problemsAndDecisions.alternative">Alternatives</td>-->
+							<!--<td data-ng-if="problemsAndDecisions.alternative">{{problemsAndDecisions.alternative.alternative.name}} <span>#{{problemsAndDecisions.alternative.alternative.id}}]</span></td>-->
+
+							<!--<td data-ng-if="!problemsAndDecisions.alternative && !problemsAndDecisions.mapping" colspan="4"><input title="Transmit subtasks (tasks of options) as normal tasks (no root element)" type="radio" data-ng-model="problemsAndDecisions.decision.rootElementForSubNodes" data-ng-value="null">No root element for subtasks</td>-->
+							<!--<td data-ng-if="!problemsAndDecisions.alternative && problemsAndDecisions.mapping"><input title="Use as root element for subtasks (tasks of options)" type="radio" data-ng-model="problemsAndDecisions.decision.rootElementForSubNodes" data-ng-value="problemsAndDecisions.mapping" data-ng-disabled="!decisionElement.taskTemplatesToExport[mkey]"></td>-->
+							<!--<td data-ng-if="problemsAndDecisions.alternative && problemsAndDecisions.mapping"></td>-->
+							<!--<td data-ng-if="problemsAndDecisions.mapping"><input title="Transmit this task" type="checkbox" data-ng-model="decisionElement.taskTemplatesToExport[mkey]" /></td>-->
+
+							<!--<td data-ng-if="problemsAndDecisions.mapping">{{problemsAndDecisions.mapping.mapping.taskTemplate.name}} <span>[#{{problemsAndDecisions.mapping.mapping.taskTemplate.id}}]</span></td>-->
+						<!--</tr>-->
+					<!--</table>-->
 
 					<button class="action update" data-ng-click="nextStep(); processTaskTemplates();"
 							title="Render requests for selected Task templates">
 						<span class="icon">&#x21e8;</span>Transform selected decisions
 					</button>
+					<button class="action update" data-ng-click="selectUnselectAll(true)" title="Select all Tasks to Export">Select all Tasks</button>
+					<button class="action update" data-ng-click="selectUnselectAll(false)" title="Unselect all Tasks to Export">Select no Task</button>
 
 					<div class="exportProgressBar">
 						<span class="passedStep">Select Input Data</span><span class="arrows">&#x21e8;</span>
