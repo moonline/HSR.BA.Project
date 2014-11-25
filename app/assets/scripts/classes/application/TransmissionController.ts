@@ -287,12 +287,12 @@ module app.application {
 							exportRequest.exportState = app.application.ApplicationState.successful;
 							exportRequest.requestData = data;
 							exportRequest.requestPrint = JSON.stringify(data);
-							$scope.transmitOne(exportRequests, nextRequest, nextSubRequest);
+							transmitOne(exportRequests, nextRequest, nextSubRequest);
 						} else {
 							exportRequest.exportState = app.application.ApplicationState.failed;
 							exportRequest.requestData = data;
 							exportRequest.requestPrint = JSON.stringify(data);
-							$scope.transmitOne(exportRequests, nextRequest, nextSubRequest);
+							transmitOne(exportRequests, nextRequest, nextSubRequest);
 						}
 					});
 				}

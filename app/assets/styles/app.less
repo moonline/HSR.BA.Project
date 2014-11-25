@@ -218,6 +218,9 @@ button {
 		.linearGradient(gainsboro, silver)!important; border: none; color: gray;
 		&:hover { border: none; }
 	}
+	&.small {
+		font-size: smaller; padding: 0.05rem; line-height: normal;
+	}
 }
 button + button { margin-left: 0.25rem; }
 
@@ -277,6 +280,16 @@ select {
 }
 
 /**
+ * Transmission
+ */
+.transmission {
+	table { border-collapse: collapse; width: 100%; margin: 0.5rem 0; }
+	table td, table th { border: 0.05rem solid #4682B4; padding: 0.2rem; }
+	table th { border-bottom-width: 0.3rem; }
+	td input, td select {width: 100%; }
+}
+
+ /**
  * Register
  */
 .register .formLine {
