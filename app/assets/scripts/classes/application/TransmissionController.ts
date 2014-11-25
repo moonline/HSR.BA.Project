@@ -117,7 +117,6 @@ module app.application {
 										}, configuration.settings.messageBoxDelay);
 										findDecisionsWithMappings($scope.orderedMappings, $scope.decisionMappings);
 										fillAllMappingInformation();
-										console.log("Mapping information created: " + $scope.allMappingInformation);
 									});
 								});
 							});
@@ -312,6 +311,73 @@ module app.application {
 					aMappingInformation.shouldExport = selected;
 				});
 			};
+
+			$scope.exportErrorsExist = function ():boolean {
+				for (var i = 0; i < $scope.allMappingInformation.length; i++) {
+					if ($scope.exportErrorFor($scope.allMappingInformation[i])) {
+						return true;
+					}
+				}
+				return false;
+
+			};
+
+			$scope.exportErrorFor = function (aMappingInformation:{
+				decision: app.domain.model.dks.Decision;
+				mapping: app.domain.model.core.Mapping;
+				shouldExport: boolean;
+				alternative: app.domain.model.dks.Option;
+				possibleParents: app.domain.model.core.Mapping[];
+				selectedParent: app.domain.model.core.Mapping;
+			}) {
+				if (aMappingInformation.selectedParent && aMappingInformation.shouldExport) {
+					var parentMappingInformation = getParentMappingInformation($scope.allMappingInformation, aMappingInformation);
+					if (parentMappingInformation) {
+						//Check for parent Task availability
+						if (!parentMappingInformation.shouldExport) {
+							return "Parent is not selected for Export"
+						}
+						//Check for multiple Layers
+						if (parentMappingInformation.selectedParent) {
+							return "Parent is also a Sub-Task"
+						}
+					}
+				}
+				return null;
+			};
+
+			function getParentMappingInformation(allMappingInformation:{
+				decision: app.domain.model.dks.Decision;
+				mapping: app.domain.model.core.Mapping;
+				shouldExport: boolean;
+				alternative: app.domain.model.dks.Option;
+				possibleParents: app.domain.model.core.Mapping[];
+				selectedParent: app.domain.model.core.Mapping;
+			}[], childMappingInformation:{
+				decision: app.domain.model.dks.Decision;
+				mapping: app.domain.model.core.Mapping;
+				shouldExport: boolean;
+				alternative: app.domain.model.dks.Option;
+				possibleParents: app.domain.model.core.Mapping[];
+				selectedParent: app.domain.model.core.Mapping;
+			}):{
+				decision: app.domain.model.dks.Decision;
+				mapping: app.domain.model.core.Mapping;
+				shouldExport: boolean;
+				alternative: app.domain.model.dks.Option;
+				possibleParents: app.domain.model.core.Mapping[];
+				selectedParent: app.domain.model.core.Mapping;
+			} {
+				for (var i = 0; i < allMappingInformation.length; i++) {
+					var possibleParentMappingInformation = allMappingInformation[i];
+					if (childMappingInformation.decision == possibleParentMappingInformation.decision &&
+						childMappingInformation.selectedParent.dksNode == (possibleParentMappingInformation.alternative ? possibleParentMappingInformation.alternative.template.id : possibleParentMappingInformation.decision.template.id) &&
+						childMappingInformation.selectedParent.taskTemplate.id == possibleParentMappingInformation.mapping.taskTemplate.id) {
+						return possibleParentMappingInformation;
+					}
+				}
+				return null;
+			}
 
 			function fillAllMappingInformation():void {
 				//create map containing nodeIds/[mappings]

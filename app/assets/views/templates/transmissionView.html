@@ -53,7 +53,7 @@
 						<th>Export? (<button class="action update small" data-ng-click="selectUnselectAll(true)" title="Select all Tasks to Export">All</button
 								><button class="action update small" data-ng-click="selectUnselectAll(false)" title="Unselect all Tasks to Export">None</button>)
 						</th>
-						<th>Parent?</th>
+						<th colspan="2">Parent?</th>
 						<th>Task <span class="typeDeclaration" title="Task Template from EEPPI">&lt;TT&gt;</span></th>
 						</tr>
 						<tr data-ng-repeat="aMappingInformation in allMappingInformation">
@@ -67,11 +67,13 @@
 										data-ng-options="parent.taskTemplate.name for parent in aMappingInformation.possibleParents">
 								<option value="">Not as a Subtask</option>
 							</select></td>
+							<td class="disappearable {{exportErrorFor(aMappingInformation)?'error':''}}">{{exportErrorFor(aMappingInformation)}}</td>
 							<td>{{aMappingInformation.mapping.taskTemplate.name}} <span>[#{{aMappingInformation.mapping.taskTemplate.id}}]</span></td>
 						</tr>
 					</table>
 
 					<button class="action update" data-ng-click="nextStep(); processTaskTemplates();"
+							data-ng-disabled="exportErrorsExist()"
 							title="Render requests for selected Task templates">
 						<span class="icon">&#x21e8;</span>Transform selected decisions
 					</button>
