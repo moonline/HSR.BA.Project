@@ -63,7 +63,7 @@ module app.application {
 
 			$scope.targetPPTAccount = null;
 			$scope.requestTemplate = null;
-			$scope.pptProject = "TEST"; //TODO: revert
+			$scope.pptProject = "";
 
 			$scope.pptAccountRequestTemplates = [];
 			$scope.decisions = [];
@@ -514,7 +514,7 @@ module app.application {
 							var node:app.domain.model.dks.DksNode = aMappingInformation.getAlternativeIfAvailable();
 							var transmitNodeId:string = node.id + "_" + mapping.taskTemplate.id;
 							if (aMappingInformation.selectedParent == null) {
-								console.log("Adding parent mapping for " + node.name + ": Task " + mapping.taskTemplate.name + " [" + transmitNodeId + "]");
+								//console.log("Adding parent mapping for " + node.name + ": Task " + mapping.taskTemplate.name + " [" + transmitNodeId + "]");
 								if (!ret[transmitNodeId]) {
 									ret[transmitNodeId] = {
 										node: node,
@@ -526,7 +526,7 @@ module app.application {
 								ret[transmitNodeId].mappings.push(mapping);
 							} else {
 								var parentTransmitNodeId:string = node.id + "_" + aMappingInformation.selectedParent.mapping.taskTemplate.id;
-								console.log("Adding child mapping for " + node.name + ": Task " + mapping.taskTemplate.name + " with parent " + parentTransmitNodeId + " with available parents: " + Object.keys(ret));
+								//console.log("Adding child mapping for " + node.name + ": Task " + mapping.taskTemplate.name + " with parent " + parentTransmitNodeId + " with available parents: " + Object.keys(ret));
 								if (!ret[parentTransmitNodeId].subNodes[transmitNodeId]) {
 									ret[parentTransmitNodeId].subNodes[transmitNodeId] = {
 										node: node,
