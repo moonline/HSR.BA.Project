@@ -258,41 +258,41 @@ module app.application {
 			};
 
 			// Angular mixes request at near the same time, so serialize them
-			function transmitOne(exportRequests, index, subIndex) {
-				if (index < exportRequests.length) {
-					var exportRequest;
-					if (subIndex == null) {
-						var exportRequest = exportRequests[index];
+			function transmitOne(allRequestsToExport, requestIndex, subRequestIndex) {
+				if (requestIndex < allRequestsToExport.length) {
+					var currentRequest;
+					var parentRequestData;
+					if (subRequestIndex != null) { //is subRequest?
+						currentRequest = allRequestsToExport[requestIndex].subRequests[subRequestIndex];
+						parentRequestData = allRequestsToExport[requestIndex].requestData;
 					} else {
-						var exportRequest = exportRequests[index].subRequests[subIndex];
+						currentRequest = allRequestsToExport[requestIndex];
+						parentRequestData = null;
 					}
 
-					var templateProcessor = new app.service.TemplateProcesser({parentRequestData: exportRequests[index].requestData || null}, exportRequest.requestBody, processors);
+					var templateProcessor = new app.service.TemplateProcesser({parentRequestData: parentRequestData}, currentRequest.requestBody, processors);
 					try {
-						exportRequest.requestBody = templateProcessor.processSecondary();
+						currentRequest.requestBody = templateProcessor.processSecondary();
 					} catch (error) {
-						$scope.transformationErrors.push("Errors occured during executing processors. Please check the code of your processors!");
+						$scope.transformationErrors.push("Errors occurred during executing processors. Please check the code of your processors!");
 					}
 
-					var nextRequest = index + 1;
-					var nextSubRequest:number = null;
-					if (exportRequests[index].subRequests && subIndex < exportRequests[index].subRequests.length - 1) {
-						nextRequest = index;
-						nextSubRequest = (subIndex == null) ? 0 : subIndex + 1;
+					var nextRequestIndex:number;
+					var nextSubRequestIndex:number;
+					if (allRequestsToExport[requestIndex].subRequests && (subRequestIndex === null ? -1 : subRequestIndex) < allRequestsToExport[requestIndex].subRequests.length - 1) { //is there another subRequest?
+						nextRequestIndex = requestIndex;
+						nextSubRequestIndex = (subRequestIndex === null ? 0 : subRequestIndex + 1);
+					} else {
+						nextRequestIndex = requestIndex + 1;
+						nextSubRequestIndex = null;
 					}
-					exportRequest.exportState = app.application.ApplicationState.pending;
-					projectPlanningToolRepository.transmitTasks(exportRequest, $scope.targetPPTAccount, $scope.requestTemplate.url, $scope.currentProject, function (success, data) {
-						if (success) {
-							exportRequest.exportState = app.application.ApplicationState.successful;
-							exportRequest.requestData = data;
-							exportRequest.requestPrint = JSON.stringify(data);
-							transmitOne(exportRequests, nextRequest, nextSubRequest);
-						} else {
-							exportRequest.exportState = app.application.ApplicationState.failed;
-							exportRequest.requestData = data;
-							exportRequest.requestPrint = JSON.stringify(data);
-							transmitOne(exportRequests, nextRequest, nextSubRequest);
-						}
+
+					currentRequest.exportState = app.application.ApplicationState.pending;
+					projectPlanningToolRepository.transmitTasks(currentRequest, $scope.targetPPTAccount, $scope.requestTemplate.url, $scope.currentProject, function (success, data) {
+						currentRequest.exportState = success ? app.application.ApplicationState.successful : app.application.ApplicationState.failed;
+						currentRequest.requestData = data;
+						currentRequest.requestPrint = JSON.stringify(data);
+						transmitOne(allRequestsToExport, nextRequestIndex, nextSubRequestIndex);
 					});
 				}
 			}
