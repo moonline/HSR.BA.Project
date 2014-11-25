@@ -114,11 +114,51 @@ module app.application {
 					}
 				};
 			};
+			// filter Task Templates that are a Sub Task
+			$scope.isNotSubtask = function () {
+				return function (item) {
+					return item.parent === null;
+				};
+			};
+			// filter itself
+			$scope.isNotSelf = function () {
+				return function (item) {
+					return item !== $scope.currentTaskTemplate;
+				};
+			};
+
+			$scope.isParentTask = function (potentialParent:app.domain.model.core.TaskTemplate) {
+				for (var i = 0; i < $scope.taskTemplates.length; i++) {
+					if ($scope.taskTemplates[i].parent && ($scope.taskTemplates[i].parent.id == potentialParent.id)) {
+						return true;
+					}
+				}
+				return false;
+			};
 
 			$scope.setCurrentTaskTemplate = function(taskTemplate) {
+				$scope.updateWithCorrectParent(taskTemplate);
 				$scope.currentTaskTemplate = taskTemplate;
 			};
-			
+
+			$scope.updateWithCorrectParent = function (toUpdateEntity) {
+				if(toUpdateEntity.hasOwnProperty('parent')) {
+					toUpdateEntity.parent = $scope.findTaskTemplateInList(toUpdateEntity.parent);
+				}
+			};
+
+			//Finds the correct object instance for the given project to select it in the list
+			$scope.findTaskTemplateInList = function (expectedParent:app.domain.model.core.TaskTemplate) {
+				if (!expectedParent) return expectedParent;
+				for (var index = 0; index < $scope.taskTemplates.length; ++index) {
+					if ($scope.taskTemplates[index].id == expectedParent.id) {
+						return $scope.taskTemplates[index];
+					}
+				}
+				return expectedParent;
+			};
+
+
 			$scope.createNewTaskTemplate = function(name: string) {
 				var newTaskTemplate: app.domain.model.core.TaskTemplate = new app.domain.model.core.TaskTemplate(name);
 				$scope.taskTemplateSavingStatus = app.application.ApplicationState.saving;
@@ -159,6 +199,11 @@ module app.application {
 				}
 			};
 
+			$scope.forceUpdateTaskTemplate = function() {
+				$scope.taskTemplateChanged();
+				$scope.updateTaskTemplate();
+			};
+
 			$scope.updateTaskTemplate = function() {
 				if($scope.hasTaskTemplateChanged == true) {
 					$scope.hasTaskTemplateChanged = false;
@@ -166,6 +211,7 @@ module app.application {
 					taskTemplateRepository.update($scope.currentTaskTemplate, function(success: boolean, item){
 						if(success) {
 							taskTemplateRepository.updateProperties($scope.currentTaskTemplate, function (success:boolean) {
+								if(success) $scope.updateWithCorrectParent($scope.currentTaskTemplate);
 								$scope.setTaskTemplateSavingCompletedStatus(success);
 							});
 						} else {

@@ -218,6 +218,9 @@ button {
 		.linearGradient(gainsboro, silver)!important; border: none; color: gray;
 		&:hover { border: none; }
 	}
+	&.small {
+		font-size: smaller; padding: 0.05rem; line-height: normal;
+	}
 }
 button + button { margin-left: 0.25rem; }
 
@@ -257,6 +260,8 @@ select {
 	//background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgBAMAAACBVGfHAAAAA3NCSVQICAjb4U/gAAAACXBIWXMAAARuAAAEbgHQo7JoAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAB5QTFRF////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAhow4rQAAAAl0Uk5TAAwREiowWMPOLoJhMgAAAEhJREFUKFNjYBhCgCUNDgLAAoyVM6FghgFEiThMoBmqB6YEpgCuBKYApgShAKoEoQCiBFkBWAmyApASVAVAJagKgEoUGIYaAADIMSWmfFk62AAAAABJRU5ErkJgggeb100a48247b7100fa12d2df668b370f');
 	//background-repeat: no-repeat; background-position: 90% 60%; background-size: 1rem;
 
+	&[disabled] { background: gainsboro; color: gray; box-shadow: none; }
+
 	option {
 		background: silver; padding: 0.2rem; border: none;
 	}
@@ -275,6 +280,17 @@ select {
 }
 
 /**
+ * Transmission
+ */
+.transmission {
+	table { border-collapse: collapse; width: 100%; margin: 0.5rem 0; }
+	table td, table th { border: 0.05rem solid #4682B4; padding: 0.2rem; }
+	table td.disappearable { padding-left: 0; padding-right: 0; }
+	table th { border-bottom-width: 0.3rem; }
+	td input, td select {width: 100%; }
+}
+
+ /**
  * Register
  */
 .register .formLine {
