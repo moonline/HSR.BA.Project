@@ -64,7 +64,7 @@
 							<td><select title="The Task which will be the Parent for this Task"
 										data-ng-model="aMappingInformation.selectedParent"
 										data-ng-if="aMappingInformation.possibleParents.length>0"
-										data-ng-options="parent.taskTemplate.name for parent in aMappingInformation.possibleParents">
+										data-ng-options="parent.mapping.taskTemplate.name for parent in aMappingInformation.possibleParents">
 								<option value="">Not as a Subtask</option>
 							</select></td>
 							<td class="disappearable {{exportErrorFor(aMappingInformation)?'error':''}}">{{exportErrorFor(aMappingInformation)}}</td>

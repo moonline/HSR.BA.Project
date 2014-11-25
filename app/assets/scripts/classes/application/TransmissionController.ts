@@ -2,6 +2,7 @@
 
 /// <reference path='../domain/model/TaskTemplate.ts' />
 /// <reference path='../domain/model/Decision.ts' />
+/// <reference path='../domain/model/DksOccurrenceNode.ts' />
 /// <reference path='../domain/model/Mapping.ts' />
 /// <reference path='../domain/model/RequestTemplate.ts' />
 /// <reference path='../domain/model/PPTAccount.ts' />
@@ -25,23 +26,29 @@ module app.application {
 	export class MappingInformation {
 		constructor(decision:app.domain.model.dks.Decision,
 					mapping:app.domain.model.core.Mapping,
-					alternative:app.domain.model.dks.Option,
-					possibleParents:app.domain.model.core.Mapping[],
-					selectedParent:app.domain.model.core.Mapping) {
+					alternative:app.domain.model.dks.Option) {
 			this.decision = decision;
 			this.mapping = mapping;
+			this.shouldExport = true;
 			this.alternative = alternative;
-			this.possibleParents = possibleParents;
-			this.selectedParent = selectedParent;
+			this.possibleParents = [];
+			this.selectedParent = null;
 		}
 
 		decision:app.domain.model.dks.Decision;
 		mapping:app.domain.model.core.Mapping;
 		shouldExport:boolean;
 		alternative:app.domain.model.dks.Option;
-		//noinspection JSUnusedGlobalSymbols
-		possibleParents:app.domain.model.core.Mapping[];
-		selectedParent:app.domain.model.core.Mapping;
+		possibleParents:MappingInformation[];
+		selectedParent:MappingInformation;
+
+		getAlternativeIfAvailable():app.domain.model.dks.DksOccurrenceNode {
+			if (this.alternative) {
+				return this.alternative;
+			} else {
+				return this.decision;
+			}
+		}
 	}
 
 	export class TransmissionController {
@@ -250,14 +257,13 @@ module app.application {
 
 			$scope.exportErrorFor = function (aMappingInformation:MappingInformation) {
 				if (aMappingInformation.selectedParent && aMappingInformation.shouldExport) {
-					var parentMappingInformation = getParentMappingInformation($scope.allMappingInformation, aMappingInformation);
-					if (parentMappingInformation) {
+					if (aMappingInformation.selectedParent) {
 						//Check for parent Task availability
-						if (!parentMappingInformation.shouldExport) {
+						if (!aMappingInformation.selectedParent.shouldExport) {
 							return "Parent is not selected for Export"
 						}
 						//Check for multiple Layers
-						if (parentMappingInformation.selectedParent) {
+						if (aMappingInformation.selectedParent.selectedParent) {
 							return "Parent is also a Sub-Task"
 						}
 					}
@@ -265,78 +271,59 @@ module app.application {
 				return null;
 			};
 
-			function getParentMappingInformation(allMappingInformation:MappingInformation[], childMappingInformation:MappingInformation):MappingInformation {
-				for (var i = 0; i < allMappingInformation.length; i++) {
-					var possibleParentMappingInformation = allMappingInformation[i];
-					if (childMappingInformation.decision == possibleParentMappingInformation.decision &&
-						childMappingInformation.selectedParent.dksNode == (possibleParentMappingInformation.alternative ? possibleParentMappingInformation.alternative.template.id : possibleParentMappingInformation.decision.template.id) &&
-						childMappingInformation.selectedParent.taskTemplate.id == possibleParentMappingInformation.mapping.taskTemplate.id) {
-						return possibleParentMappingInformation;
-					}
-				}
-				return null;
-			}
-
 			function fillAllMappingInformation():void {
-				//create map containing nodeIds/[mappings]
+				//1.	create map containing nodeIds/[mappings]
 				var mappingsMap = {};
 				$scope.mappings.forEach(function (mapping) {
 					if (!mappingsMap[mapping.dksNode]) mappingsMap[mapping.dksNode] = [];
 					mappingsMap[mapping.dksNode].push(mapping);
 				});
-				//fill $scope.allMappingInformation with all mappings for all existing decisions
+				//2.	fill $scope.allMappingInformation with all mappings for all existing decisions
 				$scope.decisions.forEach(function (decision) {
-					//add for the decision itself
+					//2.1	add for the decision itself
 					var mappingsForDecision = (mappingsMap[decision.template.id] || []);
+					//2.1.1	first create the information
+					var newDecisionMappingInformation:{[index:number]: MappingInformation} = {};
 					mappingsForDecision.forEach(function (mappingForDecision) {
-						$scope.allMappingInformation.push(new MappingInformation(decision, mappingForDecision, null, findParentMappingAsArray(mappingForDecision, mappingsForDecision), findParentMapping(mappingForDecision, mappingsForDecision)));
+						newDecisionMappingInformation[mappingForDecision.taskTemplate.id] = new MappingInformation(decision, mappingForDecision, null);
 					});
-					//add for all alternatives of the decision
+					//2.1.2	second enhance the information with the parent-relations configured in the Task Template
+					Object.keys(newDecisionMappingInformation).forEach(function (id) {
+						var parentTaskTemplate = newDecisionMappingInformation[id].mapping.taskTemplate.parent;
+						if (parentTaskTemplate) {
+							var parent = newDecisionMappingInformation[parentTaskTemplate.id];
+							newDecisionMappingInformation[id].selectedParent = parent;
+							newDecisionMappingInformation[id].possibleParents.push(parent);
+						}
+						$scope.allMappingInformation.push(newDecisionMappingInformation[id]);
+					});
+					//2.2	add for all alternatives of the decision
 					decision.alternatives.forEach(function (alternative) {
 						if (alternative && alternative.template) {
+							//2.2.1	first create the information
+							var newAlternativeMappingInformation:{[index:number]: MappingInformation} = {};
 							(mappingsMap[alternative.template.id] || []).forEach(function (mappingForAlternative) {
-								$scope.allMappingInformation.push(new MappingInformation(decision, mappingForAlternative, alternative, findParentMappingAsArray(mappingForAlternative, mappingsMap[alternative.template.id], getOnlyParents(mappingsForDecision)), findParentMapping(mappingForAlternative, mappingsMap[alternative.template.id])));
+								newAlternativeMappingInformation[mappingForAlternative.taskTemplate.id] = new MappingInformation(decision, mappingForAlternative, alternative);
+							});
+							//2.2.2	second enhance the information with the parent-relations
+							Object.keys(newAlternativeMappingInformation).forEach(function (alternativeId) {
+								//2.2.2.1	...configured in the Task Template
+								var parentTaskTemplate = newAlternativeMappingInformation[alternativeId].mapping.taskTemplate.parent;
+								if (parentTaskTemplate) {
+									var parent = newAlternativeMappingInformation[parentTaskTemplate.id];
+									newAlternativeMappingInformation[alternativeId].selectedParent = parent;
+									newAlternativeMappingInformation[alternativeId].possibleParents.push(parent);
+								}
+								//2.2.2.2	...and from the Decision for this Alternative
+								Object.keys(newDecisionMappingInformation).forEach(function (decisionId) {
+									newAlternativeMappingInformation[alternativeId].possibleParents.push(newDecisionMappingInformation[decisionId]);
+								});
+								$scope.allMappingInformation.push(newAlternativeMappingInformation[alternativeId]);
 							});
 						}
 					});
 				});
 			}
-
-			function getOnlyParents(mappings:app.domain.model.core.Mapping[]):app.domain.model.core.Mapping[] {
-				var result:app.domain.model.core.Mapping[] = [];
-				mappings.forEach(function (mapping) {
-					if (!mapping.taskTemplate.parent) {
-						result.push(mapping);
-					}
-				});
-				return result;
-			}
-
-			function findParentMappingAsArray(mapping, possibleParentMappings, additionalParents = null):app.domain.model.core.Mapping[] {
-				var result:app.domain.model.core.Mapping[] = [];
-				var calculated = findParentMapping(mapping, possibleParentMappings);
-				if (calculated) {
-					result.push(calculated);
-				}
-				if (additionalParents) {
-					additionalParents.forEach(function (additionalParent) {
-						result.push(additionalParent);
-					});
-				}
-				return result;
-			}
-
-			function findParentMapping(mapping, possibleParentMappings):app.domain.model.core.Mapping {
-				var parentTaskTemplate = mapping.taskTemplate.parent;
-				if (!parentTaskTemplate) return null;
-				for (var i = 0; i < possibleParentMappings.length; i++) {
-					if (possibleParentMappings[i].taskTemplate.id == parentTaskTemplate.id) {
-						return possibleParentMappings[i];
-					}
-				}
-				return null;
-			}
-
 
 			//creates a structure {parentMappingId: {mapping: parentMapping, subMappings: {subMappingId: subMapping}, subMappingsToExport: []}
 			function orderMappingsAndSubMappings(mappings:app.domain.model.core.Mapping[]) {
@@ -524,7 +511,7 @@ module app.application {
 						if (aMappingInformation.shouldExport && ((aMappingInformation.selectedParent == null) == sendParents)) {
 							var mapping:app.domain.model.core.Mapping = aMappingInformation.mapping;
 							addAttributesFieldToMapping(mapping);
-							var node:app.domain.model.dks.DksNode = aMappingInformation.alternative ? aMappingInformation.alternative : aMappingInformation.decision;
+							var node:app.domain.model.dks.DksNode = aMappingInformation.getAlternativeIfAvailable();
 							var transmitNodeId:string = node.id + "_" + mapping.taskTemplate.id;
 							if (aMappingInformation.selectedParent == null) {
 								console.log("Adding parent mapping for " + node.name + ": Task " + mapping.taskTemplate.name + " [" + transmitNodeId + "]");
@@ -538,7 +525,7 @@ module app.application {
 								}
 								ret[transmitNodeId].mappings.push(mapping);
 							} else {
-								var parentTransmitNodeId:string = node.id + "_" + aMappingInformation.selectedParent.taskTemplate.id;
+								var parentTransmitNodeId:string = node.id + "_" + aMappingInformation.selectedParent.mapping.taskTemplate.id;
 								console.log("Adding child mapping for " + node.name + ": Task " + mapping.taskTemplate.name + " with parent " + parentTransmitNodeId + " with available parents: " + Object.keys(ret));
 								if (!ret[parentTransmitNodeId].subNodes[transmitNodeId]) {
 									ret[parentTransmitNodeId].subNodes[transmitNodeId] = {
