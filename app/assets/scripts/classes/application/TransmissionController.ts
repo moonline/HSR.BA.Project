@@ -243,12 +243,12 @@ module app.application {
 						exportState: app.application.ApplicationState;
 					}} = {};
 					transmitNode.mappings.forEach(function (mapping:app.domain.model.core.Mapping) {
-						parentRequests[transmitNode.node.id + "_" + mapping.id] = renderRequestTemplates($scope, mapping, transmitNode.node, authenticationService, processors, null);
+						parentRequests[transmitNode.node.id + "_" + mapping.taskTemplate.id] = renderRequestTemplates($scope, mapping, transmitNode.node, authenticationService, processors, null);
 					});
 					Object.keys(transmitNode.subNodes).forEach(function (subNodeKey) {
 						var subNode = transmitNode.subNodes[subNodeKey];
 						subNode.mappings.forEach(function (mapping:app.domain.model.core.Mapping) {
-							renderRequestTemplates($scope, mapping, subNode.node, authenticationService, processors, null);
+							renderRequestTemplates($scope, mapping, subNode.node, authenticationService, processors, parentRequests[transmitNode.node.id + "_" + mapping.taskTemplate.parent.id]);
 						});
 					});
 				});
@@ -608,7 +608,7 @@ module app.application {
 				type: any;
 				mappings: app.domain.model.core.Mapping[];
 				subNodes: {[index:string]:{
-					node: app.domain.model.dks.Option;
+					node: app.domain.model.dks.DksNode;
 					type: any;
 					mappings: app.domain.model.core.Mapping[]
 				}}
@@ -618,7 +618,7 @@ module app.application {
 					type: any;
 					mappings: app.domain.model.core.Mapping[];
 					subNodes: {[index:string]:{
-						node: app.domain.model.dks.Option;
+						node: app.domain.model.dks.DksNode;
 						type: any;
 						mappings: app.domain.model.core.Mapping[]
 					}}
@@ -629,23 +629,26 @@ module app.application {
 						if (aMappingInformation.shouldExport && ((aMappingInformation.selectedParent == null) == sendParents)) {
 							var mapping:app.domain.model.core.Mapping = aMappingInformation.mapping;
 							addAttributesFieldToMapping(mapping);
-							var transmitNodeId:string = aMappingInformation.decision.id.toString();
+							var node:app.domain.model.dks.DksNode = aMappingInformation.alternative ? aMappingInformation.alternative : aMappingInformation.decision;
+							var transmitNodeId:string = node.id + "_" + mapping.taskTemplate.id;
 							if (aMappingInformation.selectedParent == null) {
+								console.log("Adding parent mapping for " + node.name + ": Task " + mapping.taskTemplate.name + " [" + transmitNodeId + "]");
 								if (!ret[transmitNodeId]) {
 									ret[transmitNodeId] = {
-										node: aMappingInformation.decision,
-										type: app.domain.model.dks.Decision,
+										node: node,
+										type: app.domain.model.dks.DksNode,
 										mappings: [],
 										subNodes: {}
 									};
 								}
 								ret[transmitNodeId].mappings.push(mapping);
 							} else {
-								var parentTransmitNodeId:string = aMappingInformation.selectedParent.dksNode.toString();
+								var parentTransmitNodeId:string = node.id + "_" + mapping.taskTemplate.parent.id;
+								console.log("Adding child mapping for " + node.name + ": Task " + mapping.taskTemplate.name + " with parent " + parentTransmitNodeId + " with available parents: " + Object.keys(ret));
 								if (!ret[parentTransmitNodeId].subNodes[transmitNodeId]) {
 									ret[parentTransmitNodeId].subNodes[transmitNodeId] = {
-										node: aMappingInformation.alternative,
-										type: app.domain.model.dks.Option,
+										node: node,
+										type: app.domain.model.dks.DksNode,
 										mappings: []
 									}
 								}
