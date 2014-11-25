@@ -31,7 +31,7 @@
 					</div>
 
 					<button data-ng-disabled="pptProject.length < 1 || !targetPPTAccount || !requestTemplate"
-							class="action update" data-ng-click="nextStep()" title="Forward to next step">
+							class="action update" data-ng-click="goToDataSelectionStep()" title="Forward to next step">
 						<span class="icon">&#x21e8;</span> Select decisions
 					</button>
 
@@ -72,8 +72,8 @@
 						</tr>
 					</table>
 
-					<button class="action update" data-ng-click="nextStep(); processTaskTemplates();"
-							data-ng-disabled="exportErrorsExist()"
+					<button class="action update" data-ng-click="processTaskTemplates();"
+							data-ng-disabled="atLeastOneExportErrorExists()"
 							title="Render requests for selected Task templates">
 						<span class="icon">&#x21e8;</span>Transform selected decisions
 					</button>
@@ -87,7 +87,7 @@
 					</div>
 				</div>
 
-				<div class="wizardStep area pane" data-step="Transformation" data-ng-if="currentWizardStep == ExportWizardSteps.Transformation">
+				<div class="wizardStep area pane" data-step="Transformation" data-ng-if="currentWizardStep == ExportWizardSteps.Transformation || currentWizardStep == ExportWizardSteps.Transmitting">
 					<h2>Transformation</h2>
 					<div class="transformationErrors">
 						<div data-ng-repeat="transformationError in transformationErrors">
@@ -155,7 +155,7 @@
 						</li>
 					</ul>
 
-					<button class="action update" data-ng-click="transmit()"><span class="icon" data-icon="transmit"></span> Transmit to PPT ({{targetPPTAccount.pptUrl}})</button>
+					<button class="action update" data-ng-click="transmit()" data-ng-disabled="currentWizardStep == ExportWizardSteps.Transmitting"><span class="icon" data-icon="transmit"></span> Transmit to PPT ({{targetPPTAccount.pptUrl}})</button>
 
 					<div class="exportProgressBar">
 						<span class="passedStep">Select Input Data</span><span class="arrows">&#x21e8;</span>

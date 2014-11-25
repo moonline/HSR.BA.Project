@@ -19,17 +19,35 @@ module app.application {
 	'use strict';
 
 	export enum ExportWizardSteps {
-		ToolSelection, DataSelection, Transformation
+		ToolSelection, DataSelection, Transformation, Transmitting
+	}
+
+	export class MappingInformation {
+		constructor(decision:app.domain.model.dks.Decision,
+					mapping:app.domain.model.core.Mapping,
+					alternative:app.domain.model.dks.Option,
+					possibleParents:app.domain.model.core.Mapping[],
+					selectedParent:app.domain.model.core.Mapping) {
+			this.decision = decision;
+			this.mapping = mapping;
+			this.alternative = alternative;
+			this.possibleParents = possibleParents;
+			this.selectedParent = selectedParent;
+		}
+
+		decision:app.domain.model.dks.Decision;
+		mapping:app.domain.model.core.Mapping;
+		shouldExport:boolean;
+		alternative:app.domain.model.dks.Option;
+		//noinspection JSUnusedGlobalSymbols
+		possibleParents:app.domain.model.core.Mapping[];
+		selectedParent:app.domain.model.core.Mapping;
 	}
 
 	export class TransmissionController {
-		mappingRepository:app.domain.repository.core.MappingRepository;
 		$scope:any;
 
 		constructor($scope, $location, persistenceService, authenticationService, $http) {
-			this.$scope = $scope;
-			var self = this;
-
 			$scope.ExportWizardSteps = ExportWizardSteps;
 			$scope.currentWizardStep = ExportWizardSteps.ToolSelection;
 
@@ -49,14 +67,7 @@ module app.application {
 			$scope.transmitNodes = {};
 			$scope.exportRequests = [];
 			$scope.transformationErrors = [];
-			$scope.allMappingInformation = <{
-				decision: app.domain.model.dks.Decision;
-				mapping: app.domain.model.core.Mapping;
-				shouldExport: boolean;
-				alternative: app.domain.model.dks.Option;
-				possibleParents: app.domain.model.core.Mapping[];
-				selectedParent: app.domain.model.core.Mapping;
-			}[]>[];
+			$scope.allMappingInformation = <MappingInformation[]>[];
 
 			var processors:{ [index: string]: any } = {};
 
@@ -138,92 +149,8 @@ module app.application {
 				}
 			};
 
-			$scope.decisionChildrenVisibilityState = [];
-			$scope.toggleVisibilityState = function (index:number) {
-				if ($scope.decisionChildrenVisibilityState[index]) {
-					$scope.decisionChildrenVisibilityState[index] = !$scope.decisionChildrenVisibilityState[index];
-				} else {
-					$scope.decisionChildrenVisibilityState[index] = true;
-				}
-			};
-
-			$scope.getRequiredTableRowsForDecision = function (decisionGroup) {
-				var rows:number = 0;
-				Object.keys(decisionGroup.decisions).forEach(function (deKey) {
-					rows = rows + 1; // No root element for subtasks
-					var decisionElement = decisionGroup.decisions[deKey];
-					Object.keys(decisionElement.mappings).forEach(function (mKey) {
-						rows = rows + 1; // Decision Tasks
-						var decisionMapping = decisionElement.mappings[mKey];
-					});
-					Object.keys(decisionElement.alternatives).forEach(function (aKey) {
-						var alternativeElement = decisionElement.alternatives[aKey];
-						rows = rows + 1; // Alternative
-						Object.keys(alternativeElement.mappings).forEach(function (amKey) {
-							rows = rows + 1; // Alternative Tasks
-							var alternativeMapping = alternativeElement.mappings[amKey];
-						});
-					});
-				});
-				return rows;
-			};
-
-			// Creates a simpler hierarchy containing only: decision mappings and decision groups in the first index and all mappings in the second
-			$scope.flattenDecisionAndOptionSelection = function (decisionMappings) {
-				var rows = [];
-				var lastProblem = null;
-				var lastDecision = null;
-				var lastAlternative = null;
-				Object.keys(decisionMappings).forEach(function (dmKey) {
-					var decisionGroup = decisionMappings[dmKey];
-					Object.keys(decisionGroup.decisions).forEach(function (deKey) {
-						var decisionElement = decisionGroup.decisions[deKey];
-						rows.push({
-							problem: decisionGroup,
-							firstProblem: lastProblem != decisionGroup,
-							decision: decisionElement,
-							firstDecision: lastDecision != decisionElement,
-							alternative: null,
-							firstAlternative: lastAlternative != null,
-							mapping: null
-						});
-						lastProblem = decisionGroup;
-						lastDecision = decisionElement;
-						lastAlternative = null;
-						Object.keys(decisionElement.mappings).forEach(function (mKey) {
-							var decisionMapping = decisionElement.mappings[mKey];
-							rows.push({
-								problem: decisionGroup,
-								firstProblem: false,
-								decision: decisionElement,
-								firstDecision: false,
-								alternative: null,
-								firstAlternative: false,
-								mapping: decisionMapping
-							});
-						});
-						Object.keys(decisionElement.alternatives).forEach(function (aKey) {
-							var alternativeElement = decisionElement.alternatives[aKey];
-							Object.keys(alternativeElement.mappings).forEach(function (amKey) {
-								var alternativeMapping = alternativeElement.mappings[amKey];
-								rows.push({
-									problem: decisionGroup,
-									firstProblem: false,
-									decision: decisionElement,
-									firstDecision: false,
-									alternative: alternativeElement,
-									firstAlternative: lastAlternative != alternativeMapping,
-									mapping: alternativeMapping
-								});
-								lastAlternative = alternativeMapping;
-							});
-						});
-					});
-				});
-				return rows;
-			};
-
 			$scope.processTaskTemplates = function () {
+				$scope.currentWizardStep = ExportWizardSteps.Transformation;
 				getTaskTemplatesOfSelectedDecisionsAndAlternatives($scope.allMappingInformation).forEach(function (transmitNode:{
 					node: app.domain.model.dks.DksNode;
 					type: any;
@@ -234,7 +161,6 @@ module app.application {
 						mappings: app.domain.model.core.Mapping[]
 					}}
 				}) {
-					var exportRequest = <any>null;
 					var parentRequests:{[index: string]:{
 						requestBody: any;
 						node: app.domain.model.dks.DksNode;
@@ -254,6 +180,7 @@ module app.application {
 			};
 
 			$scope.transmit = function () {
+				$scope.currentWizardStep = ExportWizardSteps.Transmitting;
 				transmitOne($scope.exportRequests, 0, null);
 			};
 
@@ -302,8 +229,8 @@ module app.application {
 				$scope.openRequestDetail = ($scope.openRequestDetail == detail) ? null : detail;
 			};
 
-			$scope.nextStep = function () {
-				$scope.currentWizardStep++;
+			$scope.goToDataSelectionStep = function () {
+				$scope.currentWizardStep = ExportWizardSteps.DataSelection;
 			};
 
 			$scope.selectUnselectAll = function (selected:boolean) {
@@ -312,24 +239,16 @@ module app.application {
 				});
 			};
 
-			$scope.exportErrorsExist = function ():boolean {
+			$scope.atLeastOneExportErrorExists = function ():boolean {
 				for (var i = 0; i < $scope.allMappingInformation.length; i++) {
 					if ($scope.exportErrorFor($scope.allMappingInformation[i])) {
 						return true;
 					}
 				}
 				return false;
-
 			};
 
-			$scope.exportErrorFor = function (aMappingInformation:{
-				decision: app.domain.model.dks.Decision;
-				mapping: app.domain.model.core.Mapping;
-				shouldExport: boolean;
-				alternative: app.domain.model.dks.Option;
-				possibleParents: app.domain.model.core.Mapping[];
-				selectedParent: app.domain.model.core.Mapping;
-			}) {
+			$scope.exportErrorFor = function (aMappingInformation:MappingInformation) {
 				if (aMappingInformation.selectedParent && aMappingInformation.shouldExport) {
 					var parentMappingInformation = getParentMappingInformation($scope.allMappingInformation, aMappingInformation);
 					if (parentMappingInformation) {
@@ -346,28 +265,7 @@ module app.application {
 				return null;
 			};
 
-			function getParentMappingInformation(allMappingInformation:{
-				decision: app.domain.model.dks.Decision;
-				mapping: app.domain.model.core.Mapping;
-				shouldExport: boolean;
-				alternative: app.domain.model.dks.Option;
-				possibleParents: app.domain.model.core.Mapping[];
-				selectedParent: app.domain.model.core.Mapping;
-			}[], childMappingInformation:{
-				decision: app.domain.model.dks.Decision;
-				mapping: app.domain.model.core.Mapping;
-				shouldExport: boolean;
-				alternative: app.domain.model.dks.Option;
-				possibleParents: app.domain.model.core.Mapping[];
-				selectedParent: app.domain.model.core.Mapping;
-			}):{
-				decision: app.domain.model.dks.Decision;
-				mapping: app.domain.model.core.Mapping;
-				shouldExport: boolean;
-				alternative: app.domain.model.dks.Option;
-				possibleParents: app.domain.model.core.Mapping[];
-				selectedParent: app.domain.model.core.Mapping;
-			} {
+			function getParentMappingInformation(allMappingInformation:MappingInformation[], childMappingInformation:MappingInformation):MappingInformation {
 				for (var i = 0; i < allMappingInformation.length; i++) {
 					var possibleParentMappingInformation = allMappingInformation[i];
 					if (childMappingInformation.decision == possibleParentMappingInformation.decision &&
@@ -391,13 +289,13 @@ module app.application {
 					//add for the decision itself
 					var mappingsForDecision = (mappingsMap[decision.template.id] || []);
 					mappingsForDecision.forEach(function (mappingForDecision) {
-						addMappingInformation(mappingForDecision, decision, null, findParentMappingAsArray(mappingForDecision, mappingsForDecision), findParentMapping(mappingForDecision, mappingsForDecision));
+						$scope.allMappingInformation.push(new MappingInformation(decision, mappingForDecision, null, findParentMappingAsArray(mappingForDecision, mappingsForDecision), findParentMapping(mappingForDecision, mappingsForDecision)));
 					});
 					//add for all alternatives of the decision
 					decision.alternatives.forEach(function (alternative) {
 						if (alternative && alternative.template) {
 							(mappingsMap[alternative.template.id] || []).forEach(function (mappingForAlternative) {
-								addMappingInformation(mappingForAlternative, decision, alternative, findParentMappingAsArray(mappingForAlternative, mappingsMap[alternative.template.id], getOnlyParents(mappingsForDecision)), findParentMapping(mappingForAlternative, mappingsMap[alternative.template.id]));
+								$scope.allMappingInformation.push(new MappingInformation(decision, mappingForAlternative, alternative, findParentMappingAsArray(mappingForAlternative, mappingsMap[alternative.template.id], getOnlyParents(mappingsForDecision)), findParentMapping(mappingForAlternative, mappingsMap[alternative.template.id])));
 							});
 						}
 					});
@@ -414,30 +312,8 @@ module app.application {
 				return result;
 			}
 
-			function addMappingInformation(mapping:app.domain.model.core.Mapping,
-										   decision:app.domain.model.dks.Decision,
-										   alternative:app.domain.model.dks.DksNode,
-										   possibleParents:app.domain.model.core.Mapping[],
-										   currentParent:app.domain.model.core.Mapping) {
-				$scope.allMappingInformation.push(<{
-					decision: app.domain.model.dks.Decision;
-					mapping: app.domain.model.core.Mapping;
-					shouldExport: boolean;
-					alternative: app.domain.model.dks.Option;
-					possibleParents: app.domain.model.core.Mapping[];
-					selectedParent: app.domain.model.core.Mapping;
-				}>{
-					decision: decision,
-					mapping: mapping,
-					shouldExport: false,
-					alternative: alternative,
-					possibleParents: possibleParents,
-					selectedParent: currentParent
-				});
-			}
-
-			function findParentMappingAsArray(mapping, possibleParentMappings, additionalParents = null) {
-				var result = [];
+			function findParentMappingAsArray(mapping, possibleParentMappings, additionalParents = null):app.domain.model.core.Mapping[] {
+				var result:app.domain.model.core.Mapping[] = [];
 				var calculated = findParentMapping(mapping, possibleParentMappings);
 				if (calculated) {
 					result.push(calculated);
@@ -450,7 +326,7 @@ module app.application {
 				return result;
 			}
 
-			function findParentMapping(mapping, possibleParentMappings) {
+			function findParentMapping(mapping, possibleParentMappings):app.domain.model.core.Mapping {
 				var parentTaskTemplate = mapping.taskTemplate.parent;
 				if (!parentTaskTemplate) return null;
 				for (var i = 0; i < possibleParentMappings.length; i++) {
@@ -573,47 +449,6 @@ module app.application {
 				}
 			}
 
-			//	function renderSubRequestTemplate($scope, dKey, aKey, authenticationService, processors, exportRequest) {
-			//	var subNode = $scope.transmitNodes[dKey].subNodes[aKey].node;
-			//
-			//	Object.keys($scope.transmitNodes[dKey].subNodes[aKey].mappings).forEach(function (atKey) {
-			//		var mapping = $scope.transmitNodes[dKey].subNodes[aKey].mappings[atKey];
-			//
-			//		var exportDecisionData = {
-			//			node: subNode,
-			//			taskTemplate: mapping.taskTemplate,
-			//			currentUser: authenticationService.loggedInUser,
-			//			project: $scope.currentProject,
-			//			pptProject: $scope.pptProject,
-			//			mappings: $scope.decisionMappings
-			//		};
-			//
-			//		var templateProcessor = new app.service.TemplateProcesser(exportDecisionData, $scope.requestTemplate.requestBodyTemplate, processors);
-			//		var renderedTemplate;
-			//		try {
-			//			renderedTemplate = templateProcessor.process();
-			//
-			//
-			//			var currentSubRequest = {
-			//				requestBody: renderedTemplate,
-			//				node: subNode,
-			//				taskTemplate: mapping.taskTemplate,
-			//				exportState: app.application.ApplicationState.waiting
-			//			};
-			//			if (exportRequest) {
-			//				if (!exportRequest.subRequests) {
-			//					exportRequest.subRequests = [];
-			//				}
-			//				exportRequest.subRequests.push(currentSubRequest);
-			//			} else {
-			//				$scope.exportRequests.push(currentSubRequest);
-			//			}
-			//		} catch (error) {
-			//			$scope.transformationErrors.push("Errors occured during executing processors. Please check the code of your processors!");
-			//		}
-			//	});
-			//}
-
 			function renderRequestTemplates($scope, mapping:app.domain.model.core.Mapping, node:app.domain.model.dks.DksNode, authenticationService, processors, parentRequest):{
 				requestBody: any;
 				node: app.domain.model.dks.DksNode;
@@ -663,14 +498,7 @@ module app.application {
 				}
 			}
 
-			function getTaskTemplatesOfSelectedDecisionsAndAlternatives(allMappingInformation:{
-				decision: app.domain.model.dks.Decision;
-				mapping: app.domain.model.core.Mapping;
-				shouldExport: boolean;
-				alternative: app.domain.model.dks.Option;
-				possibleParents: app.domain.model.core.Mapping[];
-				selectedParent: app.domain.model.core.Mapping;
-			}[]):{
+			function getTaskTemplatesOfSelectedDecisionsAndAlternatives(allMappingInformation:MappingInformation[]):{
 				node: app.domain.model.dks.DksNode;
 				type: any;
 				mappings: app.domain.model.core.Mapping[];
@@ -710,7 +538,7 @@ module app.application {
 								}
 								ret[transmitNodeId].mappings.push(mapping);
 							} else {
-								var parentTransmitNodeId:string = node.id + "_" + mapping.taskTemplate.parent.id;
+								var parentTransmitNodeId:string = node.id + "_" + aMappingInformation.selectedParent.taskTemplate.id;
 								console.log("Adding child mapping for " + node.name + ": Task " + mapping.taskTemplate.name + " with parent " + parentTransmitNodeId + " with available parents: " + Object.keys(ret));
 								if (!ret[parentTransmitNodeId].subNodes[transmitNodeId]) {
 									ret[parentTransmitNodeId].subNodes[transmitNodeId] = {
