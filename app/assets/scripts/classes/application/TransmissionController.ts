@@ -325,13 +325,13 @@ module app.application {
 					//add for the decision itself
 					var mappingsForDecision = (mappingsMap[decision.template.id] || []);
 					mappingsForDecision.forEach(function (mappingForDecision) {
-						addMappingInformation(mappingForDecision, decision, null, findParentMappingAsArray(mappingForDecision, mappingsForDecision));
+						addMappingInformation(mappingForDecision, decision, null, findParentMappingAsArray(mappingForDecision, mappingsForDecision), findParentMapping(mappingForDecision, mappingsForDecision));
 					});
 					//add for all alternatives of the decision
 					decision.alternatives.forEach(function (alternative) {
 						if (alternative && alternative.template) {
 							(mappingsMap[alternative.template.id] || []).forEach(function (mappingForAlternative) {
-								addMappingInformation(mappingForAlternative, decision, alternative, findParentMappingAsArray(mappingForAlternative, mappingsMap[alternative.template.id], getOnlyParents(mappingsForDecision)));
+								addMappingInformation(mappingForAlternative, decision, alternative, findParentMappingAsArray(mappingForAlternative, mappingsMap[alternative.template.id], getOnlyParents(mappingsForDecision)), findParentMapping(mappingForAlternative, mappingsMap[alternative.template.id]));
 							});
 						}
 					});
@@ -351,7 +351,8 @@ module app.application {
 			function addMappingInformation(mapping:app.domain.model.core.Mapping,
 										   decision:app.domain.model.dks.Decision,
 										   alternative:app.domain.model.dks.DksNode,
-										   possibleParents:app.domain.model.core.Mapping[]) {
+										   possibleParents:app.domain.model.core.Mapping[],
+										   currentParent:app.domain.model.core.Mapping) {
 				$scope.allMappingInformation.push(<{
 					decision: app.domain.model.dks.Decision;
 					mapping: app.domain.model.core.Mapping;
@@ -365,7 +366,7 @@ module app.application {
 					shouldExport: false,
 					alternative: alternative,
 					possibleParents: possibleParents,
-					selectedParent: null
+					selectedParent: currentParent
 				});
 			}
 

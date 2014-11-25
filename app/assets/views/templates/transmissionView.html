@@ -61,7 +61,12 @@
 							<td>{{aMappingInformation.decision.name}} <span>[#{{aMappingInformation.decision.id}}]</span></td>
 							<td>{{aMappingInformation.alternative.name}} <span data-ng-if="aMappingInformation.alternative">[#{{aMappingInformation.alternative.id}}]</span></td>
 							<td><input title="Transmit this task" type="checkbox" data-ng-model="aMappingInformation.shouldExport" /></td>
-							<td><select title="TODO" data-ng-model="aMappingInformation.selectedParent" data-ng-options="parent.taskTemplate.name for parent in aMappingInformation.possibleParents"></select></td>
+							<td><select title="The Task which will be the Parent for this Task"
+										data-ng-model="aMappingInformation.selectedParent"
+										data-ng-if="aMappingInformation.possibleParents.length>0"
+										data-ng-options="parent.taskTemplate.name for parent in aMappingInformation.possibleParents">
+								<option value="">Not as a Subtask</option>
+							</select></td>
 							<td>{{aMappingInformation.mapping.taskTemplate.name}} <span>[#{{aMappingInformation.mapping.taskTemplate.id}}]</span></td>
 						</tr>
 					</table>
