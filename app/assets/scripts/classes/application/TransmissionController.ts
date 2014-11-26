@@ -525,7 +525,7 @@ module app.application {
 								}
 								ret[transmitNodeId].mappings.push(mapping);
 							} else {
-								var parentTransmitNodeId:string = node.id + "_" + aMappingInformation.selectedParent.mapping.taskTemplate.id;
+								var parentTransmitNodeId:string = aMappingInformation.selectedParent.getAlternativeIfAvailable().id + "_" + aMappingInformation.selectedParent.mapping.taskTemplate.id;
 								//console.log("Adding child mapping for " + node.name + ": Task " + mapping.taskTemplate.name + " with parent " + parentTransmitNodeId + " with available parents: " + Object.keys(ret));
 								if (!ret[parentTransmitNodeId].subNodes[transmitNodeId]) {
 									ret[parentTransmitNodeId].subNodes[transmitNodeId] = {
