@@ -112,7 +112,7 @@ public class UserController extends AbstractController {
 			@Parameter(name = "oldPassword", description = "the current password for the user"),
 			@Parameter(name = "newPassword", description = "the new password for the user"),
 			@Parameter(name = "newPasswordRepeat", description = "the new password for the user (repetition, to guarantee the user didn't make a typo)")})
-	@QueryDescription("This creates a new EEPPI-user.")
+	@QueryDescription("This changes the password of an EEPPI-user.")
 	@QueryResponses({
 			@Response(status = BAD_REQUEST, description = "If the password could not be changed."),
 			@Response(status = OK, description = "If the password was changed.")
