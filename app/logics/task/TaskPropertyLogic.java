@@ -4,9 +4,8 @@ import daos.task.TaskPropertyDAO;
 import daos.task.TaskPropertyValueDAO;
 import logics.CRUDLogicInterface;
 import models.task.TaskProperty;
-import play.data.validation.Constraints;
 
-public class TaskPropertyLogic implements CRUDLogicInterface<TaskProperty, TaskPropertyLogic.TaskPropertyForm, TaskPropertyLogic.TaskPropertyForm> {
+public class TaskPropertyLogic implements CRUDLogicInterface<TaskProperty> {
 
 	private final TaskPropertyDAO TASK_PROPERTY_DAO;
 	private final TaskPropertyValueDAO TASK_PROPERTY_VALUE_DAO;
@@ -17,15 +16,15 @@ public class TaskPropertyLogic implements CRUDLogicInterface<TaskProperty, TaskP
 	}
 
 	@Override
-	public TaskProperty create(TaskPropertyForm createForm) {
+	public TaskProperty create(TaskProperty postedEntity) {
 		TaskProperty taskProperty = new TaskProperty();
-		return update(taskProperty, createForm);
+		return update(taskProperty, postedEntity);
 	}
 
 	@Override
-	public TaskProperty update(TaskProperty entity, TaskPropertyForm updateForm) {
-		entity.setName(updateForm.name);
-		return TASK_PROPERTY_DAO.persist(entity);
+	public TaskProperty update(TaskProperty persistedEntity, TaskProperty postedEntity) {
+		persistedEntity.setName(postedEntity.getName());
+		return TASK_PROPERTY_DAO.persist(persistedEntity);
 	}
 
 	/**
@@ -45,8 +44,4 @@ public class TaskPropertyLogic implements CRUDLogicInterface<TaskProperty, TaskP
 		return TASK_PROPERTY_VALUE_DAO.readByProperty(taskProperty).isEmpty();
 	}
 
-	public static class TaskPropertyForm {
-		@Constraints.Required
-		public String name;
-	}
 }

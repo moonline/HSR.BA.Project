@@ -31,7 +31,7 @@ public abstract class AbstractControllerTest extends AbstractDatabaseTest {
 	protected static Result callActionWithUser(HandlerRef<?> target, User user, Map<String, String> postData) {
 		FakeRequest fakeRequest = new FakeRequest().withFormUrlEncodedBody(postData);
 		fakeRequest = fakeRequest.withSession(AuthenticationChecker.SESSION_USER_IDENTIFIER, user.getId() + "");
-		return callAction(target, fakeRequest);
+		return callAction(target, fakeRequest, 40000);
 	}
 
 	protected static Result callActionWithUser(HandlerRef<?> target) throws Throwable {
@@ -53,7 +53,7 @@ public abstract class AbstractControllerTest extends AbstractDatabaseTest {
 
 	protected void assertCheckJsonResponse(Result result, JsonNode expected) {
 		JsonNode resultJson = Json.parse(contentAsString(result));
-		assertThat(resultJson.equals(expected)).describedAs(Json.stringify(expected) + " --- was expected but was --- " + Json.stringify(resultJson)).isTrue();
+		assertThat(resultJson.equals(expected)).describedAs("\n" + Json.stringify(expected) + "\n --- was expected but was --- \n" + Json.stringify(resultJson)).isTrue();
 	}
 
 }

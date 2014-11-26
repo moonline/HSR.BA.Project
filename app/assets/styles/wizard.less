@@ -1,0 +1,65 @@
+@import "crossBrowser.less";
+
+.wizardStep {
+	overflow: hidden;
+
+	.formLine {
+
+		label {	width: 20rem; }
+		input, select { width: 15rem; }
+		select { min-height: 1.5rem; }
+	}
+
+	.exportProgressBar {
+		margin: 0.5em -0.5rem -0.5rem -0.5rem;
+		padding: 0.5rem;
+	}
+
+	.exportProgressBar {
+		padding: 0.75rem 1rem;
+		.linearGradient(rgb(51, 136, 215),rgb(67, 130, 184)); height: auto !important; text-align: left;
+
+		.arrows { font-size: x-large; padding: 0 1rem; color: black; height: 1rem;
+			display: inline-block; vertical-align: middle; position: relative; top: -0.5rem;
+		}
+
+		.currentStep { font-weight: bold; color: white; }
+		.futureStep, .passedStep { color: silver; }
+	}
+
+	.typeDeclaration { color: gray; }
+
+	ul .problemElement {
+		list-style-type: none;
+
+		> .problem { display: block; background: #6EAADC; font-weight: bold; padding: 0.5rem; margin: -0.5rem -0.5rem 0.5rem -0.5rem; }
+		> .decisions { margin-left: 0;
+			> li > dl { margin-left: 1rem; margin-bottom: 1rem; }
+			.taskTemplates { margin-left: 0;
+				> li {list-style-type: none; }
+			}
+			.alternatives > li dl { margin-left: 1rem; }
+		}
+	}
+
+	ul.requests {
+		margin-bottom: 0.5rem;
+
+		li {
+			&:first-of-type {
+				dt.request { margin-top: -0.5rem; }
+			}
+		}
+
+		dt.request { background: #6EAADC; padding: 0.5rem; margin: 0 -0.5rem; }
+		ul.subRequests {
+			margin: 0;
+			dt.request { background: skyblue; margin-top: 0; }
+		}
+		dt.response {
+			> button  { float: left; }
+			> span {
+				padding: 0.5rem; width: 100%; display: inline-block; margin: 0 -0.5rem; box-sizing: content-box; }
+		}
+	}
+}

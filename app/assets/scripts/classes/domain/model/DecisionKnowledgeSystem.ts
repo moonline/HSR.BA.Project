@@ -4,16 +4,20 @@
 module app.domain.model.dks {
 	export class DecisionKnowledgeSystem implements app.domain.repository.core.PersistentEntity {
 		public static factoryConfiguration: app.domain.factory.FactoryConfiguration = {
-			constructorArguments: [{ name: "address", type: String, subType: null }],
+			constructorArguments: [
+				{name: "name", type: String, subType: null},
+				{name: "url", type: String, subType: null}
+			],
 			publicProperties: [{ name: "id", type: Number, subType: null }]
 		};
 
-		public address: string;
+		public name:string;
+		public url: string;
 		public id: number;
 
-		constructor(address: string) {
-			this.address = address;
-			this.id = Math.round(Math.random()*1000000);
+		constructor(name:string, url:string) {
+			this.name = name;
+			this.url = url;
 		}
 	}
 }

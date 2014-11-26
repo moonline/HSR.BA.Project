@@ -29,11 +29,11 @@ module app.domain.repository.core {
 			}
 		}
 
-		public findAll(callback: (items: T[]) => void, doCache = false): void {
+		public findAll(callback: (success: boolean, items: T[]) => void, doCache = false): void {
 			var cache: T[] = this.itemCache;
 
 			if(doCache) {
-				callback(cache);
+				callback(true, cache);
 			} else {
 				var filterFunction = this.filter;
 				var type = this.type;
@@ -58,9 +58,9 @@ module app.domain.repository.core {
 					} else {
 						console.warn("No data or data in false format returned. specified dataListProperty: '"+dataListName+"', data: ",data);
 					}
-					callback(cache);
+					callback(true, cache);
 				}).error(function(data){
-					callback(null);
+					callback(false, []);
 				});
 			}
 		}
@@ -95,7 +95,7 @@ module app.domain.repository.core {
 		 * search by id on remote resource. Do not search in cache
 		 * but update cache because user would like to get to get the newest data.
 		 */
-		public findOneById(id: number, callback: (item: T) => void, doCache:boolean = false): void {
+		public findOneById(id: number, callback: (success: boolean, item: T) => void, doCache:boolean = false): void {
 			var method: string = this.resources['detail']['method'].toLowerCase();
 			var path:string = this.getResourcePath('one').replace('{id}', id.toString());
 			var type = this.type;
@@ -117,9 +117,9 @@ module app.domain.repository.core {
 							} else {
 								cache.push(object);
 							}
-							callback(object);
+							callback(true, object);
 						} else {
-							callback(null);
+							callback(false, null);
 						}
 					});
 				}
@@ -127,7 +127,7 @@ module app.domain.repository.core {
 		}
 
 		public updateCache(): void {
-			this.findAll(function(items){
+			this.findAll(function(success, items){
 				this.itemCache = items;
 			}.bind(this));
 		}
@@ -136,15 +136,43 @@ module app.domain.repository.core {
 		 * search in local cache for item because loading all elements
 		 * only to filter occours a lot of trafic
 		 */
-		public findOneBy(propertyName: string, property: any, callback: (item: T) => void, doCache: boolean = false): void {
-			this.findAll(function(items) {
+		public findOneBy(propertyName: string, property: any, callback: (success: boolean, item: T) => void, doCache: boolean = false): void {
+			this.findAll(function(success, items) {
 				var foundItem: T = null;
 				items.forEach(function(item){
 					if(item[propertyName] && item[propertyName] === property) {
 						foundItem = item;
 					}
 				});
-				callback(foundItem);
+				callback(true, foundItem);
+			}, doCache);
+		}
+
+		/**
+		 * search in local cache for item because loading all elements
+		 * only to filter occours a lot of trafic
+		 */
+		public findOneByPropertyId(propertyName: string, property: any, callback: (success: boolean, item: T) => void, doCache: boolean = false): void {
+			this.findAll(function(success, items) {
+				var foundItem: T = null;
+				items.forEach(function(item){
+					if(item[propertyName] && item[propertyName].id && property.id && item[propertyName].id === property.id) {
+						foundItem = item;
+					}
+				});
+				callback(true, foundItem);
+			}, doCache);
+		}
+
+		public findByPropertyId(propertyName: string, property: any, callback: (success: boolean, items: T[]) => void, doCache: boolean = false): void {
+			this.findAll(function(success, items) {
+				var foundItems: T[] = [];
+				items.forEach(function(item){
+					if(item[propertyName] && item[propertyName].id && property.id && item[propertyName].id === property.id) {
+						foundItems.push(item);
+					}
+				});
+				callback(true, foundItems);
 			}, doCache);
 		}
 
@@ -160,6 +188,8 @@ module app.domain.repository.core {
 			this.httpService[method](url, {})
 				.success(function(data, status, headers, config) {
 					callback(true);
+					var position: number = cache.indexOf(item);
+					if(position >= 0) { cache.splice(cache.indexOf(item),1); }
 				})
 				.error(function(data, status, headers, config) {
 					callback(false);
@@ -174,18 +204,54 @@ module app.domain.repository.core {
 			var method: string = this.resources['update']['method'].toLowerCase();
 			var url: string = this.getResourcePath('update').replace('{id}', item.id.toString());
 			var type = this.type;
-			var cache = this.itemCache;
 
 			this.httpService[method](url, JSON.stringify(item))
 				.success(function(data, status, headers, config) {
-					var newObject: T = app.domain.factory.ObjectFactory.createFromJson(type, data);
-					var cacheObjectIndex: number = cache.indexOf(item);
-					cache[cacheObjectIndex] = newObject;
-					callback(true, newObject);
+					app.domain.factory.ObjectFactory.updateFromJson(item, type, data);
+					callback(true, item);
 				})
 				.error(function(data, status, headers, config) {
 					callback(false, null);
 				});
+		}
+
+		public findAllWithNodesAndSubNodes<S extends app.domain.repository.core.PersistentEntity>(propertyName: string, repository: app.domain.repository.core.Repository<S>,
+			callback: (success: boolean, items: T[]) => void, doCache = false) {
+			var instance = this;
+
+			this.findAll(function(success, nodes) {
+				if(success) {
+					instance.findSubNodes(nodes, propertyName, repository, callback);
+				} else {
+					callback(false, []);
+				}
+			}, doCache);
+		}
+
+		public findSubNodes<S extends app.domain.repository.core.PersistentEntity>(
+				nodes: T[],
+				propertyName: string,
+				repository: app.domain.repository.core.Repository<S>,
+				callback: (success: boolean, items: T[]) => void, doCache = false) {
+			repository.findAll(function(success, subNodes){
+				if(success) {
+					var sortedSubNodes = {};
+					subNodes.forEach(function(subNode: any){
+						sortedSubNodes[subNode.id] = subNode;
+					});
+
+					nodes.forEach(function(node, nIndex){
+						if(node[propertyName]) {
+							node[propertyName].forEach(function(subNode: any, snIndex) {
+								nodes[nIndex][propertyName][snIndex] = sortedSubNodes[subNode.id];
+							});
+						}
+					});
+					callback(true, nodes);
+				} else {
+					callback(false, []);
+				}
+			}, doCache);
 		}
 	}
 }

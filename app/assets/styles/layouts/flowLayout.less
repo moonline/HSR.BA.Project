@@ -1,3 +1,4 @@
+@import "../crossBrowser.less";
 /**
 .--------------------------------------------------------------------.
 | data-layout="flow" data-flow-direction="row"                       |
@@ -23,20 +24,20 @@
 
 */
 [data-layout="flow"], [data-layout="flow"] * {
-	box-sizing: border-box;
+	.boxSizing(border-box);
 }
 
 [data-layout="flow"] {
-	display: flex; 
-	justify-content: flex-start;
+	.displayFlex;
+	.justifyContent(flex-start);
 	
 	[data-layout="flow"] { 
 		height: auto; 
-		align-items: center;
+		.alignItems(center);
 	}
 	
 	&[data-flow-direction="column"] {
-		flex-direction: column;
+		.flexDirection(column);
 
 		> * { width: 100%; }
 		> [data-layout="flow"][data-flow-direction="column"] { 
@@ -46,7 +47,7 @@
 	}
 
 	&[data-flow-direction="row"] {
-		flex-direction: row;
+		.flexDirection(row);
 
 		&[data-scroll] { overflow-x: auto; width: 100%; }
 	}

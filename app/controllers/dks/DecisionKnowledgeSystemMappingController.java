@@ -7,6 +7,8 @@ import logics.dks.DKSMappingLogic;
 import logics.docs.QueryDescription;
 import logics.docs.QueryExamples;
 import logics.docs.QueryParameters;
+import logics.docs.QueryResponses;
+import models.dks.DKSMapping;
 import play.db.jpa.Transactional;
 import play.mvc.Result;
 
@@ -41,7 +43,7 @@ public class DecisionKnowledgeSystemMappingController extends AbstractCRUDContro
 			@Example(parameters = {"9999", "87"})
 	})
 	public Result create() {
-		return create(DKS_MAPPING_LOGIC, DKSMappingLogic.DKSMappingForm.class);
+		return create(DKS_MAPPING_LOGIC, DKSMapping.class);
 	}
 
 	@Override
@@ -78,7 +80,7 @@ public class DecisionKnowledgeSystemMappingController extends AbstractCRUDContro
 			@Example(id = "9999", parameters = {"9999", "87"})
 	})
 	public Result update(long id) {
-		return update(DKS_MAPPING_DAO, DKS_MAPPING_LOGIC, DKSMappingLogic.DKSMappingForm.class, id);
+		return update(DKS_MAPPING_DAO, DKS_MAPPING_LOGIC, DKSMapping.class, id);
 	}
 
 	@Override
@@ -92,4 +94,20 @@ public class DecisionKnowledgeSystemMappingController extends AbstractCRUDContro
 	public Result delete(long id) {
 		return delete(DKS_MAPPING_DAO, DKS_MAPPING_LOGIC, id);
 	}
+
+	@Transactional(readOnly = true)
+	@GuaranteeAuthenticatedUser()
+	@QueryParameters({@QueryParameters.Parameter(name = "dksNode", isId = true, description = "The id of the DKS Node to get the mappings for")})
+	@QueryDescription("Reads all Mappings for a given DKS Node.")
+	@QueryResponses({
+			@QueryResponses.Response(status = OK, description = "A list of all Mappings is returned, if no mapping could be found, an empty list is returned.")
+	})
+	@QueryExamples({
+			@Example(id = "9999", parameters = {}),
+			@Example(id = "REFERENCE_DKSNODE_1000000000000000064", parameters = {})
+	})
+	public Result readByDKSNode(String dksNode) {
+		return ok(jsonify(DKS_MAPPING_DAO.readByDKSNode(dksNode)));
+	}
+
 }

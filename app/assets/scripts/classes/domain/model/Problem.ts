@@ -1,35 +1,30 @@
 /// <reference path='../../domain/model/Node.ts' />
+/// <reference path='../../domain/model/DksNode.ts' />
 /// <reference path='../../domain/repository/PersistentEntity.ts' />
 /// <reference path='../../domain/factory/FactoryConfiguration.ts' />
 
-/// <reference path='OptionTemplate.ts' />
+/// <reference path='../../domain/model/Alternative.ts' />
 
 module app.domain.model.dks {
-	export class Problem implements app.domain.model.dks.Node, app.domain.repository.core.PersistentEntity {
+	export class Problem extends app.domain.model.dks.DksNode implements app.domain.model.dks.Node, app.domain.repository.core.PersistentEntity {
 		public static factoryConfiguration: app.domain.factory.FactoryConfiguration = {
 			constructorArguments: [
 				{ name: "name", type: String, subType: null },
-				{ name: "alternatives", type: Array, subType: app.domain.model.dks.OptionTemplate }
+				{ name: "path", type: Array, subType: String },
+				{ name: "attributes", type: Object, subType: null },
+				{ name: "notes", type: String, subType: null }
 			],
 			publicProperties: [
 				{ name: "id", type: Number, subType: null },
-				{ name: "notes", type: String, subType: null },
-				{ name: "attributes", type: Object, subType: null },
-				{ name: "path", type: Array, subType: String }
+				{ name: "self", type: String, subType: null },
+				{ name: "alternatives", type: Array, subType: app.domain.model.dks.Alternative }
 			]
 		};
 
-		public id: number;
-		public name: string;
-		public notes: string;
-		public attibutes: Object;
-		public path: string[];
-		public options: app.domain.model.dks.OptionTemplate[];
+		public alternatives: app.domain.model.dks.Alternative[];
 
-		constructor(name: string, options: app.domain.model.dks.OptionTemplate[] = []) {
-			this.id = Math.round(Math.random()*1000000);
-			this.name = name;
-			this.options = options;
+		constructor(name: string, path: string[], attributes: Object, notes: string) {
+			super(name, path, attributes, notes);
 		}
 	}
 }

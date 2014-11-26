@@ -2,7 +2,9 @@ package logics.docs;
 
 import daos.AbstractDAO;
 import daos.dks.DKSMappingDAO;
-import daos.ppt.MappingDAO;
+import daos.dks.DecisionKnowledgeSystemDAO;
+import daos.ppt.RequestTemplateDAO;
+import daos.ppt.ProcessorDAO;
 import daos.ppt.ProjectPlanningToolDAO;
 import daos.task.TaskPropertyDAO;
 import daos.task.TaskPropertyValueDAO;
@@ -12,7 +14,9 @@ import daos.user.ProjectDAO;
 import daos.user.UserDAO;
 import logics.user.UserLogic;
 import models.dks.DKSMapping;
-import models.ppt.Mapping;
+import models.dks.DecisionKnowledgeSystem;
+import models.ppt.RequestTemplate;
+import models.ppt.Processor;
 import models.ppt.ProjectPlanningTool;
 import models.task.TaskProperty;
 import models.task.TaskPropertyValue;
@@ -27,10 +31,12 @@ import play.libs.F;
 
 import javax.persistence.EntityManager;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class ExampleDataCreator {
 
+	private final ProcessorDAO PROCESSOR_DAO;
 	private final UserDAO USER_DAO;
 	private final PPTAccountDAO PPT_ACCOUNT_DAO;
 	private final ProjectPlanningToolDAO PROJECT_PLANNING_TOOL_DAO;
@@ -38,8 +44,10 @@ public class ExampleDataCreator {
 	private final TaskPropertyDAO TASK_PROPERTY_DAO;
 	private final TaskPropertyValueDAO TASK_PROPERTY_VALUE_DAO;
 	private final DKSMappingDAO DKS_MAPPING_DAO;
-	private final MappingDAO MAPPING_DAO;
+	private final RequestTemplateDAO REQUEST_TEMPLATE_DAO;
 	private final ProjectDAO PROJECT_DAO;
+	private final DecisionKnowledgeSystemDAO DKS_DAO;
+
 
 	private Set<String> cache = new HashSet<>();
 
@@ -49,7 +57,7 @@ public class ExampleDataCreator {
 
 	public Long USER_ID;
 
-	public ExampleDataCreator(UserLogic userLogic, UserDAO userDao, PPTAccountDAO pptAccountDao, ProjectPlanningToolDAO projectPlanningToolDao, TaskTemplateDAO taskTemplateDao, TaskPropertyDAO taskPropertyDao, TaskPropertyValueDAO taskPropertyValueDao, DKSMappingDAO dksMappingDao, MappingDAO mappingDao, ProjectDAO projectDao) {
+	public ExampleDataCreator(UserLogic userLogic, UserDAO userDao, PPTAccountDAO pptAccountDao, ProjectPlanningToolDAO projectPlanningToolDao, TaskTemplateDAO taskTemplateDao, TaskPropertyDAO taskPropertyDao, TaskPropertyValueDAO taskPropertyValueDao, DKSMappingDAO dksMappingDao, RequestTemplateDAO requestTemplateDao, ProjectDAO projectDao, ProcessorDAO processorDAO, DecisionKnowledgeSystemDAO dksDao) {
 		USER_DAO = userDao;
 		PPT_ACCOUNT_DAO = pptAccountDao;
 		JPA.withTransaction(new F.Callback0() {
@@ -75,8 +83,10 @@ public class ExampleDataCreator {
 		TASK_PROPERTY_DAO = taskPropertyDao;
 		TASK_PROPERTY_VALUE_DAO = taskPropertyValueDao;
 		DKS_MAPPING_DAO = dksMappingDao;
-		MAPPING_DAO = mappingDao;
+		REQUEST_TEMPLATE_DAO = requestTemplateDao;
 		PROJECT_DAO = projectDao;
+		PROCESSOR_DAO = processorDAO;
+		DKS_DAO = dksDao;
 	}
 
 	public void createExampleObject(String reference, boolean canBeCached) {
@@ -179,25 +189,85 @@ public class ExampleDataCreator {
 						},
 						existingDKSMapping -> existingDKSMapping.getDksNode().equals(dksNode));
 				break;
-			case "PPTMAPPING":
+			case "DKS":
+				String dksName = "Example DKS";
+				String dksUrl = "http://an-example-dks.com";
+				objectCreator = new ExampleObjectCreator<>("DKS",
+						DKS_DAO,
+						() -> {
+							DecisionKnowledgeSystem dks = new DecisionKnowledgeSystem();
+							dks.setName(dksName);
+							dks.setUrl(dksUrl);
+							persist(dks);
+							return dks.getId();
+						},
+						existingDKS -> dksName.equals(existingDKS.getName()) && dksUrl.equals(existingDKS.getUrl()));
+				break;
+			case "DKSNODE":
+				objectCreator = new ExampleObjectCreator<DKSMapping>("DKSNode",
+						DKS_MAPPING_DAO,
+						() -> null,
+						existingDKSMapping -> true) {
+					@Override
+					public void create(long id) {
+						List<DKSMapping> existingEntities = DKS_MAPPING_DAO.readByDKSNode(id + "");
+						if (existingEntities == null || existingEntities.isEmpty()) {
+							TaskTemplate taskTemplate = new TaskTemplate();
+							taskTemplate.setName("My example Task Template 7");
+							DKSMapping dksMapping = new DKSMapping();
+							dksMapping.setDksNode(id + "");
+							dksMapping.setTaskTemplate(taskTemplate);
+							persist(taskTemplate, dksMapping);
+						} else {
+							for (DKSMapping existingEntity : existingEntities) {
+								if (!existingEntity.getTaskTemplate().getName().equals("My example Task Template 7")) {
+									// In case this error occurs, try to take larger id numbers.
+									// This is the reason for example data ids > 1000000000000000000!
+									Logger.error("Could not create Example Data DKSNode with ID " + id + ", because it already exists. The problem is, this existing object is exposed to every use as example of the documentation: " + existingEntities);
+								}
+							}
+						}
+					}
+				};
+				break;
+			case "PROCESSOR":
+				String name = "Example Processor";
+				String code = "function(a) { return a+'.'+a; }";
+				objectCreator = new ExampleObjectCreator<>("Processor",
+						PROCESSOR_DAO,
+						() -> {
+							Project project = new Project();
+							project.setName("Example project");
+
+							Processor processor = new Processor();
+							processor.setName(name);
+							processor.setProject(project);
+							processor.setCode(code);
+							persist(project, processor);
+							return processor.getId();
+						},
+						existingProcessor -> existingProcessor.getName().equals(name) && existingProcessor.getCode().equals(code));
+				break;
+			case "REQUESTTEMPLATE":
 				String url = "/example/endpoint";
 				String requestTemplate = "{\"name\":\"${title}\"}";
 				objectCreator = new ExampleObjectCreator<>("Mapping",
-						MAPPING_DAO,
+						REQUEST_TEMPLATE_DAO,
 						() -> {
 							ProjectPlanningTool ppt = new ProjectPlanningTool();
 							ppt.setName("Example PPT");
 							Project project = new Project();
 							project.setName("Example Project");
-							Mapping mapping = new Mapping();
-							mapping.setProjectPlanningTool(ppt);
+							RequestTemplate mapping = new RequestTemplate();
+							mapping.setPpt(ppt);
+							mapping.setName("My Request Template");
 							mapping.setProject(project);
 							mapping.setUrl(url);
-							mapping.setRequestTemplate(requestTemplate);
+							mapping.setRequestBodyTemplate(requestTemplate);
 							persist(ppt, project, mapping);
 							return mapping.getId();
 						},
-						existingPPTMapping -> existingPPTMapping.getUrl().equals(url) && existingPPTMapping.getRequestTemplate().equals(requestTemplate));
+						existingRequestTemplate -> existingRequestTemplate.getUrl().equals(url) && existingRequestTemplate.getRequestBodyTemplate().equals(requestTemplate));
 				break;
 			case "PROJECT":
 				String projectName = "The Example Project";
@@ -237,7 +307,7 @@ public class ExampleDataCreator {
 				JPA.em().createQuery("update " + className + " p set p.id=:new where p.id=:old").setParameter("old", currentId).setParameter("new", id).executeUpdate();
 			} else {
 				if (!isExistingAndExpectedFunction.check(existingEntity)) {
-					// In case this error occours, try to take larger id numbers.
+					// In case this error occurs, try to take larger id numbers.
 					// This is the reason for example data ids > 1000000000000000000!
 					Logger.error("Could not create Example Data " + className + " with ID " + id + ", because it already exists. The problem is, this existing object is exposed to every use as example of the documentation: " + existingEntity);
 				}

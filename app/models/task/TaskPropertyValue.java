@@ -46,4 +46,12 @@ public class TaskPropertyValue extends AbstractEntity {
 	public void setValue(String value) {
 		this.value = value;
 	}
+
+	@Override
+	public String toString() {
+		return "<TaskPropertyValue " + getId() + " " + value +
+				" (property=" + (property == null ? "null" : property.getId()) +
+				", task=" + (task == null ? "null" : task.getId()) + ")>";
+	}
+
 }

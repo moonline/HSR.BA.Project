@@ -1,7 +1,6 @@
 package logics.user;
 
 import daos.user.PPTAccountDAO;
-import logics.CRUDLogicInterface;
 import models.ppt.ProjectPlanningTool;
 import models.user.PPTAccount;
 import models.user.User;
@@ -35,9 +34,9 @@ public class PPTAccountLogic {
 
 	public PPTAccount update(PPTAccount account, UpdatePPTAccountForm updateData) {
 		account.setPpt(updateData.ppt);
-		account.setPptUrl(updateData.url);
+		account.setPptUrl(updateData.pptUrl);
 		account.setPptUsername(updateData.pptUsername);
-		if (updateData.pptPassword != null) {
+		if (updateData.pptPassword != null && updateData.pptPassword.length() > 0) {
 			account.setPptPassword(updateData.pptPassword);
 		}
 		PPT_ACCOUNT_DAO.persist(account);
@@ -53,7 +52,7 @@ public class PPTAccountLogic {
 		@Constraints.Required
 		public ProjectPlanningTool ppt;
 		@Constraints.Required
-		public String url;
+		public String pptUrl;
 		@Constraints.Required
 		public String pptUsername;
 

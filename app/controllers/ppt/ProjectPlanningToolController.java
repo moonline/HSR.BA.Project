@@ -1,13 +1,17 @@
 package controllers.ppt;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import controllers.AbstractController;
+import controllers.AbstractReadController;
+import controllers.AuthenticationChecker;
 import controllers.GuaranteeAuthenticatedUser;
+import daos.ppt.ProjectPlanningToolDAO;
+import daos.user.PPTAccountDAO;
 import logics.docs.QueryDescription;
 import logics.docs.QueryExamples;
 import logics.docs.QueryParameters;
 import logics.docs.QueryResponses;
 import logics.ppt.PPTTaskLogic;
+import models.user.PPTAccount;
 import play.data.Form;
 import play.db.jpa.JPA;
 import play.db.jpa.Transactional;
@@ -15,16 +19,25 @@ import play.libs.F;
 import play.mvc.Http;
 import play.mvc.Result;
 
+import java.net.ConnectException;
+import java.util.concurrent.TimeoutException;
+
 import static logics.docs.QueryExamples.Example;
 import static logics.docs.QueryParameters.Parameter;
 import static logics.docs.QueryResponses.Response;
 
-public class ProjectPlanningToolController extends AbstractController {
+public class ProjectPlanningToolController extends AbstractReadController {
 
 	private final PPTTaskLogic PPT_TASK_LOGIC;
+	private final ProjectPlanningToolDAO PROJECT_PLANNING_TOOL_DAO;
+	private final AuthenticationChecker AUTHENTICATION_CHECKER;
+	private final PPTAccountDAO PPT_ACCOUNT_DAO;
 
-	public ProjectPlanningToolController(PPTTaskLogic pptTaskLogic) {
+	public ProjectPlanningToolController(PPTTaskLogic pptTaskLogic, ProjectPlanningToolDAO projectPlanningToolDao, AuthenticationChecker authenticationChecker, PPTAccountDAO pptAccountDao) {
 		PPT_TASK_LOGIC = pptTaskLogic;
+		PROJECT_PLANNING_TOOL_DAO = projectPlanningToolDao;
+		AUTHENTICATION_CHECKER = authenticationChecker;
+		PPT_ACCOUNT_DAO = pptAccountDao;
 	}
 
 	@Transactional(readOnly = true)
@@ -84,6 +97,8 @@ public class ProjectPlanningToolController extends AbstractController {
 	@QueryDescription("Creates a Task on a remote Project Planning Tool Server and stores the creation on the server.")
 	@QueryResponses({
 			@Response(status = BAD_REQUEST, description = "If there is an error during preparation of the request for the remote server."),
+			@Response(status = BAD_GATEWAY, description = "If the remote server could not be found."),
+			@Response(status = GATEWAY_TIMEOUT, description = "If the remote server did not respond."),
 			@Response(status = 0, description = "The return value from the remote server is returned")
 	})
 	@QueryExamples({@Example(parameters = {"100", "/rest/api/2/issue/", "{\n" +
@@ -111,15 +126,53 @@ public class ProjectPlanningToolController extends AbstractController {
 	})
 	public F.Promise<Result> createPPTTask() {
 		Form<PPTTaskLogic.CreatePPTTaskForm> form = Form.form(PPTTaskLogic.CreatePPTTaskForm.class).bindFromRequest();
-		if (form.hasErrors()) {
-			return F.Promise.pure(badRequest(form.errorsAsJson()));
+		if (!form.hasErrors()) {
+			PPTAccount account = PPT_ACCOUNT_DAO.readByUser(AUTHENTICATION_CHECKER.getLoggedInUser(ctx()), form.get().account.getId());
+			if (account == null) {
+				form.reject("account", "Could not find account on server");
+			} else {
+				return F.Promise.promise(() -> {
+					Http.Context.current.remove();
+					return JPA.withTransaction(() -> PPT_TASK_LOGIC.createPPTTask(form.get(), account));
+				}).map(wsResponse ->
+								(Result) status(wsResponse.getFinalResponseStatus(), wsResponse.getFinalResponseContent())
+				).recover(throwable -> {
+					if (throwable instanceof ConnectException) {
+						return status(BAD_GATEWAY, jsonify("Could not connect to " + form.get().account.getPptUrl() + "."));
+					} else if (throwable instanceof TimeoutException) {
+						return status(GATEWAY_TIMEOUT, jsonify(form.get().account.getPptUrl() + " did not respond."));
+					} else {
+						throw throwable;
+					}
+				});
+			}
 		}
-		return F.Promise.promise(() -> {
-			Http.Context.current.remove();
-			return JPA.withTransaction(() -> PPT_TASK_LOGIC.createPPTTask(form.get()));
-		}).map(wsResponse ->
-						status(wsResponse.getStatus(), wsResponse.asJson())
-		);
+		return F.Promise.pure(badRequest(form.errorsAsJson()));
+	}
+
+	@Override
+	protected String getEntityName() {
+		return "Project Planning Tool";
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	@GuaranteeAuthenticatedUser
+	@QueryDescription("Returns one Project Planning Tool.")
+	@QueryExamples({
+			@Example(id = "9999", parameters = {}),
+			@Example(id = "REFERENCE_PPT_1000000000000000051", parameters = {})
+	})
+	public Result read(long id) {
+		return read(PROJECT_PLANNING_TOOL_DAO, id);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	@GuaranteeAuthenticatedUser
+	@QueryDescription("Returns all Project Planning Tools.")
+	public Result readAll() {
+		return readAll(PROJECT_PLANNING_TOOL_DAO);
 	}
 
 }

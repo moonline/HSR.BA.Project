@@ -47,7 +47,7 @@ public class TaskTemplateController extends AbstractCRUDController {
 			@Example(parameters = {"A new Task Template"})
 	})
 	public Result create() {
-		return create(TASK_TEMPLATE_LOGIC, TaskTemplateLogic.TaskTemplateForm.class);
+		return create(TASK_TEMPLATE_LOGIC, TaskTemplate.class);
 	}
 
 	@Transactional(readOnly = true)
@@ -79,7 +79,7 @@ public class TaskTemplateController extends AbstractCRUDController {
 			@Example(id = "REFERENCE_TASKTEMPLATE_1000000000000000008", parameters = {"My example Task Template"})
 	})
 	public Result update(long id) {
-		return update(TASK_TEMPLATE_DAO, TASK_TEMPLATE_LOGIC, TaskTemplateLogic.TaskTemplateForm.class, id);
+		return update(TASK_TEMPLATE_DAO, TASK_TEMPLATE_LOGIC, TaskTemplate.class, id);
 	}
 
 	@Transactional()

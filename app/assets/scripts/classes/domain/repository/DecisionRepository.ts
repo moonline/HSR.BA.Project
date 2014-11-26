@@ -10,7 +10,6 @@ module app.domain.repository.dks {
 			this.type = app.domain.model.dks.Decision;
 			this.resources = configuration.paths.decision;
 
-			this.filter = function(element) { return element.type === "ProblemOccurrence"; };
 			this.dataList = 'elements';
 			this.proxy = configuration.paths.dks.remoteProxy;
 		}

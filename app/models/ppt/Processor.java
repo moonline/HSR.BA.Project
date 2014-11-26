@@ -2,8 +2,10 @@ package models.ppt;
 
 import models.AbstractEntity;
 import models.user.Project;
+import play.data.validation.Constraints;
 
 import javax.persistence.Entity;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -11,9 +13,13 @@ import javax.persistence.Table;
 @Table(name = "processor")
 public class Processor extends AbstractEntity {
 
+	@Constraints.Required
 	private String name;
 	@ManyToOne
+	@Constraints.Required
 	private Project project;
+	@Constraints.Required
+	@Lob
 	private String code;
 
 	public String getName() {
@@ -39,4 +45,10 @@ public class Processor extends AbstractEntity {
 	public void setCode(String code) {
 		this.code = code;
 	}
+
+	@Override
+	public String toString() {
+		return "<Processor " + getId() + " " + name + " (project=" + (project == null ? "null" : project.getId()) + ", code=" + code + ")>";
+	}
+
 }

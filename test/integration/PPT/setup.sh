@@ -31,6 +31,39 @@ sudo sed -i $'/MISSING LICENSE INFORMATION HERE/{r/vagrant/jira-license.key\n d}
 echo "== Starting up jira again =="
 sudo -u jira /opt/atlassian/jira/bin/start-jira.sh
 
+echo "== Waiting for Jira to have started =="
+until $(curl --output /dev/null --silent --head --fail http://localhost:9920/); do
+	printf '.'
+	sleep 1
+done
+
+echo "== Configuring Jira with first project =="
+#Login
+wget --save-cookies /tmp/cookies.txt                                 --keep-session-cookies --header='X-Atlassian-Token: no-check' --post-data 'os_username=admin&os_password=admin&os_captcha=' http://localhost:9920/rest/gadget/1.0/login -o /tmp/login.log -O /tmp/login.json
+#Sudo
+wget --save-cookies /tmp/cookies.txt --load-cookies /tmp/cookies.txt --keep-session-cookies --header='X-Atlassian-Token: no-check' --post-data 'webSudoPassword=admin&decorator=dialog&inline=true&webSudoIsPost=false&close=true&_=1413538948243' http://localhost:9920/secure/admin/WebSudoAuthenticate.jspa -o /tmp/websudo.log -O /tmp/websudo.json
+#Source: http://stackoverflow.com/a/10660730/1937795
+rawurlencode() {
+  local string="${1}"
+  local strlen=${#string}
+  local encoded=""
+
+  for (( pos=0 ; pos<strlen ; pos++ )); do
+     c=${string:$pos:1}
+     case "$c" in
+        [-_.~a-zA-Z0-9] ) o="${c}" ;;
+        * )               printf -v o '%%%02x' "'$c"
+     esac
+     encoded+="${o}"
+  done
+  echo "${encoded}"
+}
+#Update License
+wget --save-cookies /tmp/cookies.txt --load-cookies /tmp/cookies.txt --keep-session-cookies --header='X-Atlassian-Token: no-check' --post-data "license=$(rawurlencode "$(cat /vagrant/jira-license.key)")&Add=Add" http://localhost:9920/secure/admin/ViewLicense.jspa -o /tmp/updateLicense.log -O /tmp/updateLicense.html
+#Create Project
+wget --save-cookies /tmp/cookies.txt --load-cookies /tmp/cookies.txt --keep-session-cookies --header='X-Atlassian-Token: no-check' --post-data "name=TestProjekt&key=TEST&keyEdited=true&projectTemplateWebItemKey=com.atlassian.jira-core-project-templates%3Ajira-issuetracking-item&projectTemplateModuleKey=com.atlassian.jira-core-project-templates%3Ajira-issuetracking-item" http://localhost:9920/rest/project-templates/1.0/templates -o /tmp/createProject.log -O /tmp/createProject.html
+
+
 echo "------ Installation and configuration of JIRA done ------"
 
 echo "||================================================||"

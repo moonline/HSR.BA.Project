@@ -1,6 +1,7 @@
 /// <reference path='../../../../../public/test/includes.ts' />
 
 /// <reference path='../../../../../app/assets/scripts/classes/domain/model/Node.ts' />
+/// <reference path='../../../../../app/assets/scripts/classes/domain/model/DksNode.ts' />
 /// <reference path='../../../../../app/assets/scripts/classes/domain/model/TaskTemplate.ts' />
 /// <reference path='../../../../../app/assets/scripts/classes/domain/model/TaskProperty.ts' />
 /// <reference path='../../../../../app/assets/scripts/classes/domain/model/Mapping.ts' />
@@ -20,13 +21,13 @@ module test.logic.domain.repository {
 				});
 				var repository: app.domain.repository.core.MappingRepository = new app.domain.repository.core.MappingRepository($http);
 
-				var decision: app.domain.model.dks.Decision = new app.domain.model.dks.Decision("Irgendwas");
-				decision.id = 3;
+				var dksNodeElement: app.domain.model.dks.DksNode = new app.domain.model.dks.DksNode("Irgendwas", [], {}, "");
+				dksNodeElement.id = 3;
 
 				var taskTemplate: app.domain.model.core.TaskTemplate = new app.domain.model.core.TaskTemplate("Invite to decision meeting 2");
 				taskTemplate.id = 24;
 
-				var mapping: app.domain.model.core.Mapping = new app.domain.model.core.Mapping(decision, taskTemplate);
+				var mapping: app.domain.model.core.Mapping = new app.domain.model.core.Mapping(dksNodeElement.id, taskTemplate);
 				mapping.id = 1302;
 
 				var status;
@@ -35,7 +36,6 @@ module test.logic.domain.repository {
 				});
 
 				$httpBackend.flush();
-				mapping.dksNode = 3;
 				expect(status).toEqual({ status: true, item: mapping });
 			}));
 		});

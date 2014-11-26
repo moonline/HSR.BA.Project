@@ -1,17 +1,23 @@
 /// <reference path='../../domain/repository/PersistentEntity.ts' />
+/// <reference path='../../domain/factory/FactoryConfiguration.ts' />
 
 module app.domain.model.ppt {
-	export class ProjectPlanningTool implements app.domain.repository.core.PersistentEntity{
-		url: string;
-		account: string;
-		password: string;
-		public id: number;
+	export class ProjectPlanningTool implements app.domain.repository.core.PersistentEntity {
+		public static factoryConfiguration: app.domain.factory.FactoryConfiguration = {
+			constructorArguments: [
+				{ name: "name", type: String, subType: null }
+			],
+			publicProperties: [
+				{ name: "id", type: Number, subType: null }
+			]
+		};
 
-		constructor(url: string, account: string, password: string) {
+		public id: number;
+		name: string;
+
+		constructor(name: string) {
 			this.id = Math.round(Math.random()*1000000);
-			this.url = url;
-			this.account = account;
-			this.password = password;
+			this.name = name;
 		}
 	}
 }

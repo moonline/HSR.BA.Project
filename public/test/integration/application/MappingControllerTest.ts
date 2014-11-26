@@ -6,6 +6,7 @@
 /// <reference path='../../../../app/assets/scripts/classes/domain/repository/MappingRepository.ts' />
 /// <reference path='../../../../app/assets/scripts/classes/domain/repository/DecisionKnowledgeSystemRepository.ts' />
 /// <reference path='../../../../app/assets/scripts/classes/domain/repository/ProblemRepository.ts' />
+/// <reference path='../../../../app/assets/scripts/classes/domain/repository/AlternativeRepository.ts' />
 
 /// <reference path='../../../../app/assets/scripts/classes/application/MappingController.ts' />
 
@@ -24,12 +25,13 @@ module test.integration.application {
 				persistenceService = {
 					taskTemplateRepository: new app.domain.repository.core.TaskTemplateRepository($http),
 					taskPropertyRepository: new app.domain.repository.core.TaskPropertyRepository($http),
-					decisionRepository: new app.domain.repository.dks.DecisionRepository($http),
 					mappingRepository: new app.domain.repository.core.MappingRepository($http),
-					decisionKnowledgeRepository: new app.domain.repository.dks.DecisionKnowledgeSystemRepository($http),
+					decisionKnowledgeSystemRepository: new app.domain.repository.dks.DecisionKnowledgeSystemRepository($http),
+					alternativeRepository : new app.domain.repository.dks.AlternativeRepository($http),
 					problemRepository: new app.domain.repository.dks.ProblemRepository($http)
 				};
-				persistenceService.decisionKnowledgeRepository.resources['list']['url'] = '/dks/decisionKnowledgeSystem';
+
+				persistenceService.decisionKnowledgeSystemRepository.resources['list']['url'] = '/dks';
 				persistenceService.taskTemplateRepository.resources['list']['url'] = '/taskTemplate';
 				persistenceService.taskPropertyRepository.resources['list']['url'] = '/taskProperty';
 				persistenceService.mappingRepository.resources['list']['url'] = '/mapping';
@@ -42,26 +44,17 @@ module test.integration.application {
 				httpBackend.when('GET','/mapping').respond({});
 
 
-				httpBackend.when('GET','/dks/decisionKnowledgeSystem').respond({
+				httpBackend.when('GET','/dks').respond({
 					"items": [
 						{
 							"id": 1,
-							"address": "http://localhost:9940"
+							"name": "The DKS",
+							"url": "http://localhost:9940"
 						}
 					]
 				});
-				httpBackend.when('GET','/dks/getFromDKS?url='+encodeURIComponent('http://localhost:9940/element')).respond({
+				httpBackend.when('GET','/dks/getFromDKS?url=http%3A%2F%2Flocalhost%3A9940%2Felement%3Fquery%3Dtype%2520is%2520%2522ProblemTemplate%2522').respond({
 					"startAt": 0, "maxResults": 2147483647, "length": 9, "elements": [
-					{
-						"type": "OptionTemplate",
-						"path": ["Cloud Application", "Session Management", "Server Session State"],
-						"name": "Server Session State",
-						"self": "http://152.96.193.210:8080/element/Cloud+Application%2FSession+Management%2FServer+Session+State",
-						"attributes": {
-							"IPR Classification": "Open"
-						},
-						"notes": "Keep session state on web server\r\n\r\n# Pros\r\n\r\n* ...\r\n* ..."
-					},
 					{
 						"type": "ProblemTemplate",
 						"path": ["Cloud Application", "DB Technologies", "DB Model"],
@@ -83,58 +76,20 @@ module test.integration.application {
 								"self": "http://152.96.193.210:8080/element/Cloud+Application%2FDB+Technologies%2FKey%2F%2FValue+Store"
 							}
 						]
-					},
-					{
-						"type": "ProblemOccurrence",
-						"path": ["My Project", "Session State Management"],
-						"name": "Session State Management",
-						"self": "http://152.96.193.210:8080/element/My+Project%2FSession+State+Management",
-						"attributes": {},
-						"notes": "How to manage session state on servers?",
-						"state": "Open",
-						"alternatives": [
-							{
-								"type": "OptionOccurrence",
-								"path": ["My Project", "Server Session State"],
-								"name": "Server Session State",
-								"self": "http://152.96.193.210:8080/element/My+Project%2FServer+Session+State"
-							},
-							{
-								"type": "OptionOccurrence",
-								"path": ["My Project", "DB Session State"],
-								"name": "DB Session State",
-								"self": "http://152.96.193.210:8080/element/My+Project%2FDB+Session+State"
-							},
-							{
-								"type": "OptionOccurrence",
-								"path": ["My Project", "Cloud Session State"],
-								"name": "Cloud Session State",
-								"self": "http://152.96.193.210:8080/element/My+Project%2FCloud+Session+State"
-							}
-						],
-						"template": {
-							"type": "ProblemTemplate",
-							"path": ["Cloud Application", "Session Management", "Session State Management"],
-							"name": "Session State Management",
-							"self": "http://152.96.193.210:8080/element/Cloud+Application%2FSession+Management%2FSession+State+Management"
-						}
 					}
 				]});
+				httpBackend.when('GET','/dks/getFromDKS?url=http%3A%2F%2Flocalhost%3A9940%2Felement%3Fquery%3Dtype%2520is%2520%2522OptionTemplate%2522').respond({});
 
 				var scope = rootScope.$new();
 				var controller: app.application.MappingController = new app.application.MappingController(scope, location, http, persistenceService);
 				httpBackend.flush();
 
-				var dkSystem = new app.domain.model.dks.DecisionKnowledgeSystem("http://localhost:9940"); dkSystem.id = 1;
+				var dkSystem = new app.domain.model.dks.DecisionKnowledgeSystem("The DKS", "http://localhost:9940"); dkSystem.id = 1;
 				expect(scope.currentDks).toEqual(dkSystem);
 
 				expect(scope.problems.length).toEqual(1);
 				expect(scope.problems[0].name).toEqual("DB Model");
-				expect(scope.problems[0].options.length).toEqual(2);
-
-				expect(scope.decisions.length).toEqual(1);
-				expect(scope.decisions[0].name).toEqual("Session State Management");
-				expect(scope.decisions[0].options.length).toEqual(3);
+				expect(scope.problems[0].alternatives.length).toEqual(2);
 			})
 		});
 	}

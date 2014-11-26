@@ -39,7 +39,7 @@ public class PPTAccountController extends AbstractCRUDController {
 	@GuaranteeAuthenticatedUser
 	@QueryParameters({
 			@Parameter(name = "ppt", description = "a reference (ID) to the Project Planning Tool"),
-			@Parameter(name = "url", description = "the URL to the Project Planning Tool"),
+			@Parameter(name = "urlUrl", description = "the URL to the Project Planning Tool"),
 			@Parameter(name = "pptUsername", description = "the username for the user for the Project Planning Tool"),
 			@Parameter(name = "pptPassword", description = "the password for the user for the Project Planning Tool")
 	})
@@ -87,7 +87,7 @@ public class PPTAccountController extends AbstractCRUDController {
 	@QueryParameters({
 			@Parameter(name = "id", isId = true, format = Long.class, description = "The id of the login information to update"),
 			@Parameter(name = "ppt", description = "a reference (ID) to the Project Planning Tool"),
-			@Parameter(name = "url", description = "the URL to the Project Planning Tool"),
+			@Parameter(name = "pptUrl", description = "the URL to the Project Planning Tool"),
 			@Parameter(name = "pptUsername", description = "the username for the user for the Project Planning Tool"),
 			@Parameter(name = "pptPassword", description = "the password for the user for the Project Planning Tool (optional)")
 	})

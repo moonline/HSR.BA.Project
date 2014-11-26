@@ -50,7 +50,7 @@ module test.logic.domain.repository {
 					var repository: test.helper.DummyRepository = new test.helper.DummyRepository($http);
 					var dummies: test.helper.Dummy[];
 
-					repository.findAll(function(items: test.helper.Dummy[]) {
+					repository.findAll(function(success, items: test.helper.Dummy[]) {
 						dummies = items;
 					});
 					$httpBackend.flush();
@@ -67,7 +67,7 @@ module test.logic.domain.repository {
 					var repository: test.helper.DummyRepository = new test.helper.DummyRepository($http);
 					var dummies: test.helper.Dummy[];
 
-					repository.findAll(function(items: test.helper.Dummy[]) {
+					repository.findAll(function(success, items: test.helper.Dummy[]) {
 						dummies = items;
 					});
 					$httpBackend.flush();
@@ -75,7 +75,7 @@ module test.logic.domain.repository {
 
 
 					var dummies2: test.helper.Dummy[];
-					repository.findAll(function(items: test.helper.Dummy[]) {
+					repository.findAll(function(success, items: test.helper.Dummy[]) {
 						dummies2 = items;
 					}, true);
 
@@ -93,7 +93,7 @@ module test.logic.domain.repository {
 					});
 
 					var duckDummies: test.helper.Dummy[];
-					repository.findAll(function(items: test.helper.Dummy[]) {
+					repository.findAll(function(success, items: test.helper.Dummy[]) {
 						duckDummies = items;
 					});
 
@@ -125,7 +125,7 @@ module test.logic.domain.repository {
 					var repository: test.helper.DummyRepository = new test.helper.DummyRepository($http);
 					var dummy: test.helper.Dummy;
 
-					repository.findOneBy('name', "DummyObject2", function(item: test.helper.Dummy) {
+					repository.findOneBy('name', "DummyObject2", function(success, item: test.helper.Dummy) {
 						dummy = item;
 					});
 					$httpBackend.flush();
@@ -150,7 +150,7 @@ module test.logic.domain.repository {
 					var repository: test.helper.DummyRepository = new test.helper.DummyRepository($http);
 					var dummies: test.helper.Dummy[];
 
-					repository.findAll(function(items) { dummies = items; });
+					repository.findAll(function(success, items) { dummies = items; });
 					$httpBackend.flush();
 
 					$httpBackend.expectPOST('/dummy/1/delete').respond({});
@@ -159,6 +159,7 @@ module test.logic.domain.repository {
 					$httpBackend.flush();
 
 					expect(status).toEqual(true);
+					expect(repository.itemCache.length).toEqual(1);
 				}));
 
 				it("Update dummy using .update()",angular.mock.inject(function($httpBackend, $http) {
@@ -198,7 +199,7 @@ module test.logic.domain.repository {
 				repository.dataList = 'dummies';
 				var dummies: test.helper.Dummy[];
 
-				repository.findAll(function(items: test.helper.Dummy[]) {
+				repository.findAll(function(success, items: test.helper.Dummy[]) {
 					dummies = items;
 				});
 				$httpBackend.flush();
@@ -225,7 +226,7 @@ module test.logic.domain.repository {
 				repository.filter = function(element) { return element.id == 2; };
 				var dummies: test.helper.Dummy[];
 
-				repository.findAll(function(items: test.helper.Dummy[]) {
+				repository.findAll(function(success, items: test.helper.Dummy[]) {
 					dummies = items;
 				});
 				$httpBackend.flush();
@@ -252,7 +253,7 @@ module test.logic.domain.repository {
 				repository.host = 'http://www.eeppi.ch';
 				var dummies: test.helper.Dummy[];
 
-				repository.findAll(function(items: test.helper.Dummy[]) {
+				repository.findAll(function(success, items: test.helper.Dummy[]) {
 					dummies = items;
 				});
 				$httpBackend.flush();
@@ -281,7 +282,7 @@ module test.logic.domain.repository {
 				repository.proxy = { url: '/dks/getFromDKS?url={target}' };
 				var dummies: test.helper.Dummy[];
 
-				repository.findAll(function(items: test.helper.Dummy[]) {
+				repository.findAll(function(success, items: test.helper.Dummy[]) {
 					dummies = items;
 				});
 				$httpBackend.flush();

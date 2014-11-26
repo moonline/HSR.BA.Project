@@ -15,14 +15,14 @@ public class ProjectControllerTest extends AbstractControllerTest {
 
 	@Test
 	public void testReadTheSingleProject() throws Throwable {
-		Result result = callActionWithUser(routes.ref.ProjectController.read());
+		Result result = callActionWithUser(routes.ref.ProjectController.readAll());
 		//Verification
 		assertThat(status(result)).isEqualTo(OK);
-		Long projectId = JPA.withTransaction(() -> new ProjectDAO().readTheOnlyOne().getId());
-		assertCheckJsonResponse(result, Json.parse("{" +
+		Long projectId = JPA.withTransaction(() -> new ProjectDAO().readAll().get(0).getId());
+		assertCheckJsonResponse(result, Json.parse("{\"items\":[{" +
 				"	\"id\" : " + projectId + ",\n" +
 				"	\"name\":\"Project\"\n" +
-				"}"));
+				"}]}"));
 	}
 
 }

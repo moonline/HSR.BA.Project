@@ -45,4 +45,9 @@ public class User extends AbstractEntity {
 	public void initSalt(SecureRandom secureRandom) {
 		salt = secureRandom.generateSeed(20);
 	}
+
+	@Override
+	public String toString() {
+		return "<User " + getId() + " " + name + ">";
+	}
 }
