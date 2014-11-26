@@ -135,6 +135,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   
   config.vm.provision "shell", path: "../../test/integration/PPT/setup.sh"
   config.vm.provision "shell", path: "../../test/integration/ADRepo/setup.sh"
+  config.vm.provision "shell", path: "../../test/integration/ADRepo/startup.sh", run: "always"
   config.vm.provision "shell", path: "setup.sh"
 
 end
