@@ -74,7 +74,7 @@ The EEPPI application is independent of the choosen persistence.
 * In the play console the following commands are especially useful:
   * `run` to start this project under http://localhost:9000
   * `test` to run all tests
-  * `build` to build the project to target/universal/eeppi-0.3.1-SNAPSHOT.zip
+  * `build` to build the project to target/universal/eeppi-0.4-SNAPSHOT.zip
   * `compile` to just compile the code without running anyting
 
 
