@@ -2,6 +2,8 @@
 /// <reference path='../../domain/factory/FactoryConfiguration.ts' />
 
 module app.domain.model.ppt {
+	'use strict';
+
 	export class ProjectPlanningTool implements app.domain.repository.core.PersistentEntity {
 		public static factoryConfiguration: app.domain.factory.FactoryConfiguration = {
 			constructorArguments: [

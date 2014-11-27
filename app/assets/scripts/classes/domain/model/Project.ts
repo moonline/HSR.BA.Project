@@ -2,6 +2,8 @@
 /// <reference path='../../domain/factory/FactoryConfiguration.ts' />
 
 module app.domain.model.core {
+	'use strict';
+
 	export class Project implements app.domain.repository.core.PersistentEntity {
 		public static factoryConfiguration: app.domain.factory.FactoryConfiguration = {
 			constructorArguments: [{ name: "name", type: String, subType: null }],

@@ -1,4 +1,5 @@
 /// <reference path='TaskPropertyValue.ts' />
+
 /// <reference path='../../domain/repository/PersistentEntity.ts' />
 /// <reference path='../../domain/factory/FactoryConfiguration.ts' />
 
@@ -28,14 +29,6 @@ module app.domain.model.core {
             this.properties = properties;
 			this.parent = null;
         }
-
-		public getPropertyValuesByProperty(): {[index: string]: app.domain.model.core.TaskPropertyValue } {
-			var propertyValues: {[index: string]: TaskPropertyValue } = {};
-			this.properties.forEach(function(propertyValue){
-				propertyValues[propertyValue.property.name] = propertyValue;
-			});
-			return propertyValues;
-		}
 
 		public hasProperty(property: app.domain.model.core.TaskProperty) {
 			for(var pi in this.properties) {

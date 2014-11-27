@@ -1,13 +1,14 @@
 /// <reference path='../../domain/model/Node.ts' />
 /// <reference path='../../domain/model/DksOccurrenceNode.ts' />
 /// <reference path='../../domain/model/Problem.ts' />
+/// <reference path='../../domain/model/Option.ts' />
 
 /// <reference path='../../domain/repository/PersistentEntity.ts' />
 /// <reference path='../../domain/factory/FactoryConfiguration.ts' />
 
-/// <reference path='Option.ts' />
-
 module app.domain.model.dks {
+	'use strict';
+
 	export class Decision extends DksOccurrenceNode implements app.domain.model.dks.Node, app.domain.repository.core.PersistentEntity {
 		public static factoryConfiguration: app.domain.factory.FactoryConfiguration = {
 			constructorArguments: [

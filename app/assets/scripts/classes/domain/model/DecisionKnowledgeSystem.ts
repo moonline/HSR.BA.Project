@@ -2,6 +2,8 @@
 /// <reference path='../../domain/factory/FactoryConfiguration.ts' />
 
 module app.domain.model.dks {
+	'use strict';
+
 	export class DecisionKnowledgeSystem implements app.domain.repository.core.PersistentEntity {
 		public static factoryConfiguration: app.domain.factory.FactoryConfiguration = {
 			constructorArguments: [

@@ -5,6 +5,8 @@
 /// <reference path='../../domain/model/Project.ts' />
 
 module app.domain.model.ppt {
+	'use strict';
+
 	export class RequestTemplate implements app.domain.repository.core.PersistentEntity {
 		public static factoryConfiguration: app.domain.factory.FactoryConfiguration = {
 			constructorArguments: [
