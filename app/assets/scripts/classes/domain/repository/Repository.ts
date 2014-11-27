@@ -1,4 +1,4 @@
-/// <reference path='PersistentEntity.ts' />
+/// <reference path='../../../classes/domain/repository/PersistentEntity.ts' />
 /// <reference path='../../../classes/domain/factory/ObjectFactory.ts' />
 
 module app.domain.repository.core {
@@ -7,21 +7,71 @@ module app.domain.repository.core {
 		type: any = null;
 		itemCache: T[];
 
+		/**
+		 * @member {string} host - The host url of the remote api, will be concatenated in front of the relative resource path.
+		 * 		Should be used in combination of proxy or host has to allow cross origin calls.
+		 * @example
+		 * 	'http://dks.eeppi.ch'
+		 */
 		public host: string = '';
-		// proxy path with {target} to be replaced by the remote url
+
+		/**
+		 * @member {string} proxy - Path with {target} to be replaced by the remote url.
+		 * 		If proxy is set, /path/to/proxy/{http://example.host.tld/path/to/resource/} will be called instead of
+		 * 		http://example.host.tld/path/to/resource/
+		 * @example
+		 *  '/dks/getFromDKS?url={target}'
+		 */
 		public proxy: { url: string; } = null;
+
+		/**
+		 * @member {string} dataList - Name of the item list inside the returned js object from remote api		 *
+		 * @example api returns:
+		 * 	{ "items": [
+		 * 		{ "name": "item 1" }, { "name": "item 2" }
+		 * 	] }
+ 		 */
 		public dataList: string = 'items';
+
+		/**
+		 * @member {function} filter - Function to filter the items returned by the remote api		 *
+		 * @callback ItemsFilter
+		 * @param {T} element - The current item inside the items list
+		 * @example
+		 *  function(element) { return element.type === "domain.model.Asset"; }
+		 */
 		public filter: (element: any) => boolean = function(element) { return true; };
 
 		httpService;
+
+		/**
+		 * @member { [index: string]: { method: string; url: string; } } resources - Dictionary with resource paths
+		 * @example
+		 * 	{
+		 *		list: 	{ method: 'GET', url: '/dksMapping' },
+		 *		detail: { method: 'GET', url: '/dksMapping/{id}' },
+		 *		create: { method: 'POST', url: '/dksMapping' },
+		 *		update: { method: 'POST', url: '/dksMapping/{id}' },
+		 *		remove: { method: 'POST', url: '/dksMapping/{id}/delete' }
+		 *	}
+		 */
 		resources: { [index: string]: { method: string; url: string; } } = <any>{};
 
+		/**
+		 * @param httpService - Angular $http service, used to call a remote api
+		 */
 		constructor(httpService) {
 			this.httpService = httpService;
 			this.itemCache = [];
 		}
 
-		public getResourcePath(resource: string) {
+		/**
+		 * Get url for resource
+		 *
+		 * @param {string} resource
+		 * @returns {string} path - Gets the path for the requested resource. Concatenates host & path and uses proxy of set
+		 */
+		public getResourcePath(resource: string):string {
 			if(this.proxy != null && this.proxy.url.indexOf("{target}") > -1) {
 				return this.proxy.url.replace("{target}", encodeURIComponent(this.host+this.resources[resource]['url']));
 			} else {
@@ -29,6 +79,12 @@ module app.domain.repository.core {
 			}
 		}
 
+		/**
+		 * Find all items in remote repository or local cache.
+		 *
+		 * @param {function} callback - Will be called with (true, items) on success successful remote/cache call and with (false, []) on error
+		 * @param {boolean} doCache - Returns items from remote api and updates the items cache if false, returns items from local cache if true.
+		 */
 		public findAll(callback: (success: boolean, items: T[]) => void, doCache = false): void {
 			var cache: T[] = this.itemCache;
 
@@ -49,6 +105,8 @@ module app.domain.repository.core {
 								items.push(app.domain.factory.ObjectFactory.createFromJson(type,element));
 							}
 						});
+						// remove existing items using loop because assignment of empty list to
+						//  temp. variable cache will assign a reference to a new list and not change itemCache
 						while(cache.length > 0) {
 							cache.pop();
 						}
@@ -56,7 +114,7 @@ module app.domain.repository.core {
 							cache.push(item);
 						});
 					} else {
-						console.warn("No data or data in false format returned. specified dataListProperty: '"+dataListName+"', data: ",data);
+						console.warn("No data or data have wrong format. specified dataListProperty: '"+dataListName+"', data: ",data);
 					}
 					callback(true, cache);
 				}).error(function(data){
@@ -66,9 +124,10 @@ module app.domain.repository.core {
 		}
 
 		/**
-		 * add item
+		 * Add an item to the remote collection and the cache using the remote api.
 		 *
-		 * the callback returns 'true, theObject' on success otherwise 'false, null'
+		 * @param {T} item - The item to persist using the remote api
+		 * @param {function} callback - The callback is called with (true, item) on success and with (false, null) on error
 		 */
 		public add(item: T, callback: (success: boolean, item: T) => void): void {
 			var method: string = this.resources['create']['method'].toLowerCase();
@@ -92,8 +151,11 @@ module app.domain.repository.core {
 		}
 
 		/**
-		 * search by id on remote resource. Do not search in cache
-		 * but update cache because user would like to get to get the newest data.
+		 * Search item by id on remote resource or in cache. Updates item in item cache on success.
+		 *
+		 * @param {number} id - ID of the item
+		 * @param {function} callback - The callback is called with (true, item) on success and with (false, null) on error
+		 * @param {boolean} doCache - Returns item from remote api and updates the item in the cache if false, returns item from local cache if true.
 		 */
 		public findOneById(id: number, callback: (success: boolean, item: T) => void, doCache:boolean = false): void {
 			var method: string = this.resources['detail']['method'].toLowerCase();
@@ -101,7 +163,7 @@ module app.domain.repository.core {
 			var type = this.type;
 			var cache = this.itemCache;
 
-			if(!this.resources['one']) {
+			if(!this.resources['detail']) {
 				throw new Error("Please configure a 'detail' resource for the "+this.type+" repository.");
 			} else {
 				if(doCache) {
@@ -112,6 +174,7 @@ module app.domain.repository.core {
 							var object = app.domain.factory.ObjectFactory.createFromJson(type, data);
 							var itemCachePos: number = cache.indexOf(object);
 
+							// find item an replace it with fetched item because maybe the item was updated on remote
 							if(itemCachePos >= 0) {
 								cache[itemCachePos] = object;
 							} else {
@@ -126,15 +189,13 @@ module app.domain.repository.core {
 			}
 		}
 
-		public updateCache(): void {
-			this.findAll(function(success, items){
-				this.itemCache = items;
-			}.bind(this));
-		}
-
 		/**
-		 * search in local cache for item because loading all elements
-		 * only to filter occours a lot of trafic
+		 * Find an item by a property value
+		 *
+		 * @param {string} propertyName - The name of the property of the item
+		 * @param property - The value of the property to search
+		 * @param {function} callback - The callback is called with (true, item) on success and with (false, null) on error
+		 * @param {boolean} doCache - Returns item from remote api and updates the item in the cache if false, returns item from local cache if true.
 		 */
 		public findOneBy(propertyName: string, property: any, callback: (success: boolean, item: T) => void, doCache: boolean = false): void {
 			this.findAll(function(success, items) {
@@ -149,8 +210,12 @@ module app.domain.repository.core {
 		}
 
 		/**
-		 * search in local cache for item because loading all elements
-		 * only to filter occours a lot of trafic
+		 * Find an item by a property (object) id
+		 *
+		 * @param {string} propertyName - The name of the property of the item
+		 * @param {object} property - The value of the property to search
+		 * @param {function} callback - The callback is called with (true, item) on success and with (false, null) on error
+		 * @param {boolean} doCache - Returns item from remote api and updates the item in the cache if false, returns item from local cache if true.
 		 */
 		public findOneByPropertyId(propertyName: string, property: any, callback: (success: boolean, item: T) => void, doCache: boolean = false): void {
 			this.findAll(function(success, items) {
@@ -164,6 +229,14 @@ module app.domain.repository.core {
 			}, doCache);
 		}
 
+		/**
+		 * Find items by a property (object) id
+		 *
+		 * @param {string} propertyName - The name of the property of the item
+		 * @param {object} property - The value of the property to search
+		 * @param {function} callback - The callback is called with (true, item) on success and with (false, null) on error
+		 * @param {boolean} doCache - Returns item from remote api and updates the item in the cache if false, returns item from local cache if true.
+		 */
 		public findByPropertyId(propertyName: string, property: any, callback: (success: boolean, items: T[]) => void, doCache: boolean = false): void {
 			this.findAll(function(success, items) {
 				var foundItems: T[] = [];
@@ -176,6 +249,12 @@ module app.domain.repository.core {
 			}, doCache);
 		}
 
+		/**
+		 * Remove item from remote collection and item cache
+		 *
+		 * @param {T} item - The item to remove
+		 * @param {function} callback - The callback is called with (true) on success and with (false) on error
+		 */
 		public remove(item: T, callback: (success: boolean) => void): void {
 			if(!this.resources['remove']) {
 				throw new Error("Please configure a 'remove' resource for the" +this.type.name+" repository.");
@@ -197,6 +276,12 @@ module app.domain.repository.core {
 
 		}
 
+		/**
+		 * Update item in remote collection
+		 *
+		 * @param {T} item - The item to remove
+		 * @param {function} callback - The callback is called with (true, item) on success and with (false, null) on error
+		 */
 		public update(item: T, callback: (success: boolean, item: T) => void): void {
 			if(!this.resources['update']) {
 				throw new Error("Please configure a 'update' resource for the" +this.type.name+" repository.");
@@ -215,6 +300,14 @@ module app.domain.repository.core {
 				});
 		}
 
+		/**
+		 * Find all items and its related properties
+		 *
+		 * @param {string} propertyName - The name of the item property
+		 * @param {app.domain.repository.core.Repository} repository - The repository to fetch the the property
+		 * @param {function} callback - Will be called with (true, items) on success successful remote/cache call and with (false, []) on error
+		 * @param {boolean} doCache - Returns items from remote api and updates the item cache if false, returns items from local cache if true.
+		 */
 		public findAllWithNodesAndSubNodes<S extends app.domain.repository.core.PersistentEntity>(propertyName: string, repository: app.domain.repository.core.Repository<S>,
 			callback: (success: boolean, items: T[]) => void, doCache = false) {
 			var instance = this;
@@ -228,6 +321,15 @@ module app.domain.repository.core {
 			}, doCache);
 		}
 
+		/**
+		 * Find related properties of nodes
+		 *
+		 * @param {T[]} nodes - A list with items to find its properties
+		 * @param {string} propertyName - The name of the item property
+		 * @param {app.domain.repository.core.Repository} repository - The repository to fetch the the property
+		 * @param {function} callback - Will be called with (true, items) on success successful remote/cache call and with (false, []) on error
+		 * @param {boolean} doCache - Returns items from remote api and updates the item cache if false, returns items from local cache if true.
+		 */
 		public findSubNodes<S extends app.domain.repository.core.PersistentEntity>(
 				nodes: T[],
 				propertyName: string,
