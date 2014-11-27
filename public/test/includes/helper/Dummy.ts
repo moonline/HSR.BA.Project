@@ -1,6 +1,6 @@
-/// <reference path='../../../app/assets/scripts/classes/domain/model/Node.ts' />
-/// <reference path='../../../app/assets/scripts/classes/domain/repository/PersistentEntity.ts' />
-/// <reference path='../../../app/assets/scripts/classes/domain/factory/FactoryConfiguration.ts' />
+/// <reference path='../../../../app/assets/scripts/classes/domain/model/Node.ts' />
+/// <reference path='../../../../app/assets/scripts/classes/domain/repository/PersistentEntity.ts' />
+/// <reference path='../../../../app/assets/scripts/classes/domain/factory/FactoryConfiguration.ts' />
 
 module test.helper {
 	export class Dummy implements app.domain.model.dks.Node, app.domain.repository.core.PersistentEntity {

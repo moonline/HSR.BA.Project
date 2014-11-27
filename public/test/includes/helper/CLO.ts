@@ -1,5 +1,5 @@
-/// <reference path='../../../app/assets/scripts/classes/domain/model/Node.ts' />
-/// <reference path='../../../app/assets/scripts/classes/domain/repository/PersistentEntity.ts' />
+/// <reference path='../../../../app/assets/scripts/classes/domain/model/Node.ts' />
+/// <reference path='../../../../app/assets/scripts/classes/domain/repository/PersistentEntity.ts' />
 
 // factory configuration less objekt ;-)
 

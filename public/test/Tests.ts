@@ -1,4 +1,4 @@
-/// <reference path='../test/libraries/declarations/jasmin/jasmine.d.ts' />
+/// <reference path='includes/libraries/declarations/jasmin/jasmine.d.ts' />
 /// <reference path='unit/domain/repository/RepositoryTest.ts' />
 /// <reference path='unit/domain/repository/TaskTemplateRepositoryTest.ts' />
 /// <reference path='unit/domain/repository/ProblemRepositoryTest.ts' />
