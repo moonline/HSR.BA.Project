@@ -113,7 +113,7 @@ module app.mod {
 		private addControllers() {
 			this.module.controller('mappingController', ['$scope', '$location', '$http', 'persistenceService', app.application.MappingController]);
 			this.module.controller('transmissionController', ['$scope', '$location', 'persistenceService', 'authenticationService', '$http', app.application.TransmissionController]);
-			this.module.controller('registerController', ['$scope', '$location', '$http', 'persistenceService', 'authenticationService', app.application.RegisterController]);
+			this.module.controller('registerController', ['$scope', 'persistenceService', 'authenticationService', app.application.RegisterController]);
 			this.module.controller('adminController', ['$scope', '$location', '$http', 'persistenceService', 'authenticationService', app.application.AdminController]);
 			this.module.controller('dashboardController', ['$scope', '$location', '$http', 'persistenceService', app.application.DashboardController]);
 
