@@ -134,3 +134,18 @@ tsc --target ES5 --out public/test/Tests.js public/test/Tests.ts
 
 1. Compile tests manual if you didn't start the server app
 2. Open public/test/index.html using a browser, recommended Firefox
+
+
+
+### 4.5 Manual generation of client documentation
+
+#### Requirements
+
+* Node
+    * See development requirements
+* typedoc
+    * npm install typedoc --global
+
+#### Usage
+
+typedoc --out 'targetDirectory' app/assets/scripts/Main.ts --target ES5

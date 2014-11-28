@@ -8,25 +8,26 @@ module app.domain.repository.core {
 		itemCache: T[];
 
 		/**
-		 * @member {string} host - The host url of the remote api, will be concatenated in front of the relative resource path.
-		 * 		Should be used in combination of proxy or host has to allow cross origin calls.
-		 * @example
-		 * 	'http://dks.eeppi.ch'
+		 * The host url of the remote api, will be concatenated in front of the relative resource path.
+		 * Should be used in combination of proxy or host has to allow cross origin calls.
+		 *
+		 * @example "http://dks.eeppi.ch"
 		 */
 		public host: string = '';
 
 		/**
-		 * @member {string} proxy - Path with {target} to be replaced by the remote url.
-		 * 		If proxy is set, /path/to/proxy/{http://example.host.tld/path/to/resource/} will be called instead of
-		 * 		http://example.host.tld/path/to/resource/
-		 * @example
-		 *  '/dks/getFromDKS?url={target}'
+		 * Path with {target} to be replaced by the remote url.
+		 * If proxy is set, /path/to/proxy/{http://example.host.tld/path/to/resource/} will be called instead of http://example.host.tld/path/to/resource/
+		 *
+		 * @example "/dks/getFromDKS?url={target}"
 		 */
 		public proxy: { url: string; } = null;
 
 		/**
-		 * @member {string} dataList - Name of the item list inside the returned js object from remote api		 *
-		 * @example api returns:
+		 * Name of the item list inside the returned js object from remote api
+		 *
+		 * @example
+		 * 	// api returns:
 		 * 	{ "items": [
 		 * 		{ "name": "item 1" }, { "name": "item 2" }
 		 * 	] }
@@ -34,18 +35,21 @@ module app.domain.repository.core {
 		public dataList: string = 'items';
 
 		/**
-		 * @member {function} filter - Function to filter the items returned by the remote api		 *
-		 * @callback ItemsFilter
-		 * @param {T} element - The current item inside the items list
+		 * Function to filter the items returned by the remote api
+		 *
+		 * @param element - The current item inside the items list
 		 * @example
-		 *  function(element) { return element.type === "domain.model.Asset"; }
+		 * 	function(element) {
+		 *  	return element.type === "domain.model.Asset";
+		 * 	}
 		 */
 		public filter: (element: any) => boolean = function(element) { return true; };
 
 		httpService;
 
 		/**
-		 * @member { [index: string]: { method: string; url: string; } } resources - Dictionary with resource paths
+		 * Dictionary with resource paths
+		 *
 		 * @example
 		 * 	{
 		 *		list: 	{ method: 'GET', url: '/dksMapping' },
@@ -68,8 +72,8 @@ module app.domain.repository.core {
 		/**
 		 * Get url for resource
 		 *
-		 * @param {string} resource
-		 * @returns {string} path - Gets the path for the requested resource. Concatenates host & path and uses proxy of set
+		 * @param resource
+		 * @returns path - Gets the path for the requested resource. Concatenates host & path and uses proxy of set
 		 */
 		public getResourcePath(resource: string):string {
 			if(this.proxy != null && this.proxy.url.indexOf("{target}") > -1) {
@@ -82,8 +86,8 @@ module app.domain.repository.core {
 		/**
 		 * Find all items in remote repository or local cache.
 		 *
-		 * @param {function} callback - Will be called with (true, items) on success successful remote/cache call and with (false, []) on error
-		 * @param {boolean} doCache - Returns items from remote api and updates the items cache if false, returns items from local cache if true.
+		 * @param callback - Will be called with (true, items) on success successful remote/cache call and with (false, []) on error
+		 * @param doCache - Returns items from remote api and updates the items cache if false, returns items from local cache if true.
 		 */
 		public findAll(callback: (success: boolean, items: T[]) => void, doCache = false): void {
 			var cache: T[] = this.itemCache;
@@ -126,8 +130,8 @@ module app.domain.repository.core {
 		/**
 		 * Add an item to the remote collection and the cache using the remote api.
 		 *
-		 * @param {T} item - The item to persist using the remote api
-		 * @param {function} callback - The callback is called with (true, item) on success and with (false, null) on error
+		 * @param item - The item to persist using the remote api
+		 * @param callback - The callback is called with (true, item) on success and with (false, null) on error
 		 */
 		public add(item: T, callback: (success: boolean, item: T) => void): void {
 			var method: string = this.resources['create']['method'].toLowerCase();
@@ -153,9 +157,9 @@ module app.domain.repository.core {
 		/**
 		 * Search item by id on remote resource or in cache. Updates item in item cache on success.
 		 *
-		 * @param {number} id - ID of the item
-		 * @param {function} callback - The callback is called with (true, item) on success and with (false, null) on error
-		 * @param {boolean} doCache - Returns item from remote api and updates the item in the cache if false, returns item from local cache if true.
+		 * @param id - ID of the item
+		 * @param callback - The callback is called with (true, item) on success and with (false, null) on error
+		 * @param doCache - Returns item from remote api and updates the item in the cache if false, returns item from local cache if true.
 		 */
 		public findOneById(id: number, callback: (success: boolean, item: T) => void, doCache:boolean = false): void {
 			var method: string = this.resources['detail']['method'].toLowerCase();
@@ -192,10 +196,10 @@ module app.domain.repository.core {
 		/**
 		 * Find an item by a property value
 		 *
-		 * @param {string} propertyName - The name of the property of the item
+		 * @param propertyName - The name of the property of the item
 		 * @param property - The value of the property to search
-		 * @param {function} callback - The callback is called with (true, item) on success and with (false, null) on error
-		 * @param {boolean} doCache - Returns item from remote api and updates the item in the cache if false, returns item from local cache if true.
+		 * @param callback - The callback is called with (true, item) on success and with (false, null) on error
+		 * @param doCache - Returns item from remote api and updates the item in the cache if false, returns item from local cache if true.
 		 */
 		public findOneBy(propertyName: string, property: any, callback: (success: boolean, item: T) => void, doCache: boolean = false): void {
 			this.findAll(function(success, items) {
@@ -212,10 +216,10 @@ module app.domain.repository.core {
 		/**
 		 * Find an item by a property (object) id
 		 *
-		 * @param {string} propertyName - The name of the property of the item
-		 * @param {object} property - The value of the property to search
-		 * @param {function} callback - The callback is called with (true, item) on success and with (false, null) on error
-		 * @param {boolean} doCache - Returns item from remote api and updates the item in the cache if false, returns item from local cache if true.
+		 * @param propertyName - The name of the property of the item
+		 * @param property - The value of the property to search
+		 * @param callback - The callback is called with (true, item) on success and with (false, null) on error
+		 * @param doCache - Returns item from remote api and updates the item in the cache if false, returns item from local cache if true.
 		 */
 		public findOneByPropertyId(propertyName: string, property: any, callback: (success: boolean, item: T) => void, doCache: boolean = false): void {
 			this.findAll(function(success, items) {
@@ -232,10 +236,10 @@ module app.domain.repository.core {
 		/**
 		 * Find items by a property (object) id
 		 *
-		 * @param {string} propertyName - The name of the property of the item
-		 * @param {object} property - The value of the property to search
-		 * @param {function} callback - The callback is called with (true, item) on success and with (false, null) on error
-		 * @param {boolean} doCache - Returns item from remote api and updates the item in the cache if false, returns item from local cache if true.
+		 * @param propertyName - The name of the property of the item
+		 * @param property - The value of the property to search
+		 * @param callback - The callback is called with (true, item) on success and with (false, null) on error
+		 * @param doCache - Returns item from remote api and updates the item in the cache if false, returns item from local cache if true.
 		 */
 		public findByPropertyId(propertyName: string, property: any, callback: (success: boolean, items: T[]) => void, doCache: boolean = false): void {
 			this.findAll(function(success, items) {
@@ -252,8 +256,8 @@ module app.domain.repository.core {
 		/**
 		 * Remove item from remote collection and item cache
 		 *
-		 * @param {T} item - The item to remove
-		 * @param {function} callback - The callback is called with (true) on success and with (false) on error
+		 * @param item - The item to remove
+		 * @param callback - The callback is called with (true) on success and with (false) on error
 		 */
 		public remove(item: T, callback: (success: boolean) => void): void {
 			if(!this.resources['remove']) {
@@ -279,8 +283,8 @@ module app.domain.repository.core {
 		/**
 		 * Update item in remote collection
 		 *
-		 * @param {T} item - The item to remove
-		 * @param {function} callback - The callback is called with (true, item) on success and with (false, null) on error
+		 * @param item - The item to remove
+		 * @param callback - The callback is called with (true, item) on success and with (false, null) on error
 		 */
 		public update(item: T, callback: (success: boolean, item: T) => void): void {
 			if(!this.resources['update']) {
@@ -303,10 +307,10 @@ module app.domain.repository.core {
 		/**
 		 * Find all items and its related properties
 		 *
-		 * @param {string} propertyName - The name of the item property
-		 * @param {app.domain.repository.core.Repository} repository - The repository to fetch the the property
-		 * @param {function} callback - Will be called with (true, items) on success successful remote/cache call and with (false, []) on error
-		 * @param {boolean} doCache - Returns items from remote api and updates the item cache if false, returns items from local cache if true.
+		 * @param propertyName - The name of the item property
+		 * @param repository - The repository to fetch the the property
+		 * @param callback - Will be called with (true, items) on success successful remote/cache call and with (false, []) on error
+		 * @param doCache - Returns items from remote api and updates the item cache if false, returns items from local cache if true.
 		 */
 		public findAllWithNodesAndSubNodes<S extends app.domain.repository.core.PersistentEntity>(propertyName: string, repository: app.domain.repository.core.Repository<S>,
 			callback: (success: boolean, items: T[]) => void, doCache = false) {
@@ -324,11 +328,11 @@ module app.domain.repository.core {
 		/**
 		 * Find related properties of nodes
 		 *
-		 * @param {T[]} nodes - A list with items to find its properties
-		 * @param {string} propertyName - The name of the item property
-		 * @param {app.domain.repository.core.Repository} repository - The repository to fetch the the property
-		 * @param {function} callback - Will be called with (true, items) on success successful remote/cache call and with (false, []) on error
-		 * @param {boolean} doCache - Returns items from remote api and updates the item cache if false, returns items from local cache if true.
+		 * @param nodes - A list with items to find its properties
+		 * @param propertyName - The name of the item property
+		 * @param repository - The repository to fetch the the property
+		 * @param callback - Will be called with (true, items) on success successful remote/cache call and with (false, []) on error
+		 * @param doCache - Returns items from remote api and updates the item cache if false, returns items from local cache if true.
 		 */
 		public findSubNodes<S extends app.domain.repository.core.PersistentEntity>(
 				nodes: T[],
