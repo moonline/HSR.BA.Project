@@ -25,6 +25,7 @@ module app.service {
 
 	}
 
+
 	export class TemplateProcesser {
 
 		private data: Object;
@@ -148,7 +149,7 @@ module app.service {
 				var startIndex: number = match.index;
 				var length: number = match[0].length;
 				var name: string = this.getProcessorName(processorPattern, processorLiteral);
-				var params: string[] = this.getParameters(processorPattern, processorLiteral);
+				var params: string[] = this.getProcessorParameters(processorPattern, processorLiteral);
 
 				if(name && params && startIndex >= 0 && length > 0) {
 					var replacement: string = executer(name, params, match.index, match[0].length);
@@ -162,6 +163,18 @@ module app.service {
 			return textToReplace;
 		}
 
+		/**
+		 * Execute a processor
+		 *
+		 * @param {string} processorName
+		 * @param {string[]} processorParameters - A list with string and path variables
+		 * 		string variables: 	start and end with ", e.q. "\"a string value\"", "\"variable \, with escaped commas\""
+		 * 		path variables: 	e.q. "path.to.variable"
+		 * @returns {string} - The rendered processor or ""
+		 *
+		 * @example:
+		 * 	runProcessor('concat', ["path.to.title", "\":\"", "path.to.value"]);
+		 */
 		public runProcessor(processorName: string, processorParameters: string[]):string {
 			var parameterList: any[] = [];
 			var instance = this;
@@ -179,7 +192,7 @@ module app.service {
 			if(this.processors[processorName]) {
 				var method = this.processors[processorName];
 				var result;
-				try {
+				try { // prevent malformed processors breake whole application
 					result = method.apply(this,parameterList);
 				} catch (error) {
 					console.error("Execution of processor '"+processorName+"' failed. Please check your processor code.", error);
@@ -213,7 +226,14 @@ module app.service {
 			}
 		}
 
-		private getParameters(processorPattern: ProcessorPattern, processorLiteral: string):string[] {
+		/**
+		 * Extract processor parameters from processor literal
+		 *
+		 * @param {ProcessorPattern} processorPattern
+		 * @param {string} processorLiteral -  - E.g. $processor:(path.to.variable, "ab")$
+		 * @returns {string[]} parameters - A list with string and path parameters, e.g. ["abc.ef", "\"string param\"", "variable"]
+		 */
+		private getProcessorParameters(processorPattern: ProcessorPattern, processorLiteral: string):string[] {
 			var match;
 			var processorParameterPart: string = (match = (new RegExp(processorPattern.parameter.pattern)).exec(processorLiteral)) ? match[0] : null;
 			if(processorParameterPart) {
@@ -235,7 +255,11 @@ module app.service {
 		}
 
 		/**
-		 * find patterns like ${var} or ${var.auto.name}
+		 * find patterns like ${var} or ${var.auto.name} or $!{var}
+		 *
+		 * @param {VariablePattern} variablePattern
+		 * @param {string} text - The template containing variable markers to replace
+		 * @return {string} textToReplace - The template with replaced variable markers
 		 */
 		public parseVariables(variablePattern: VariablePattern, text: string):string {
 			var regex: RegExp = new RegExp(variablePattern.pattern);
@@ -252,6 +276,13 @@ module app.service {
 			return textToReplace;
 		}
 
+		/**
+		 * Split path variables by dots and follow the path inside data to find values
+		 *
+		 * @param {string} path - A path like 'taskTemplate.attributes.assignee'
+		 * @param {object} data - Object with variables like { taskTemplate: { attributes: { assignee: 'admin', description: 'A description' } } }
+		 * @returns {string} value - The found value or ""
+		 */
 		private findValuesInPath(path: string, data: Object): string {
 			var currentSegment:string = null;
 			var currentData = data;
