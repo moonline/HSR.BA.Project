@@ -5,9 +5,9 @@ import controllers.AuthenticationChecker;
 import controllers.dks.DecisionKnowledgeSystemController;
 import controllers.dks.DecisionKnowledgeSystemMappingController;
 import controllers.docs.DocumentationController;
-import controllers.ppt.RequestTemplateController;
 import controllers.ppt.ProcessorController;
 import controllers.ppt.ProjectPlanningToolController;
+import controllers.ppt.RequestTemplateController;
 import controllers.task.TaskPropertyController;
 import controllers.task.TaskTemplateController;
 import controllers.user.PPTAccountController;
@@ -15,9 +15,9 @@ import controllers.user.ProjectController;
 import controllers.user.UserController;
 import daos.dks.DKSMappingDAO;
 import daos.dks.DecisionKnowledgeSystemDAO;
-import daos.ppt.RequestTemplateDAO;
 import daos.ppt.ProcessorDAO;
 import daos.ppt.ProjectPlanningToolDAO;
+import daos.ppt.RequestTemplateDAO;
 import daos.task.TaskDAO;
 import daos.task.TaskPropertyDAO;
 import daos.task.TaskPropertyValueDAO;
@@ -30,9 +30,9 @@ import logics.dks.DKSMappingLogic;
 import logics.dks.DecisionKnowledgeSystemLogic;
 import logics.docs.DocumentationLogic;
 import logics.docs.ExampleDataCreator;
-import logics.ppt.RequestTemplateLogic;
 import logics.ppt.PPTTaskLogic;
 import logics.ppt.ProcessorLogic;
+import logics.ppt.RequestTemplateLogic;
 import logics.task.TaskPropertyLogic;
 import logics.task.TaskTemplateLogic;
 import logics.user.PPTAccountLogic;
@@ -44,6 +44,7 @@ import models.task.TaskPropertyValue;
 import models.task.TaskTemplate;
 import models.user.PPTAccount;
 import models.user.Project;
+import org.jetbrains.annotations.NotNull;
 import play.Application;
 import play.GlobalSettings;
 import play.data.format.Formatters;
@@ -122,7 +123,7 @@ public class Global extends GlobalSettings {
 	private void registerFormatters() {
 		Formatters.register(PPTAccount.class, new Formatters.SimpleFormatter<PPTAccount>() {
 			@Override
-			public PPTAccount parse(String accountId, Locale l) throws ParseException {
+			public PPTAccount parse(@NotNull String accountId, Locale l) throws ParseException {
 				if (accountId.matches("\\d+")) {
 					PPTAccount authentication = PPT_ACCOUNT_LOGIC.read(AUTHENTICATION_CHECKER.getLoggedInUser(ctx()), Long.parseLong(accountId));
 					if (authentication != null) {
@@ -133,7 +134,7 @@ public class Global extends GlobalSettings {
 			}
 
 			@Override
-			public String print(PPTAccount account, Locale l) {
+			public String print(@NotNull PPTAccount account, Locale l) {
 				return account.getId() + "";
 			}
 
@@ -145,47 +146,47 @@ public class Global extends GlobalSettings {
 			}
 
 			@Override
-			public String print(JsonNode json, Locale l) {
+			public String print(@NotNull JsonNode json, Locale l) {
 				return Json.stringify(json);
 			}
 
 		});
 		Formatters.register(ProjectPlanningTool.class, new Formatters.SimpleFormatter<ProjectPlanningTool>() {
 			@Override
-			public ProjectPlanningTool parse(String text, Locale locale) throws ParseException {
+			public ProjectPlanningTool parse(@NotNull String text, Locale locale) throws ParseException {
 				return PROJECT_PLANNING_TOOL_DAO.readById(Long.parseLong(text));
 			}
 
 			@Override
-			public String print(ProjectPlanningTool projectPlanningTool, Locale locale) {
+			public String print(@NotNull ProjectPlanningTool projectPlanningTool, Locale locale) {
 				return projectPlanningTool.getId() + "";
 			}
 		});
 		Formatters.register(TaskTemplate.class, new Formatters.SimpleFormatter<TaskTemplate>() {
 			@Override
-			public TaskTemplate parse(String text, Locale locale) throws ParseException {
+			public TaskTemplate parse(@NotNull String text, Locale locale) throws ParseException {
 				return TASK_TEMPLATE_DAO.readById(Long.parseLong(text));
 			}
 
 			@Override
-			public String print(TaskTemplate taskTemplate, Locale locale) {
+			public String print(@NotNull TaskTemplate taskTemplate, Locale locale) {
 				return taskTemplate.getId() + "";
 			}
 		});
 		Formatters.register(TaskProperty.class, new Formatters.SimpleFormatter<TaskProperty>() {
 			@Override
-			public TaskProperty parse(String text, Locale locale) throws ParseException {
+			public TaskProperty parse(@NotNull String text, Locale locale) throws ParseException {
 				return TASK_PROPERTY_DAO.readById(Long.parseLong(text));
 			}
 
 			@Override
-			public String print(TaskProperty taskProperty, Locale locale) {
+			public String print(@NotNull TaskProperty taskProperty, Locale locale) {
 				return taskProperty.getId() + "";
 			}
 		});
 		Formatters.register(TaskPropertyValue.class, new Formatters.SimpleFormatter<TaskPropertyValue>() {
 			@Override
-			public TaskPropertyValue parse(String text, Locale locale) throws ParseException {
+			public TaskPropertyValue parse(@NotNull String text, Locale locale) throws ParseException {
 				if (text.matches("\\d+")) {
 					return TASK_PROPERTY_VALUE_DAO.readById(Long.parseLong(text));
 				} else {
@@ -204,18 +205,18 @@ public class Global extends GlobalSettings {
 			}
 
 			@Override
-			public String print(TaskPropertyValue taskPropertyValue, Locale locale) {
+			public String print(@NotNull TaskPropertyValue taskPropertyValue, Locale locale) {
 				return taskPropertyValue.getId() + "";
 			}
 		});
 		Formatters.register(Project.class, new Formatters.SimpleFormatter<Project>() {
 			@Override
-			public Project parse(String text, Locale locale) throws ParseException {
+			public Project parse(@NotNull String text, Locale locale) throws ParseException {
 				return PROJECT_DAO.readById(Long.parseLong(text));
 			}
 
 			@Override
-			public String print(Project project, Locale locale) {
+			public String print(@NotNull Project project, Locale locale) {
 				return project.getId() + "";
 			}
 		});

@@ -12,6 +12,7 @@ import logics.docs.QueryParameters;
 import logics.docs.QueryResponses;
 import logics.ppt.PPTTaskLogic;
 import models.user.PPTAccount;
+import org.jetbrains.annotations.NotNull;
 import play.data.Form;
 import play.db.jpa.JPA;
 import play.db.jpa.Transactional;
@@ -150,6 +151,7 @@ public class ProjectPlanningToolController extends AbstractReadController {
 		return F.Promise.pure(badRequest(form.errorsAsJson()));
 	}
 
+	@NotNull
 	@Override
 	protected String getEntityName() {
 		return "Project Planning Tool";

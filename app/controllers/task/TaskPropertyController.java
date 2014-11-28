@@ -8,6 +8,7 @@ import logics.docs.QueryExamples;
 import logics.docs.QueryParameters;
 import logics.task.TaskPropertyLogic;
 import models.task.TaskProperty;
+import org.jetbrains.annotations.NotNull;
 import play.db.jpa.Transactional;
 import play.mvc.Result;
 
@@ -23,6 +24,7 @@ public class TaskPropertyController extends AbstractCRUDController {
 		TASK_PROPERTY_DAO = taskPropertyDao;
 	}
 
+	@NotNull
 	@Override
 	protected String getEntityName() {
 		return "Task Property";

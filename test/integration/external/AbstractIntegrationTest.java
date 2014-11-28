@@ -1,7 +1,8 @@
-package integration;
+package external;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
+import org.jetbrains.annotations.Nullable;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import play.Logger;
@@ -16,7 +17,7 @@ public class AbstractIntegrationTest extends AbstractDatabaseTest {
 		return integrationTestsExcluded(null);
 	}
 
-	protected static boolean integrationTestsExcluded(String testName) {
+	protected static boolean integrationTestsExcluded(@Nullable String testName) {
 		Config config = ConfigFactory.load();
 		boolean isExcluded = config.hasPath(LAUNCH_PARAMETER_TO_EXCLUDE_INTEGRATION_TESTS_KEY) &&
 				config.getString(LAUNCH_PARAMETER_TO_EXCLUDE_INTEGRATION_TESTS_KEY).equals(LAUNCH_PARAMETER_TO_EXCLUDE_INTEGRATION_TESTS_VALUE);

@@ -4,6 +4,8 @@ import daos.task.TaskPropertyDAO;
 import daos.task.TaskPropertyValueDAO;
 import logics.CRUDLogicInterface;
 import models.task.TaskProperty;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class TaskPropertyLogic implements CRUDLogicInterface<TaskProperty> {
 
@@ -16,13 +18,13 @@ public class TaskPropertyLogic implements CRUDLogicInterface<TaskProperty> {
 	}
 
 	@Override
-	public TaskProperty create(TaskProperty postedEntity) {
+	public TaskProperty create(@NotNull TaskProperty postedEntity) {
 		TaskProperty taskProperty = new TaskProperty();
 		return update(taskProperty, postedEntity);
 	}
 
 	@Override
-	public TaskProperty update(TaskProperty persistedEntity, TaskProperty postedEntity) {
+	public TaskProperty update(@NotNull TaskProperty persistedEntity, @NotNull TaskProperty postedEntity) {
 		persistedEntity.setName(postedEntity.getName());
 		return TASK_PROPERTY_DAO.persist(persistedEntity);
 	}
@@ -31,6 +33,7 @@ public class TaskPropertyLogic implements CRUDLogicInterface<TaskProperty> {
 	 * @param entity The entity to delete
 	 * @return null (if the entity could be deleted) or an error message.
 	 */
+	@Nullable
 	@Override
 	public String delete(TaskProperty entity) {
 		if (canBeDeleted(entity)) {

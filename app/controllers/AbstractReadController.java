@@ -5,9 +5,11 @@ import logics.docs.QueryExamples;
 import logics.docs.QueryParameters;
 import logics.docs.QueryResponses;
 import models.AbstractEntity;
+import org.jetbrains.annotations.NotNull;
 import play.mvc.Result;
 
 public abstract class AbstractReadController extends AbstractController {
+	@NotNull
 	protected abstract String getEntityName();
 
 	@QueryParameters({@QueryParameters.Parameter(name = "id", isId = true, format = Long.class, description = "The id of the entity to get")})
@@ -17,7 +19,8 @@ public abstract class AbstractReadController extends AbstractController {
 	})
 	public abstract Result read(long id);
 
-	protected <E extends AbstractEntity> Result read(AbstractDAO<E> dao, long id) {
+	@NotNull
+	protected <E extends AbstractEntity> Result read(@NotNull AbstractDAO<E> dao, long id) {
 		E entity = dao.readById(id);
 		if (entity == null) {
 			return notFound(id);
@@ -33,10 +36,12 @@ public abstract class AbstractReadController extends AbstractController {
 	})
 	public abstract Result readAll();
 
-	protected Result readAll(AbstractDAO<? extends AbstractEntity> dao) {
+	@NotNull
+	protected Result readAll(@NotNull AbstractDAO<? extends AbstractEntity> dao) {
 		return ok(jsonify(dao.readAll()));
 	}
 
+	@NotNull
 	protected Result notFound(long id) {
 		return notFound(jsonify("Could not find " + getEntityName() + " with id " + id + "."));
 	}

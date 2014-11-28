@@ -77,7 +77,7 @@ public abstract class AbstractDAO<T> {
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<T> getResultList(Query q) {
+	private List<T> getResultList(@NotNull Query q) {
 		return q.getResultList();
 	}
 

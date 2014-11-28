@@ -2,6 +2,8 @@ package models.task;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import models.dks.DKSMapping;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import play.data.validation.Constraints;
 import play.data.validation.ValidationError;
 
@@ -13,6 +15,7 @@ import java.util.List;
 @Table(name = "tasktemplate")
 public class TaskTemplate extends AbstractWork {
 
+	@NotNull
 	@OneToMany(cascade = CascadeType.PERSIST, mappedBy = "taskTemplate")
 	@JsonBackReference
 	private List<DKSMapping> dksMappings = new ArrayList<>();
@@ -39,6 +42,7 @@ public class TaskTemplate extends AbstractWork {
 		this.parent = parent;
 	}
 
+	@NotNull
 	public List<DKSMapping> getDksMappings() {
 		return dksMappings;
 	}
@@ -48,6 +52,7 @@ public class TaskTemplate extends AbstractWork {
 		return "<TaskTemplate " + getId() + " " + name + " (parent=" + (parent == null ? "null" : parent.getId()) + ")>";
 	}
 
+	@Nullable
 	@SuppressWarnings("UnusedDeclaration") //Used by Play Framework to validate form
 	public List<ValidationError> validate() {
 		if (parent != null && parent.getParent() != null) {

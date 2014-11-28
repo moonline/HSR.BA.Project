@@ -5,6 +5,7 @@ import controllers.GuaranteeAuthenticatedUser;
 import daos.user.ProjectDAO;
 import logics.docs.QueryDescription;
 import logics.docs.QueryExamples;
+import org.jetbrains.annotations.NotNull;
 import play.db.jpa.Transactional;
 import play.mvc.Result;
 
@@ -16,6 +17,7 @@ public class ProjectController extends AbstractReadController {
 		PROJECT_DAO = projectDao;
 	}
 
+	@NotNull
 	@Override
 	protected String getEntityName() {
 		return "Project";

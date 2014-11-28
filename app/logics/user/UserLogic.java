@@ -3,6 +3,7 @@ package logics.user;
 import daos.user.UserDAO;
 import models.user.User;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import play.data.validation.Constraints;
 
 import java.security.MessageDigest;
@@ -21,7 +22,21 @@ public class UserLogic {
 		SECURE_RANDOM = secureRandom;
 	}
 
-	public User readUser(String name, String password) {
+	/**
+	 * @return null if the password is valid, an error message otherwise
+	 */
+	@Nullable
+	private static String validatePassword(@Nullable String password1, @Nullable String password2) {
+		if (password1 == null || password2 == null) {
+			return "Missing new password";
+		} else if (!password1.equals(password2)) {
+			return "The two passwords do not match";
+		}
+		return null;
+	}
+
+	@Nullable
+	public User readUser(String name, @NotNull String password) {
 		User user = USER_DAO.readByName(name);
 		if (!isPasswordCorrect(user, password)) {
 			user = null;
@@ -29,7 +44,7 @@ public class UserLogic {
 		return user;
 	}
 
-	public boolean changePassword(User user, ChangePasswordForm form) {
+	public boolean changePassword(@NotNull User user, @NotNull ChangePasswordForm form) {
 		if (!isPasswordCorrect(user, form.oldPassword)) {
 			return false;
 		} else {
@@ -39,7 +54,7 @@ public class UserLogic {
 	}
 
 	@NotNull
-	public User createUser(RegisterForm form) {
+	public User createUser(@NotNull RegisterForm form) {
 		User user = new User();
 		user.setName(form.name);
 		user.initSalt(SECURE_RANDOM);
@@ -48,11 +63,11 @@ public class UserLogic {
 		return user;
 	}
 
-	public boolean isPasswordCorrect(User user, String password) {
+	public boolean isPasswordCorrect(@Nullable User user, @NotNull String password) {
 		return user != null && Arrays.equals(user.getPasswordHash(), calculatePasswordHash(user, password));
 	}
 
-	private byte[] calculatePasswordHash(User user, String password) {
+	private byte[] calculatePasswordHash(@NotNull User user, @NotNull String password) {
 		byte[] out = password.getBytes();
 		try {
 			MessageDigest algorithm = MessageDigest.getInstance("SHA");
@@ -66,18 +81,6 @@ public class UserLogic {
 			Logger.getAnonymousLogger().severe("Could not find Hash-algorithm 'SHA'!");
 		}
 		return out;
-	}
-
-	/**
-	 * @return null if the password is valid, an error message otherwise
-	 */
-	private static String validatePassword(String password1, String password2) {
-		if (password1 == null || password2 == null) {
-			return "Missing new password";
-		} else if (!password1.equals(password2)) {
-			return "The two passwords do not match";
-		}
-		return null;
 	}
 
 	public static class LoginForm {
@@ -100,6 +103,7 @@ public class UserLogic {
 			this.password = password;
 		}
 
+		@Nullable
 		@SuppressWarnings("UnusedDeclaration") //Used by play for validation
 		public String validate() {
 			return validatePassword(password, passwordRepeat);
@@ -114,6 +118,7 @@ public class UserLogic {
 		@Constraints.Required
 		public String newPasswordRepeat;
 
+		@Nullable
 		@SuppressWarnings("UnusedDeclaration") //Used by play for validation
 		public String validate() {
 			return validatePassword(newPassword, newPasswordRepeat);
