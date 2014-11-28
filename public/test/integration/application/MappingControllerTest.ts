@@ -34,7 +34,7 @@ module test.integration.application {
 				persistenceService.decisionKnowledgeSystemRepository.resources['list']['url'] = '/dks';
 				persistenceService.taskTemplateRepository.resources['list']['url'] = '/taskTemplate';
 				persistenceService.taskPropertyRepository.resources['list']['url'] = '/taskProperty';
-				persistenceService.mappingRepository.resources['list']['url'] = '/mapping';
+				persistenceService.mappingRepository.resources['list']['url'] = '/dksMapping';
 			}));
 
 			it("load problems and decisions from remote dks using dks sources", function() {

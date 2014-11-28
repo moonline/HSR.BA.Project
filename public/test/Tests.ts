@@ -8,6 +8,7 @@
 /// <reference path='unit/service/TemplateProcessorTest.ts' />
 /// <reference path='../test/integration/application/AdminControllerTest.ts' />
 /// <reference path='../test/integration/application/MappingControllerTest.ts' />
+/// <reference path='../test/integration/application/TransmissionControllerTest.ts' />
 
 module test {
 	describe("Logic tests", function(){
@@ -33,6 +34,7 @@ module test {
 		describe("Application test suite", function() {
 			test.integration.application.AdminControllerTest();
 			test.integration.application.MappingControllerTest();
+			test.integration.application.TransmissionControllerTest();
 		});
 	});
 }
