@@ -2,6 +2,7 @@ package models.task;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import models.user.Project;
+import org.jetbrains.annotations.NotNull;
 import play.libs.Json;
 
 import javax.persistence.Entity;
@@ -52,7 +53,7 @@ public class Task extends AbstractWork {
 		return finalRequestContent;
 	}
 
-	public void setFinalRequestContent(JsonNode finalRequestContent) {
+	public void setFinalRequestContent(@NotNull JsonNode finalRequestContent) {
 		this.finalRequestContent = Json.stringify(finalRequestContent);
 	}
 
@@ -68,7 +69,7 @@ public class Task extends AbstractWork {
 		return Json.parse(finalResponseContent);
 	}
 
-	public void setFinalResponseContent(JsonNode finalResponseContent) {
+	public void setFinalResponseContent(@NotNull JsonNode finalResponseContent) {
 		this.finalResponseContent = Json.stringify(finalResponseContent);
 	}
 

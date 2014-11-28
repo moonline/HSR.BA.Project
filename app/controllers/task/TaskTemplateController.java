@@ -12,6 +12,7 @@ import logics.task.TaskTemplateLogic;
 import logics.task.WorkLogic;
 import models.task.TaskPropertyValue;
 import models.task.TaskTemplate;
+import org.jetbrains.annotations.NotNull;
 import play.data.Form;
 import play.db.jpa.Transactional;
 import play.mvc.Result;
@@ -31,6 +32,7 @@ public class TaskTemplateController extends AbstractCRUDController {
 		TASK_PROPERTY_VALUE_DAO = taskPropertyValueDao;
 	}
 
+	@NotNull
 	@Override
 	protected String getEntityName() {
 		return "Task Template";

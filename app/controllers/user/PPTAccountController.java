@@ -10,6 +10,7 @@ import logics.docs.QueryParameters;
 import logics.docs.QueryResponses;
 import logics.user.PPTAccountLogic;
 import models.user.PPTAccount;
+import org.jetbrains.annotations.NotNull;
 import play.data.Form;
 import play.db.jpa.Transactional;
 import play.mvc.Result;
@@ -30,6 +31,7 @@ public class PPTAccountController extends AbstractCRUDController {
 		AUTHENTICATION_CHECKER = authenticationChecker;
 	}
 
+	@NotNull
 	@Override
 	protected String getEntityName() {
 		return "Projectplanningtool Account";

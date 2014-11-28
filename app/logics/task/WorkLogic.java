@@ -4,6 +4,7 @@ import daos.task.TaskPropertyValueDAO;
 import models.task.AbstractWork;
 import models.task.TaskProperty;
 import models.task.TaskPropertyValue;
+import org.jetbrains.annotations.NotNull;
 import play.data.validation.Constraints;
 import play.db.jpa.JPA;
 
@@ -15,7 +16,7 @@ public class WorkLogic {
 		TASK_PROPERTY_VALUE_DAO = taskPropertyValueDao;
 	}
 
-	public AbstractWork addProperty(AbstractWork work, TaskPropertyForm taskPropertyForm) {
+	public AbstractWork addProperty(AbstractWork work, @NotNull TaskPropertyForm taskPropertyForm) {
 		TaskPropertyValue taskPropertyValue = new TaskPropertyValue();
 		taskPropertyValue.setTask(work);
 		taskPropertyValue.setValue(taskPropertyForm.value);
@@ -26,13 +27,13 @@ public class WorkLogic {
 		return work;
 	}
 
-	public AbstractWork updateProperty(TaskPropertyValue taskPropertyValue, TaskPropertyForm taskPropertyForm) {
+	public AbstractWork updateProperty(@NotNull TaskPropertyValue taskPropertyValue, @NotNull TaskPropertyForm taskPropertyForm) {
 		taskPropertyValue.setValue(taskPropertyForm.value);
 		taskPropertyValue.setProperty(taskPropertyForm.property);
 		return taskPropertyValue.getTask();
 	}
 
-	public AbstractWork removeProperty(TaskPropertyValue taskPropertyValue) {
+	public AbstractWork removeProperty(@NotNull TaskPropertyValue taskPropertyValue) {
 		AbstractWork work = taskPropertyValue.getTask();
 		work.removeProperty(taskPropertyValue);
 		TASK_PROPERTY_VALUE_DAO.remove(taskPropertyValue);

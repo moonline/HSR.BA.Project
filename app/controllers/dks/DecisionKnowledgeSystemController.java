@@ -9,6 +9,7 @@ import logics.docs.QueryExamples;
 import logics.docs.QueryParameters;
 import logics.docs.QueryResponses;
 import models.dks.DecisionKnowledgeSystem;
+import org.jetbrains.annotations.NotNull;
 import play.db.jpa.Transactional;
 import play.libs.F;
 import play.mvc.Result;
@@ -42,7 +43,7 @@ public class DecisionKnowledgeSystemController extends AbstractCRUDController {
 			@Example(id = "http://headers.jsontest.com/", parameters = {}),
 			@Example(id = "hatetepe?__no-valid-url", parameters = {})
 	})
-	public F.Promise<Result> getFromDKS(String url) {
+	public F.Promise<Result> getFromDKS(@NotNull String url) {
 		//noinspection RedundantCast
 		return F.Promise.promise(() ->
 						DKS_LOGIC.getFromDKS(url)
@@ -52,6 +53,7 @@ public class DecisionKnowledgeSystemController extends AbstractCRUDController {
 				F.Promise.pure(badRequest("Could not load " + url)));
 	}
 
+	@NotNull
 	@Override
 	protected String getEntityName() {
 		return "DecisionKnowledgeSystem";

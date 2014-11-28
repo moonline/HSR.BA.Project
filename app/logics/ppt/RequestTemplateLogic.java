@@ -3,6 +3,8 @@ package logics.ppt;
 import daos.ppt.RequestTemplateDAO;
 import logics.CRUDLogicInterface;
 import models.ppt.RequestTemplate;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class RequestTemplateLogic implements CRUDLogicInterface<RequestTemplate> {
 
@@ -13,13 +15,15 @@ public class RequestTemplateLogic implements CRUDLogicInterface<RequestTemplate>
 		REQUEST_TEMPLATE_DAO = requestTemplateDao;
 	}
 
+	@NotNull
 	@Override
-	public RequestTemplate create(RequestTemplate postedEntity) {
+	public RequestTemplate create(@NotNull RequestTemplate postedEntity) {
 		return update(new RequestTemplate(), postedEntity);
 	}
 
+	@NotNull
 	@Override
-	public RequestTemplate update(RequestTemplate persistedEntity, RequestTemplate postedEntity) {
+	public RequestTemplate update(@NotNull RequestTemplate persistedEntity, @NotNull RequestTemplate postedEntity) {
 		persistedEntity.setPpt(postedEntity.getPpt());
 		persistedEntity.setProject(postedEntity.getProject());
 		persistedEntity.setName(postedEntity.getName());
@@ -33,6 +37,7 @@ public class RequestTemplateLogic implements CRUDLogicInterface<RequestTemplate>
 	 * @param entity The entity to delete
 	 * @return null (if the entity could be deleted) or an error message.
 	 */
+	@Nullable
 	@Override
 	public String delete(RequestTemplate entity) {
 		REQUEST_TEMPLATE_DAO.remove(entity);

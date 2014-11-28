@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import models.AbstractEntity;
+import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -42,7 +43,7 @@ public class User extends AbstractEntity {
 		return salt;
 	}
 
-	public void initSalt(SecureRandom secureRandom) {
+	public void initSalt(@NotNull SecureRandom secureRandom) {
 		salt = secureRandom.generateSeed(20);
 	}
 

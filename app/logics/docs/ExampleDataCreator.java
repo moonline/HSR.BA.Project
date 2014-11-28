@@ -3,9 +3,9 @@ package logics.docs;
 import daos.AbstractDAO;
 import daos.dks.DKSMappingDAO;
 import daos.dks.DecisionKnowledgeSystemDAO;
-import daos.ppt.RequestTemplateDAO;
 import daos.ppt.ProcessorDAO;
 import daos.ppt.ProjectPlanningToolDAO;
+import daos.ppt.RequestTemplateDAO;
 import daos.task.TaskPropertyDAO;
 import daos.task.TaskPropertyValueDAO;
 import daos.task.TaskTemplateDAO;
@@ -15,9 +15,9 @@ import daos.user.UserDAO;
 import logics.user.UserLogic;
 import models.dks.DKSMapping;
 import models.dks.DecisionKnowledgeSystem;
-import models.ppt.RequestTemplate;
 import models.ppt.Processor;
 import models.ppt.ProjectPlanningTool;
+import models.ppt.RequestTemplate;
 import models.task.TaskProperty;
 import models.task.TaskPropertyValue;
 import models.task.TaskTemplate;
@@ -25,6 +25,7 @@ import models.user.PPTAccount;
 import models.user.Project;
 import models.user.User;
 import org.apache.commons.lang3.NotImplementedException;
+import org.jetbrains.annotations.NotNull;
 import play.Logger;
 import play.db.jpa.JPA;
 import play.libs.F;
@@ -36,6 +37,7 @@ import java.util.Set;
 
 public class ExampleDataCreator {
 
+	public final String USER_PASSWORD = "ZvGjYpyJdU";
 	private final ProcessorDAO PROCESSOR_DAO;
 	private final UserDAO USER_DAO;
 	private final PPTAccountDAO PPT_ACCOUNT_DAO;
@@ -47,17 +49,12 @@ public class ExampleDataCreator {
 	private final RequestTemplateDAO REQUEST_TEMPLATE_DAO;
 	private final ProjectDAO PROJECT_DAO;
 	private final DecisionKnowledgeSystemDAO DKS_DAO;
-
-
+	public String USER_NAME;
+	public Long USER_ID;
+	@NotNull
 	private Set<String> cache = new HashSet<>();
 
-	public String USER_NAME;
-
-	public final String USER_PASSWORD = "ZvGjYpyJdU";
-
-	public Long USER_ID;
-
-	public ExampleDataCreator(UserLogic userLogic, UserDAO userDao, PPTAccountDAO pptAccountDao, ProjectPlanningToolDAO projectPlanningToolDao, TaskTemplateDAO taskTemplateDao, TaskPropertyDAO taskPropertyDao, TaskPropertyValueDAO taskPropertyValueDao, DKSMappingDAO dksMappingDao, RequestTemplateDAO requestTemplateDao, ProjectDAO projectDao, ProcessorDAO processorDAO, DecisionKnowledgeSystemDAO dksDao) {
+	public ExampleDataCreator(@NotNull UserLogic userLogic, UserDAO userDao, PPTAccountDAO pptAccountDao, ProjectPlanningToolDAO projectPlanningToolDao, TaskTemplateDAO taskTemplateDao, TaskPropertyDAO taskPropertyDao, TaskPropertyValueDAO taskPropertyValueDao, DKSMappingDAO dksMappingDao, RequestTemplateDAO requestTemplateDao, ProjectDAO projectDao, ProcessorDAO processorDAO, DecisionKnowledgeSystemDAO dksDao) {
 		USER_DAO = userDao;
 		PPT_ACCOUNT_DAO = pptAccountDao;
 		JPA.withTransaction(new F.Callback0() {
@@ -89,7 +86,7 @@ public class ExampleDataCreator {
 		DKS_DAO = dksDao;
 	}
 
-	public void createExampleObject(String reference, boolean canBeCached) {
+	public void createExampleObject(@NotNull String reference, boolean canBeCached) {
 		ExampleObjectCreator objectCreator;
 		String[] referenceParts = reference.split("_");
 		switch (referenceParts[1]) {
@@ -287,6 +284,38 @@ public class ExampleDataCreator {
 		doCreateObject(reference, canBeCached, objectCreator, Long.parseLong(referenceParts[2]));
 	}
 
+	private void persist(@NotNull Object... objectsToPersist) {
+		EntityManager em = JPA.em();
+		for (Object objectToPersist : objectsToPersist) {
+			em.persist(objectToPersist);
+		}
+		em.flush();
+	}
+
+	private void doCreateObject(String reference, boolean canBeCached, @NotNull ExampleObjectCreator function, long id) {
+		if (canBeCached && cache.contains(reference)) {
+			return;
+		}
+		try {
+			function.create(id);
+		} catch (Throwable throwable) {
+			Logger.error("Could not create example object " + reference, throwable);
+		}
+		if (canBeCached) {
+			cache.add(reference);
+		}
+	}
+
+	public static interface CreateNewObjectFunctionInterface<R> {
+		@NotNull
+		public R createNew();
+	}
+
+	public static interface CheckIsExistingAndExpectedFunctionInterface<A, R> {
+		@NotNull
+		public R check(A a);
+	}
+
 	private static class ExampleObjectCreator<T> {
 		private final String className;
 		private final AbstractDAO<T> dao;
@@ -312,36 +341,6 @@ public class ExampleDataCreator {
 					Logger.error("Could not create Example Data " + className + " with ID " + id + ", because it already exists. The problem is, this existing object is exposed to every use as example of the documentation: " + existingEntity);
 				}
 			}
-		}
-	}
-
-	public static interface CreateNewObjectFunctionInterface<R> {
-		public R createNew();
-	}
-
-	public static interface CheckIsExistingAndExpectedFunctionInterface<A, R> {
-		public R check(A a);
-	}
-
-	private void persist(Object... objectsToPersist) {
-		EntityManager em = JPA.em();
-		for (Object objectToPersist : objectsToPersist) {
-			em.persist(objectToPersist);
-		}
-		em.flush();
-	}
-
-	private void doCreateObject(String reference, boolean canBeCached, ExampleObjectCreator function, long id) {
-		if (canBeCached && cache.contains(reference)) {
-			return;
-		}
-		try {
-			function.create(id);
-		} catch (Throwable throwable) {
-			Logger.error("Could not create example object " + reference, throwable);
-		}
-		if (canBeCached) {
-			cache.add(reference);
 		}
 	}
 

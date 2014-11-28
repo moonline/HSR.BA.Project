@@ -9,6 +9,7 @@ import logics.docs.QueryExamples;
 import logics.docs.QueryParameters;
 import logics.docs.QueryResponses;
 import models.dks.DKSMapping;
+import org.jetbrains.annotations.NotNull;
 import play.db.jpa.Transactional;
 import play.mvc.Result;
 
@@ -25,6 +26,7 @@ public class DecisionKnowledgeSystemMappingController extends AbstractCRUDContro
 		DKS_MAPPING_DAO = dksMappingDao;
 	}
 
+	@NotNull
 	@Override
 	protected String getEntityName() {
 		return "Decision Knowledge System Mapping";

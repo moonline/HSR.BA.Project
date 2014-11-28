@@ -9,6 +9,7 @@ import logics.docs.QueryParameters;
 import logics.docs.QueryResponses;
 import logics.ppt.RequestTemplateLogic;
 import models.ppt.RequestTemplate;
+import org.jetbrains.annotations.NotNull;
 import play.db.jpa.Transactional;
 import play.mvc.Result;
 
@@ -26,6 +27,7 @@ public class RequestTemplateController extends AbstractCRUDController {
 		REQUEST_TEMPLATE_DAO = requestTemplateDao;
 	}
 
+	@NotNull
 	@Override
 	protected String getEntityName() {
 		return "Request Template";

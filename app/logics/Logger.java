@@ -11,7 +11,9 @@ import play.mvc.Http;
 
 public class Logger {
 
+	@NotNull
 	private final play.Logger.ALogger logger;
+	@NotNull
 	private final AuthenticationChecker authenticationChecker;
 
 	public Logger(String name) {
@@ -23,7 +25,7 @@ public class Logger {
 		authenticationChecker = new AuthenticationChecker(userDAO, new UserLogic(userDAO, null));
 	}
 
-	public void debug(String action, @NotNull Object... params) {
+	public void debug(@NotNull String action, @NotNull Object... params) {
 		if (!action.equals("looked for select u from User u where u.name = ?") && !action.startsWith("looked for User with id ")) { //prevent Stack Overflow Exception on logging (Logger calls this method itself)
 			Http.Context context = getContextIfPossible();
 			if (context != null) {

@@ -5,6 +5,7 @@ import models.ppt.ProjectPlanningTool;
 import models.user.PPTAccount;
 import models.user.User;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import play.data.validation.Constraints;
 
 public class PPTAccountLogic {
@@ -15,7 +16,8 @@ public class PPTAccountLogic {
 		PPT_ACCOUNT_DAO = pptAccountDao;
 	}
 
-	public PPTAccount read(User user, long accountId) {
+	@Nullable
+	public PPTAccount read(@Nullable User user, long accountId) {
 		if (user != null) {
 			PPTAccount pptAccount = PPT_ACCOUNT_DAO.readById(accountId);
 			if (pptAccount != null && pptAccount.getUser().getId().equals(user.getId())) {
@@ -26,13 +28,14 @@ public class PPTAccountLogic {
 	}
 
 	@NotNull
-	public PPTAccount create(CreatePPTAccountForm form, User loggedInUser) {
+	public PPTAccount create(@NotNull CreatePPTAccountForm form, User loggedInUser) {
 		PPTAccount account = new PPTAccount();
 		account.setUser(loggedInUser);
 		return update(account, form);
 	}
 
-	public PPTAccount update(PPTAccount account, UpdatePPTAccountForm updateData) {
+	@NotNull
+	public PPTAccount update(@NotNull PPTAccount account, @NotNull UpdatePPTAccountForm updateData) {
 		account.setPpt(updateData.ppt);
 		account.setPptUrl(updateData.pptUrl);
 		account.setPptUsername(updateData.pptUsername);
@@ -60,6 +63,7 @@ public class PPTAccountLogic {
 	}
 
 	public static class CreatePPTAccountForm extends UpdatePPTAccountForm {
+		@Nullable
 		@SuppressWarnings("UnusedDeclaration") //used for form validation by Play
 		public String validate() {
 			if (pptPassword == null || pptPassword.equals("")) {

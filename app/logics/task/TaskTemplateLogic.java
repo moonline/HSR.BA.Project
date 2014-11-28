@@ -4,6 +4,8 @@ import daos.task.TaskPropertyValueDAO;
 import daos.task.TaskTemplateDAO;
 import logics.CRUDLogicInterface;
 import models.task.TaskTemplate;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class TaskTemplateLogic extends WorkLogic implements CRUDLogicInterface<TaskTemplate> {
 
@@ -14,12 +16,12 @@ public class TaskTemplateLogic extends WorkLogic implements CRUDLogicInterface<T
 		TASK_TEMPLATE_DAO = taskTemplateDao;
 	}
 
-	public TaskTemplate create(TaskTemplate postedEntity) {
+	public TaskTemplate create(@NotNull TaskTemplate postedEntity) {
 		TaskTemplate taskTemplate = new TaskTemplate();
 		return update(taskTemplate, postedEntity);
 	}
 
-	public TaskTemplate update(TaskTemplate persistedEntity, TaskTemplate postedEntity) {
+	public TaskTemplate update(@NotNull TaskTemplate persistedEntity, @NotNull TaskTemplate postedEntity) {
 		persistedEntity.setName(postedEntity.getName());
 		persistedEntity.setParent(postedEntity.getParent());
 		return TASK_TEMPLATE_DAO.persist(persistedEntity);
@@ -29,6 +31,7 @@ public class TaskTemplateLogic extends WorkLogic implements CRUDLogicInterface<T
 	 * @param entity The entity to delete
 	 * @return null (if the entity could be deleted) or an error message.
 	 */
+	@Nullable
 	@Override
 	public String delete(TaskTemplate entity) {
 		if (canBeDeleted(entity)) {
