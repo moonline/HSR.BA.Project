@@ -25,7 +25,6 @@ module app.application {
 		
 
 		constructor($scope, persistenceService, authenticationService) {
-			
 			this.authenticationService = authenticationService;
 			this.settings = configuration.settings;
 			this.pptAccountRepository = persistenceService['pptAccountRepository'];
