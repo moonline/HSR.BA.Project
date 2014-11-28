@@ -86,7 +86,7 @@ INSERT INTO REQUESTTEMPLATE (ID, NAME, REQUESTBODYTEMPLATE, URL, PROJECT_ID, PPT
 ','			"name": "$!ifElse:(parentRequestData.key,"Sub-task", "${taskTemplate.attributes.type}")$"
 ','		},
 ','		$ifElse:(taskTemplate.attributes.priority, " "priority": {\n"name": "${taskTemplate.attributes.priority}"\n}\, ", "")$
-','		$mapExistingAssignees:(taskTemplate.attributes.assignee, "Project Planner:admin|Customer:admin|Architect:admin"," "assignee": {
+','		$mapExistingAssignees:(taskTemplate.attributes.assignee, "Project Planner:admin\,Customer:admin\,Architect:admin"," "assignee": {
 ','			"name": "${taskTemplate.attributes.assignee}"
 ','		}\, ")$
 ','		"timetracking": {
@@ -119,7 +119,7 @@ INSERT INTO PROCESSOR (ID, CODE, NAME, PROJECT_ID) VALUES (nextval('entity_seq')
 
 INSERT INTO PROCESSOR (ID, CODE, NAME, PROJECT_ID) VALUES (nextval('entity_seq'),CONCAT('function(assignee, existingAssignees, assigneeJSON) {
 ','		if(assignee && existingAssignees && assigneeJSON) {
-','			var assigneeMappingList = existingAssignees.split("|")&#SEMICOLON
+','			var assigneeMappingList = existingAssignees.split(",")&#SEMICOLON
 ','			var assigneeMapping = {}&#SEMICOLON
 ','			for(var ami in assigneeMappingList) {
 ','				var assigneeName = assigneeMappingList[ami].split(":")[0].trim()&#SEMICOLON

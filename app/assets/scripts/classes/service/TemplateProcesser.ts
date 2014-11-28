@@ -1,29 +1,102 @@
 module app.service {
+	export class ProcessorPattern {
+		pattern: string;
+		name: {
+			pattern: string;
+			// # characters in front of processor name
+			preSignLength: number;
+			// # characters behind of processor name
+			postSignLength: number;
+		};
+		parameter: {
+			pattern: string;
+			// # characters in front of processor parameters
+			preSignLength: number;
+			// # characters behind of processor name
+			postSignLength: number;
+		}
+	}
+	export class VariablePattern {
+		pattern: string;
+		// # characters in front of variable name
+		preSignLength: number;
+		// # characters behind of variable name
+		postSignLength: number;
+
+	}
+
 	export class TemplateProcesser {
 
 		private data: Object;
 		private template: string;
+
 		/**
 		 * @example:
+		 *	 ${path.to.something}
+		 *	 ${variable}
+		 */
+		primaryVariablePattern: VariablePattern = {
+			pattern: '\\$\\{[\\w\\d\\.]*\\}',
+			preSignLength: 2,
+			postSignLength: 1
+
+		};
+		secondaryVariablePattern: VariablePattern = {
+			pattern: '\\$\\!\\{[\\w\\d\\.]*\\}',
+			preSignLength: 3,
+			postSignLength: 1
+
+		};
+
+		/**
+		 * processor pattern:
+		 * $processorName:(param1, param2)$
+		 *
+		 * not allowed inside processor: '$', ':(', ')$'
+		 * escape , like \, inside values:
+		 * $processorName:(param1, "stringParam\, with\, comma")$
+		 *
+		 * @example:
 		 *	 $processor:(abc1, abc, "ef")$
+		 *	 $processor:(path.to.variable, "ab")$
 		 *	 $processor:(abc1)$
 		 *	 $processor:(abc1 )$
 		 *	 $processor:()$
 		 */
-		private variablePattern:string = '\\$\\{[\\w\\d\\.]*\\}';
-		private scondaryVariablePattern: string = '\\$\\!\\{[\\w\\d\\.]*\\}';
-
-		private processorPattern:string = '\\$[A-Za-z0-9_-]+:\\([^\\(\\)]*\\)\\$';
-		private secondaryProcessorPattern: string = '\\$\\![A-Za-z0-9_-]+:\\([^\\(\\)]*\\)\\$';
-
-		private processorNamePattern:string = '\\$[A-Za-z0-9_-]+:\\(';
-		private secondaryProcessorNamePattern:string = '\\$\\![A-Za-z0-9_-]+:\\(';
-
-		private processorParameterPattern:string = ':\\([^\\(\\)]*\\)\\$';
-		private secondaryProcessorParameterPattern:string = ':\\([^\\(\\)]*\\)\\$';
+		primaryProcessorPattern: ProcessorPattern = {
+			pattern: '\\$[A-Za-z0-9_-]+:\\([^\\(\\)]*\\)\\$',
+			name: {
+				pattern: '\\$[A-Za-z0-9_-]+:\\(',
+				preSignLength: 1,
+				postSignLength: 2
+			},
+			parameter: {
+				pattern: ':\\([^\\(\\)]*\\)\\$',
+				preSignLength: 2,
+				postSignLength: 2
+			}
+		};
+		secondaryProcessorPattern: ProcessorPattern = {
+			pattern: '\\$\\![A-Za-z0-9_-]+:\\([^\\(\\)]*\\)\\$',
+			name: {
+				pattern: '\\$\\![A-Za-z0-9_-]+:\\(',
+				preSignLength: 2,
+				postSignLength: 2
+			},
+			parameter: {
+				pattern: ':\\([^\\(\\)]*\\)\\$',
+				preSignLength: 2,
+				postSignLength: 2
+			}
+		};
 
 		private processors: { [index:string]: any };
 
+		/**
+		 * @param {object} data - A dictionary used byvariables and processors for template rendering
+		 * @param {string} template - A text template containing markers and processors to replace
+		 * @param {Object.<string, function>} processors - A dictionary with processor functions
+		 */
 		constructor(data: Object, template: string, processors: { [index:string]: any }) {
 			this.template = template;
 			this.data = data;
@@ -31,34 +104,33 @@ module app.service {
 		}
 
 		/**
-		 * processorpattern:
-		 * $processorname:(param1, param2)$
+		 * process member template using member data and member processors
 		 *
-		 * not allowed inside processor: '$', ':(', ')$'
-		 * escape , like \, inside values:
-		 * $processorname:(param1, "stringparam\, with\, comma")$
+		 * @returns {string} template - The rendered text template
 		 */
 		public process(): string {
 			var template = this.template;
-			// ${variable.path.to.something}
-			template = this.parseVariables(template);
-			// $processorname:(param1, param2)$
+
+			template = this.parseVariables(this.primaryVariablePattern, template);
 			template = this.parseProcessors(
 				template,
+				this.primaryProcessorPattern,
 				function(processorName, processorParameters, startIndex, length) {
 					return this.runProcessor(processorName, processorParameters);
 				}.bind(this)
 			);
 			return template;
 		}
+
 
 		public processSecondary(): string {
 			var template = this.template;
-			// ${variable.path.to.something}
-			template = this.parseSecondaryVariables(template);
+			// $!{variable.path.to.something}
+			template = this.parseVariables(this.secondaryVariablePattern, template);
 			// $!processorname:(param1, param2)$
-			template = this.parseSecondaryProcessors(
+			template = this.parseProcessors(
 				template,
+				this.secondaryProcessorPattern,
 				function(processorName, processorParameters, startIndex, length) {
 					return this.runProcessor(processorName, processorParameters);
 				}.bind(this)
@@ -66,41 +138,19 @@ module app.service {
 			return template;
 		}
 
-		public parseProcessors(text: string, executer: (processorName: string, processorParameters: string[], startIndex: number, length: number) => string):string {
-			var regex: RegExp = new RegExp(this.processorPattern);
+		public parseProcessors(text: string, processorPattern: ProcessorPattern,
+				executer: (processorName: string, processorParameters: string[], startIndex: number, length: number) => string):string {
+			var regex: RegExp = new RegExp(processorPattern.pattern);
 			var textToReplace = ""+text;
 
 			for(var match; match = regex.exec(textToReplace); ) {
 				var processorLiteral: string = match[0];
 				var startIndex: number = match.index;
 				var length: number = match[0].length;
-				var name: string = this.getProcessorName(processorLiteral);
-				var params: string[] = this.getParameters(processorLiteral);
+				var name: string = this.getProcessorName(processorPattern, processorLiteral);
+				var params: string[] = this.getParameters(processorPattern, processorLiteral);
 
-				if(name && params && startIndex && startIndex >= 0 && length > 0) {
-					var replacement: string = executer(name, params, match.index, match[0].length);
-					textToReplace = textToReplace.slice(0, startIndex) + (replacement || '') + textToReplace.slice(startIndex+length, textToReplace.length);
-				} else {
-					throw new Error("Invalid processor properties: "+JSON.stringify({
-						match: match, name: name, params: params, startIndex: match.index, length: match[0].length
-					}));
-				}
-			}
-			return textToReplace;
-		}
-
-		public parseSecondaryProcessors(text: string, executer: (processorName: string, processorParameters: string[], startIndex: number, length: number) => string):string {
-			var regex: RegExp = new RegExp(this.secondaryProcessorPattern);
-			var textToReplace = ""+text;
-
-			for(var match; match = regex.exec(textToReplace); ) {
-				var processorLiteral: string = match[0];
-				var startIndex: number = match.index;
-				var length: number = match[0].length;
-				var name: string = this.getSecondaryProcessorName(processorLiteral);
-				var params: string[] = this.getSecondaryParameters(processorLiteral);
-
-				if(name && params && startIndex && startIndex >= 0 && length > 0) {
+				if(name && params && startIndex >= 0 && length > 0) {
 					var replacement: string = executer(name, params, match.index, match[0].length);
 					textToReplace = textToReplace.slice(0, startIndex) + (replacement || '') + textToReplace.slice(startIndex+length, textToReplace.length);
 				} else {
@@ -135,7 +185,7 @@ module app.service {
 					console.error("Execution of processor '"+processorName+"' failed. Please check your processor code.", error);
 					throw new Error("Execution of processor '"+processorName+"' failed. Please check your processor code.");
 				}
-				return result.toString();
+				return (result) ? result.toString() : '';
 			} else {
 				return '';
 			}
@@ -145,58 +195,35 @@ module app.service {
 			return variable[0] == '"' && variable[variable.length-1] == '"';
 		}
 
-		private getProcessorName(processorLiteral: string) {
+		/**
+		 * Extract the processors name from the matched processor literal
+		 *
+		 * @param {ProcessorPattern} processorPattern
+		 * @param {string} processorLiteral - E.g. $processor:(path.to.variable, "ab")$
+		 * @returns {string}
+		 */
+		private getProcessorName(processorPattern: ProcessorPattern, processorLiteral: string) {
 			var match;
-			var processorNamePart:string = (match = (new RegExp(this.processorNamePattern)).exec(processorLiteral)) ? match[0] : null;
+			var processorNamePart:string = (match = (new RegExp(processorPattern.name.pattern)).exec(processorLiteral)) ? match[0] : null;
 			if(processorNamePart) {
-				return processorNamePart.substring(1, processorNamePart.length-2);
+				// string pre- and post charachter to get the blank name
+				return processorNamePart.substring(processorPattern.name.preSignLength, processorNamePart.length-processorPattern.name.postSignLength);
 			} else {
 				return null;
 			}
 		}
 
-		private getSecondaryProcessorName(processorLiteral: string) {
+		private getParameters(processorPattern: ProcessorPattern, processorLiteral: string):string[] {
 			var match;
-			var processorNamePart:string = (match = (new RegExp(this.secondaryProcessorNamePattern)).exec(processorLiteral)) ? match[0] : null;
-			if(processorNamePart) {
-				return processorNamePart.substring(2, processorNamePart.length-2);
-			} else {
-				return null;
-			}
-		}
-
-		private getParameters(processorLiteral: string):string[] {
-			var match;
-			var processorParameterPart: string = (match = (new RegExp(this.processorParameterPattern)).exec(processorLiteral)) ? match[0] : null;
+			var processorParameterPart: string = (match = (new RegExp(processorPattern.parameter.pattern)).exec(processorLiteral)) ? match[0] : null;
 			if(processorParameterPart) {
-				var parameterCommaSepList:string = processorParameterPart.substring(2, processorParameterPart.length-2);
+				var parameterCommaSepList:string = processorParameterPart.substring(processorPattern.parameter.preSignLength, processorParameterPart.length-processorPattern.parameter.postSignLength);
 				if(parameterCommaSepList.length > 1) {
-					// replace escaped commans before splitting and restore after
-					parameterCommaSepList = parameterCommaSepList.replace('\\,', '##!!comma!!##');
+					// replace escaped commas before splitting and restore after
+					parameterCommaSepList = parameterCommaSepList.split("\\,").join("##!!comma!!##");
 					var parameters: string[] = parameterCommaSepList.split(',');
 					for(var pi in parameters) {
-						parameters[pi] = parameters[pi].replace('##!!comma!!##',',');
-					}
-					return <string[]>parameters.map(function(element) { return element.trim(); });
-				} else {
-					return [];
-				}
-			} else {
-				return [];
-			}
-		}
-
-		private getSecondaryParameters(processorLiteral: string):string[] {
-			var match;
-			var processorParameterPart: string = (match = (new RegExp(this.secondaryProcessorParameterPattern)).exec(processorLiteral)) ? match[0] : null;
-			if(processorParameterPart) {
-				var parameterCommaSepList:string = processorParameterPart.substring(2, processorParameterPart.length-2);
-				if(parameterCommaSepList.length > 1) {
-					// replace escaped commans before splitting and restore after
-					parameterCommaSepList = parameterCommaSepList.replace('\\,', '##!!comma!!##');
-					var parameters: string[] = parameterCommaSepList.split(',');
-					for(var pi in parameters) {
-						parameters[pi] = parameters[pi].replace('##!!comma!!##',',');
+						parameters[pi] = parameters[pi].split('##!!comma!!##').join(',');
 					}
 					return <string[]>parameters.map(function(element) { return element.trim(); });
 				} else {
@@ -210,27 +237,12 @@ module app.service {
 		/**
 		 * find patterns like ${var} or ${var.auto.name}
 		 */
-		public parseVariables(text: string):string {
-			var regex: RegExp = new RegExp(this.variablePattern);
+		public parseVariables(variablePattern: VariablePattern, text: string):string {
+			var regex: RegExp = new RegExp(variablePattern.pattern);
 			var textToReplace = ""+text;
 
 			for(var match; match = regex.exec(textToReplace); ) {
-				var property: string = match[0].substring(2,match[0].length-1);
-				var replaceLength:number = match[0].length;
-				var index: number = match.index;
-
-				var replacer: string = this.findValuesInPath(property,this.data);
-				textToReplace = textToReplace.slice(0, index) + replacer + textToReplace.slice(index+replaceLength, textToReplace.length);
-			}
-			return textToReplace;
-		}
-
-		public parseSecondaryVariables(text: string):string {
-			var regex: RegExp = new RegExp(this.scondaryVariablePattern);
-			var textToReplace = ""+text;
-
-			for(var match; match = regex.exec(textToReplace); ) {
-				var property: string = match[0].substring(3,match[0].length-1);
+				var property: string = match[0].substring(variablePattern.preSignLength,match[0].length-variablePattern.postSignLength);
 				var replaceLength:number = match[0].length;
 				var index: number = match.index;
 

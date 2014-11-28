@@ -15,6 +15,7 @@ module test.logic.service {
 				var processorData: any[] = [];
 				processorService.parseProcessors(
 					template,
+					processorService.primaryProcessorPattern,
 					function(processorName, processorParameters, startIndex, length){
 						processorData.push({
 							processorName:processorName,
@@ -50,6 +51,7 @@ module test.logic.service {
 				var processorData: any[] = [];
 				processorService.parseProcessors(
 					template,
+					processorService.primaryProcessorPattern,
 					function(processorName, processorParameters, startIndex, length){
 						processorData.push({
 							processorName:processorName,
@@ -171,7 +173,7 @@ module test.logic.service {
 				};
 
 				var processorService: app.service.TemplateProcesser = new app.service.TemplateProcesser(data, '', {});
-				var renderedTemplate = processorService.parseVariables(template);
+				var renderedTemplate = processorService.parseVariables(processorService.primaryVariablePattern, template);
 				var expectedTemplate: string = "{\
 	\"assignee\": \"irgendwas\",\
 	\"name\": \"irgendwas und nochwas\"\
@@ -195,7 +197,7 @@ module test.logic.service {
 				};
 
 				var processorService: app.service.TemplateProcesser = new app.service.TemplateProcesser(data, '', {});
-				var renderedTemplate = processorService.parseVariables(template);
+				var renderedTemplate = processorService.parseVariables(processorService.primaryVariablePattern, template);
 				var expectedTemplate: string = "{\
 	\"assignee\": \"drei\",\
 	\"name\": \"irgendwas: irgendwo\"\
@@ -216,6 +218,32 @@ module test.logic.service {
 				var processorService: app.service.TemplateProcesser = new app.service.TemplateProcesser(data, '', processors);
 				var result1: string = processorService.runProcessor('receiverGenerator',['person1']);
 				expect(result1).toEqual('Hans Müller <hmueller@gmx.net>');
+			});
+
+			it("Usage of escaped commas inside processor arguments", function() {
+				var template = '$mapExistingAssignees:(taskTemplate.attributes.assignee, "Project Planner:admin\\,Customer:sandro\\,Architect:hans", "\\,", ":")$';
+				var data:any = {
+					taskTemplate: {
+						attributes: {
+							assignee: 'Customer'
+						}
+					}
+				};
+				var processors: { [index:string]: any} = {
+					mapExistingAssignees: function(assignee, assignees, deli1, deli2) {
+						var assigneeMappings = assignees.split(deli1);
+						var assigneeList = {};
+						assigneeMappings.forEach(function(assigneeMapping){
+							var parts = assigneeMapping.split(deli2);
+							assigneeList[parts[0]] = parts[1];
+						});
+						return assigneeList[assignee];
+					}
+				};
+
+				var processorService: app.service.TemplateProcesser = new app.service.TemplateProcesser(data, template, processors);
+				var renderedTemplate = processorService.process();
+				expect(renderedTemplate).toEqual('sandro');
 			});
 
 			it("Process template", function() {

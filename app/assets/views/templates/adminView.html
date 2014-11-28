@@ -89,16 +89,48 @@
 			In the <strong>Request Body Template</strong> you should provide a Json to perform the request to the PPT. In Request Body Template you can:
 			<ul>
 				<li>include variables with <strong>${<span class="light">variable.path.to.property</span>}</strong>.
-					"taskTemplate", "node", "pptProject" and in post Processors "parentRequestData" can be used.
-					You can access their properties with the "."-operator (e.g. ${taskTemplate.name}).</li>
-				<li>call Processors with <strong>$<span class="light">processorName</span>:(<span class="light">parameter.path.to.property</span>, <span class="light">anotherParameter</span>, "<span class="light">stringParameter</span>", <span class="light">...</span>)$</strong>.
-					Parameters can be variable paths or <strong>"<span class="light">strings</span>"</strong>.
-					Strings may contain anything other than <span class="light">"</span><strong>,</strong><span class="light">", "</span><strong>:(</strong><span class="light">" and "</span><strong>)$</strong><span class="light">"</span>.
-					However, you can use quote characters (' " « »).</li>
-				<li>call post Processors and post Variable (parentRequestData) almost like Processors with <strong>$<span style="font-size: larger; font-weight: bolder;">!</span><span class="light">processorName</span>:(<span class="light">parameter.path.to.property</span>, <span class="light">anotherParameter</span>, "<span class="light">stringParameter</span>", <span class="light">...</span>)$</strong> (note the exclamation mark).
+					&quot;taskTemplate&quot;, &quot;node&quot;, &quot;pptProject&quot; and in post Processors &quot;parentRequestData&quot; can be used.
+					You can access their properties with the &quot;.&quot;-operator (e.g. ${taskTemplate.name}).
+				</li>
+				<li>call Processors with
+					<strong>
+						$<span class="light">processorName</span>:(<span class="light">parameter.path.to.property</span>,
+						<span class="light">anotherParameter</span>, &quot;
+						<span class="light">stringParameter</span>&quot;,
+						<span class="light">...</span>)$
+					</strong>.
+					Parameters can be variable paths or <strong>&quot;<span class="light">strings</span>&quot;</strong>.
+					Strings may contain anything other than <span class="light">&quot;</span><strong>,
+					</strong><span class="light">&quot;, &quot;</span><strong>:(
+					</strong><span class="light">&quot; and &quot;</span>
+					<strong>)$</strong><span class="light">&quot;</span>.
+					However, you can use quote characters (' &quot; « »). If you want to use a comma, escape it like:
+					&quot;\,&quot; .
+					<br />Be careful using variables inside processors like
+					<strong>
+						$<span class="light">processorName</span>
+						:(<span class="light">parameter.path.to.property</span>,
+						<strong>${<span class="light">another.parameter</span>}</strong>)$
+					</strong>.
+					It is possible to use variables inside processors because variables are rendered before processors.
+					But if variable values contain not escaped commas, the processor execution will be broken. So if possible,
+					use processor path variables instead of rendered variables:
+					<strong>
+						$<span class="light">processorName</span>:(<span class="light">parameter.path.to.property</span>,
+						<span class="light">another.parameter</span>)$
+					</strong> or ensure variable values contain only escaped commas.
+				</li>
+				<li>call post Processors and post Variable (parentRequestData) almost like Processors with
+					<strong>
+						$<span style="font-size: larger; font-weight: bolder;">!</span><span class="light">processorName</span>:(<span class="light">parameter.path.to.property</span>,
+						<span class="light">anotherParameter</span>, &quot;
+						<span class="light">stringParameter</span>&quot;,
+						<span class="light">...</span>)$
+					</strong> (note the exclamation mark).
 					Post Processors are Processors which are only processed, after the parent request was executed and they can include the parent request result.
 					However, they are only processed after the parent Tasks request was executed.
-					The result of the parent Tasks request can then be accessed with the variable "parentRequestData".</li>
+					The result of the parent Tasks request can then be accessed with the variable "parentRequestData".
+				</li>
 			</ul>
 		</div>
 		<form>
