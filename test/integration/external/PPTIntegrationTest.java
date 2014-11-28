@@ -1,4 +1,4 @@
-package integration;
+package external;
 
 import daos.task.TaskDAO;
 import daos.task.TaskPropertyValueDAO;
