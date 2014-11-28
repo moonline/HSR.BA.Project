@@ -26,7 +26,7 @@ module app.service {
 	}
 
 
-	export class TemplateProcesser {
+	export class TemplateProcessor {
 
 		private data: Object;
 		private template: string;
@@ -37,13 +37,13 @@ module app.service {
 		 *	 ${variable}
 		 */
 		primaryVariablePattern: VariablePattern = {
-			pattern: '\\$\\{[\\w\\d\\.]*\\}',
+			pattern: '\\$\\{[\\w\\d\\s\\.]*\\}',
 			preSignLength: 2,
 			postSignLength: 1
 
 		};
 		secondaryVariablePattern: VariablePattern = {
-			pattern: '\\$\\!\\{[\\w\\d\\.]*\\}',
+			pattern: '\\$\\!\\{[\\w\\d\\s\\.]*\\}',
 			preSignLength: 3,
 			postSignLength: 1
 
@@ -94,7 +94,7 @@ module app.service {
 		private processors: { [index:string]: any };
 
 		/**
-		 * @param {object} data - A dictionary used byvariables and processors for template rendering
+		 * @param {object} data - A dictionary used by variables and processors for template rendering
 		 * @param {string} template - A text template containing markers and processors to replace
 		 * @param {Object.<string, function>} processors - A dictionary with processor functions
 		 */

@@ -27,7 +27,17 @@ INSERT INTO TASKTEMPLATE (ID, NAME, PARENT_ID) VALUES (nextval('entity_seq'), 'D
 INSERT INTO TASKPROPERTYVALUE(ID, "VALUE", PROPERTY_ID, TASK_ID) VALUES (nextval('entity_seq'),'Project Planner',
 	(SELECT id FROM TASKPROPERTY WHERE name='Assignee'),(SELECT id FROM TASKTEMPLATE WHERE name='Define criterions'));
 INSERT INTO TASKPROPERTYVALUE(ID, "VALUE", PROPERTY_ID, TASK_ID) VALUES (nextval('entity_seq'),'Task',
-	(SELECT id FROM TASKPROPERTY WHERE name='Type'    ),(SELECT id FROM TASKTEMPLATE WHERE name='Define criterions'));
+	(SELECT id FROM TASKPROPERTY WHERE name='Type'),(SELECT id FROM TASKTEMPLATE WHERE name='Define criterions'));
+INSERT INTO TASKPROPERTYVALUE(ID, "VALUE", PROPERTY_ID, TASK_ID) VALUES (nextval('entity_seq'),'Define criterions for evaluation',
+	(SELECT id FROM TASKPROPERTY WHERE name='Description'),(SELECT id FROM TASKTEMPLATE WHERE name='Define criterions'));
+INSERT INTO TASKPROPERTYVALUE(ID, "VALUE", PROPERTY_ID, TASK_ID) VALUES (nextval('entity_seq'),'Major',
+	(SELECT id FROM TASKPROPERTY WHERE name='Priority'),(SELECT id FROM TASKTEMPLATE WHERE name='Define criterions'));
+INSERT INTO TASKPROPERTYVALUE(ID, "VALUE", PROPERTY_ID, TASK_ID) VALUES (nextval('entity_seq'),'14.12.2014',
+	(SELECT id FROM TASKPROPERTY WHERE name='Due Date'),(SELECT id FROM TASKTEMPLATE WHERE name='Define criterions'));
+INSERT INTO TASKPROPERTYVALUE(ID, "VALUE", PROPERTY_ID, TASK_ID) VALUES (nextval('entity_seq'),'10h',
+	(SELECT id FROM TASKPROPERTY WHERE name='Estimated Duration'),(SELECT id FROM TASKTEMPLATE WHERE name='Define criterions'));
+
+
 INSERT INTO DKSMAPPING(ID, TASKTEMPLATE_ID, DKSNODE) VALUES (nextval('entity_seq'),
 	(SELECT id FROM TASKTEMPLATE WHERE name='Define criterions'),'3');
 
@@ -80,19 +90,21 @@ INSERT INTO REQUESTTEMPLATE (ID, NAME, REQUESTBODYTEMPLATE, URL, PROJECT_ID, PPT
 ','			"key": "$!{parentRequestData.key}"
 ','		}\, ", "")$
 ','		"summary": "${taskTemplate.name}",
-','		"description": "${taskTemplate.attributes.description}. \nDecision: ${node.name}\nDKS link: ${node.self}\nAttributes:\n$objectToString:(node.attributes, ": ", "\n")$",
-','		$ifElse:(taskTemplate.attributes.dueDate," "duedate": "${taskTemplate.attributes.dueDate}"\, ", "")$
+','		"description": "${taskTemplate.attributes.Description}. \nDecision: ${node.name}\nDKS link: ${node.self}\nAttributes:\n$objectToString:(node.attributes, ": ", "\n")$",
+','		$ifElse:(taskTemplate.attributes.Due Date," "duedate": "${taskTemplate.attributes.Due Date}"\, ", "")$
 ','		"issuetype": {
-','			"name": "$!ifElse:(parentRequestData.key,"Sub-task", "${taskTemplate.attributes.type}")$"
+','			"name": "$!ifElse:(parentRequestData.key,"Sub-task", "${taskTemplate.attributes.Type}")$"
 ','		},
-','		$ifElse:(taskTemplate.attributes.priority, " "priority": {\n"name": "${taskTemplate.attributes.priority}"\n}\, ", "")$
-','		$mapExistingAssignees:(taskTemplate.attributes.assignee, "Project Planner:admin\,Customer:admin\,Architect:admin"," "assignee": {
-','			"name": "${taskTemplate.attributes.assignee}"
+','		$ifElse:(taskTemplate.attributes.Priority, " "priority": {
+','			"name": "${taskTemplate.attributes.Priority}"
+','		}\, ", "")$
+','		$mapExistingAssignees:(taskTemplate.attributes.Assignee, "Project Planner:admin\,Customer:admin\,Architect:admin"," "assignee": {
+','			"name": "${taskTemplate.attributes.Assignee}"
 ','		}\, ")$
-','		"timetracking": {
-','			"originalEstimate": "${taskTemplate.attributes.remainingEstimate}"
-','		},
-','		"labels": ["$taggedValue:(node.attributes,"Intellectual Property Rights")$", "$taggedValue:(node.attributes,"Project Stage")$", "createdByEEPPI"]
+','		$ifElse:(taskTemplate.attributes.Estimated Duration, " "timetracking": {
+','			"originalEstimate": "${taskTemplate.attributes.Estimated Duration}"
+','		}\, ", "")$
+','		"labels": ["${node.attributes.Intellectual Property Rights}", "${node.attributes.Project Stage}", "createdByEEPPI"]
 ','	}
 }'),'/rest/api/2/issue',(SELECT id FROM PROJECT WHERE name='Project'),(SELECT id FROM PPT WHERE name='Project Planning Tool'));
 

@@ -14,7 +14,7 @@
 /// <reference path='../domain/repository/DecisionKnowledgeSystemRepository.ts' />
 /// <reference path='../domain/repository/PPTAccountRepository.ts' />
 
-/// <reference path='../service/TemplateProcesser.ts' />
+/// <reference path='../service/TemplateProcessor.ts' />
 
 module app.application {
 	'use strict';
@@ -204,7 +204,7 @@ module app.application {
 						parentRequestData = null;
 					}
 
-					var templateProcessor = new app.service.TemplateProcesser({parentRequestData: parentRequestData}, currentRequest.requestBody, processors);
+					var templateProcessor = new app.service.TemplateProcessor({parentRequestData: parentRequestData}, currentRequest.requestBody, processors);
 					try {
 						currentRequest.requestBody = templateProcessor.processSecondary();
 					} catch (error) {
@@ -450,8 +450,9 @@ module app.application {
 					pptProject: $scope.pptProject,
 					mappings: $scope.decisionMappings
 				};
+				console.log(exportDecisionData);
 
-				var templateProcessor = new app.service.TemplateProcesser(exportDecisionData, $scope.requestTemplate.requestBodyTemplate, processors);
+				var templateProcessor = new app.service.TemplateProcessor(exportDecisionData, $scope.requestTemplate.requestBodyTemplate, processors);
 				var renderedTemplate;
 				try {
 					renderedTemplate = templateProcessor.process();
@@ -552,7 +553,7 @@ module app.application {
 				if (!mapping.taskTemplate['attributes']) {
 					mapping.taskTemplate['attributes'] = {};
 					mapping.taskTemplate.properties.forEach(function (taskPropertyValue, index) {
-						mapping.taskTemplate['attributes'][taskPropertyValue.property.name.toLowerCase()] = taskPropertyValue.value;
+						mapping.taskTemplate['attributes'][taskPropertyValue.property.name] = taskPropertyValue.value;
 					});
 				}
 			}
