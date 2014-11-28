@@ -15,7 +15,7 @@ module app.application {
 		success, error
 	}
 
-	export class RegisterController {
+	export class AccountController {
 		scope: any;
 		authenticationService: app.service.AuthenticationService;
 		settings: any;

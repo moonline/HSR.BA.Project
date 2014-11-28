@@ -1,4 +1,4 @@
-/// <reference path='../../classes/application/RegisterController.ts' />
+/// <reference path='../../classes/application/AccountController.ts' />
 /// <reference path='../../classes/application/MappingController.ts' />
 /// <reference path='../../classes/application/TransmissionController.ts' />
 /// <reference path='../../classes/application/AdminController.ts' />
@@ -100,9 +100,9 @@ module app.mod {
 						}]
 					}
 				});
-				$routeProvider.when('/register', {
-					templateUrl: '/public/views/templates/registerView.html',
-					controller: 'registerController'
+				$routeProvider.when('/account', {
+					templateUrl: '/public/views/templates/accountView.html',
+					controller: 'accountController'
 				});
 				$routeProvider.otherwise({
 					redirectTo:'/'
@@ -113,7 +113,7 @@ module app.mod {
 		private addControllers() {
 			this.module.controller('mappingController', ['$scope', '$location', '$http', 'persistenceService', app.application.MappingController]);
 			this.module.controller('transmissionController', ['$scope', '$location', 'persistenceService', 'authenticationService', '$http', app.application.TransmissionController]);
-			this.module.controller('registerController', ['$scope', 'persistenceService', 'authenticationService', app.application.RegisterController]);
+			this.module.controller('accountController', ['$scope', 'persistenceService', 'authenticationService', app.application.AccountController]);
 			this.module.controller('adminController', ['$scope', '$location', '$http', 'persistenceService', 'authenticationService', app.application.AdminController]);
 			this.module.controller('dashboardController', ['$scope', '$location', '$http', 'persistenceService', app.application.DashboardController]);
 
