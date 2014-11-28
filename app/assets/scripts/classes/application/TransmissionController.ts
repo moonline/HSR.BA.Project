@@ -240,6 +240,10 @@ module app.application {
 				$scope.currentWizardStep = ExportWizardSteps.DataSelection;
 			};
 
+			$scope.setPPTProject = function (pptProject) {
+				$scope.pptProject = pptProject;
+			};
+
 			$scope.selectUnselectAll = function (selected:boolean) {
 				$scope.allMappingInformation.forEach(function (aMappingInformation:{ shouldExport: boolean; }) {
 					aMappingInformation.shouldExport = selected;

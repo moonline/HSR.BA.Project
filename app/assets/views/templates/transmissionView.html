@@ -27,7 +27,7 @@
 					</div>
 					<div class="formLine">
 						<label>Project in project planning tool</label>
-						<input title="Project value has to match with the field of the project in the project planning tool you mapped in the request template." type="text" data-ng-model="pptProject"/>
+						<input title="Project value has to match with the field of the project in the project planning tool you mapped in the request template." type="text" data-ng-model="pptProject" data-ng-change="setPPTProject(pptProject)"/>
 					</div>
 
 					<button data-ng-disabled="pptProject.length < 1 || !targetPPTAccount || !requestTemplate"
