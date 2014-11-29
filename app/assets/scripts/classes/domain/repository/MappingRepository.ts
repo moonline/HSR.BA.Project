@@ -21,15 +21,19 @@ module app.domain.repository.core {
 		 * @param {boolean} doCache - Returns items from remote api and updates the item cache if false, returns items from local cache if true.
 		 */
 		public findByDksNode(dksNode: app.domain.model.dks.DksNode, callback: (success: boolean, items: app.domain.model.core.Mapping[]) => void, doCache: boolean = false): void {
-			this.findAll(function(success, items) {
-				var foundItems: app.domain.model.core.Mapping[] = [];
-				items.forEach(function(item){
-					if(item.dksNode && Number(item.dksNode) == dksNode['id']) {
-						foundItems.push(item);
-					}
-				});
-				callback(success, foundItems);
-			}, doCache);
+			if(dksNode && dksNode['id']) {
+				this.findAll(function(success, items) {
+					var foundItems: app.domain.model.core.Mapping[] = [];
+					items.forEach(function(item){
+						if(item.dksNode && Number(item.dksNode) == dksNode['id']) {
+							foundItems.push(item);
+						}
+					});
+					callback(success, foundItems);
+				}, doCache);
+			} else {
+				callback(false, []);
+			}
 		}
 	}
 }

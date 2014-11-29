@@ -343,14 +343,21 @@ module app.domain.repository.core {
 				if(success) {
 					var sortedSubNodes = {};
 					subNodes.forEach(function(subNode: any){
-						sortedSubNodes[subNode.id] = subNode;
+						if(subNode && subNode.id) {
+							sortedSubNodes[subNode.id] = subNode;
+						}
 					});
 
 					nodes.forEach(function(node, nIndex){
 						if(node[propertyName]) {
+							// create new list, only add existing entities & subNode != undefined
+							var newSubNodesList:S[] = [];
 							node[propertyName].forEach(function(subNode: any, snIndex) {
-								nodes[nIndex][propertyName][snIndex] = sortedSubNodes[subNode.id];
+								if(subNode && subNode.id && sortedSubNodes[subNode.id]) {
+									newSubNodesList.push(sortedSubNodes[subNode.id]);
+								}
 							});
+							nodes[nIndex][propertyName] = newSubNodesList;
 						}
 					});
 					callback(true, nodes);

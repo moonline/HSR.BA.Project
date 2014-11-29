@@ -81,7 +81,7 @@ module test.integration.application {
 				httpBackend.when('GET','/dks/getFromDKS?url=http%3A%2F%2Flocalhost%3A9940%2Felement%3Fquery%3Dtype%2520is%2520%2522OptionTemplate%2522').respond({});
 
 				var scope = rootScope.$new();
-				var controller: app.application.MappingController = new app.application.MappingController(scope, location, http, persistenceService);
+				var controller: app.application.MappingController = new app.application.MappingController(scope, persistenceService);
 				httpBackend.flush();
 
 				var dkSystem = new app.domain.model.dks.DecisionKnowledgeSystem("The DKS", "http://localhost:9940"); dkSystem.id = 1;

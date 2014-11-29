@@ -1,7 +1,27 @@
 <div class="main area page mapping" data-layout="flow" data-flow-direction="row" data-align="start">
 	<div class="column1 area pane" data-layout="flow" data-flow-direction="column" data-scroll="y">
 		<div class="areaContent">
-			<h2><span title="Problem Templates in DKS">Problems</span> <a href="{{currentDks.url}}" target="_blank" title="from {{currentDks.name}} ({{currentDks.url}})">(read only)</a> (&Sigma;:{{problems.length}})</h2>
+			<h2>
+				<span title="Problem Templates in DKS">Problems</span>
+				<a href="{{currentDks.url}}" target="_blank" title="from {{currentDks.name}} ({{currentDks.url}})">(read only)</a>
+				(&Sigma;:{{problems.length}})
+
+				<span class="infoBox"
+					  style="float: right; "
+					  title="You didn't find the Problem (ProblemTemplate) or
+Alternative (OptionTemplate) you created in your DKS?
+
+Ensure the nodes you created are correct and complete and you
+structured them the correct way:
+
+[ProblemTemplate]  1 --- *  [OptionTemplate].
+
+Don't mix the elements and don't use ProblemTemples as alternatives of
+other ProblemTemplates. Incorrect nodes or incorrect structured nodes
+will be filtered by EEPPI.">
+					<span class="icon info">&#x2139;</span>
+				</span>
+			</h2>
 
 			<span class="messagebox error" data-ng-if="problemsLoadingStatus === ApplicationState.failed">Loading of DKS elements failed. Maybe service is not available.</span>
 			<span class="messagebox pending" data-ng-if="problemsLoadingStatus === ApplicationState.pending">Loading ...</span>
@@ -44,14 +64,19 @@
 					</dd>
 					<dt>Attributes</dt>
 					<dd>
-						<ul>
-							<li data-ng-repeat="(name, value) in currentDksNode.attributes">{{name}}: {{value}}</li>
-						</ul>
+						<table class="attributes">
+							<tbody>
+								<tr data-ng-repeat="(name, value) in currentDksNode.attributes">
+									<th>{{name}}</th>
+									<td>{{value}}</td>
+								</tr>
+							</tbody>
+						</table>
 					</dd>
-					<dt>DKS link</dt>
+					<dt>DKS link (data resource)</dt>
 					<dd><a href="{{currentDksNode.self}}" target="_blank">{{currentDksNode.self}}</a></dd>
-					<dt data-ng-if="currentDksNode.alternatives">Options</dt>
-					<dd data-ng-if="currentDksNode.alternatives">
+					<dt data-ng-if="currentDksNode.alternatives && currentDksNode.alternatives.length > 0">Options</dt>
+					<dd data-ng-if="currentDksNode.alternatives && currentDksNode.alternatives.length > 0">
 						<ul>
 							<li data-ng-repeat="option in currentDksNode.alternatives | orderBy:'name'">
 								<span data-ng-click="setCurrentDksNode(option)">
@@ -72,7 +97,8 @@
 				<ul>
 					<li data-ng-repeat="mapping in currentMappings | orderBy:'name'">
 						<button class="action remove" data-ng-click="removeMapping(mapping)"
-							title="Remove mapping "><span class="icon small iconOnly">&Chi;</span>
+							title="Release mapping">
+							<span class="icon small iconOnly">&Chi;</span>&nbsp;&nbsp;Release
 						</button>
 						<span data-ng-click="setCurrentTaskTemplate(mapping.taskTemplate)" title="Edit task template">
 							{{mapping.taskTemplate.name}} [{{mapping.taskTemplate.id}}]
@@ -96,7 +122,7 @@
 					data-state="{{template.id == currentTaskTemplate.id && 'selected' || '' }}">
 					<button class="action update" data-ng-if="currentDksNode" data-ng-disabled="hasMappingFor(template)"
 							data-ng-click="mapTaskTemplate(template)"
-							title="{{hasMappingFor(template)?'There is already a mapping for this Task Template':'Map this Task Template with the selected DKS element'}}">&lt; map
+							title="{{hasMappingFor(template)?'There is already a mapping for this Task Template':'Map this Task Template with the selected DKS element'}}">&lt; Map
 					</button>
 					<span data-ng-click="setCurrentTaskTemplate(template)" title="Edit task template">
 						<button class="action edit">&#x270E;</button> {{template.name}}
@@ -116,8 +142,11 @@
 						<span class="icon">&#x2b;</span>Create
 					</button>
 				</div>
-				<span class="infoBox" title="Task Templates can't be removed because of its relations to DKS nodes (mappings) and exported tasks. Rename Task Templates to reuse it.">
-					<span class="icon info"  style="background: steelblue; color: white; border-radius: 2rem; width: 1.2rem; height: 1.1rem; text-align: center;">&#x2139;</span>
+				<span class="infoBox" title="Task Templates can't be removed because of its
+relations to DKS nodes (mappings) and exported tasks.
+
+➡ Rename Task Templates to reuse it.">
+					<span class="icon info" >&#x2139;</span>
 					How to remove Task Templates?
 				</span>
 			</form>
