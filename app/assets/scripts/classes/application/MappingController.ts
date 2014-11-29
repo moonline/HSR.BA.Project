@@ -256,6 +256,7 @@ module app.application {
 				(<app.domain.model.core.TaskTemplate>this.$scope.currentTaskTemplate).addProperty(taskPropertyValue);
 				this.$scope.taskTemplateSavingStatus = app.application.ApplicationState.saving;
 				this.taskTemplateRepository.addPropertyValue(this.$scope.currentTaskTemplate, taskPropertyValue, function(success, item){
+					scope.currentTaskTemplate = item;
 					scope.setTaskTemplateSavingCompletedStatus(success);
 				});
 			}
@@ -346,11 +347,11 @@ module app.application {
 			
 			this.$scope.mappingsSavingStatus = app.application.ApplicationState.saving;
 			mappingRepository.remove(mapping, function(success) {
-				mappingRepository.findByDksNode(this.$scope.currentDksNode, function(success, mappings) {
+				mappingRepository.findByDksNode(scope.currentDksNode, function(success, mappings) {
 					if(mappings) {
 						scope.currentMappings = mappings;
 						scope.mappingsSavingStatus = app.application.ApplicationState.successful;
-						setTimeout(() => { this.$scope.mappingsSavingStatus = null; this.$scope.$apply(); }, settings.successDelay);
+						setTimeout(() => { scope.mappingsSavingStatus = null; scope.$apply(); }, settings.successDelay);
 					} else {
 						scope.mappingsSavingStatus = app.application.ApplicationState.failed;
 					}
