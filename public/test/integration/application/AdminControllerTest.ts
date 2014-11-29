@@ -54,7 +54,7 @@ module test.integration.application {
 
             it("loaded a project to create a new processor for", function () {
                 var scope = rootScope.$new();
-                new app.application.AdminController(scope, location, http, persistenceService, null);
+                new app.application.AdminController(scope, persistenceService);
                 httpBackend.flush();
 
                 expect(scope.projects.length).toBe(1);
@@ -62,7 +62,7 @@ module test.integration.application {
 
             it("can create a new processor", function () {
                 var scope = rootScope.$new();
-                new app.application.AdminController(scope, location, http, persistenceService, null);
+                new app.application.AdminController(scope, persistenceService);
                 httpBackend.flush();
                 var initialProcessorsCount:number = scope.processors.length;
 
@@ -76,7 +76,7 @@ module test.integration.application {
 
             it("can update an existing processor", function () {
                 var scope = rootScope.$new();
-                new app.application.AdminController(scope, location, http, persistenceService, null);
+                new app.application.AdminController(scope, persistenceService);
                 httpBackend.flush();
 
                 expect(scope.processors.length).toBeGreaterThan(0);
@@ -99,7 +99,7 @@ module test.integration.application {
 
             it("can delete an existing processor", function () {
                 var scope = rootScope.$new();
-                new app.application.AdminController(scope, location, http, persistenceService, null);
+                new app.application.AdminController(scope, persistenceService);
                 httpBackend.flush();
 
                 expect(scope.processors.length).toBeGreaterThan(0);
