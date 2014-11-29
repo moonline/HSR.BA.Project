@@ -1,4 +1,4 @@
-/// <reference path='../../../../../public/test/includes.ts' />
+	/// <reference path='../../../../../public/test/includes.ts' />
 
 /// <reference path='../../../../../app/assets/scripts/classes/domain/model/Node.ts' />
 /// <reference path='../../../../../app/assets/scripts/classes/domain/model/TaskTemplate.ts' />
