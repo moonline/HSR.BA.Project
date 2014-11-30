@@ -1,3 +1,5 @@
+/// <reference path='../../configuration/application.ts' />
+
 /// <reference path='../../classes/application/AccountController.ts' />
 /// <reference path='../../classes/application/MappingController.ts' />
 /// <reference path='../../classes/application/TransmissionController.ts' />
@@ -42,6 +44,7 @@ module app.mod {
 				});
 
 				$rootScope.currentView = $location;
+				$rootScope.logoutStatus = null;
 
 				// make Status available in view
 				$rootScope.Status = app.application.Status;
@@ -57,9 +60,17 @@ module app.mod {
 					});
 				};
 				$rootScope.logout = function() {
-					authenticationService.logout();
-					$rootScope.loginStatus = null;
-					$location.path("/");
+					authenticationService.logout(function(success: boolean){
+						if(success) {
+							$rootScope.logoutStatus = app.application.Status.success;
+							setTimeout(() => { $rootScope.logoutStatus = null; $rootScope.$apply(); }, configuration.settings.successDelay);
+							$rootScope.loginStatus = null;
+							$location.path("/");
+						} else {
+							$rootScope.logoutStatus = app.application.Status.error;
+							setTimeout(() => { $rootScope.logoutStatus = null; $rootScope.$apply(); }, configuration.settings.successDelay);
+						}
+					});
 				}
 			}]);
 		}

@@ -32,8 +32,11 @@
 					</h1>
 				</div>
 				<div data-region="east">
+					<span class="messagebox error" data-ng-if="logoutStatus === Status.error">Logout failed. Maybe server is not available. Please ensure server is running an reload the page.</span>
+					<span class="messagebox success" data-ng-if="logoutStatus === Status.success">Logout successful</span>
+
 					<button data-ng-if="authenticator.loggedInUser != null"
-						data-ng-click="logout()">Logout {{authenticator.loggedInUser.userName}}</button>
+						data-ng-click="logout()">Logout <strong>{{authenticator.loggedInUser.userName}}</strong></button>
 					<form data-ng-if="authenticator.loggedInUser == null">
 						<input class="{{loginStatus == Status.error && 'error' || '' }}" type="text" data-ng-model="username" placeholder="username" />
 						<input class="{{loginStatus == Status.error && 'error' || '' }}" type="password" data-ng-model="password" placeholder="password" />
