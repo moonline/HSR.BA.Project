@@ -3,7 +3,8 @@
 		<div class="areaContent">
 			<h2>
 				<span title="Problem Templates in DKS">Problems</span>
-				<a href="{{currentDks.url}}" target="_blank" title="from {{currentDks.name}} ({{currentDks.url}})">(read only)</a>
+				<a href="{{currentDks.url}}" target="_blank" title="Read only - loaded from {{currentDks.name}} (DKS data source: {{currentDks.url}})">
+					<span class="icon big" data-icon="readOnly"></span></a>
 				(&Sigma;:{{problems.length}})
 
 				<span class="infoBox"
@@ -23,7 +24,7 @@ will be filtered by EEPPI.">
 				</span>
 			</h2>
 
-			<span class="messagebox error" data-ng-if="problemsLoadingStatus === ApplicationState.failed">Loading of DKS elements failed. Maybe service is not available.</span>
+			<span class="messagebox error" data-ng-if="problemsLoadingStatus === ApplicationState.failed">Loading of DKS elements failed. Maybe service is not available. Check if <a href="{{currentDks.url}}" target="_blank" >DKS</a> is running and DKS configuration is correct and reload the page.</span>
 			<span class="messagebox pending" data-ng-if="problemsLoadingStatus === ApplicationState.pending">Loading ...</span>
 
 			<ul data-type="list">
@@ -153,9 +154,9 @@ relations to DKS nodes (mappings) and exported tasks.
 
 			<h3 data-ng-if="currentTaskTemplate">{{currentTaskTemplate.name}} [{{currentTaskTemplate.id}}]</h3>
 			<div class="operationState">
-				<span class="messagebox saving" data-ng-if="taskTemplateSavingStatus === ApplicationState.saving">Saving ...</span>
-				<span class="messagebox success" data-ng-if="taskTemplateSavingStatus === ApplicationState.successful">Saved successfully!</span>
-				<span class="messagebox error" data-ng-if="taskTemplateSavingStatus === ApplicationState.failed">Could not save! Please try again, reload the page or file a bug report.</span>
+				<span class="messagebox saving taskDetail" data-ng-if="taskTemplateSavingStatus === ApplicationState.saving">Saving ...</span>
+				<span class="messagebox success taskDetail" data-ng-if="taskTemplateSavingStatus === ApplicationState.successful">Saved successfully!</span>
+				<span class="messagebox error taskDetail" data-ng-if="taskTemplateSavingStatus === ApplicationState.failed">Could not save! Please try again, reload the page or file a bug report.</span>
 			</div>
 			<form data-ng-if="currentTaskTemplate">
 				<div class="formLine" data-columns="3" data-ng-if="currentTaskTemplate.properties.length < taskProperties.length">

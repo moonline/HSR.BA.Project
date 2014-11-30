@@ -293,20 +293,18 @@ module app.application {
 		}
 
 		updateTaskTemplate():void {
+			var instance = this;
 			var scope = this.$scope;
 			var taskTemplateRepository = this.taskTemplateRepository;
 
 			if(this.$scope.hasTaskTemplateChanged == true) {
 				this.$scope.hasTaskTemplateChanged = false;
 				this.$scope.taskTemplateSavingStatus = app.application.ApplicationState.saving;
-				taskTemplateRepository.update(this.$scope.currentTaskTemplate, function(success: boolean, item){
+				taskTemplateRepository.update(this.$scope.currentTaskTemplate, function(success: boolean, item) {
 					if(success) {
-						taskTemplateRepository.updateProperties(scope.currentTaskTemplate, function (success:boolean) {
-							if(success) {
-								scope.updateWithCorrectParent(scope.currentTaskTemplate);
-							}
-							scope.setTaskTemplateSavingCompletedStatus(success);
-						});
+						scope.currentTaskTemplate = item;
+						instance.updateWithCorrectParent(item);
+						scope.setTaskTemplateSavingCompletedStatus(success);
 					} else {
 						scope.taskTemplateSavingStatus = app.application.ApplicationState.failed;
 					}
