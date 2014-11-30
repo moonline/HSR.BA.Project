@@ -158,7 +158,7 @@ relations to DKS nodes (mappings) and exported tasks.
 				<span class="messagebox success taskDetail" data-ng-if="taskTemplateSavingStatus === ApplicationState.successful">Saved successfully!</span>
 				<span class="messagebox error taskDetail" data-ng-if="taskTemplateSavingStatus === ApplicationState.failed">Could not save! Please try again, reload the page or file a bug report.</span>
 			</div>
-			<form data-ng-if="currentTaskTemplate">
+			<form data-ng-if="currentTaskTemplate" class="detailForm">
 				<div class="formLine" data-columns="3" data-ng-if="currentTaskTemplate.properties.length < taskProperties.length">
 					<select data-ng-model="newTaskProperty"
 							data-ng-options="taskProperty.name for taskProperty in taskProperties | filter:notYetUsed() | orderBy:'name'"
@@ -185,12 +185,14 @@ relations to DKS nodes (mappings) and exported tasks.
 							</select>
 					<span></span>
 				</div>
-				<div data-ng-repeat="propertyValue in currentTaskTemplate.properties | orderBy:'name'" class="formLine" data-columns="3"	>
-					<label>{{propertyValue.property.name}}</label>
-					<input data-ng-model="propertyValue.value" data-ng-blur="updateTaskTemplate()" data-ng-change="taskTemplateChanged()"/>
-					<button class="action remove" data-ng-click="removePropertyValue(propertyValue)"
-							title="Remove property "><span class="icon big">&minus;</span>Remove
-					</button>
+				<div class="propertyValues">
+					<div data-ng-repeat="propertyValue in currentTaskTemplate.properties | orderBy:'property.name'" class="formLine" data-columns="3">
+						<label>{{propertyValue.property.name}}</label>
+						<input data-ng-model="propertyValue.value" data-ng-blur="updateTaskTemplate()" data-ng-change="taskTemplateChanged()"/>
+						<button class="action remove" data-ng-click="removePropertyValue(propertyValue)"
+								title="Remove property "><span class="icon big">&minus;</span>Remove
+						</button>
+					</div>
 				</div>
 			</form>
 		</div>

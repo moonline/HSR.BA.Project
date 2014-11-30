@@ -82,7 +82,10 @@ footer { height: 2rem; position: fixed; bottom: 0; z-index: 100%; width: 100%; }
 
 .taskTemplateList { .flexGrow(1); overflow-x: hidden; overflow-y: scroll; height: 5em; }
 
-.taskTemplateDetail { .alignSelf(flex-end); min-height: 38.2%; max-height: 62.8%; } //height min/max according to golden ratio
+.taskTemplateDetail { .alignSelf(flex-end); min-height: 38.2%; max-height: 62.8%;  //height min/max according to golden ratio
+	.propertyValues { margin-top: 1rem; }
+	.detailForm { margin-top: 0.5rem; margin-bottom: 0.5rem; }
+}
 
 [data-scroll="y"] { height: 100%; overflow-x: hidden; overflow-y: scroll; }
 
