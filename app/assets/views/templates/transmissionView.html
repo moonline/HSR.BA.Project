@@ -26,7 +26,22 @@
 						<span data-ng-if="targetPPTAccount && requestTemplate">&nbsp;&rarr;&nbsp;{{targetPPTAccount.pptUrl}}{{requestTemplate.url}}</span>
 					</div>
 					<div class="formLine">
-						<label>Project in project planning tool</label>
+						<label>Project identifier
+							<span class="infoBox" title='This is the project identifier of the project
+in your project planning tool. This depends on how you used the
+variable ${pptProject} in your request template.
+
+Example:
+If you are using Jira and you configured your request template like
+...
+	"project": {
+		"key": "${pptProject}"
+	},
+...
+You need to input here the KEY of your Jira project.'>
+								<span class="icon info" >&#x2139;</span>
+							</span>
+						</label>
 						<input title="Project value has to match with the field of the project in the project planning tool you mapped in the request template." type="text" data-ng-model="pptProject" data-ng-change="setPPTProject(pptProject)"/>
 					</div>
 
@@ -45,31 +60,43 @@
 				<div class="wizardStep area pane" data-step="DataSelection" data-ng-if="currentWizardStep == ExportWizardSteps.DataSelection">
 					<h2>Decision &amp; Option selection</h2>
 
+					<p>To generate tasks from mapped task templates you need to have occurences of your problems and alternatives.
+					If you didn't create occurences, please go to your DKS and create ProblemOccurences of your ProblemTemplates and
+					OptionOccurences of your OptionTemplates.<br />
+					If you don't have occurences, you won't see tasks of your mapped task templates here and can't transfer tasks!<br ></p>
+
 					<table>
-						<tr>
-						<th>Problem <span class="typeDeclaration" title="Problem Template from DSK">&lt;PT&gt;</span></th>
-						<th>Decision <span class="typeDeclaration" title="Problem Occurence from DSK">&lt;PO&gt;</span></th>
-						<th>Alternative <span class="typeDeclaration" title="Option Occurence from DSK">&lt;OO&gt;</span></th>
-						<th>Export? (<button class="action update small" data-ng-click="selectUnselectAll(true)" title="Select all Tasks to Export">All</button
-								><button class="action update small" data-ng-click="selectUnselectAll(false)" title="Unselect all Tasks to Export">None</button>)
-						</th>
-						<th colspan="2">Parent?</th>
-						<th>Task <span class="typeDeclaration" title="Task Template from EEPPI">&lt;TT&gt;</span></th>
-						</tr>
-						<tr data-ng-repeat="aMappingInformation in allMappingInformation">
-							<td>{{aMappingInformation.decision.template.name}} <span>[#{{aMappingInformation.decision.template.id}}]</span></td>
-							<td>{{aMappingInformation.decision.name}} <span>[#{{aMappingInformation.decision.id}}]</span></td>
-							<td>{{aMappingInformation.alternative.name}} <span data-ng-if="aMappingInformation.alternative">[#{{aMappingInformation.alternative.id}}]</span></td>
-							<td><input title="Transmit this task" type="checkbox" data-ng-model="aMappingInformation.shouldExport" /></td>
-							<td><select title="The Task which will be the Parent for this Task"
-										data-ng-model="aMappingInformation.selectedParent"
-										data-ng-if="aMappingInformation.possibleParents.length>0"
-										data-ng-options="parent.mapping.taskTemplate.name for parent in aMappingInformation.possibleParents">
-								<option value="">Not as a Subtask</option>
-							</select></td>
-							<td class="disappearable {{exportErrorFor(aMappingInformation)?'error':''}}">{{exportErrorFor(aMappingInformation)}}</td>
-							<td>{{aMappingInformation.mapping.taskTemplate.name}} <span>[#{{aMappingInformation.mapping.taskTemplate.id}}]</span></td>
-						</tr>
+						<thead>
+							<tr>
+								<th>Problem <span class="typeDeclaration" title="Problem Template from DSK">&lt;PT&gt;</span></th>
+								<th>Decision <span class="typeDeclaration" title="Problem Occurence from DSK">&lt;PO&gt;</span></th>
+								<th>Alternative <span class="typeDeclaration" title="Option Occurence from DSK">&lt;OO&gt;</span></th>
+								<th>Export? (
+									<button class="action small" data-ng-click="selectUnselectAll(true)"
+										title="Select all Tasks to Export">All</button>
+									<button class="action small" data-ng-click="selectUnselectAll(false)"
+										title="Unselect all Tasks to Export">None</button>)
+								</th>
+								<th colspan="2">Parent?</th>
+								<th>Task <span class="typeDeclaration" title="Task Template from EEPPI">&lt;TT&gt;</span></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr data-ng-repeat="aMappingInformation in allMappingInformation">
+								<td>{{aMappingInformation.decision.template.name}} <span>[#{{aMappingInformation.decision.template.id}}]</span></td>
+								<td>{{aMappingInformation.decision.name}} <span>[#{{aMappingInformation.decision.id}}]</span></td>
+								<td>{{aMappingInformation.alternative.name}} <span data-ng-if="aMappingInformation.alternative">[#{{aMappingInformation.alternative.id}}]</span></td>
+								<td><input title="Transmit this task" type="checkbox" data-ng-model="aMappingInformation.shouldExport" /></td>
+								<td><select title="The Task which will be the Parent for this Task"
+											data-ng-model="aMappingInformation.selectedParent"
+											data-ng-if="aMappingInformation.possibleParents.length>0"
+											data-ng-options="parent.mapping.taskTemplate.name for parent in aMappingInformation.possibleParents">
+									<option value="">Not as a Subtask</option>
+								</select></td>
+								<td class="disappearable {{exportErrorFor(aMappingInformation)?'error':''}}">{{exportErrorFor(aMappingInformation)}}</td>
+								<td>{{aMappingInformation.mapping.taskTemplate.name}} <span>[#{{aMappingInformation.mapping.taskTemplate.id}}]</span></td>
+							</tr>
+						</tbody>
 					</table>
 
 					<button class="action update" data-ng-click="processTaskTemplates();"
