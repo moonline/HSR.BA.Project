@@ -2,6 +2,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import controllers.AuthenticationChecker;
+import controllers.TransactionalAction;
 import controllers.dks.DecisionKnowledgeSystemController;
 import controllers.dks.DecisionKnowledgeSystemMappingController;
 import controllers.docs.DocumentationController;
@@ -29,7 +30,6 @@ import logics.Logger;
 import logics.dks.DKSMappingLogic;
 import logics.dks.DecisionKnowledgeSystemLogic;
 import logics.docs.DocumentationLogic;
-import logics.docs.ExampleDataCreator;
 import logics.ppt.PPTTaskLogic;
 import logics.ppt.ProcessorLogic;
 import logics.ppt.RequestTemplateLogic;
@@ -89,12 +89,12 @@ public class Global extends GlobalSettings {
 	private final DecisionKnowledgeSystemLogic DKS_LOGIC = new DecisionKnowledgeSystemLogic(DKS_DAO);
 	private final DKSMappingLogic DKS_MAPPING_LOGIC = new DKSMappingLogic(DKS_MAPPING_DAO);
 	private final PPTTaskLogic PPT_TASK_LOGIC = new PPTTaskLogic(TASK_DAO, TASK_PROPERTY_VALUE_DAO);
-	private final DocumentationLogic DOCUMENTATION_LOGIC = new DocumentationLogic();
 	private final TaskTemplateLogic TASK_TEMPLATE_LOGIC = new TaskTemplateLogic(TASK_TEMPLATE_DAO, TASK_PROPERTY_VALUE_DAO);
 	private final UserLogic USER_LOGIC = new UserLogic(USER_DAO, new SecureRandom());
 	private final PPTAccountLogic PPT_ACCOUNT_LOGIC = new PPTAccountLogic(PPT_ACCOUNT_DAO);
 	private final AuthenticationChecker AUTHENTICATION_CHECKER = new AuthenticationChecker(USER_DAO, USER_LOGIC);
 	private final ProcessorLogic PROCESSOR_LOGIC = new ProcessorLogic(PROCESSOR_DAO);
+	private final DocumentationLogic DOCUMENTATION_LOGIC = new DocumentationLogic(USER_LOGIC, USER_DAO, PPT_ACCOUNT_DAO, PROJECT_PLANNING_TOOL_DAO, TASK_TEMPLATE_DAO, TASK_PROPERTY_DAO, TASK_PROPERTY_VALUE_DAO, DKS_MAPPING_DAO, REQUEST_TEMPLATE_DAO, PROJECT_DAO, PROCESSOR_DAO, DKS_DAO);
 
 	private final Map<Class, Object> CONTROLLERS = new HashMap<>();
 
@@ -108,12 +108,19 @@ public class Global extends GlobalSettings {
 	}
 
 	private void fixSQLInitializationBug() {
-		JPA.withTransaction(() -> {
-			for (Processor processor : PROCESSOR_DAO.readAll()) {
-				processor.setCode(processor.getCode().replaceAll("&#SEMICOLON", ";"));
-				PROCESSOR_DAO.persist(processor);
+		for (String db : new String[]{"default", DocumentationLogic.DOCUMENTATION_PERSISTENCE_UNIT}) {
+			try {
+				JPA.withTransaction(db, false, () -> {
+					for (Processor processor : PROCESSOR_DAO.readAll()) {
+						processor.setCode(processor.getCode().replaceAll("&#SEMICOLON", ";"));
+						PROCESSOR_DAO.persist(processor);
+					}
+					return null;
+				});
+			} catch (Throwable throwable) {
+				play.Logger.error("Could not fix SQL initialization bug in " + db, throwable);
 			}
-		});
+		}
 	}
 
 	private void registerJsonObjectMappers() {
@@ -233,18 +240,19 @@ public class Global extends GlobalSettings {
 	}
 
 	private void initializeControllersRequiringParameters() {
-		CONTROLLERS.put(DocumentationController.class, new DocumentationController(DOCUMENTATION_LOGIC, new ExampleDataCreator(USER_LOGIC, USER_DAO, PPT_ACCOUNT_DAO, PROJECT_PLANNING_TOOL_DAO, TASK_TEMPLATE_DAO, TASK_PROPERTY_DAO, TASK_PROPERTY_VALUE_DAO, DKS_MAPPING_DAO, REQUEST_TEMPLATE_DAO, PROJECT_DAO, PROCESSOR_DAO, DKS_DAO)));
-		CONTROLLERS.put(PPTAccountController.class, new PPTAccountController(PPT_ACCOUNT_DAO, PPT_ACCOUNT_LOGIC, AUTHENTICATION_CHECKER));
-		CONTROLLERS.put(UserController.class, new UserController(USER_LOGIC, AUTHENTICATION_CHECKER));
-		CONTROLLERS.put(TaskTemplateController.class, new TaskTemplateController(TASK_TEMPLATE_LOGIC, TASK_TEMPLATE_DAO, TASK_PROPERTY_VALUE_DAO));
-		CONTROLLERS.put(ProjectPlanningToolController.class, new ProjectPlanningToolController(PPT_TASK_LOGIC, PROJECT_PLANNING_TOOL_DAO, AUTHENTICATION_CHECKER, PPT_ACCOUNT_DAO));
-		CONTROLLERS.put(DecisionKnowledgeSystemController.class, new DecisionKnowledgeSystemController(DKS_LOGIC, DKS_DAO));
+		CONTROLLERS.put(DocumentationController.class, new DocumentationController(DOCUMENTATION_LOGIC));
+		CONTROLLERS.put(PPTAccountController.class, new PPTAccountController(PPT_ACCOUNT_DAO, PPT_ACCOUNT_LOGIC, AUTHENTICATION_CHECKER, DOCUMENTATION_LOGIC));
+		CONTROLLERS.put(UserController.class, new UserController(USER_LOGIC, AUTHENTICATION_CHECKER, DOCUMENTATION_LOGIC));
+		CONTROLLERS.put(TaskTemplateController.class, new TaskTemplateController(TASK_TEMPLATE_LOGIC, TASK_TEMPLATE_DAO, TASK_PROPERTY_VALUE_DAO, DOCUMENTATION_LOGIC));
+		CONTROLLERS.put(ProjectPlanningToolController.class, new ProjectPlanningToolController(PPT_TASK_LOGIC, PROJECT_PLANNING_TOOL_DAO, AUTHENTICATION_CHECKER, PPT_ACCOUNT_DAO, DOCUMENTATION_LOGIC));
+		CONTROLLERS.put(DecisionKnowledgeSystemController.class, new DecisionKnowledgeSystemController(DKS_LOGIC, DKS_DAO, DOCUMENTATION_LOGIC));
 		CONTROLLERS.put(AuthenticationChecker.Authenticator.class, AUTHENTICATION_CHECKER.new Authenticator());
-		CONTROLLERS.put(TaskPropertyController.class, new TaskPropertyController(TASK_PROPERTY_LOGIC, TASK_PROPERTY_DAO));
-		CONTROLLERS.put(DecisionKnowledgeSystemMappingController.class, new DecisionKnowledgeSystemMappingController(DKS_MAPPING_LOGIC, DKS_MAPPING_DAO));
-		CONTROLLERS.put(RequestTemplateController.class, new RequestTemplateController(REQUEST_TEMPLATE_LOGIC, REQUEST_TEMPLATE_DAO));
-		CONTROLLERS.put(ProjectController.class, new ProjectController(PROJECT_DAO));
-		CONTROLLERS.put(ProcessorController.class, new ProcessorController(PROCESSOR_LOGIC, PROCESSOR_DAO));
+		CONTROLLERS.put(TransactionalAction.class, new TransactionalAction(DOCUMENTATION_LOGIC));
+		CONTROLLERS.put(TaskPropertyController.class, new TaskPropertyController(TASK_PROPERTY_LOGIC, TASK_PROPERTY_DAO, DOCUMENTATION_LOGIC));
+		CONTROLLERS.put(DecisionKnowledgeSystemMappingController.class, new DecisionKnowledgeSystemMappingController(DKS_MAPPING_LOGIC, DKS_MAPPING_DAO, DOCUMENTATION_LOGIC));
+		CONTROLLERS.put(RequestTemplateController.class, new RequestTemplateController(REQUEST_TEMPLATE_LOGIC, REQUEST_TEMPLATE_DAO, DOCUMENTATION_LOGIC));
+		CONTROLLERS.put(ProjectController.class, new ProjectController(PROJECT_DAO, DOCUMENTATION_LOGIC));
+		CONTROLLERS.put(ProcessorController.class, new ProcessorController(PROCESSOR_LOGIC, PROCESSOR_DAO, DOCUMENTATION_LOGIC));
 	}
 
 	@Override

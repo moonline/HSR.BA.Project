@@ -64,8 +64,17 @@ includeFilter in (Assets, LessKeys.less) := "*.less"
 ///////// enables debuging in tests
 Keys.fork in Test := false
 
-///////// blames you, if you use unchecked conversions
-javacOptions += "-Xlint:unchecked"
+//define custom test directories
+sourceDirectories in Test ++= Seq(
+  (sourceDirectory in Test).value,
+  (sourceDirectory in Test).value / "behaviour",
+  (sourceDirectory in Test).value / "integration",
+  (sourceDirectory in Test).value / "tools",
+  (sourceDirectory in Test).value / "unit"
+)
+
+///////// blames you, if you use unchecked conversions and set Java to 1.8
+javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint:unchecked")
 
 // Typescript compiler
 lazy val compileTS = taskKey[Seq[File]]("Compiling the TypeScript files to JavaScript files")

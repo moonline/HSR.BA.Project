@@ -1,6 +1,7 @@
 package controllers;
 
 import daos.AbstractDAO;
+import logics.docs.DocumentationLogic;
 import logics.docs.QueryExamples;
 import logics.docs.QueryParameters;
 import logics.docs.QueryResponses;
@@ -9,6 +10,11 @@ import org.jetbrains.annotations.NotNull;
 import play.mvc.Result;
 
 public abstract class AbstractReadController extends AbstractController {
+
+	public AbstractReadController(DocumentationLogic documentationLogic) {
+		super(documentationLogic);
+	}
+
 	@NotNull
 	protected abstract String getEntityName();
 

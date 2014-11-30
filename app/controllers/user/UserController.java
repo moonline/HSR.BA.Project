@@ -4,14 +4,11 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import controllers.AbstractController;
 import controllers.AuthenticationChecker;
 import controllers.GuaranteeAuthenticatedUser;
-import logics.docs.QueryDescription;
-import logics.docs.QueryExamples;
-import logics.docs.QueryParameters;
-import logics.docs.QueryResponses;
+import logics.docs.*;
 import logics.user.UserLogic;
 import models.user.User;
 import play.data.Form;
-import play.db.jpa.Transactional;
+import controllers.Transactional;
 import play.mvc.Result;
 
 import static logics.docs.QueryExamples.Example;
@@ -23,7 +20,8 @@ public class UserController extends AbstractController {
 	private final UserLogic USER_LOGIC;
 	private final AuthenticationChecker AUTHENTICATION_CHECKER;
 
-	public UserController(UserLogic userLogic, AuthenticationChecker authenticationChecker) {
+	public UserController(UserLogic userLogic, AuthenticationChecker authenticationChecker, DocumentationLogic documentationLogic) {
+		super(documentationLogic);
 		USER_LOGIC = userLogic;
 		AUTHENTICATION_CHECKER = authenticationChecker;
 	}

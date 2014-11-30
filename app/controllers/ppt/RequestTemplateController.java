@@ -3,14 +3,11 @@ package controllers.ppt;
 import controllers.AbstractCRUDController;
 import controllers.GuaranteeAuthenticatedUser;
 import daos.ppt.RequestTemplateDAO;
-import logics.docs.QueryDescription;
-import logics.docs.QueryExamples;
-import logics.docs.QueryParameters;
-import logics.docs.QueryResponses;
+import logics.docs.*;
 import logics.ppt.RequestTemplateLogic;
 import models.ppt.RequestTemplate;
 import org.jetbrains.annotations.NotNull;
-import play.db.jpa.Transactional;
+import controllers.Transactional;
 import play.mvc.Result;
 
 import static logics.docs.QueryExamples.Example;
@@ -22,7 +19,8 @@ public class RequestTemplateController extends AbstractCRUDController {
 	private final RequestTemplateLogic REQUEST_TEMPLATE_LOGIC;
 	private final RequestTemplateDAO REQUEST_TEMPLATE_DAO;
 
-	public RequestTemplateController(RequestTemplateLogic requestTemplateLogic, RequestTemplateDAO requestTemplateDao) {
+	public RequestTemplateController(RequestTemplateLogic requestTemplateLogic, RequestTemplateDAO requestTemplateDao, DocumentationLogic documentationLogic) {
+		super(documentationLogic);
 		REQUEST_TEMPLATE_LOGIC = requestTemplateLogic;
 		REQUEST_TEMPLATE_DAO = requestTemplateDao;
 	}

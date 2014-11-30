@@ -3,21 +3,19 @@ package controllers.ppt;
 import controllers.AbstractCRUDController;
 import controllers.GuaranteeAuthenticatedUser;
 import daos.ppt.ProcessorDAO;
-import logics.docs.QueryDescription;
-import logics.docs.QueryExamples;
-import logics.docs.QueryParameters;
-import logics.docs.QueryResponses;
+import logics.docs.*;
 import logics.ppt.ProcessorLogic;
 import models.ppt.Processor;
 import org.jetbrains.annotations.NotNull;
-import play.db.jpa.Transactional;
+import controllers.Transactional;
 import play.mvc.Result;
 
 public class ProcessorController extends AbstractCRUDController {
 	private final ProcessorLogic PROCESSOR_LOGIC;
 	private final ProcessorDAO PROCESSOR_DAO;
 
-	public ProcessorController(ProcessorLogic processorLogic, ProcessorDAO processorDAO) {
+	public ProcessorController(ProcessorLogic processorLogic, ProcessorDAO processorDAO, DocumentationLogic documentationLogic) {
+		super(documentationLogic);
 		PROCESSOR_LOGIC = processorLogic;
 		PROCESSOR_DAO = processorDAO;
 	}

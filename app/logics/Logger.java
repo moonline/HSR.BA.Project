@@ -26,15 +26,23 @@ public class Logger {
 	}
 
 	public void debug(@NotNull String action, @NotNull Object... params) {
+		log(logger::debug, action, params);
+	}
+
+	private void log(@NotNull LogFunction logFunction, @NotNull String action, @NotNull Object... params) {
 		if (!action.equals("looked for select u from User u where u.name = ?") && !action.startsWith("looked for User with id ")) { //prevent Stack Overflow Exception on logging (Logger calls this method itself)
 			Http.Context context = getContextIfPossible();
 			if (context != null) {
 				User loggedInUser = getLoggedInUserWithOrWithoutTransaction(context);
-				logger.debug((loggedInUser == null ? "A not logged in user" : loggedInUser) + " from " + context.request().remoteAddress() + " " + action, params);
+				logFunction.log((loggedInUser == null ? "A not logged in user" : loggedInUser) + " from " + context.request().remoteAddress() + " " + action, params);
 			} else {
-				logger.debug(action, params);
+				logFunction.log(action, params);
 			}
 		}
+	}
+
+	private static interface LogFunction {
+		public void log(String message, Object... args);
 	}
 
 	@Nullable

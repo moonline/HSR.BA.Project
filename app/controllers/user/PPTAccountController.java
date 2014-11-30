@@ -4,15 +4,12 @@ import controllers.AbstractCRUDController;
 import controllers.AuthenticationChecker;
 import controllers.GuaranteeAuthenticatedUser;
 import daos.user.PPTAccountDAO;
-import logics.docs.QueryDescription;
-import logics.docs.QueryExamples;
-import logics.docs.QueryParameters;
-import logics.docs.QueryResponses;
+import logics.docs.*;
 import logics.user.PPTAccountLogic;
 import models.user.PPTAccount;
 import org.jetbrains.annotations.NotNull;
 import play.data.Form;
-import play.db.jpa.Transactional;
+import controllers.Transactional;
 import play.mvc.Result;
 
 import static logics.docs.QueryExamples.Example;
@@ -25,7 +22,8 @@ public class PPTAccountController extends AbstractCRUDController {
 	private final PPTAccountLogic PPT_ACCOUNT_LOGIC;
 	private final AuthenticationChecker AUTHENTICATION_CHECKER;
 
-	public PPTAccountController(PPTAccountDAO pptAccountDao, PPTAccountLogic pptAccountLogic, AuthenticationChecker authenticationChecker) {
+	public PPTAccountController(PPTAccountDAO pptAccountDao, PPTAccountLogic pptAccountLogic, AuthenticationChecker authenticationChecker, DocumentationLogic documentationLogic) {
+		super(documentationLogic);
 		PPT_ACCOUNT_DAO = pptAccountDao;
 		PPT_ACCOUNT_LOGIC = pptAccountLogic;
 		AUTHENTICATION_CHECKER = authenticationChecker;

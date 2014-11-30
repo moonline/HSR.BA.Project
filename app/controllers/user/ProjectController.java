@@ -3,17 +3,19 @@ package controllers.user;
 import controllers.AbstractReadController;
 import controllers.GuaranteeAuthenticatedUser;
 import daos.user.ProjectDAO;
+import logics.docs.DocumentationLogic;
 import logics.docs.QueryDescription;
 import logics.docs.QueryExamples;
 import org.jetbrains.annotations.NotNull;
-import play.db.jpa.Transactional;
+import controllers.Transactional;
 import play.mvc.Result;
 
 public class ProjectController extends AbstractReadController {
 
 	private final ProjectDAO PROJECT_DAO;
 
-	public ProjectController(ProjectDAO projectDao) {
+	public ProjectController(ProjectDAO projectDao, DocumentationLogic documentationLogic) {
+		super(documentationLogic);
 		PROJECT_DAO = projectDao;
 	}
 

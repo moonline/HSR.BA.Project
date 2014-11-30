@@ -3,13 +3,14 @@ package controllers.task;
 import controllers.AbstractCRUDController;
 import controllers.GuaranteeAuthenticatedUser;
 import daos.task.TaskPropertyDAO;
+import logics.docs.DocumentationLogic;
 import logics.docs.QueryDescription;
 import logics.docs.QueryExamples;
 import logics.docs.QueryParameters;
 import logics.task.TaskPropertyLogic;
 import models.task.TaskProperty;
 import org.jetbrains.annotations.NotNull;
-import play.db.jpa.Transactional;
+import controllers.Transactional;
 import play.mvc.Result;
 
 import static logics.docs.QueryExamples.Example;
@@ -19,7 +20,8 @@ public class TaskPropertyController extends AbstractCRUDController {
 	private final TaskPropertyLogic TASK_PROPERTY_LOGIC;
 	private final TaskPropertyDAO TASK_PROPERTY_DAO;
 
-	public TaskPropertyController(TaskPropertyLogic taskPropertyLogic, TaskPropertyDAO taskPropertyDao) {
+	public TaskPropertyController(TaskPropertyLogic taskPropertyLogic, TaskPropertyDAO taskPropertyDao, DocumentationLogic documentationLogic) {
+		super(documentationLogic);
 		TASK_PROPERTY_LOGIC = taskPropertyLogic;
 		TASK_PROPERTY_DAO = taskPropertyDao;
 	}

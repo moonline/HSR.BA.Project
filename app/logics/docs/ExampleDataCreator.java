@@ -28,7 +28,6 @@ import org.apache.commons.lang3.NotImplementedException;
 import org.jetbrains.annotations.NotNull;
 import play.Logger;
 import play.db.jpa.JPA;
-import play.libs.F;
 
 import javax.persistence.EntityManager;
 import java.util.HashSet;
@@ -54,27 +53,24 @@ public class ExampleDataCreator {
 	@NotNull
 	private Set<String> cache = new HashSet<>();
 
-	public ExampleDataCreator(@NotNull UserLogic userLogic, UserDAO userDao, PPTAccountDAO pptAccountDao, ProjectPlanningToolDAO projectPlanningToolDao, TaskTemplateDAO taskTemplateDao, TaskPropertyDAO taskPropertyDao, TaskPropertyValueDAO taskPropertyValueDao, DKSMappingDAO dksMappingDao, RequestTemplateDAO requestTemplateDao, ProjectDAO projectDao, ProcessorDAO processorDAO, DecisionKnowledgeSystemDAO dksDao) {
+	protected ExampleDataCreator(@NotNull UserLogic userLogic, UserDAO userDao, PPTAccountDAO pptAccountDao, ProjectPlanningToolDAO projectPlanningToolDao, TaskTemplateDAO taskTemplateDao, TaskPropertyDAO taskPropertyDao, TaskPropertyValueDAO taskPropertyValueDao, DKSMappingDAO dksMappingDao, RequestTemplateDAO requestTemplateDao, ProjectDAO projectDao, ProcessorDAO processorDAO, DecisionKnowledgeSystemDAO dksDao) {
 		USER_DAO = userDao;
 		PPT_ACCOUNT_DAO = pptAccountDao;
-		JPA.withTransaction(new F.Callback0() {
-			@Override
-			public void invoke() throws Throwable {
-				int i = 0;
-				User user;
-				String username;
-				do {
-					username = "user" + i;
-					user = USER_DAO.readByName(username);
-					if (user == null) {
-						user = userLogic.createUser(new UserLogic.RegisterForm(username, USER_PASSWORD));
-						JPA.em().flush();
-					}
-				} while (!userLogic.isPasswordCorrect(user, USER_PASSWORD));
-				USER_NAME = username;
-				USER_ID = user.getId();
-			}
-		});
+		{//create a valid user
+			int i = 0;
+			User user;
+			String username;
+			do {
+				username = "user" + i;
+				user = USER_DAO.readByName(username);
+				if (user == null) {
+					user = userLogic.createUser(new UserLogic.RegisterForm(username, USER_PASSWORD));
+					JPA.em().flush();
+				}
+			} while (!userLogic.isPasswordCorrect(user, USER_PASSWORD));
+			USER_NAME = username;
+			USER_ID = user.getId();
+		}
 		PROJECT_PLANNING_TOOL_DAO = projectPlanningToolDao;
 		TASK_TEMPLATE_DAO = taskTemplateDao;
 		TASK_PROPERTY_DAO = taskPropertyDao;
@@ -95,7 +91,7 @@ public class ExampleDataCreator {
 				String pptUsername = "tbucher";
 				String pptPassword = "7YqupNxN9v";
 				objectCreator = new ExampleObjectCreator<>(
-						"PPTAccount",
+						PPTAccount.class,
 						PPT_ACCOUNT_DAO,
 						() -> {
 							ProjectPlanningTool ppt = new ProjectPlanningTool();
@@ -119,7 +115,7 @@ public class ExampleDataCreator {
 				break;
 			case "PPT":
 				String pptName = "Example Jira";
-				objectCreator = new ExampleObjectCreator<>("ProjectPlanningTool",
+				objectCreator = new ExampleObjectCreator<>(ProjectPlanningTool.class,
 						PROJECT_PLANNING_TOOL_DAO,
 						() -> {
 							ProjectPlanningTool ppt = new ProjectPlanningTool();
@@ -131,7 +127,7 @@ public class ExampleDataCreator {
 				break;
 			case "TASKTEMPLATE":
 				String ttName = "My example Task Template";
-				objectCreator = new ExampleObjectCreator<>("TaskTemplate",
+				objectCreator = new ExampleObjectCreator<>(TaskTemplate.class,
 						TASK_TEMPLATE_DAO,
 						() -> {
 							TaskTemplate taskTemplate = new TaskTemplate();
@@ -143,7 +139,7 @@ public class ExampleDataCreator {
 				break;
 			case "TASKPROPERTY":
 				String tpName = "My example Task Property";
-				objectCreator = new ExampleObjectCreator<>("TaskProperty",
+				objectCreator = new ExampleObjectCreator<>(TaskProperty.class,
 						TASK_PROPERTY_DAO,
 						() -> {
 							TaskProperty taskProperty = new TaskProperty();
@@ -155,7 +151,7 @@ public class ExampleDataCreator {
 				break;
 			case "TASKPROPERTYVALUE":
 				String tpValue = "My example Value";
-				objectCreator = new ExampleObjectCreator<>("TaskPropertyValue",
+				objectCreator = new ExampleObjectCreator<>(TaskPropertyValue.class,
 						TASK_PROPERTY_VALUE_DAO,
 						() -> {
 							TaskProperty taskProperty = new TaskProperty();
@@ -173,7 +169,7 @@ public class ExampleDataCreator {
 				break;
 			case "DKSMAPPING":
 				String dksNode = "87";
-				objectCreator = new ExampleObjectCreator<>("DKSMapping",
+				objectCreator = new ExampleObjectCreator<>(DKSMapping.class,
 						DKS_MAPPING_DAO,
 						() -> {
 							TaskTemplate taskTemplate = new TaskTemplate();
@@ -189,7 +185,7 @@ public class ExampleDataCreator {
 			case "DKS":
 				String dksName = "Example DKS";
 				String dksUrl = "http://an-example-dks.com";
-				objectCreator = new ExampleObjectCreator<>("DKS",
+				objectCreator = new ExampleObjectCreator<>(DecisionKnowledgeSystem.class,
 						DKS_DAO,
 						() -> {
 							DecisionKnowledgeSystem dks = new DecisionKnowledgeSystem();
@@ -201,7 +197,7 @@ public class ExampleDataCreator {
 						existingDKS -> dksName.equals(existingDKS.getName()) && dksUrl.equals(existingDKS.getUrl()));
 				break;
 			case "DKSNODE":
-				objectCreator = new ExampleObjectCreator<DKSMapping>("DKSNode",
+				objectCreator = new ExampleObjectCreator<DKSMapping>(DKSMapping.class,
 						DKS_MAPPING_DAO,
 						() -> null,
 						existingDKSMapping -> true) {
@@ -230,7 +226,7 @@ public class ExampleDataCreator {
 			case "PROCESSOR":
 				String name = "Example Processor";
 				String code = "function(a) { return a+'.'+a; }";
-				objectCreator = new ExampleObjectCreator<>("Processor",
+				objectCreator = new ExampleObjectCreator<>(Processor.class,
 						PROCESSOR_DAO,
 						() -> {
 							Project project = new Project();
@@ -248,7 +244,7 @@ public class ExampleDataCreator {
 			case "REQUESTTEMPLATE":
 				String url = "/example/endpoint";
 				String requestTemplate = "{\"name\":\"${title}\"}";
-				objectCreator = new ExampleObjectCreator<>("Mapping",
+				objectCreator = new ExampleObjectCreator<>(RequestTemplate.class,
 						REQUEST_TEMPLATE_DAO,
 						() -> {
 							ProjectPlanningTool ppt = new ProjectPlanningTool();
@@ -268,7 +264,7 @@ public class ExampleDataCreator {
 				break;
 			case "PROJECT":
 				String projectName = "The Example Project";
-				objectCreator = new ExampleObjectCreator<>("Project",
+				objectCreator = new ExampleObjectCreator<>(Project.class,
 						PROJECT_DAO,
 						() -> {
 							Project project = new Project();
@@ -322,8 +318,8 @@ public class ExampleDataCreator {
 		private final CreateNewObjectFunctionInterface<Long> createNewObjectFunction;
 		private final CheckIsExistingAndExpectedFunctionInterface<T, Boolean> isExistingAndExpectedFunction;
 
-		public ExampleObjectCreator(String className, AbstractDAO<T> dao, CreateNewObjectFunctionInterface<Long> createNewObjectFunction, CheckIsExistingAndExpectedFunctionInterface<T, Boolean> isExistingAndExpectedFunction) {
-			this.className = className;
+		public ExampleObjectCreator(Class className, AbstractDAO<T> dao, CreateNewObjectFunctionInterface<Long> createNewObjectFunction, CheckIsExistingAndExpectedFunctionInterface<T, Boolean> isExistingAndExpectedFunction) {
+			this.className = className.getSimpleName();
 			this.dao = dao;
 			this.createNewObjectFunction = createNewObjectFunction;
 			this.isExistingAndExpectedFunction = isExistingAndExpectedFunction;

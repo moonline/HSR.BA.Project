@@ -4,13 +4,10 @@ import controllers.AbstractCRUDController;
 import controllers.GuaranteeAuthenticatedUser;
 import daos.dks.DecisionKnowledgeSystemDAO;
 import logics.dks.DecisionKnowledgeSystemLogic;
-import logics.docs.QueryDescription;
-import logics.docs.QueryExamples;
-import logics.docs.QueryParameters;
-import logics.docs.QueryResponses;
+import logics.docs.*;
 import models.dks.DecisionKnowledgeSystem;
 import org.jetbrains.annotations.NotNull;
-import play.db.jpa.Transactional;
+import controllers.Transactional;
 import play.libs.F;
 import play.mvc.Result;
 
@@ -24,7 +21,8 @@ public class DecisionKnowledgeSystemController extends AbstractCRUDController {
 	private final DecisionKnowledgeSystemLogic DKS_LOGIC;
 	private final DecisionKnowledgeSystemDAO DKS_DAO;
 
-	public DecisionKnowledgeSystemController(DecisionKnowledgeSystemLogic dksLogic, DecisionKnowledgeSystemDAO dksDao) {
+	public DecisionKnowledgeSystemController(DecisionKnowledgeSystemLogic dksLogic, DecisionKnowledgeSystemDAO dksDao, DocumentationLogic documentationLogic) {
+		super(documentationLogic);
 		DKS_LOGIC = dksLogic;
 		DKS_DAO = dksDao;
 	}

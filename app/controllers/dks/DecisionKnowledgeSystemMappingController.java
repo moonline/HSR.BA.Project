@@ -2,15 +2,12 @@ package controllers.dks;
 
 import controllers.AbstractCRUDController;
 import controllers.GuaranteeAuthenticatedUser;
+import controllers.Transactional;
 import daos.dks.DKSMappingDAO;
 import logics.dks.DKSMappingLogic;
-import logics.docs.QueryDescription;
-import logics.docs.QueryExamples;
-import logics.docs.QueryParameters;
-import logics.docs.QueryResponses;
+import logics.docs.*;
 import models.dks.DKSMapping;
 import org.jetbrains.annotations.NotNull;
-import play.db.jpa.Transactional;
 import play.mvc.Result;
 
 import static logics.docs.QueryExamples.Example;
@@ -21,7 +18,8 @@ public class DecisionKnowledgeSystemMappingController extends AbstractCRUDContro
 	private final DKSMappingLogic DKS_MAPPING_LOGIC;
 	private final DKSMappingDAO DKS_MAPPING_DAO;
 
-	public DecisionKnowledgeSystemMappingController(DKSMappingLogic dksMappingLogic, DKSMappingDAO dksMappingDao) {
+	public DecisionKnowledgeSystemMappingController(DKSMappingLogic dksMappingLogic, DKSMappingDAO dksMappingDao, DocumentationLogic documentationLogic) {
+		super(documentationLogic);
 		DKS_MAPPING_LOGIC = dksMappingLogic;
 		DKS_MAPPING_DAO = dksMappingDao;
 	}

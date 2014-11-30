@@ -3,8 +3,21 @@ package logics.docs;
 import controllers.AbstractCRUDController;
 import controllers.AbstractController;
 import controllers.GuaranteeAuthenticatedUser;
+import daos.dks.DKSMappingDAO;
+import daos.dks.DecisionKnowledgeSystemDAO;
+import daos.ppt.ProcessorDAO;
+import daos.ppt.ProjectPlanningToolDAO;
+import daos.ppt.RequestTemplateDAO;
+import daos.task.TaskPropertyDAO;
+import daos.task.TaskPropertyValueDAO;
+import daos.task.TaskTemplateDAO;
+import daos.user.PPTAccountDAO;
+import daos.user.ProjectDAO;
+import daos.user.UserDAO;
+import logics.user.UserLogic;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.exception.ConstraintViolationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.reflections.Reflections;
@@ -15,13 +28,17 @@ import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
 import play.Logger;
 import play.api.mvc.Call;
+import play.db.jpa.JPA;
 import play.libs.F;
 import play.libs.ws.WS;
 import play.libs.ws.WSRequestHolder;
 import play.libs.ws.WSResponse;
 import play.mvc.Controller;
+import play.mvc.Http;
 import play.mvc.Result;
 
+import javax.persistence.PersistenceException;
+import javax.persistence.metamodel.EntityType;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -35,6 +52,36 @@ import static play.mvc.Http.Context.Implicit.ctx;
 public class DocumentationLogic {
 
 	public static final int MAGIC_CONSTANT_PARAMETER_IDENTIFICATION = 42;
+	public static final String DOCUMENTATION_REQUEST_HEADER = "isDocumentationRequest";
+	public static final String DOCUMENTATION_PERSISTENCE_UNIT = "documentation";
+
+	private final UserLogic USER_LOGIC;
+	private final UserDAO USER_DAO;
+	private final PPTAccountDAO PPT_ACCOUNT_DAO;
+	private final ProjectPlanningToolDAO PROJECT_PLANNING_TOOL_DAO;
+	private final TaskTemplateDAO TASK_TEMPLATE_DAO;
+	private final TaskPropertyDAO TASK_PROPERTY_DAO;
+	private final TaskPropertyValueDAO TASK_PROPERTY_VALUE_DAO;
+	private final DKSMappingDAO DKS_MAPPING_DAO;
+	private final RequestTemplateDAO REQUEST_TEMPLATE_DAO;
+	private final ProjectDAO PROJECT_DAO;
+	private final ProcessorDAO PROCESSOR_DAO;
+	private final DecisionKnowledgeSystemDAO DKS_DAO;
+
+	public DocumentationLogic(UserLogic userLogic, UserDAO userDAO, PPTAccountDAO pptAccountDAO, ProjectPlanningToolDAO projectPlanningToolDAO, TaskTemplateDAO taskTemplateDAO, TaskPropertyDAO taskPropertyDAO, TaskPropertyValueDAO taskPropertyValueDAO, DKSMappingDAO dksMappingDAO, RequestTemplateDAO requestTemplateDAO, ProjectDAO projectDAO, ProcessorDAO processorDAO, DecisionKnowledgeSystemDAO decisionKnowledgeSystemDAO) {
+		USER_LOGIC = userLogic;
+		USER_DAO = userDAO;
+		PPT_ACCOUNT_DAO = pptAccountDAO;
+		PROJECT_PLANNING_TOOL_DAO = projectPlanningToolDAO;
+		TASK_TEMPLATE_DAO = taskTemplateDAO;
+		TASK_PROPERTY_DAO = taskPropertyDAO;
+		TASK_PROPERTY_VALUE_DAO = taskPropertyValueDAO;
+		DKS_MAPPING_DAO = dksMappingDAO;
+		REQUEST_TEMPLATE_DAO = requestTemplateDAO;
+		PROJECT_DAO = projectDAO;
+		PROCESSOR_DAO = processorDAO;
+		DKS_DAO = decisionKnowledgeSystemDAO;
+	}
 
 	/**
 	 * Gets all methods in all controllers (see getAllControllerClasses()) which is implicitly a list of all public API endpoints
@@ -223,16 +270,17 @@ public class DocumentationLogic {
 
 	@NotNull
 	private SimpleResponse simulateRequest(@NotNull MethodDocumentation method, @NotNull QueryExamples.Example example, @NotNull ExampleDataCreator exampleDataCreator) {
-		WSRequestHolder url = WS.url(getRequestUrl(method, true, example.id()));
+		WSRequestHolder request = WS.url(getRequestUrl(method, true, example.id()));
 		String queryString = calculateQueryString(method, example.parameters());
 		if (queryString != null) {
-			url.setQueryString(queryString);
+			request.setQueryString(queryString);
 		}
 		if (example.provideAuthentication()) {
-			url.setAuth(exampleDataCreator.USER_NAME, exampleDataCreator.USER_PASSWORD);
-			url.setQueryParameter("basicAuth", "true");
+			request.setAuth(exampleDataCreator.USER_NAME, exampleDataCreator.USER_PASSWORD);
+			request.setQueryParameter("basicAuth", "true");
 		}
-		F.Promise<WSResponse> promise = url.execute(method.call.method());
+		request.setHeader(DocumentationLogic.DOCUMENTATION_REQUEST_HEADER, "true");
+		F.Promise<WSResponse> promise = request.execute(method.call.method());
 		WSResponse wsResponse = promise.get(30, SECONDS);
 		return new SimpleResponse(wsResponse.getStatus(), wsResponse.getStatusText(), wsResponse.getBody(), true);
 	}
@@ -290,7 +338,9 @@ public class DocumentationLogic {
 	 * Some query parameters need to be backed up by real data and they are reference with REFERENCE_TYPE_ID.
 	 * This method creates the data that is referenced in the given methods.
 	 */
-	public void createCallExampleData(@NotNull Collection<List<MethodDocumentation>> allAPIMethods, @NotNull ExampleDataCreator exampleDataCreator) {
+	public ExampleDataCreator createCallExampleData(@NotNull Collection<List<MethodDocumentation>> allAPIMethods) {
+		removeAllExistingData(PROCESSOR_DAO, TASK_PROPERTY_VALUE_DAO, PPT_ACCOUNT_DAO, REQUEST_TEMPLATE_DAO, DKS_MAPPING_DAO);
+		ExampleDataCreator exampleDataCreator = new ExampleDataCreator(USER_LOGIC, USER_DAO, PPT_ACCOUNT_DAO, PROJECT_PLANNING_TOOL_DAO, TASK_TEMPLATE_DAO, TASK_PROPERTY_DAO, TASK_PROPERTY_VALUE_DAO, DKS_MAPPING_DAO, REQUEST_TEMPLATE_DAO, PROJECT_DAO, PROCESSOR_DAO, DKS_DAO);
 		for (List<MethodDocumentation> apiMethods : allAPIMethods) {
 			for (MethodDocumentation apiMethod : apiMethods) {
 				for (QueryExamples.Example queryExample : apiMethod.queryExamples) {
@@ -307,6 +357,32 @@ public class DocumentationLogic {
 				}
 			}
 		}
+		return exampleDataCreator;
+	}
+
+	private void removeAllExistingData(ProcessorDAO processorDAO, TaskPropertyValueDAO taskPropertyValueDAO, PPTAccountDAO pptAccountDAO, RequestTemplateDAO requestTemplateDAO, DKSMappingDAO dksMappingDAO) {
+		//Remove the ones, that have dependencies
+		processorDAO.removeAll();
+		taskPropertyValueDAO.removeAll();
+		pptAccountDAO.removeAll();
+		requestTemplateDAO.removeAll();
+		dksMappingDAO.removeAll();
+		//Remove the rest
+		for (EntityType<?> entity : JPA.em().getMetamodel().getEntities()) {
+			try {
+				JPA.em().createQuery("delete from " + entity.getName()).executeUpdate();
+			} catch (PersistenceException e) {
+				if (e.getCause() instanceof ConstraintViolationException) {
+					throw new RuntimeException("Could not delete all existing data, as something depends on the one just tried to delete. Please delete it manually before.", e);
+				} else {
+					throw e;
+				}
+			}
+		}
+	}
+
+	public boolean isDocumentationRequest(@NotNull Http.Request request) {
+		return request.hasHeader(DOCUMENTATION_REQUEST_HEADER);
 	}
 
 	public static class SimpleResponse {
@@ -316,7 +392,7 @@ public class DocumentationLogic {
 		private final String body;
 		private final boolean isRealSimulation;
 
-		public SimpleResponse(int status, String statusText, String body, boolean isRealSimulation) {
+		public SimpleResponse(int status, @Nullable String statusText, String body, boolean isRealSimulation) {
 			this.status = status;
 			this.statusText = statusText;
 			this.body = body;
@@ -327,6 +403,7 @@ public class DocumentationLogic {
 			return status;
 		}
 
+		@Nullable
 		public String getStatusText() {
 			return statusText;
 		}

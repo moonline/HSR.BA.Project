@@ -4,18 +4,15 @@ import com.fasterxml.jackson.databind.JsonNode;
 import controllers.AbstractReadController;
 import controllers.AuthenticationChecker;
 import controllers.GuaranteeAuthenticatedUser;
+import controllers.Transactional;
 import daos.ppt.ProjectPlanningToolDAO;
 import daos.user.PPTAccountDAO;
-import logics.docs.QueryDescription;
-import logics.docs.QueryExamples;
-import logics.docs.QueryParameters;
-import logics.docs.QueryResponses;
+import logics.docs.*;
 import logics.ppt.PPTTaskLogic;
 import models.user.PPTAccount;
 import org.jetbrains.annotations.NotNull;
 import play.data.Form;
 import play.db.jpa.JPA;
-import play.db.jpa.Transactional;
 import play.libs.F;
 import play.mvc.Http;
 import play.mvc.Result;
@@ -34,7 +31,8 @@ public class ProjectPlanningToolController extends AbstractReadController {
 	private final AuthenticationChecker AUTHENTICATION_CHECKER;
 	private final PPTAccountDAO PPT_ACCOUNT_DAO;
 
-	public ProjectPlanningToolController(PPTTaskLogic pptTaskLogic, ProjectPlanningToolDAO projectPlanningToolDao, AuthenticationChecker authenticationChecker, PPTAccountDAO pptAccountDao) {
+	public ProjectPlanningToolController(PPTTaskLogic pptTaskLogic, ProjectPlanningToolDAO projectPlanningToolDao, AuthenticationChecker authenticationChecker, PPTAccountDAO pptAccountDao, DocumentationLogic documentationLogic) {
+		super(documentationLogic);
 		PPT_TASK_LOGIC = pptTaskLogic;
 		PROJECT_PLANNING_TOOL_DAO = projectPlanningToolDao;
 		AUTHENTICATION_CHECKER = authenticationChecker;
@@ -132,10 +130,7 @@ public class ProjectPlanningToolController extends AbstractReadController {
 			if (account == null) {
 				form.reject("account", "Could not find account on server");
 			} else {
-				return F.Promise.promise(() -> {
-					Http.Context.current.remove();
-					return JPA.withTransaction(() -> PPT_TASK_LOGIC.createPPTTask(form.get(), account));
-				}).map(wsResponse ->
+				return F.Promise.promise(() -> withTransaction(() -> PPT_TASK_LOGIC.createPPTTask(form.get(), account))).map(wsResponse ->
 								(Result) status(wsResponse.getFinalResponseStatus(), wsResponse.getFinalResponseContent())
 				).recover(throwable -> {
 					if (throwable instanceof ConnectException) {

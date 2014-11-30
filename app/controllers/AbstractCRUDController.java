@@ -2,6 +2,7 @@ package controllers;
 
 import daos.AbstractDAO;
 import logics.CRUDLogicInterface;
+import logics.docs.DocumentationLogic;
 import logics.docs.QueryParameters;
 import logics.docs.QueryResponses;
 import models.AbstractEntity;
@@ -10,6 +11,10 @@ import play.data.Form;
 import play.mvc.Result;
 
 public abstract class AbstractCRUDController extends AbstractReadController {
+
+	public AbstractCRUDController(DocumentationLogic documentationLogic) {
+		super(documentationLogic);
+	}
 
 	@QueryResponses({
 			@QueryResponses.Response(status = BAD_REQUEST, description = "If the request parameter contain errors."),
