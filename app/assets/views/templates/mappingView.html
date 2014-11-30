@@ -58,7 +58,7 @@ will be filtered by EEPPI.">
 				<h2>{{currentDksNode.name}} [#{{currentDksNode.id}}]</h2>
 				<dl>
 					<dt data-ng-if="currentDksNode.notes">Notes</dt>
-					<dd data-ng-if="currentDksNode.notes"><pre class="multilineText">{{currentDksNode.notes}}</pre></dd>
+					<dd data-ng-if="currentDksNode.notes"><p data-ng-bind-html="currentDksNode.secureNotes" class="multilineText"></p></dd>
 					<dt>Path</dt>
 					<dd><span data-ng-repeat="pathSegment in currentDksNode.path">
 					<span class="pathDivider" data-ng-if="!$first">/</span><span class="pathSegment">{{pathSegment}}</span></span>
@@ -88,18 +88,28 @@ will be filtered by EEPPI.">
 					</dd>
 				</dl>
 
-				<h3>Mapping ({{currentDksNode.name}} &hArr; Task Templates)</h3>
+				<h3>Mapping ({{currentDksNode.name}} &hArr; Task Templates)
+					<span class="infoBox"
+						  style="float: right; "
+						  title="Mapped task templates are tasks related to this problem/alternative
+you should do everytime in your project if you have
+to decide this problem or if you have choosen this
+alternative.">
+						<span class="icon info">&#x2139;</span>
+					</span>
+				</h3>
 
 				<span class="messagebox error" data-ng-if="mappingsLoadingStatus === ApplicationState.failed">Loading of task mappings failed. Maybe server is not available.</span>
 				<span class="messagebox pending" data-ng-if="mappingsLoadingStatus === ApplicationState.pending">Loading ...</span>
 				<span class="messagebox saving" data-ng-if="mappingsSavingStatus === ApplicationState.saving">Saving ...</span>
 				<span class="messagebox success" data-ng-if="mappingsSavingStatus === ApplicationState.successful">Saved successfully</span>
 				<span class="messagebox error" data-ng-if="mappingsSavingStatus === ApplicationState.failed">Could not save! Please try again, reload the page or file a bug report.</span>
+
 				<ul>
 					<li data-ng-repeat="mapping in currentMappings | orderBy:'name'">
 						<button class="action remove" data-ng-click="removeMapping(mapping)"
 							title="Release mapping">
-							<span class="icon small iconOnly">&Chi;</span>&nbsp;&nbsp;Release
+							<span class="icon small iconOnly">&Chi;</span>&nbsp;&nbsp;Unmap
 						</button>
 						<span data-ng-click="setCurrentTaskTemplate(mapping.taskTemplate)" title="Edit task template">
 							{{mapping.taskTemplate.name}} [{{mapping.taskTemplate.id}}]
@@ -126,7 +136,7 @@ will be filtered by EEPPI.">
 							title="{{hasMappingFor(template)?'There is already a mapping for this Task Template':'Map this Task Template with the selected DKS element'}}">&lt; Map
 					</button>
 					<span data-ng-click="setCurrentTaskTemplate(template)" title="Edit task template">
-						<button class="action edit">&#x270E;</button> {{template.name}}
+						<button class="action {{template.id != currentTaskTemplate.id && 'edit' || '' }}">&#x270E;</button> {{template.name}}
 					</span>
 				</li>
 			</ul>
@@ -152,7 +162,7 @@ relations to DKS nodes (mappings) and exported tasks.
 				</span>
 			</form>
 
-			<h3 data-ng-if="currentTaskTemplate">{{currentTaskTemplate.name}} [{{currentTaskTemplate.id}}]</h3>
+			<h3 data-ng-if="currentTaskTemplate">{{currentTaskTemplate.name}} [#{{currentTaskTemplate.id}}]</h3>
 			<div class="operationState">
 				<span class="messagebox saving taskDetail" data-ng-if="taskTemplateSavingStatus === ApplicationState.saving">Saving ...</span>
 				<span class="messagebox success taskDetail" data-ng-if="taskTemplateSavingStatus === ApplicationState.successful">Saved successfully!</span>
@@ -171,7 +181,8 @@ relations to DKS nodes (mappings) and exported tasks.
 				</div>
 				<div class="formLine" data-columns="3">
 					<label>Name</label>
-					<input type="text" data-ng-model="currentTaskTemplate.name" data-ng-blur="updateTaskTemplate()" data-ng-change="taskTemplateChanged()"/>
+					<input type="text" data-ng-model="currentTaskTemplate.name" data-ng-blur="updateTaskTemplate()"
+						data-ng-change="taskTemplateChanged()" title="Name of the task template, e.g. 'Install database environment on server'" />
 					<span></span>
 				</div>
 				<div class="formLine" data-columns="3">
@@ -186,6 +197,23 @@ relations to DKS nodes (mappings) and exported tasks.
 					<span></span>
 				</div>
 				<div class="propertyValues">
+					<span class="infoBox" title="Properties are user defined (see Administration) and its
+values depend on your target PPT and the processors you defined
+to transform this values to PPT specific values.
+
+So we can't give you information about what you should input as value,
+but we can give you some examples properties with
+example values to inspire you:
+
+	Assignee: Project Planner,
+	Description: Install DB environment including application drivers,
+	Due Date: 14\14\14,
+	Estimated Duration: 10h,
+	Type: Feature">
+						<span class="icon info" >&#x2139;</span>
+						Property values examples
+					</span>
+
 					<div data-ng-repeat="propertyValue in currentTaskTemplate.properties | orderBy:'property.name'" class="formLine" data-columns="3">
 						<label>{{propertyValue.property.name}}</label>
 						<input data-ng-model="propertyValue.value" data-ng-blur="updateTaskTemplate()" data-ng-change="taskTemplateChanged()"/>

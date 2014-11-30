@@ -30,9 +30,11 @@ module app.application {
 		mappingRepository: app.domain.repository.core.MappingRepository;
 		decisionKnowledgeRepository: app.domain.repository.dks.DecisionKnowledgeSystemRepository;
 		settings: any;
+		strictContextualEscapingService: any;
 
-		constructor($scope, persistenceService) {
+		constructor($scope, persistenceService, strictContextualEscapingService) {
 			this.$scope = $scope;
+			this.strictContextualEscapingService = strictContextualEscapingService;
 			this.settings = configuration.settings;
 
 			this.problemRepository = persistenceService['problemRepository'];
@@ -147,6 +149,7 @@ module app.application {
 			if(problem) {
 				var scope = this.$scope;
 				this.$scope.currentDksNode = problem;
+				this.$scope.currentDksNode.secureNotes = this.strictContextualEscapingService.trustAsHtml(problem.notes);
 
 				this.$scope.mappingsLoadingStatus = app.application.ApplicationState.pending;
 				this.mappingRepository.findByDksNode(problem, function(success, mappings) {
