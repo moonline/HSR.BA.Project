@@ -35,8 +35,9 @@
 					<span class="messagebox error" data-ng-if="logoutStatus === Status.error">Logout failed. Maybe server is not available. Please ensure server is running an reload the page.</span>
 					<span class="messagebox success" data-ng-if="logoutStatus === Status.success">Logout successful</span>
 
+					<span data-ng-if="authenticator.loggedInUser != null" class="userName">You are logged in as «<strong>{{authenticator.loggedInUser.userName}}</strong>». </span>
 					<button data-ng-if="authenticator.loggedInUser != null"
-						data-ng-click="logout()">Logout <strong>{{authenticator.loggedInUser.userName}}</strong></button>
+						data-ng-click="logout()">Logout</button>
 					<form data-ng-if="authenticator.loggedInUser == null">
 						<input class="{{loginStatus == Status.error && 'error' || '' }}" type="text" data-ng-model="username" placeholder="username" />
 						<input class="{{loginStatus == Status.error && 'error' || '' }}" type="password" data-ng-model="password" placeholder="password" />
