@@ -1,7 +1,7 @@
 HSR.BA.Project
 ==============
 
-Bachelor thesis "Entwurfsentscheidungen als Projektplanungsinstrument" (EEPPI) implementation
+Bachelor thesis "Design Decisions as Project Planning Instrument" (Entwurfsentscheidungen als Projektplanungsinstrument - EEPPI) implementation
 by Laurin Murer and Tobias Blaser.
 
 
@@ -14,7 +14,7 @@ can be found at [/api/documentation](http://localhost:9000/api/documentation).
 
 
 
-2. Production installation
+2. Productive installation
 --------------------------
 
 ### 2.1. Requirements
@@ -60,8 +60,11 @@ The EEPPI application is independent of the choosen persistence.
   	* Windows / Mac OS X: [http://nodejs.org/download/]
   2. Install Typescript compiler
   	* Linux/Mac OS X:  `sudo npm install -g typescript`
-* Firefox to run client tests
+* Firefox to run client tests and behaviour tests (selenium tests)
   1. Install [Firefox](https://www.mozilla.org/)
+* (optional) Buildserver / Buildserver UI: If would like to build EEPPI using a build server like Jenkins, you need to install a graphical user interface to run the client tests and the selenium tests.
+    * Linux: `sudo apt-get install xvfb`
+
 * [Play Framework](https://www.playframework.com/documentation/2.3.6/Installing) 2.3.6
 * Latest EEPPI Build
 
