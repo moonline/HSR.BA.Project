@@ -1,0 +1,4 @@
+/**
+ * Overwrite the visual appearance of the client by adding css styles here.
+ */
+.splashScreen > h2 { color: white; }
