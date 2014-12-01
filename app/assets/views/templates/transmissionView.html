@@ -91,7 +91,7 @@ You need to input here the KEY of your Jira project.'>
 											data-ng-model="aMappingInformation.selectedParent"
 											data-ng-if="aMappingInformation.possibleParents.length>0"
 											data-ng-options="parent.mapping.taskTemplate.name for parent in aMappingInformation.possibleParents">
-									<option value="">Not as a Subtask</option>
+									<option value="" style="font-weight: bold">Not as a Subtask</option>
 								</select></td>
 								<td class="disappearable {{exportErrorFor(aMappingInformation)?'error':''}}">{{exportErrorFor(aMappingInformation)}}</td>
 								<td>{{aMappingInformation.mapping.taskTemplate.name}} <span>[#{{aMappingInformation.mapping.taskTemplate.id}}]</span></td>
