@@ -64,7 +64,7 @@ The EEPPI application is independent of the choosen persistence.
   	* Linux/Mac OS X:  `sudo npm install -g typescript`
 * Firefox to run client tests and behaviour tests (selenium tests)
   1. Install [Firefox](https://www.mozilla.org/)
-* (optional) Buildserver / Buildserver UI: If would like to build EEPPI using a build server like Jenkins, you need to install a graphical user interface to run the client tests and the selenium tests.
+* (optional) Buildserver / Buildserver UI: If you would like to build EEPPI using a build server like Jenkins, you need to install a graphical user interface to run the client tests and the selenium tests.
     * Linux: `sudo apt-get install xvfb`
 
 * [Play Framework](https://www.playframework.com/documentation/2.3.6/Installing) 2.3.6
