@@ -18,7 +18,7 @@ import static play.mvc.Http.Status.CREATED;
 
 public class PPTIntegrationTest extends AbstractIntegrationTest {
 
-	public static final String VAGRANT_PATH = "test/integration/PPT";
+	public static final String VAGRANT_PATH = "test/tools/vagrants/PPT";
 	public static final String JIRA_URL = "http://localhost:9920";
 
 	@BeforeClass
