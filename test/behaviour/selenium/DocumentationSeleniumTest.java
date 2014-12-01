@@ -11,7 +11,7 @@ public class DocumentationSeleniumTest extends AbstractSeleniumTest {
 	public void testDocumentation() throws Throwable {
 		browser.goTo(routes.DocumentationController.getAPIDocumentation().url());
 		assertThat(browser.pageSource()).contains("API Documentation for EEPPI");
-		assertThat(browser.pageSource()).contains("GET /dks/getFromDKS?url=&lt;url&gt;");
+		assertThat(browser.pageSource()).contains("GET /rest/api/1/dks/getFromDKS?url=&lt;url&gt;");
 		assertThat(browser.pageSource()).doesNotContain(routes.DocumentationController.getAPIDocumentation().url());
 	}
 
