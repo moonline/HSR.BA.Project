@@ -12,7 +12,7 @@ module test.logic.domain.repository {
 	export function MappingRepositoryTest() {
 		describe("Mapping repository class suite", function(){
 			it("Create Mapping", angular.mock.inject(function($httpBackend, $http) {
-				$httpBackend.expectPOST('/dksMapping').respond({
+				$httpBackend.expectPOST('/rest/api/1/dksMapping').respond({
 					"id":1302,
 					"taskTemplate": {
 						id: 24, "parent":null,"name":"Invite to decision meeting 2",

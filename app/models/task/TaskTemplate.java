@@ -61,6 +61,11 @@ public class TaskTemplate extends AbstractWork {
 			errorList.add(new ValidationError("parent", "Can not create sub-sub-task (two layers)."));
 			return errorList;
 		}
+		if (parent == this) {
+			List<ValidationError> errorList = new ArrayList<>(1);
+			errorList.add(new ValidationError("parent", "Can not reference to itself as parent."));
+			return errorList;
+		}
 		return null;
 	}
 
