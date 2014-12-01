@@ -22,7 +22,7 @@ module test.logic.service {
 
 			describe("Status", function() {
 				it("Not logged in", function() {
-					httpBackend.when("GET",'/user/loginStatus').respond({});
+					httpBackend.when("GET",'/rest/api/1/user/loginStatus').respond({});
 					var authentivationService: app.service.AuthenticationService = new app.service.AuthenticationService(http, q);
 
 					expect(authentivationService.isLoggedIn).toEqual(false);
@@ -48,9 +48,9 @@ module test.logic.service {
 						return user;
 					})();
 
-					httpBackend.expectGET('/user/loginStatus').respond({});
-					httpBackend.when('POST','/user/login').respond(testUserData);
-					httpBackend.when('POST','/user/logout').respond(200);
+					httpBackend.expectGET('/rest/api/1/user/loginStatus').respond({});
+					httpBackend.when('POST','/rest/api/1/user/login').respond(testUserData);
+					httpBackend.when('POST','/rest/api/1/user/logout').respond(200);
 
 					var returnValue = {};
 					var authentivationService: app.service.AuthenticationService = new app.service.AuthenticationService(http, q);
@@ -79,9 +79,9 @@ module test.logic.service {
 						return user;
 					})();
 
-					httpBackend.expectGET('/user/loginStatus').respond({});
-					httpBackend.when('POST','/user/login').respond(testUserData);
-					httpBackend.when('POST','/user/logout').respond(403);
+					httpBackend.expectGET('/rest/api/1/user/loginStatus').respond({});
+					httpBackend.when('POST','/rest/api/1/user/login').respond(testUserData);
+					httpBackend.when('POST','/rest/api/1/user/logout').respond(403);
 
 					var returnValue = {};
 					var authentivationService: app.service.AuthenticationService = new app.service.AuthenticationService(http, q);
@@ -105,8 +105,8 @@ module test.logic.service {
 				it("Failed login", function() {
 					var testUserData: any = { "id": 5, "name": "peter" };
 
-					httpBackend.expectGET('/user/loginStatus').respond({});
-					httpBackend.expectPOST('/user/login').respond(403);
+					httpBackend.expectGET('/rest/api/1/user/loginStatus').respond({});
+					httpBackend.expectPOST('/rest/api/1/user/login').respond(403);
 
 					var returnValue = {};
 					var authentivationService: app.service.AuthenticationService = new app.service.AuthenticationService(http, q);
@@ -131,8 +131,8 @@ module test.logic.service {
 						return user;
 					})();
 
-					httpBackend.expectGET('/user/loginStatus').respond({});
-					httpBackend.expectPOST('/user/register').respond(testUserData);
+					httpBackend.expectGET('/rest/api/1/user/loginStatus').respond({});
+					httpBackend.expectPOST('/rest/api/1/user/register').respond(testUserData);
 
 					var returnValue = {};
 					var authentivationService: app.service.AuthenticationService = new app.service.AuthenticationService(http, q);
@@ -144,8 +144,8 @@ module test.logic.service {
 				});
 
 				it("Malformed data returned", function() {
-					httpBackend.expectGET('/user/loginStatus').respond({});
-					httpBackend.expectPOST('/user/register').respond({});
+					httpBackend.expectGET('/rest/api/1/user/loginStatus').respond({});
+					httpBackend.expectPOST('/rest/api/1/user/register').respond({});
 
 					var returnValue = {};
 					var authentivationService: app.service.AuthenticationService = new app.service.AuthenticationService(http, q);
@@ -159,8 +159,8 @@ module test.logic.service {
 				});
 
 				it("Failed registration", function() {
-					httpBackend.expectGET('/user/loginStatus').respond({});
-					httpBackend.expectPOST('/user/register').respond(403);
+					httpBackend.expectGET('/rest/api/1/user/loginStatus').respond({});
+					httpBackend.expectPOST('/rest/api/1/user/register').respond(403);
 
 					var returnValue = {};
 					var authentivationService: app.service.AuthenticationService = new app.service.AuthenticationService(http, q);
@@ -174,8 +174,8 @@ module test.logic.service {
 
 			describe("Password change", function() {
 				it("Successful password change", function() {
-					httpBackend.expectGET('/user/loginStatus').respond({});
-					httpBackend.expectPOST('/user/changePassword').respond({});
+					httpBackend.expectGET('/rest/api/1/user/loginStatus').respond({});
+					httpBackend.expectPOST('/rest/api/1/user/changePassword').respond({});
 
 					var returnValue = {};
 					var authentivationService: app.service.AuthenticationService = new app.service.AuthenticationService(http, q);
@@ -187,8 +187,8 @@ module test.logic.service {
 				});
 
 				it("Failed password change", function() {
-					httpBackend.expectGET('/user/loginStatus').respond({});
-					httpBackend.expectPOST('/user/changePassword').respond(403);
+					httpBackend.expectGET('/rest/api/1/user/loginStatus').respond({});
+					httpBackend.expectPOST('/rest/api/1/user/changePassword').respond(403);
 
 					var returnValue = {};
 					var authentivationService: app.service.AuthenticationService = new app.service.AuthenticationService(http, q);

@@ -11,7 +11,7 @@ module test.logic.domain.repository {
 	export function TaskTemplateRepositoryTest() {
 		describe("TaskTemplate class suite", function(){
 			it("Update TaskTemplate", angular.mock.inject(function($httpBackend, $http) {
-				$httpBackend.expectPOST('/taskTemplate/5/properties/9').respond({
+				$httpBackend.expectPOST('/rest/api/1/taskTemplate/5/properties/9').respond({
 					"id":5,"dksNode":[],"parent":null,"name":"Invite to decision meeting 2",
 					"properties":[
 						{"id":9,"property":{"id":2,"name":"Type"},"value":"Sub Task"}
@@ -35,7 +35,7 @@ module test.logic.domain.repository {
 			}));
 
 			it("Add TaskTemplate property", angular.mock.inject(function($httpBackend, $http) {
-				$httpBackend.expectPOST('/taskTemplate/5/addProperty').respond({
+				$httpBackend.expectPOST('/rest/api/1/taskTemplate/5/addProperty').respond({
 					"id":5,"dksNode":[],"parent":null,"name":"Invite to decision meeting",
 					"properties":[
 						{"id":9,"property":{"id":2,"name":"Type"},"value":"Sub Task"}
@@ -62,7 +62,7 @@ module test.logic.domain.repository {
 			}));
 
 			it("Remove TaskTemplate property", angular.mock.inject(function($httpBackend, $http) {
-				$httpBackend.expectPOST('/taskTemplate/5/properties/9/delete').respond({
+				$httpBackend.expectPOST('/rest/api/1/taskTemplate/5/properties/9/delete').respond({
 					"id":5,"dksNode":[],"parent":null,"name":"Invite to decision meeting",
 					"properties":[]
 				});
