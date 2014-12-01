@@ -294,7 +294,11 @@ module app.service {
 					if(si == propertyPathSegments.length-1) {
 						return (currentData && currentData[currentSegment] != undefined) ? <string>currentData[currentSegment] : "";
 					} else {
-						currentData = (currentData[currentSegment] != undefined) ? currentData[currentSegment] : null;
+						if(currentData && currentData[currentSegment]) {
+							currentData = currentData[currentSegment];
+						} else {
+							return "";
+						}
 					}
 				}
 			}

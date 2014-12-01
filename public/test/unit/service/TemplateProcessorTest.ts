@@ -271,6 +271,7 @@ module test.logic.service {
 				var template: string = "{\
 	\"tula\": \"$concater:(var Mega1, \":\", Var 2)$\",\
 	\"name\": \"$listConcater:(list,\"|\")$\",\
+	$ifElse:(parentRequestData.issue.issue_id,\"\"parent_issue_id\": \"${parentRequestData.issue.issue_id}\"\\,\", \"\")$\
 	\"iwo\": \"$concater:(var Mega1, \":\", Var 2)$\",\
 	$mapExistingAssignees:(taskTemplate.assignee, \"Architect:bamboo|Project Manager:admin\", \"\"assignee\": \"${taskTemplate.assignee}\"\\,\")$\
 	\"title\": \"${title.name it}\",\
@@ -335,6 +336,7 @@ module test.logic.service {
 				var expectedTemplate: string = "{\
 	\"tula\": \"irgendwas:nochwas\",\
 	\"name\": \"eins|zwei|drei|vier\",\
+	\
 	\"iwo\": \"irgendwas:nochwas\",\
 	\"assignee\": \"admin\",\
 	\"title\": \"auto\",\
