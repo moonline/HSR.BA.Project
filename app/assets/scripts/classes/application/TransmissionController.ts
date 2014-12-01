@@ -241,6 +241,10 @@ module app.application {
 				$scope.pptProject = pptProject;
 			};
 
+			$scope.setRequestTemplate = function (requestTemplate) {
+				$scope.requestTemplate = requestTemplate;
+			};
+
 			$scope.selectUnselectAll = function (selected:boolean) {
 				$scope.allMappingInformation.forEach(function (aMappingInformation:{ shouldExport: boolean; }) {
 					aMappingInformation.shouldExport = selected;

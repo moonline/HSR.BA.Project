@@ -22,6 +22,7 @@
 					<div class="formLine">
 						<label>Request template to transmit</label>
 						<select title="Choose the request template to rendering transmitting requests" data-ng-disabled="!targetPPTAccount" data-ng-model="requestTemplate"
+								data-ng-change="setRequestTemplate(requestTemplate)"
 								data-ng-options="pptAccountRequestTemplate.name for pptAccountRequestTemplate in pptAccountRequestTemplates"></select>
 						<span data-ng-if="targetPPTAccount && requestTemplate">&nbsp;&rarr;&nbsp;{{targetPPTAccount.pptUrl}}{{requestTemplate.url}}</span>
 					</div>
