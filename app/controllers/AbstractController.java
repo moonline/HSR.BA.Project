@@ -50,6 +50,7 @@ public abstract class AbstractController extends Controller {
 		try {
 			withTransaction(() -> {
 				block.invoke();
+				//noinspection ConstantConditions
 				return null;
 			});
 		} catch (RuntimeException runtimeException) {

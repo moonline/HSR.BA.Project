@@ -26,6 +26,7 @@ import models.user.Project;
 import models.user.User;
 import org.apache.commons.lang3.NotImplementedException;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import play.Logger;
 import play.db.jpa.JPA;
 
@@ -48,10 +49,10 @@ public class ExampleDataCreator {
 	private final RequestTemplateDAO REQUEST_TEMPLATE_DAO;
 	private final ProjectDAO PROJECT_DAO;
 	private final DecisionKnowledgeSystemDAO DKS_DAO;
-	public String USER_NAME;
-	public Long USER_ID;
+	public final String USER_NAME;
+	private final Long USER_ID;
 	@NotNull
-	private Set<String> cache = new HashSet<>();
+	private final Set<String> cache = new HashSet<>();
 
 	protected ExampleDataCreator(@NotNull UserLogic userLogic, UserDAO userDao, PPTAccountDAO pptAccountDao, ProjectPlanningToolDAO projectPlanningToolDao, TaskTemplateDAO taskTemplateDao, TaskPropertyDAO taskPropertyDao, TaskPropertyValueDAO taskPropertyValueDao, DKSMappingDAO dksMappingDao, RequestTemplateDAO requestTemplateDao, ProjectDAO projectDao, ProcessorDAO processorDAO, DecisionKnowledgeSystemDAO dksDao) {
 		USER_DAO = userDao;
@@ -303,7 +304,7 @@ public class ExampleDataCreator {
 	}
 
 	public static interface CreateNewObjectFunctionInterface<R> {
-		@NotNull
+		@Nullable
 		public R createNew();
 	}
 

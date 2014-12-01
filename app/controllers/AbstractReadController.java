@@ -11,7 +11,7 @@ import play.mvc.Result;
 
 public abstract class AbstractReadController extends AbstractController {
 
-	public AbstractReadController(DocumentationLogic documentationLogic) {
+	protected AbstractReadController(DocumentationLogic documentationLogic) {
 		super(documentationLogic);
 	}
 

@@ -54,11 +54,13 @@ public class Logger {
 		}
 	}
 
+	@Nullable
 	private User getLoggedInUserWithOrWithoutTransaction(Http.Context ctx) {
 		if (isThereATransaction()) {
 			return authenticationChecker.getLoggedInUser(ctx);
 		}
 		try {
+			//noinspection ConstantConditions
 			return JPA.withTransaction(() -> authenticationChecker.getLoggedInUser(ctx));
 		} catch (Throwable t) {
 			throw new RuntimeException(t);

@@ -12,9 +12,7 @@ import logics.ppt.PPTTaskLogic;
 import models.user.PPTAccount;
 import org.jetbrains.annotations.NotNull;
 import play.data.Form;
-import play.db.jpa.JPA;
 import play.libs.F;
-import play.mvc.Http;
 import play.mvc.Result;
 
 import java.net.ConnectException;
@@ -130,8 +128,10 @@ public class ProjectPlanningToolController extends AbstractReadController {
 			if (account == null) {
 				form.reject("account", "Could not find account on server");
 			} else {
-				return F.Promise.promise(() -> withTransaction(() -> PPT_TASK_LOGIC.createPPTTask(form.get(), account))).map(wsResponse ->
-								(Result) status(wsResponse.getFinalResponseStatus(), wsResponse.getFinalResponseContent())
+				return F.Promise.promise(() -> withTransaction(() -> PPT_TASK_LOGIC.createPPTTask(form.get(), account))).map(wsResponse -> {
+							//noinspection CodeBlock2Expr
+							return (Result) status(wsResponse.getFinalResponseStatus(), wsResponse.getFinalResponseContent());
+						}
 				).recover(throwable -> {
 					if (throwable instanceof ConnectException) {
 						return status(BAD_GATEWAY, jsonify("Could not connect to " + form.get().account.getPptUrl() + "."));

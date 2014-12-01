@@ -17,7 +17,7 @@ import static logics.docs.QueryResponses.Response;
 
 public class DecisionKnowledgeSystemController extends AbstractCRUDController {
 
-	public static final Status NOT_IMPLEMENTED_YET = internalServerError("This is not implemented yet, it is a known limitation of this version.");
+	private static final Status NOT_IMPLEMENTED_YET = internalServerError("This is not implemented yet, it is a known limitation of this version.");
 	private final DecisionKnowledgeSystemLogic DKS_LOGIC;
 	private final DecisionKnowledgeSystemDAO DKS_DAO;
 

@@ -42,6 +42,7 @@ public class TaskTemplate extends AbstractWork {
 		this.parent = parent;
 	}
 
+	@SuppressWarnings("UnusedDeclaration") //is used by Json-creator
 	@NotNull
 	public List<DKSMapping> getDksMappings() {
 		return dksMappings;

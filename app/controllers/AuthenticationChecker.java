@@ -34,6 +34,18 @@ public class AuthenticationChecker {
 		return user;
 	}
 
+	/**
+	 * Gets the logged in user or throws an exception (annotate Controller with @GuaranteeAuthenticatedUser)
+	 */
+	@NotNull
+	public User forceGetLoggedInUser(@NotNull Http.Context context) {
+		User loggedInUser = getLoggedInUser(context);
+		if (loggedInUser == null) {
+			throw new RuntimeException("Could not find the logged in user, which was promised to be there!");
+		}
+		return loggedInUser;
+	}
+
 	@Nullable
 	public User getLoggedInUser(@NotNull Http.Context context) {
 		if (isBasicAuthenticationEnabled(context)) {

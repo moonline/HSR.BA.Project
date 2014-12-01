@@ -115,6 +115,7 @@ public class Global extends GlobalSettings {
 						processor.setCode(processor.getCode().replaceAll("&#SEMICOLON", ";"));
 						PROCESSOR_DAO.persist(processor);
 					}
+					//noinspection ConstantConditions
 					return null;
 				});
 			} catch (Throwable throwable) {

@@ -10,9 +10,9 @@ import play.db.jpa.JPA;
 
 public class WorkLogic {
 
-	protected final TaskPropertyValueDAO TASK_PROPERTY_VALUE_DAO;
+	private final TaskPropertyValueDAO TASK_PROPERTY_VALUE_DAO;
 
-	public WorkLogic(TaskPropertyValueDAO taskPropertyValueDao) {
+	protected WorkLogic(TaskPropertyValueDAO taskPropertyValueDao) {
 		TASK_PROPERTY_VALUE_DAO = taskPropertyValueDao;
 	}
 

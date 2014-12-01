@@ -124,7 +124,7 @@ public class UserController extends AbstractController {
 		if (form.hasErrors()) {
 			return badRequest(form.errorsAsJson());
 		}
-		User user = AUTHENTICATION_CHECKER.getLoggedInUser(ctx());
+		User user = AUTHENTICATION_CHECKER.forceGetLoggedInUser(ctx());
 		if (USER_LOGIC.changePassword(user, form.get())) {
 			return ok();
 		} else {

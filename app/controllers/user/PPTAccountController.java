@@ -57,14 +57,14 @@ public class PPTAccountController extends AbstractCRUDController {
 		if (form.hasErrors()) {
 			return badRequest(form.errorsAsJson());
 		}
-		return ok(jsonify(PPT_ACCOUNT_LOGIC.create(form.get(), AUTHENTICATION_CHECKER.getLoggedInUser(ctx()))));
+		return ok(jsonify(PPT_ACCOUNT_LOGIC.create(form.get(), AUTHENTICATION_CHECKER.forceGetLoggedInUser(ctx()))));
 	}
 
 	@Transactional(readOnly = true)
 	@GuaranteeAuthenticatedUser
 	@QueryDescription("Returns all login information (but the password) for the currently logged in user for Project Planning Tools.")
 	public Result readAll() {
-		return ok(jsonify(PPT_ACCOUNT_DAO.readByUser(AUTHENTICATION_CHECKER.getLoggedInUser(ctx()))));
+		return ok(jsonify(PPT_ACCOUNT_DAO.readByUser(AUTHENTICATION_CHECKER.forceGetLoggedInUser(ctx()))));
 	}
 
 	@Transactional(readOnly = true)

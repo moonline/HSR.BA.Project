@@ -17,7 +17,7 @@ public class UserLogic {
 	private final UserDAO USER_DAO;
 	private final SecureRandom SECURE_RANDOM;
 
-	public UserLogic(UserDAO userDao, SecureRandom secureRandom) {
+	public UserLogic(@NotNull UserDAO userDao, @Nullable SecureRandom secureRandom) {
 		USER_DAO = userDao;
 		SECURE_RANDOM = secureRandom;
 	}
@@ -57,7 +57,7 @@ public class UserLogic {
 	public User createUser(@NotNull RegisterForm form) {
 		User user = new User();
 		user.setName(form.name);
-		user.initSalt(SECURE_RANDOM);
+		user.initSalt(SECURE_RANDOM != null ? SECURE_RANDOM : new SecureRandom());
 		user.setPasswordHash(calculatePasswordHash(user, form.password));
 		USER_DAO.persist(user);
 		return user;
