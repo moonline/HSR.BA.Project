@@ -4,6 +4,7 @@
 
 # Home page
 GET     /                           	controllers.Assets.at(path="/public", file="index.html")
+GET		/configuration/paths.js			@controllers.GeneralController.paths()
 
 GET     /api/documentation          	@controllers.docs.DocumentationController.getAPIDocumentation()
 
@@ -44,6 +45,7 @@ DELETE	/taskTemplate/$id<[0-9]+>		@controllers.task.TaskTemplateController.delet
 POST	/taskTemplate/$id<[0-9]+>/delete		@controllers.task.TaskTemplateController.delete(id: Long)
 POST	/taskTemplate/$id<[0-9]+>/addProperty	@controllers.task.TaskTemplateController.addProperty(id: Long)
 POST	/taskTemplate/$taskTemplate<[0-9]+>/properties/$id<[0-9]+>			@controllers.task.TaskTemplateController.updateProperty(id: Long, taskTemplate: Long)
+DELETE	/taskTemplate/$taskTemplate<[0-9]+>/properties/$id<[0-9]+>	@controllers.task.TaskTemplateController.deleteProperty(id: Long, taskTemplate: Long)
 POST	/taskTemplate/$taskTemplate<[0-9]+>/properties/$id<[0-9]+>/delete	@controllers.task.TaskTemplateController.deleteProperty(id: Long, taskTemplate: Long)
 
 POST	/dksMapping						@controllers.dks.DecisionKnowledgeSystemMappingController.create()

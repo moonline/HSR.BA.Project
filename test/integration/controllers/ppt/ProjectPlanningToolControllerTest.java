@@ -326,7 +326,7 @@ public class ProjectPlanningToolControllerTest extends AbstractControllerTest {
 
 		verifyStatic(atLeastOnce());
 		WS.url(baseUrl + urlPath);
-		verify(wsURL).setAuth(username, password);
+		verify(wsURL, atLeastOnce()).setAuth(username, password);
 
 		Task task = JPA.withTransaction(() -> TASK_DAO.readAll().get(0));
 		assertThat(task.getCreatedFrom().getId()).isEqualTo(taskTemplate.getId());
