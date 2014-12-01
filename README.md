@@ -27,7 +27,9 @@ can be found at [/api/documentation](http://localhost:9000/api/documentation).
 
 ### 2.2. Configuration
 
-See [Additional configuration of Play](https://www.playframework.com/documentation/2.3.x/ProductionConfiguration).
+* Server: See [Additional configuration of Play](https://www.playframework.com/documentation/2.3.x/ProductionConfiguration).
+* Client: The configuration in  [/public/configuration/application.js](http://localhost:9000/public/configuration/application.js) and [/configuration/paths.js](http://localhost:9000/configuration/paths.js) are rewritable by [/public/configuration/custom.js](http://localhost:9000/public/configuration/custom.js). Add your configuration there.
+* Client visual appearance: Add style rules to [/public/configuration/custom.css](http://localhost:9000/public/configuration/custom.css) to rewrite the visual appearance of EEPPI, e.g. to integrate EEPPI in your corporation intranet.
 
 
 ### 2.3. Setup instructions
