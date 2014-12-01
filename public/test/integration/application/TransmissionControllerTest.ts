@@ -23,7 +23,7 @@ module test.integration.application {
 				rootScope = $rootScope;
 
 				// for this test most data is not relevant, so it works with an empty result
-				httpBackend.when('GET', '/requestTemplate').respond({
+				httpBackend.when('GET', '/rest/api/1/requestTemplate').respond({
 					"items": [{
 						"id": 39,
 						"ppt": {"id": 1, "name": "Project Planning Tool"},
@@ -33,7 +33,7 @@ module test.integration.application {
 						"requestBodyTemplate": "{\n\t\"fields\": {\n\t\t\"project\": {\n\t\t\t\"key\": \"${pptProject}\"\n\t\t},\n\t\t$!ifElse:(parentRequestData.key,\" \"parent\": {\n\t\t\t\"key\": \"$!{parentRequestData.key}\"\n\t\t}\\, \", \"\")$\n\t\t\"summary\": \"${taskTemplate.name}\",\n\t\t\"description\": \"${taskTemplate.attributes.Description}. \\nDecision: ${node.name}\\nDKS link: ${node.self}\\nAttributes:\\n$objectToString:(node.attributes, \": \", \"\\n\")$\",\n\t\t$ifElse:(taskTemplate.attributes.Due Date,\" \"duedate\": \"${taskTemplate.attributes.Due Date}\"\\, \", \"\")$\n\t\t\"issuetype\": {\n\t\t\t\"name\": \"$!ifElse:(parentRequestData.key,\"Sub-task\", \"${taskTemplate.attributes.Type}\")$\"\n\t\t},\n\t\t$ifElse:(taskTemplate.attributes.Priority, \" \"priority\": {\n\t\t\t\"name\": \"${taskTemplate.attributes.Priority}\"\n\t\t}\\, \", \"\")$\n\t\t$mapExistingAssignees:(taskTemplate.attributes.Assignee, \"Project Planner:admin\\,Customer:admin\\,Architect:admin\",\" \"assignee\": {\n\t\t\t\"name\": \"${taskTemplate.attributes.Assignee}\"\n\t\t}\\, \")$\n\t\t$ifElse:(taskTemplate.attributes.Estimated Duration, \" \"timetracking\": {\n\t\t\t\"originalEstimate\": \"${taskTemplate.attributes.Estimated Duration}\"\n\t\t}\\, \", \"\")$\n\t\t\"labels\": [\"${node.attributes.Intellectual Property Rights}\", \"${node.attributes.Project Stage}\", \"createdByEEPPI\"]\n\t}\n}"
 					}]
 				});
-				httpBackend.when('GET', '/requestTemplate').respond({
+				httpBackend.when('GET', '/rest/api/1/requestTemplate').respond({
 					"items": [{
 						"id": 39,
 						"ppt": {"id": 1, "name": "Project Planning Tool"},
@@ -43,7 +43,7 @@ module test.integration.application {
 						"requestBodyTemplate": "{\n\t\"fields\": {\n\t\t\"project\": {\n\t\t\t\"key\": \"${pptProject}\"\n\t\t},\n\t\t$!ifElse:(parentRequestData.key,\" \"parent\": {\n\t\t\t\"key\": \"$!{parentRequestData.key}\"\n\t\t}\\, \", \"\")$\n\t\t\"summary\": \"${taskTemplate.name}\",\n\t\t\"description\": \"${taskTemplate.attributes.Description}. \\nDecision: ${node.name}\\nDKS link: ${node.self}\\nAttributes:\\n$objectToString:(node.attributes, \": \", \"\\n\")$\",\n\t\t$ifElse:(taskTemplate.attributes.Due Date,\" \"duedate\": \"${taskTemplate.attributes.Due Date}\"\\, \", \"\")$\n\t\t\"issuetype\": {\n\t\t\t\"name\": \"$!ifElse:(parentRequestData.key,\"Sub-task\", \"${taskTemplate.attributes.Type}\")$\"\n\t\t},\n\t\t$ifElse:(taskTemplate.attributes.Priority, \" \"priority\": {\n\t\t\t\"name\": \"${taskTemplate.attributes.Priority}\"\n\t\t}\\, \", \"\")$\n\t\t$mapExistingAssignees:(taskTemplate.attributes.Assignee, \"Project Planner:admin\\,Customer:admin\\,Architect:admin\",\" \"assignee\": {\n\t\t\t\"name\": \"${taskTemplate.attributes.Assignee}\"\n\t\t}\\, \")$\n\t\t$ifElse:(taskTemplate.attributes.Estimated Duration, \" \"timetracking\": {\n\t\t\t\"originalEstimate\": \"${taskTemplate.attributes.Estimated Duration}\"\n\t\t}\\, \", \"\")$\n\t\t\"labels\": [\"${node.attributes.Intellectual Property Rights}\", \"${node.attributes.Project Stage}\", \"createdByEEPPI\"]\n\t}\n}"
 					}]
 				});
-				httpBackend.when('GET', '/user/pptAccount').respond({
+				httpBackend.when('GET', '/rest/api/1/user/pptAccount').respond({
 					"items": [{
 						"id": 5,
 						"ppt": {"id": 1, "name": "Project Planning Tool"},
@@ -52,8 +52,8 @@ module test.integration.application {
 						"pptUsername": "admin"
 					}]
 				});
-				httpBackend.when('GET', '/project').respond({"items": [{"id": 2, "name": "Project"}]});
-				httpBackend.when('GET', '/processor').respond({
+				httpBackend.when('GET', '/rest/api/1/project').respond({"items": [{"id": 2, "name": "Project"}]});
+				httpBackend.when('GET', '/rest/api/1/processor').respond({
 					"items": [{
 						"id": 40,
 						"name": "objectToString",
@@ -76,14 +76,14 @@ module test.integration.application {
 						"code": "function(values, name) {\n\t\treturn (values && name && values[name]) ? values[name] : \"\";\n}"
 					}]
 				});
-				httpBackend.when('GET', '/dks').respond({
+				httpBackend.when('GET', '/rest/api/1/dks').respond({
 					"items": [{
 						"id": 3,
 						"name": "DKS",
 						"url": "http://localhost:9940"
 					}]
 				});
-				httpBackend.when('GET', '/dks/getFromDKS?url=http%3A%2F%2Flocalhost%3A9940%2Felement%3Fquery%3Dtype%2520is%2520%2522ProblemOccurrence%2522').respond({
+				httpBackend.when('GET', '/rest/api/1/dks/getFromDKS?url=http%3A%2F%2Flocalhost%3A9940%2Felement%3Fquery%3Dtype%2520is%2520%2522ProblemOccurrence%2522').respond({
 					"startAt": 0,
 					"maxResults": 2147483647,
 					"length": 3,
@@ -203,7 +203,7 @@ module test.integration.application {
 						}
 					}]
 				});
-				httpBackend.when('GET', '/dks/getFromDKS?url=http%3A%2F%2Flocalhost%3A9940%2Felement%3Fquery%3Dtype%2520is%2520%2522OptionOccurrence%2522').respond({
+				httpBackend.when('GET', '/rest/api/1/dks/getFromDKS?url=http%3A%2F%2Flocalhost%3A9940%2Felement%3Fquery%3Dtype%2520is%2520%2522OptionOccurrence%2522').respond({
 					"startAt": 0,
 					"maxResults": 2147483647,
 					"length": 6,
@@ -299,7 +299,7 @@ module test.integration.application {
 						}
 					}]
 				});
-				httpBackend.when('GET', '/dksMapping').respond({
+				httpBackend.when('GET', '/rest/api/1/dksMapping').respond({
 					"items": [{
 						"id": 19,
 						"taskTemplate": {
@@ -450,8 +450,8 @@ module test.integration.application {
 			});
 
 			var getAuthenticationServiceWithLoggedInUser = function () {
-				httpBackend.when('POST', '/user/login').respond({"id": 4, "name": "name"});
-				httpBackend.when('GET', '/user/loginStatus').respond({"id": 4, "name": "name"});
+				httpBackend.when('POST', '/rest/api/1/user/login').respond({"id": 4, "name": "name"});
+				httpBackend.when('GET', '/rest/api/1/user/loginStatus').respond({"id": 4, "name": "name"});
 				var authenticationService = new app.service.AuthenticationService(http, q);
 				authenticationService.login("name", "pw", function () {
 				});
@@ -474,7 +474,7 @@ module test.integration.application {
 				scope.setPPTProject("TEST");
 				scope.processTaskTemplates();
 				scope.transmit();
-				httpBackend.expectPOST('/ppt/createPPTTask', {
+				httpBackend.expectPOST('/rest/api/1/ppt/createPPTTask', {
 					"account": {
 						"pptPassword": null,
 						"id": 5,
@@ -503,7 +503,7 @@ module test.integration.application {
 					}, {"id": 28, "property": {"id": 7, "name": "Type"}, "value": "Task"}],
 					"project": {"id": 2, "name": "Project"}
 				}).respond({});
-				httpBackend.expectPOST('/ppt/createPPTTask', {
+				httpBackend.expectPOST('/rest/api/1/ppt/createPPTTask', {
 					"account": {
 						"pptPassword": null,
 						"id": 5,
@@ -524,7 +524,7 @@ module test.integration.application {
 					"taskProperties": [{"id": 37, "property": {"id": 7, "name": "Type"}, "value": "Task"}],
 					"project": {"id": 2, "name": "Project"}
 				}).respond({"id": "10001", "key": "TEST-2", "self": "http://localhost:9920/rest/api/2/issue/10001"});
-				httpBackend.expectPOST('/ppt/createPPTTask', {
+				httpBackend.expectPOST('/rest/api/1/ppt/createPPTTask', {
 					"account": {
 						"pptPassword": null,
 						"id": 5,
@@ -550,7 +550,7 @@ module test.integration.application {
 					"taskProperties": [],
 					"project": {"id": 2, "name": "Project"}
 				}).respond({});
-				httpBackend.expectPOST('/ppt/createPPTTask', {
+				httpBackend.expectPOST('/rest/api/1/ppt/createPPTTask', {
 					"account": {
 						"pptPassword": null,
 						"id": 5,
@@ -602,7 +602,7 @@ module test.integration.application {
 					}, {"id": 18, "property": {"id": 11, "name": "Estimated Duration"}, "value": "10h"}],
 					"project": {"id": 2, "name": "Project"}
 				}).respond({});
-				httpBackend.expectPOST('/ppt/createPPTTask', {
+				httpBackend.expectPOST('/rest/api/1/ppt/createPPTTask', {
 					"account": {
 						"pptPassword": null,
 						"id": 5,
@@ -643,7 +643,7 @@ module test.integration.application {
 					}],
 					"project": {"id": 2, "name": "Project"}
 				}).respond({});
-				httpBackend.expectPOST('/ppt/createPPTTask', {
+				httpBackend.expectPOST('/rest/api/1/ppt/createPPTTask', {
 					"account": {
 						"pptPassword": null,
 						"id": 5,
@@ -695,7 +695,7 @@ module test.integration.application {
 					}, {"id": 18, "property": {"id": 11, "name": "Estimated Duration"}, "value": "10h"}],
 					"project": {"id": 2, "name": "Project"}
 				}).respond({});
-				httpBackend.expectPOST('/ppt/createPPTTask', {
+				httpBackend.expectPOST('/rest/api/1/ppt/createPPTTask', {
 					"account": {
 						"pptPassword": null,
 						"id": 5,
@@ -724,7 +724,7 @@ module test.integration.application {
 					}, {"id": 28, "property": {"id": 7, "name": "Type"}, "value": "Task"}],
 					"project": {"id": 2, "name": "Project"}
 				}).respond({});
-				httpBackend.expectPOST('/ppt/createPPTTask', {
+				httpBackend.expectPOST('/rest/api/1/ppt/createPPTTask', {
 					"account": {
 						"pptPassword": null,
 						"id": 5,
@@ -781,7 +781,7 @@ module test.integration.application {
 				rootScope = $rootScope;
 
 				// for this test most data is not relevant, so it works with an empty result
-				httpBackend.when('GET', '/requestTemplate').respond({
+				httpBackend.when('GET', '/rest/api/1/requestTemplate').respond({
 					"items": [{
 						"id": 39,
 						"ppt": {"id": 1, "name": "Project Planning Tool"},
@@ -791,7 +791,7 @@ module test.integration.application {
 						"requestBodyTemplate": "{\n\t\"fields\": {\n\t\t\"project\": {\n\t\t\t\"key\": \"${pptProject}\"\n\t\t},\n\t\t$!ifElse:(parentRequestData.key,\" \"parent\": {\n\t\t\t\"key\": \"$!{parentRequestData.key}\"\n\t\t}\\, \", \"\")$\n\t\t\"summary\": \"${taskTemplate.name}\",\n\t\t\"description\": \"${taskTemplate.attributes.Description}. \\nDecision: ${node.name}\\nDKS link: ${node.self}\\nAttributes:\\n$objectToString:(node.attributes, \": \", \"\\n\")$\",\n\t\t$ifElse:(taskTemplate.attributes.Due Date,\" \"duedate\": \"${taskTemplate.attributes.Due Date}\"\\, \", \"\")$\n\t\t\"issuetype\": {\n\t\t\t\"name\": \"$!ifElse:(parentRequestData.key,\"Sub-task\", \"${taskTemplate.attributes.Type}\")$\"\n\t\t},\n\t\t$ifElse:(taskTemplate.attributes.Priority, \" \"priority\": {\n\t\t\t\"name\": \"${taskTemplate.attributes.Priority}\"\n\t\t}\\, \", \"\")$\n\t\t$mapExistingAssignees:(taskTemplate.attributes.Assignee, \"Project Planner:admin\\,Customer:admin\\,Architect:admin\",\" \"assignee\": {\n\t\t\t\"name\": \"${taskTemplate.attributes.Assignee}\"\n\t\t}\\, \")$\n\t\t$ifElse:(taskTemplate.attributes.Estimated Duration, \" \"timetracking\": {\n\t\t\t\"originalEstimate\": \"${taskTemplate.attributes.Estimated Duration}\"\n\t\t}\\, \", \"\")$\n\t\t\"labels\": [\"${node.attributes.Intellectual Property Rights}\", \"${node.attributes.Project Stage}\", \"createdByEEPPI\"]\n\t}\n}"
 					}]
 				});
-				httpBackend.when('GET', '/requestTemplate').respond({
+				httpBackend.when('GET', '/rest/api/1/requestTemplate').respond({
 					"items": [{
 						"id": 39,
 						"ppt": {"id": 1, "name": "Project Planning Tool"},
@@ -801,7 +801,7 @@ module test.integration.application {
 						"requestBodyTemplate": "{\n\t\"fields\": {\n\t\t\"project\": {\n\t\t\t\"key\": \"${pptProject}\"\n\t\t},\n\t\t$!ifElse:(parentRequestData.key,\" \"parent\": {\n\t\t\t\"key\": \"$!{parentRequestData.key}\"\n\t\t}\\, \", \"\")$\n\t\t\"summary\": \"${taskTemplate.name}\",\n\t\t\"description\": \"${taskTemplate.attributes.Description}. \\nDecision: ${node.name}\\nDKS link: ${node.self}\\nAttributes:\\n$objectToString:(node.attributes, \": \", \"\\n\")$\",\n\t\t$ifElse:(taskTemplate.attributes.Due Date,\" \"duedate\": \"${taskTemplate.attributes.Due Date}\"\\, \", \"\")$\n\t\t\"issuetype\": {\n\t\t\t\"name\": \"$!ifElse:(parentRequestData.key,\"Sub-task\", \"${taskTemplate.attributes.Type}\")$\"\n\t\t},\n\t\t$ifElse:(taskTemplate.attributes.Priority, \" \"priority\": {\n\t\t\t\"name\": \"${taskTemplate.attributes.Priority}\"\n\t\t}\\, \", \"\")$\n\t\t$mapExistingAssignees:(taskTemplate.attributes.Assignee, \"Project Planner:admin\\,Customer:admin\\,Architect:admin\",\" \"assignee\": {\n\t\t\t\"name\": \"${taskTemplate.attributes.Assignee}\"\n\t\t}\\, \")$\n\t\t$ifElse:(taskTemplate.attributes.Estimated Duration, \" \"timetracking\": {\n\t\t\t\"originalEstimate\": \"${taskTemplate.attributes.Estimated Duration}\"\n\t\t}\\, \", \"\")$\n\t\t\"labels\": [\"${node.attributes.Intellectual Property Rights}\", \"${node.attributes.Project Stage}\", \"createdByEEPPI\"]\n\t}\n}"
 					}]
 				});
-				httpBackend.when('GET', '/user/pptAccount').respond({
+				httpBackend.when('GET', '/rest/api/1/user/pptAccount').respond({
 					"items": [{
 						"id": 5,
 						"ppt": {"id": 1, "name": "Project Planning Tool"},
@@ -810,8 +810,8 @@ module test.integration.application {
 						"pptUsername": "admin"
 					}]
 				});
-				httpBackend.when('GET', '/project').respond({"items": [{"id": 2, "name": "Project"}]});
-				httpBackend.when('GET', '/processor').respond({
+				httpBackend.when('GET', '/rest/api/1/project').respond({"items": [{"id": 2, "name": "Project"}]});
+				httpBackend.when('GET', '/rest/api/1/processor').respond({
 					"items": [{
 						"id": 40,
 						"name": "objectToString",
@@ -834,14 +834,14 @@ module test.integration.application {
 						"code": "function(values, name) {\n\t\treturn (values && name && values[name]) ? values[name] : \"\";\n}"
 					}]
 				});
-				httpBackend.when('GET', '/dks').respond({
+				httpBackend.when('GET', '/rest/api/1/dks').respond({
 					"items": [{
 						"id": 3,
 						"name": "DKS",
 						"url": "http://localhost:9940"
 					}]
 				});
-				httpBackend.when('GET', '/dks/getFromDKS?url=http%3A%2F%2Flocalhost%3A9940%2Felement%3Fquery%3Dtype%2520is%2520%2522ProblemOccurrence%2522').respond({
+				httpBackend.when('GET', '/rest/api/1/dks/getFromDKS?url=http%3A%2F%2Flocalhost%3A9940%2Felement%3Fquery%3Dtype%2520is%2520%2522ProblemOccurrence%2522').respond({
 					"startAt": 0,
 					"maxResults": 2147483647,
 					"length": 3,
@@ -961,7 +961,7 @@ module test.integration.application {
 						}
 					}]
 				});
-				httpBackend.when('GET', '/dks/getFromDKS?url=http%3A%2F%2Flocalhost%3A9940%2Felement%3Fquery%3Dtype%2520is%2520%2522OptionOccurrence%2522').respond({
+				httpBackend.when('GET', '/rest/api/1/dks/getFromDKS?url=http%3A%2F%2Flocalhost%3A9940%2Felement%3Fquery%3Dtype%2520is%2520%2522OptionOccurrence%2522').respond({
 					"startAt": 0,
 					"maxResults": 2147483647,
 					"length": 6,
@@ -1057,7 +1057,7 @@ module test.integration.application {
 						}
 					}]
 				});
-				httpBackend.when('GET', '/dksMapping').respond({"items":[{"id":19,"taskTemplate":{"id":12,"properties":[{"id":13,"property":{"id":6,"name":"Assignee"},"value":"Project Planner"},{"id":14,"property":{"id":7,"name":"Type"},"value":"Task"},{"id":15,"property":{"id":8,"name":"Description"},"value":"Define criterions for evaluation"},{"id":16,"property":{"id":9,"name":"Priority"},"value":"Major"},{"id":17,"property":{"id":10,"name":"Due Date"},"value":"2015-01-14"},{"id":18,"property":{"id":11,"name":"Estimated Duration"},"value":"10h"}],"parent":null,"name":"Define criterions"},"dksNode":"3"},{"id":29,"taskTemplate":{"id":26,"properties":[{"id":27,"property":{"id":6,"name":"Assignee"},"value":"Customer"},{"id":28,"property":{"id":7,"name":"Type"},"value":"Task"}],"parent":{"id":12,"properties":[{"id":13,"property":{"id":6,"name":"Assignee"},"value":"Project Planner"},{"id":14,"property":{"id":7,"name":"Type"},"value":"Task"},{"id":15,"property":{"id":8,"name":"Description"},"value":"Define criterions for evaluation"},{"id":16,"property":{"id":9,"name":"Priority"},"value":"Major"},{"id":17,"property":{"id":10,"name":"Due Date"},"value":"2015-01-14"},{"id":18,"property":{"id":11,"name":"Estimated Duration"},"value":"10h"}],"parent":null,"name":"Define criterions"},"name":"Rank criterions"},"dksNode":"3"},{"id":35,"taskTemplate":{"id":31,"properties":[{"id":32,"property":{"id":6,"name":"Assignee"},"value":"Project Planner"},{"id":33,"property":{"id":7,"name":"Type"},"value":"Task"},{"id":34,"property":{"id":8,"name":"Description"},"value":"Rank every item for every criterion."}],"parent":{"id":12,"properties":[{"id":13,"property":{"id":6,"name":"Assignee"},"value":"Project Planner"},{"id":14,"property":{"id":7,"name":"Type"},"value":"Task"},{"id":15,"property":{"id":8,"name":"Description"},"value":"Define criterions for evaluation"},{"id":16,"property":{"id":9,"name":"Priority"},"value":"Major"},{"id":17,"property":{"id":10,"name":"Due Date"},"value":"2015-01-14"},{"id":18,"property":{"id":11,"name":"Estimated Duration"},"value":"10h"}],"parent":null,"name":"Define criterions"},"name":"Define criterion values"},"dksNode":"3"},{"id":2250,"taskTemplate":{"id":26,"properties":[{"id":27,"property":{"id":6,"name":"Assignee"},"value":"Customer"},{"id":28,"property":{"id":7,"name":"Type"},"value":"Task"}],"parent":{"id":12,"properties":[{"id":13,"property":{"id":6,"name":"Assignee"},"value":"Project Planner"},{"id":14,"property":{"id":7,"name":"Type"},"value":"Task"},{"id":15,"property":{"id":8,"name":"Description"},"value":"Define criterions for evaluation"},{"id":16,"property":{"id":9,"name":"Priority"},"value":"Major"},{"id":17,"property":{"id":10,"name":"Due Date"},"value":"2015-01-14"},{"id":18,"property":{"id":11,"name":"Estimated Duration"},"value":"10h"}],"parent":null,"name":"Define criterions"},"name":"Rank criterions"},"dksNode":"4"},{"id":2251,"taskTemplate":{"id":20,"properties":[{"id":21,"property":{"id":6,"name":"Assignee"},"value":"DB Developer"},{"id":22,"property":{"id":7,"name":"Type"},"value":"Task"}],"parent":null,"name":"Install DB"},"dksNode":"4"},{"id":2252,"taskTemplate":{"id":31,"properties":[{"id":32,"property":{"id":6,"name":"Assignee"},"value":"Project Planner"},{"id":33,"property":{"id":7,"name":"Type"},"value":"Task"},{"id":34,"property":{"id":8,"name":"Description"},"value":"Rank every item for every criterion."}],"parent":{"id":12,"properties":[{"id":13,"property":{"id":6,"name":"Assignee"},"value":"Project Planner"},{"id":14,"property":{"id":7,"name":"Type"},"value":"Task"},{"id":15,"property":{"id":8,"name":"Description"},"value":"Define criterions for evaluation"},{"id":16,"property":{"id":9,"name":"Priority"},"value":"Major"},{"id":17,"property":{"id":10,"name":"Due Date"},"value":"2015-01-14"},{"id":18,"property":{"id":11,"name":"Estimated Duration"},"value":"10h"}],"parent":null,"name":"Define criterions"},"name":"Define criterion values"},"dksNode":"4"},{"id":2253,"taskTemplate":{"id":12,"properties":[{"id":13,"property":{"id":6,"name":"Assignee"},"value":"Project Planner"},{"id":14,"property":{"id":7,"name":"Type"},"value":"Task"},{"id":15,"property":{"id":8,"name":"Description"},"value":"Define criterions for evaluation"},{"id":16,"property":{"id":9,"name":"Priority"},"value":"Major"},{"id":17,"property":{"id":10,"name":"Due Date"},"value":"2015-01-14"},{"id":18,"property":{"id":11,"name":"Estimated Duration"},"value":"10h"}],"parent":null,"name":"Define criterions"},"dksNode":"4"},{"id":2254,"taskTemplate":{"id":12,"properties":[{"id":13,"property":{"id":6,"name":"Assignee"},"value":"Project Planner"},{"id":14,"property":{"id":7,"name":"Type"},"value":"Task"},{"id":15,"property":{"id":8,"name":"Description"},"value":"Define criterions for evaluation"},{"id":16,"property":{"id":9,"name":"Priority"},"value":"Major"},{"id":17,"property":{"id":10,"name":"Due Date"},"value":"2015-01-14"},{"id":18,"property":{"id":11,"name":"Estimated Duration"},"value":"10h"}],"parent":null,"name":"Define criterions"},"dksNode":"5"},{"id":2257,"taskTemplate":{"id":38,"properties":[],"parent":{"id":36,"properties":[{"id":37,"property":{"id":7,"name":"Type"},"value":"Task"}],"parent":null,"name":"Hold decision meeting"},"name":"Invite to decision meeting"},"dksNode":"6"},{"id":2258,"taskTemplate":{"id":36,"properties":[{"id":37,"property":{"id":7,"name":"Type"},"value":"Task"}],"parent":null,"name":"Hold decision meeting"},"dksNode":"6"},{"id":2259,"taskTemplate":{"id":31,"properties":[{"id":32,"property":{"id":6,"name":"Assignee"},"value":"Project Planner"},{"id":33,"property":{"id":7,"name":"Type"},"value":"Task"},{"id":34,"property":{"id":8,"name":"Description"},"value":"Rank every item for every criterion."}],"parent":{"id":12,"properties":[{"id":13,"property":{"id":6,"name":"Assignee"},"value":"Project Planner"},{"id":14,"property":{"id":7,"name":"Type"},"value":"Task"},{"id":15,"property":{"id":8,"name":"Description"},"value":"Define criterions for evaluation"},{"id":16,"property":{"id":9,"name":"Priority"},"value":"Major"},{"id":17,"property":{"id":10,"name":"Due Date"},"value":"2015-01-14"},{"id":18,"property":{"id":11,"name":"Estimated Duration"},"value":"10h"}],"parent":null,"name":"Define criterions"},"name":"Define criterion values"},"dksNode":"5"},{"id":2260,"taskTemplate":{"id":26,"properties":[{"id":27,"property":{"id":6,"name":"Assignee"},"value":"Customer"},{"id":28,"property":{"id":7,"name":"Type"},"value":"Task"}],"parent":{"id":12,"properties":[{"id":13,"property":{"id":6,"name":"Assignee"},"value":"Project Planner"},{"id":14,"property":{"id":7,"name":"Type"},"value":"Task"},{"id":15,"property":{"id":8,"name":"Description"},"value":"Define criterions for evaluation"},{"id":16,"property":{"id":9,"name":"Priority"},"value":"Major"},{"id":17,"property":{"id":10,"name":"Due Date"},"value":"2015-01-14"},{"id":18,"property":{"id":11,"name":"Estimated Duration"},"value":"10h"}],"parent":null,"name":"Define criterions"},"name":"Rank criterions"},"dksNode":"5"}]});
+				httpBackend.when('GET', '/rest/api/1/dksMapping').respond({"items":[{"id":19,"taskTemplate":{"id":12,"properties":[{"id":13,"property":{"id":6,"name":"Assignee"},"value":"Project Planner"},{"id":14,"property":{"id":7,"name":"Type"},"value":"Task"},{"id":15,"property":{"id":8,"name":"Description"},"value":"Define criterions for evaluation"},{"id":16,"property":{"id":9,"name":"Priority"},"value":"Major"},{"id":17,"property":{"id":10,"name":"Due Date"},"value":"2015-01-14"},{"id":18,"property":{"id":11,"name":"Estimated Duration"},"value":"10h"}],"parent":null,"name":"Define criterions"},"dksNode":"3"},{"id":29,"taskTemplate":{"id":26,"properties":[{"id":27,"property":{"id":6,"name":"Assignee"},"value":"Customer"},{"id":28,"property":{"id":7,"name":"Type"},"value":"Task"}],"parent":{"id":12,"properties":[{"id":13,"property":{"id":6,"name":"Assignee"},"value":"Project Planner"},{"id":14,"property":{"id":7,"name":"Type"},"value":"Task"},{"id":15,"property":{"id":8,"name":"Description"},"value":"Define criterions for evaluation"},{"id":16,"property":{"id":9,"name":"Priority"},"value":"Major"},{"id":17,"property":{"id":10,"name":"Due Date"},"value":"2015-01-14"},{"id":18,"property":{"id":11,"name":"Estimated Duration"},"value":"10h"}],"parent":null,"name":"Define criterions"},"name":"Rank criterions"},"dksNode":"3"},{"id":35,"taskTemplate":{"id":31,"properties":[{"id":32,"property":{"id":6,"name":"Assignee"},"value":"Project Planner"},{"id":33,"property":{"id":7,"name":"Type"},"value":"Task"},{"id":34,"property":{"id":8,"name":"Description"},"value":"Rank every item for every criterion."}],"parent":{"id":12,"properties":[{"id":13,"property":{"id":6,"name":"Assignee"},"value":"Project Planner"},{"id":14,"property":{"id":7,"name":"Type"},"value":"Task"},{"id":15,"property":{"id":8,"name":"Description"},"value":"Define criterions for evaluation"},{"id":16,"property":{"id":9,"name":"Priority"},"value":"Major"},{"id":17,"property":{"id":10,"name":"Due Date"},"value":"2015-01-14"},{"id":18,"property":{"id":11,"name":"Estimated Duration"},"value":"10h"}],"parent":null,"name":"Define criterions"},"name":"Define criterion values"},"dksNode":"3"},{"id":2250,"taskTemplate":{"id":26,"properties":[{"id":27,"property":{"id":6,"name":"Assignee"},"value":"Customer"},{"id":28,"property":{"id":7,"name":"Type"},"value":"Task"}],"parent":{"id":12,"properties":[{"id":13,"property":{"id":6,"name":"Assignee"},"value":"Project Planner"},{"id":14,"property":{"id":7,"name":"Type"},"value":"Task"},{"id":15,"property":{"id":8,"name":"Description"},"value":"Define criterions for evaluation"},{"id":16,"property":{"id":9,"name":"Priority"},"value":"Major"},{"id":17,"property":{"id":10,"name":"Due Date"},"value":"2015-01-14"},{"id":18,"property":{"id":11,"name":"Estimated Duration"},"value":"10h"}],"parent":null,"name":"Define criterions"},"name":"Rank criterions"},"dksNode":"4"},{"id":2251,"taskTemplate":{"id":20,"properties":[{"id":21,"property":{"id":6,"name":"Assignee"},"value":"DB Developer"},{"id":22,"property":{"id":7,"name":"Type"},"value":"Task"}],"parent":null,"name":"Install DB"},"dksNode":"4"},{"id":2252,"taskTemplate":{"id":31,"properties":[{"id":32,"property":{"id":6,"name":"Assignee"},"value":"Project Planner"},{"id":33,"property":{"id":7,"name":"Type"},"value":"Task"},{"id":34,"property":{"id":8,"name":"Description"},"value":"Rank every item for every criterion."}],"parent":{"id":12,"properties":[{"id":13,"property":{"id":6,"name":"Assignee"},"value":"Project Planner"},{"id":14,"property":{"id":7,"name":"Type"},"value":"Task"},{"id":15,"property":{"id":8,"name":"Description"},"value":"Define criterions for evaluation"},{"id":16,"property":{"id":9,"name":"Priority"},"value":"Major"},{"id":17,"property":{"id":10,"name":"Due Date"},"value":"2015-01-14"},{"id":18,"property":{"id":11,"name":"Estimated Duration"},"value":"10h"}],"parent":null,"name":"Define criterions"},"name":"Define criterion values"},"dksNode":"4"},{"id":2253,"taskTemplate":{"id":12,"properties":[{"id":13,"property":{"id":6,"name":"Assignee"},"value":"Project Planner"},{"id":14,"property":{"id":7,"name":"Type"},"value":"Task"},{"id":15,"property":{"id":8,"name":"Description"},"value":"Define criterions for evaluation"},{"id":16,"property":{"id":9,"name":"Priority"},"value":"Major"},{"id":17,"property":{"id":10,"name":"Due Date"},"value":"2015-01-14"},{"id":18,"property":{"id":11,"name":"Estimated Duration"},"value":"10h"}],"parent":null,"name":"Define criterions"},"dksNode":"4"},{"id":2254,"taskTemplate":{"id":12,"properties":[{"id":13,"property":{"id":6,"name":"Assignee"},"value":"Project Planner"},{"id":14,"property":{"id":7,"name":"Type"},"value":"Task"},{"id":15,"property":{"id":8,"name":"Description"},"value":"Define criterions for evaluation"},{"id":16,"property":{"id":9,"name":"Priority"},"value":"Major"},{"id":17,"property":{"id":10,"name":"Due Date"},"value":"2015-01-14"},{"id":18,"property":{"id":11,"name":"Estimated Duration"},"value":"10h"}],"parent":null,"name":"Define criterions"},"dksNode":"5"},{"id":2257,"taskTemplate":{"id":38,"properties":[],"parent":{"id":36,"properties":[{"id":37,"property":{"id":7,"name":"Type"},"value":"Task"}],"parent":null,"name":"Hold decision meeting"},"name":"Invite to decision meeting"},"dksNode":"6"},{"id":2258,"taskTemplate":{"id":36,"properties":[{"id":37,"property":{"id":7,"name":"Type"},"value":"Task"}],"parent":null,"name":"Hold decision meeting"},"dksNode":"6"},{"id":2259,"taskTemplate":{"id":31,"properties":[{"id":32,"property":{"id":6,"name":"Assignee"},"value":"Project Planner"},{"id":33,"property":{"id":7,"name":"Type"},"value":"Task"},{"id":34,"property":{"id":8,"name":"Description"},"value":"Rank every item for every criterion."}],"parent":{"id":12,"properties":[{"id":13,"property":{"id":6,"name":"Assignee"},"value":"Project Planner"},{"id":14,"property":{"id":7,"name":"Type"},"value":"Task"},{"id":15,"property":{"id":8,"name":"Description"},"value":"Define criterions for evaluation"},{"id":16,"property":{"id":9,"name":"Priority"},"value":"Major"},{"id":17,"property":{"id":10,"name":"Due Date"},"value":"2015-01-14"},{"id":18,"property":{"id":11,"name":"Estimated Duration"},"value":"10h"}],"parent":null,"name":"Define criterions"},"name":"Define criterion values"},"dksNode":"5"},{"id":2260,"taskTemplate":{"id":26,"properties":[{"id":27,"property":{"id":6,"name":"Assignee"},"value":"Customer"},{"id":28,"property":{"id":7,"name":"Type"},"value":"Task"}],"parent":{"id":12,"properties":[{"id":13,"property":{"id":6,"name":"Assignee"},"value":"Project Planner"},{"id":14,"property":{"id":7,"name":"Type"},"value":"Task"},{"id":15,"property":{"id":8,"name":"Description"},"value":"Define criterions for evaluation"},{"id":16,"property":{"id":9,"name":"Priority"},"value":"Major"},{"id":17,"property":{"id":10,"name":"Due Date"},"value":"2015-01-14"},{"id":18,"property":{"id":11,"name":"Estimated Duration"},"value":"10h"}],"parent":null,"name":"Define criterions"},"name":"Rank criterions"},"dksNode":"5"}]});
 
 				persistenceService = {
 					pptAccountRepository: new app.domain.repository.ppt.PPTAccountRepository($http),
@@ -1074,8 +1074,8 @@ module test.integration.application {
 			}));
 
 			var getAuthenticationServiceWithLoggedInUser = function () {
-				httpBackend.when('POST', '/user/login').respond({"id": 4, "name": "name"});
-				httpBackend.when('GET', '/user/loginStatus').respond({"id": 4, "name": "name"});
+				httpBackend.when('POST', '/rest/api/1/user/login').respond({"id": 4, "name": "name"});
+				httpBackend.when('GET', '/rest/api/1/user/loginStatus').respond({"id": 4, "name": "name"});
 				var authenticationService = new app.service.AuthenticationService(http, q);
 				authenticationService.login("name", "pw", function () {
 				});
