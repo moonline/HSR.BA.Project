@@ -16,7 +16,6 @@ POST	/rest/api/1/user/changePassword			@controllers.user.UserController.changePa
 
 GET		/rest/api/1/ppt							@controllers.ppt.ProjectPlanningToolController.readAll()
 GET		/rest/api/1/ppt/$id<[0-9]+>				@controllers.ppt.ProjectPlanningToolController.read(id: Long)
-POST	/rest/api/1/ppt/sendToPPT					@controllers.ppt.ProjectPlanningToolController.sendToPPT()
 POST	/rest/api/1/ppt/createPPTTask				@controllers.ppt.ProjectPlanningToolController.createPPTTask()
 
 POST	/rest/api/1/dks							@controllers.dks.DecisionKnowledgeSystemController.create()
