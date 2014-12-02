@@ -44,41 +44,6 @@ public class ProjectPlanningToolControllerTest extends AbstractControllerTest {
 	public static final TaskDAO TASK_DAO = new TaskDAO();
 
 	@Test
-	public void testSendToPPTWithGoodData() throws Throwable {
-		//Setup
-		User user = AbstractTestDataCreator.createUserWithTransaction("User 1", "1");
-		String baseUrl = "http://localhost:1234";
-		String urlPath = "/testPath";
-		String username = "admin";
-		String password = "1234";
-		String account = AbstractTestDataCreator.createPPTAccountWithTransaction(user, baseUrl, username, password).getId() + "";
-		String contentString = "{\"content\": \"Test content\"}";
-		int resultStatus = 123;
-		JsonNode resultJson = Json.parse("{\"result\":\"Check!\"}");
-
-		WSResponse response = mock(WSResponse.class);
-		when(response.getStatus()).thenReturn(resultStatus);
-		when(response.asJson()).thenReturn(resultJson);
-
-		WSRequestHolder wsURL = spy(WS.url(baseUrl + urlPath));
-		when(wsURL.post(Json.parse(contentString))).thenReturn(F.Promise.promise(() -> response));
-
-		spy(WS.class);
-		when(WS.url(baseUrl + urlPath)).thenReturn(wsURL);
-
-		//Test
-		Result result = callActionWithUser(routes.ref.ProjectPlanningToolController.sendToPPT(), user, postData("path", urlPath, "content", contentString, "account", account));
-
-		//Verification
-		assertThat(status(result)).isEqualTo(resultStatus);
-		assertCheckJsonResponse(result, resultJson);
-
-		verifyStatic(atLeastOnce());
-		WS.url(baseUrl + urlPath);
-		verify(wsURL).setAuth(username, password);
-	}
-
-	@Test
 	public void createPPTTaskWithGoodData() throws Throwable {
 		createPPTTaskWithGoodData(false);
 	}

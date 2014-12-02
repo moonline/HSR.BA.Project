@@ -3,11 +3,13 @@ package external;
 import daos.task.TaskDAO;
 import daos.task.TaskPropertyValueDAO;
 import logics.ppt.PPTTaskLogic;
+import models.task.Task;
+import models.task.TaskTemplate;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import play.db.jpa.JPA;
 import play.libs.Json;
-import play.libs.ws.WSResponse;
 import test.AbstractTestDataCreator;
 
 import java.io.File;
@@ -18,7 +20,7 @@ import static play.mvc.Http.Status.CREATED;
 
 public class PPTIntegrationTest extends AbstractIntegrationTest {
 
-	public static final String VAGRANT_PATH = "test/integration/PPT";
+	public static final String VAGRANT_PATH = "test/tools/vagrants/PPT";
 	public static final String JIRA_URL = "http://localhost:9920";
 
 	@BeforeClass
@@ -59,7 +61,7 @@ public class PPTIntegrationTest extends AbstractIntegrationTest {
 		//Create an issue
 		{
 			//Setup
-			PPTTaskLogic.CreatePPTTaskWithoutStoringForm form = new PPTTaskLogic.CreatePPTTaskWithoutStoringForm();
+			PPTTaskLogic.CreatePPTTaskForm form = new PPTTaskLogic.CreatePPTTaskForm();
 			form.account = AbstractTestDataCreator.createPPTAccountWithTransaction(AbstractTestDataCreator.createUserWithTransaction("Admin", "123"), JIRA_URL, "admin", "admin");
 			form.path = "/rest/api/2/issue/";
 			form.content = Json.parse("{\n" +
@@ -75,11 +77,21 @@ public class PPTIntegrationTest extends AbstractIntegrationTest {
 					"       }\n" +
 					"   }\n" +
 					"}");
+			form.project = AbstractTestDataCreator.createProjectWithTransaction();
+			form.taskTemplate = JPA.withTransaction(() -> {
+				TaskTemplate taskTemplate = AbstractTestDataCreator.createTaskTemplate("My generated issue");
+				AbstractTestDataCreator.createTaskPropertyValue("This is an issue, which is created by EEPPI over the API", "description", taskTemplate);
+				AbstractTestDataCreator.createTaskPropertyValue("Task", "type", taskTemplate);
+				flush();
+				JPA.em().refresh(taskTemplate);
+				return taskTemplate;
+			});
+			form.taskProperties = form.taskTemplate.getProperties();
 			//Test
-			WSResponse response = new PPTTaskLogic(new TaskDAO(), new TaskPropertyValueDAO()).createPPTTaskWithoutStoring(form);
+			Task generatedTask = JPA.withTransaction(() -> new PPTTaskLogic(new TaskDAO(), new TaskPropertyValueDAO()).createPPTTask(form, form.account));
 			//Verification
-			assertThat(response.getStatus()).isEqualTo(CREATED);
-			assertThat(response.asJson().has("key")).isTrue();
+			assertThat(generatedTask.getFinalResponseStatus()).isEqualTo(CREATED);
+			assertThat(generatedTask.getFinalResponseContent().has("key")).isTrue();
 		}
 
 		System.out.println("PPTIntegrationTest.testLoginStatusForUser: END");

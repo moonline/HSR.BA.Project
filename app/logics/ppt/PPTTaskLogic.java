@@ -32,16 +32,6 @@ public class PPTTaskLogic {
 		TASK_PROPERTY_VALUE_DAO = taskPropertyValueDao;
 	}
 
-	@Deprecated
-	public WSResponse createPPTTaskWithoutStoring(@NotNull CreatePPTTaskWithoutStoringForm form) {
-		PPTAccount account = form.account;
-		return WS.url(account.getPptUrl() + form.path)
-				.setHeader("Content-Type", "application/json")
-				.setAuth(account.getPptUsername(), account.getPptPassword())
-				.post(form.content)
-				.get(30, SECONDS);
-	}
-
 	/**
 	 * @param form    All data needed for creating a Task
 	 * @param account The PPT-Account to create the task for (cannot use the one from the form, as the password probably is not passed there).
@@ -79,28 +69,6 @@ public class PPTTaskLogic {
 		}
 		TASK_PROPERTY_VALUE_DAO.flush();
 		return task;
-	}
-
-	@Deprecated
-	public static class CreatePPTTaskWithoutStoringForm {
-		@Constraints.Required
-		public PPTAccount account;
-		@Constraints.Required
-		public String path;
-		@Constraints.Required
-		public JsonNode content;
-
-		public void setAccount(PPTAccount account) {
-			this.account = account;
-		}
-
-		public void setPath(String path) {
-			this.path = path;
-		}
-
-		public void setContent(JsonNode content) {
-			this.content = content;
-		}
 	}
 
 	public static class CreatePPTTaskForm {

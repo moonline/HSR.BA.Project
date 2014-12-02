@@ -87,14 +87,14 @@ The EEPPI application is independent of the choosen persistence.
 
 There are some virtual environments you can use to test EEPPI:
 
-- ADRepo Installation: /test/integration/ADRepo
-- CDAR Installation: /test/integration/CDAR
-- Redmine/Jira Installation: /test/integration/PPT
-	* Please copy your Jira License to /test/integration/PPT before start the environment
+- ADRepo Installation: /test/tools/vagrants/ADRepo
+- CDAR Installation: /test/tools/vagrants/CDAR
+- Redmine/Jira Installation: /test/tools/vagrants/PPT
+	* Please copy your Jira License to /test/tools/vagrants/PPT before start the environment
 
 There is a vagrant environment containing EEPPI, ADRepo and Jira you can use to test EEPPI fully integrated.:
 - /project/vagrant/
-	* Please copy your Jira License to /test/integration/PPT before starting the environment
+	* Please copy your Jira License to /test/tools/vagrants/PPT before starting the environment
 
 
 #### 4.3.1. Requirements
@@ -107,7 +107,7 @@ There is a vagrant environment containing EEPPI, ADRepo and Jira you can use to 
 
 To start an virtual environment:
 
-1. Go to the corresponding directory (e.q. 'cd /test/integration/ADRepo' on linux)
+1. Go to the corresponding directory (e.q. 'cd /test/tools/vagrants/ADRepo' on linux)
 2. Run 'vagrant up' to start the environment
 	- This will take some time and needs an internet connection to load the box and the software packages
 	- After successfull installation and configuration, the environment is ready and the services are reachable using the printed host:port.
