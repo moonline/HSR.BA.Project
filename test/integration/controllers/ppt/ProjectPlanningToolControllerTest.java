@@ -180,6 +180,7 @@ public class ProjectPlanningToolControllerTest extends AbstractControllerTest {
 	@Test
 	public void createPPTTaskWithClientExampleRequest() throws Throwable {
 		//Setup
+		JPA.withTransaction(TASK_DAO::removeAll);
 		User user = AbstractTestDataCreator.createUserWithTransaction("User 1", "1");
 		String url = "http://localhost:9920/rest/api/2/issue";
 		Long account = AbstractTestDataCreator.createPPTAccountWithTransaction(user, "http://localhost:9920", "admin", "admin").getId();
@@ -303,5 +304,77 @@ public class ProjectPlanningToolControllerTest extends AbstractControllerTest {
 		assertThat(task.getProperties()).isEmpty();
 	}
 
+	@Test
+	public void createPPTTaskOnRedmine() throws Throwable {
+		//Setup
+		JPA.withTransaction(TASK_DAO::removeAll);
+		User user = AbstractTestDataCreator.createUserWithTransaction("User 1", "1");
+		String url = "http://localhost:9930/issues.json";
+		Long account = AbstractTestDataCreator.createPPTAccountWithTransaction(user, "http://localhost:9930", "admin", "admin").getId();
+		TaskPropertyValue[] taskPropertyValues = JPA.withTransaction(() -> {
+			TaskTemplate newTaskTemplate = AbstractTestDataCreator.createTaskTemplate("Define criterions");
+			return new TaskPropertyValue[]{
+					AbstractTestDataCreator.createTaskPropertyValue("Customer", "Assignee", newTaskTemplate),
+					AbstractTestDataCreator.createTaskPropertyValue("Task", "Type", newTaskTemplate)
+			};
+		});
+		JsonNode requestContent = Json.parse("{\n\t\"issue\": {\n\t\t\"project_id\": \"test\",\n\t\t\n\t\t\"subject\": \"Rank criterions\",\n\t\t\"description\": \" \\nDecision: DB Model \\nDKS link: http://localhost:9940/element/16 \\nAttributes: \\nRevision Date: 2016-11-11\\nViewpoint: Scenario\\nIntellectual Property Rights: Unrestricted\\nDue Date: 2014-12-24\\nProject Stage: Inception\\nOrganisational Reach: Project\\nStakeholder Roles: Any\\nOwner Role: Lead Architect\",\n\t\t\"assigned_to_id\": 1,\n\t\t\"tracker_id\": 3\n\t}\n}");
+		int resultStatus = 123;
+		String resultString = "{\"issue\":{\"id\":7,\"project\":{\"id\":1,\"name\":\"Test Projekt\"},\"tracker\":{\"id\":3,\"name\":\"Support\"},\"status\":{\"id\":1,\"name\":\"New\"},\"priority\":{\"id\":2,\"name\":\"Normal\"},\"author\":{\"id\":1,\"name\":\"Redmine Admin\"},\"assigned_to\":{\"id\":1,\"name\":\"Redmine Admin\"},\"subject\":\"Rank criterions\",\"description\":\" \\r\\nDecision: DB Model \\r\\nDKS link: http://localhost:9940/element/16 \\r\\nAttributes: \\r\\nRevision Date: 2016-11-11\\r\\nViewpoint: Scenario\\r\\nIntellectual Property Rights: Unrestricted\\r\\nDue Date: 2014-12-24\\r\\nProject Stage: Inception\\r\\nOrganisational Reach: Project\\r\\nStakeholder Roles: Any\\r\\nOwner Role: Lead Architect\",\"start_date\":\"2014-12-03\",\"done_ratio\":0,\"spent_hours\":0.0,\"created_on\":\"2014-12-03T16:06:09Z\",\"updated_on\":\"2014-12-03T16:06:09Z\"}}";
+		JsonNode resultJson = Json.parse(resultString);
+
+		WSResponse response = mock(WSResponse.class);
+		when(response.getStatus()).thenReturn(resultStatus);
+		when(response.asJson()).thenReturn(resultJson);
+
+		WSRequestHolder wsURL = spy(WS.url(url));
+		when(wsURL.post(requestContent)).thenReturn(F.Promise.promise(() -> response));
+
+		spy(WS.class);
+		when(WS.url(url)).thenReturn(wsURL);
+
+		//Test
+		Result result = callAction(routes.ref.ProjectPlanningToolController.createPPTTask(), new FakeRequest().withJsonBody(Json.parse("{" +
+				"	\"account\":{" +
+				"		\"pptPassword\":null," +
+				"		\"id\":" + account + "," +
+				"		\"user\":{\"userName\":null}," +
+				"		\"pptUrl\":\"http://localhost:9930\"," +
+				"		\"pptUsername\":\"admin\"," +
+				"		\"ppt\":{\"id\":47,\"name\":\"Project Planning Tool\"}" +
+				"	}," +
+				"	\"path\":\"/issues.json\"," +
+				"	\"content\":\"{\\n\\t\\\"issue\\\": {\\n\\t\\t\\\"project_id\\\": \\\"test\\\",\\n\\t\\t\\n\\t\\t\\\"subject\\\": \\\"Rank criterions\\\",\\n\\t\\t\\\"description\\\": \\\" \\\\nDecision: DB Model \\\\nDKS link: http://localhost:9940/element/16 \\\\nAttributes: \\\\nRevision Date: 2016-11-11\\\\nViewpoint: Scenario\\\\nIntellectual Property Rights: Unrestricted\\\\nDue Date: 2014-12-24\\\\nProject Stage: Inception\\\\nOrganisational Reach: Project\\\\nStakeholder Roles: Any\\\\nOwner Role: Lead Architect\\\",\\n\\t\\t\\\"assigned_to_id\\\": 1,\\n\\t\\t\\\"tracker_id\\\": 3\\n\\t}\\n}\"," +
+				"	\"taskTemplate\":{" +
+				"		\"id\":" + taskPropertyValues[0].getTask().getId() + "," +
+				"		\"name\":\"Rank criterions\"," +
+				"		\"properties\":[" +
+				"			{\"id\":" + taskPropertyValues[0].getId() + ",\"property\":{\"id\":" + taskPropertyValues[0].getProperty().getId() + ",\"name\":\"Assignee\"},\"value\":\"Customer\"}," +
+				"			{\"id\":" + taskPropertyValues[1].getId() + ",\"property\":{\"id\":" + taskPropertyValues[1].getProperty().getId() + ",\"name\":\"Type\"},\"value\":\"Task\"}]," +
+				"		\"parent\":null," +
+				"		\"attributes\":{\"Assignee\":\"Customer\",\"Type\":\"Task\"}" +
+				"	}," +
+				"	\"taskProperties\":[" +
+				"		{\"id\":" + taskPropertyValues[0].getId() + ",\"property\":{\"id\":" + taskPropertyValues[0].getProperty().getId() + ",\"name\":\"Assignee\"},\"value\":\"Customer\"}," +
+				"		{\"id\":" + taskPropertyValues[1].getId() + ",\"property\":{\"id\":" + taskPropertyValues[1].getProperty().getId() + ",\"name\":\"Type\"},\"value\":\"Task\"}" +
+				"	]," +
+				"	\"project\":{\"id\":2,\"name\":\"Project\"}" +
+				"}")).withSession(AuthenticationChecker.SESSION_USER_IDENTIFIER, user.getId() + ""));
+
+		//Verification
+		assertThat(status(result)).isEqualTo(resultStatus);
+		assertCheckJsonResponse(result, resultJson);
+
+		verifyStatic(atLeastOnce());
+		WS.url(url);
+
+		Task task = JPA.withTransaction(() -> TASK_DAO.readAll().get(0));
+		assertThat(task.getCreatedFrom().getId()).describedAs("createdFrom").isEqualTo(taskPropertyValues[0].getTask().getId());
+		assertThat(task.getFinalRequestUrl()).isEqualTo(url);
+		assertThat(Json.stringify(task.getFinalResponseContent())).isEqualTo(resultString);
+		assertThat(task.getFinalResponseStatus()).describedAs("status").isEqualTo(resultStatus);
+		assertThat(task.getProject().getId()).describedAs("project").isEqualTo(2);
+		assertThat(task.getProperties()).describedAs("properties").hasSize(2);
+	}
 
 }
