@@ -1,6 +1,7 @@
 #!/bin/bash
 
 echo "== Starting up ADRepo =="
+sudo rm /home/vagrant/ADRepo/adrepo-0.1.2-SNAPSHOT/RUNNING_PID
 sudo /home/vagrant/ADRepo/adrepo-0.1.2-SNAPSHOT/bin/adrepo -Dhttp.port=9940 &
 echo "== Waiting for ADRepo to have started =="
 until $(curl --output /dev/null --silent --head --fail http://localhost:9940/element); do
