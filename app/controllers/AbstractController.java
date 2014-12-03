@@ -71,7 +71,7 @@ public abstract class AbstractController extends Controller {
 				try {
 					return block.apply();
 				} catch (RuntimeException e) {
-					if (e.getMessage().startsWith("No EntityManager bound to this thread") && retries > 0) {
+					if (e.getMessage() != null && e.getMessage().startsWith("No EntityManager bound to this thread") && retries > 0) {
 						return withTransaction(block, retries - 1); //try again, an EntityManager SHOULD be there!
 					}
 					throw e;

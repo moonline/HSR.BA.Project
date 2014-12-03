@@ -52,29 +52,38 @@ public class ProjectPlanningToolController extends AbstractReadController {
 			@Response(status = BAD_REQUEST, description = "If there is an error during preparation of the request for the remote server."),
 			@Response(status = BAD_GATEWAY, description = "If the remote server could not be found."),
 			@Response(status = GATEWAY_TIMEOUT, description = "If the remote server did not respond."),
-			@Response(status = 0, description = "The return value from the remote server is returned")
+			@Response(status = 0, description = "The return value from the remote server is returned (the Json if it's a Json or a Json containing the type and the content as a simple Json-Object).")
 	})
-	@QueryExamples({@Example(parameters = {"100", "/rest/api/2/issue/", "{\n" +
-			"    \"fields\": {\n" +
-			"       \"project\":\n" +
-			"       {\n" +
-			"          \"key\": \"PRV\"\n" +
-			"       },\n" +
-			"       \"summary\": \"My generated issue\",\n" +
-			"       \"description\": \"This is an issue, which is created by EEPPI over the API\",\n" +
-			"       \"issuetype\": {\n" +
-			"          \"name\": \"Task\"\n" +
-			"       }\n" +
-			"   }\n" +
-			"}",
-			"51",
-			"53-Example Value",
-			"55"},
-			response = @Example.Response(status = 201, content = "{\n" +
-					"    \"id\": \"10000\",\n" +
-					"    \"key\": \"PRV-24\",\n" +
-					"    \"self\": \"http://jira.example.ch/jira/rest/api/2/issue/10000\"\n" +
-					"}")),
+	@QueryExamples({
+			@Example(parameters = {"100", "/rest/api/2/issue/", "{\n" +
+					"    \"fields\": {\n" +
+					"       \"project\":\n" +
+					"       {\n" +
+					"          \"key\": \"PRV\"\n" +
+					"       },\n" +
+					"       \"summary\": \"My generated issue\",\n" +
+					"       \"description\": \"This is an issue, which is created by EEPPI over the API\",\n" +
+					"       \"issuetype\": {\n" +
+					"          \"name\": \"Task\"\n" +
+					"       }\n" +
+					"   }\n" +
+					"}",
+					"51",
+					"53-Example Value",
+					"55"},
+					response = @Example.Response(status = 201, content = "{\n" +
+							"    \"id\": \"10000\",\n" +
+							"    \"key\": \"PRV-24\",\n" +
+							"    \"self\": \"http://jira.example.ch/jira/rest/api/2/issue/10000\"\n" +
+							"}")),
+			@Example(parameters = {"100", "/index.html", "{}",
+					"51",
+					"53-Example Value",
+					"55"},
+					response = @Example.Response(status = 200, content = "{\n" +
+							"    \"content\": \"<html><head></head><body>...</body></html>\",\n" +
+							"    \"type\": \"text/html; charset=utf-8\"\n" +
+							"}")),
 			@Example(parameters = {"not a number", "not a path", "no Json", "wrongFormat", "9999"})
 	})
 	public F.Promise<Result> createPPTTask() {
@@ -84,9 +93,10 @@ public class ProjectPlanningToolController extends AbstractReadController {
 			if (account == null) {
 				form.reject("account", "Could not find account on server");
 			} else {
-				return F.Promise.promise(() -> withTransaction(() -> PPT_TASK_LOGIC.createPPTTask(form.get(), account))).map(wsResponse -> {
+				return F.Promise.promise(() -> withTransaction(() ->
+						PPT_TASK_LOGIC.createPPTTask(form.get(), account))).map(task -> {
 							//noinspection CodeBlock2Expr
-							return (Result) status(wsResponse.getFinalResponseStatus(), wsResponse.getFinalResponseContent());
+							return (Result) status(task.getFinalResponseStatus(), task.getFinalResponseContent());
 						}
 				).recover(throwable -> {
 					if (throwable instanceof ConnectException) {

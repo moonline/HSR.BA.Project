@@ -31,9 +31,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.atLeastOnce;
 import static org.powermock.api.mockito.PowerMockito.*;
-import static play.mvc.Http.Status.*;
-import static play.test.Helpers.callAction;
-import static play.test.Helpers.status;
+import static play.mvc.Http.Status.BAD_GATEWAY;
+import static play.mvc.Http.Status.GATEWAY_TIMEOUT;
+import static play.mvc.Http.Status.OK;
+import static play.test.Helpers.*;
 
 
 @RunWith(PowerMockRunner.class)
@@ -72,6 +73,7 @@ public class ProjectPlanningToolControllerTest extends AbstractControllerTest {
 
 		WSResponse response = mock(WSResponse.class);
 		when(response.getStatus()).thenReturn(resultStatus);
+		when(response.getHeader("Content-Type")).thenReturn("application/json; charset=utf-8");
 		when(response.asJson()).thenReturn(resultJson);
 
 		WSRequestHolder wsURL = spy(WS.url(baseUrl + urlPath));
@@ -197,6 +199,7 @@ public class ProjectPlanningToolControllerTest extends AbstractControllerTest {
 
 		WSResponse response = mock(WSResponse.class);
 		when(response.getStatus()).thenReturn(resultStatus);
+		when(response.getHeader("Content-Type")).thenReturn("application/json; charset=utf-8");
 		when(response.asJson()).thenReturn(resultJson);
 
 		WSRequestHolder wsURL = spy(WS.url(url));
@@ -267,6 +270,7 @@ public class ProjectPlanningToolControllerTest extends AbstractControllerTest {
 
 		WSResponse response = mock(WSResponse.class);
 		when(response.getStatus()).thenReturn(resultStatus);
+		when(response.getHeader("Content-Type")).thenReturn("application/json; charset=utf-8");
 		when(response.asJson()).thenReturn(resultJson);
 
 		WSRequestHolder wsURL = spy(WS.url(baseUrl + urlPath));
@@ -325,6 +329,7 @@ public class ProjectPlanningToolControllerTest extends AbstractControllerTest {
 
 		WSResponse response = mock(WSResponse.class);
 		when(response.getStatus()).thenReturn(resultStatus);
+		when(response.getHeader("Content-Type")).thenReturn("application/json; charset=utf-8");
 		when(response.asJson()).thenReturn(resultJson);
 
 		WSRequestHolder wsURL = spy(WS.url(url));
@@ -375,6 +380,70 @@ public class ProjectPlanningToolControllerTest extends AbstractControllerTest {
 		assertThat(task.getFinalResponseStatus()).describedAs("status").isEqualTo(resultStatus);
 		assertThat(task.getProject().getId()).describedAs("project").isEqualTo(2);
 		assertThat(task.getProperties()).describedAs("properties").hasSize(2);
+	}
+
+	@Test
+	public void survivingRequestsToAPPTReturningNoJson() throws Throwable {
+		//Setup
+		JPA.withTransaction(TASK_DAO::removeAll);
+		User user = AbstractTestDataCreator.createUserWithTransaction("User 1", "1");
+		String url = "http://localhost:9930/issues.json";
+		Long account = AbstractTestDataCreator.createPPTAccountWithTransaction(user, "http://localhost:9930", "admin", "admin").getId();
+		TaskPropertyValue[] taskPropertyValues = JPA.withTransaction(() -> {
+			TaskTemplate newTaskTemplate = AbstractTestDataCreator.createTaskTemplate("Define criterions");
+			return new TaskPropertyValue[]{
+					AbstractTestDataCreator.createTaskPropertyValue("Customer", "Assignee", newTaskTemplate),
+					AbstractTestDataCreator.createTaskPropertyValue("Task", "Type", newTaskTemplate)
+			};
+		});
+		JsonNode requestContent = Json.parse("{\n\t\"issue\": {\n\t\t\"project_id\": \"test\",\n\t\t\n\t\t\"subject\": \"Rank criterions\",\n\t\t\"description\": \" \\nDecision: DB Model \\nDKS link: http://localhost:9940/element/16 \\nAttributes: \\nRevision Date: 2016-11-11\\nViewpoint: Scenario\\nIntellectual Property Rights: Unrestricted\\nDue Date: 2014-12-24\\nProject Stage: Inception\\nOrganisational Reach: Project\\nStakeholder Roles: Any\\nOwner Role: Lead Architect\",\n\t\t\"assigned_to_id\": 1,\n\t\t\"tracker_id\": 3\n\t}\n}");
+		int resultStatus = 123;
+
+		WSResponse response = mock(WSResponse.class);
+		when(response.getStatus()).thenReturn(resultStatus);
+		when(response.getHeader("Content-Type")).thenReturn("text/html; charset=utf-8");
+		when(response.asJson()).thenThrow(new RuntimeException());
+		String resultString = "<html><head></head><body>...</body></html>";
+		when(response.getBody()).thenReturn(resultString);
+
+		WSRequestHolder wsURL = spy(WS.url(url));
+		when(wsURL.post(requestContent)).thenReturn(F.Promise.promise(() -> response));
+
+		spy(WS.class);
+		when(WS.url(url)).thenReturn(wsURL);
+
+		//Test
+		Result result = callAction(routes.ref.ProjectPlanningToolController.createPPTTask(), new FakeRequest().withJsonBody(Json.parse("{" +
+				"	\"account\":{" +
+				"		\"pptPassword\":null," +
+				"		\"id\":" + account + "," +
+				"		\"user\":{\"userName\":null}," +
+				"		\"pptUrl\":\"http://localhost:9930\"," +
+				"		\"pptUsername\":\"admin\"," +
+				"		\"ppt\":{\"id\":47,\"name\":\"Project Planning Tool\"}" +
+				"	}," +
+				"	\"path\":\"/issues.json\"," +
+				"	\"content\":\"{\\n\\t\\\"issue\\\": {\\n\\t\\t\\\"project_id\\\": \\\"test\\\",\\n\\t\\t\\n\\t\\t\\\"subject\\\": \\\"Rank criterions\\\",\\n\\t\\t\\\"description\\\": \\\" \\\\nDecision: DB Model \\\\nDKS link: http://localhost:9940/element/16 \\\\nAttributes: \\\\nRevision Date: 2016-11-11\\\\nViewpoint: Scenario\\\\nIntellectual Property Rights: Unrestricted\\\\nDue Date: 2014-12-24\\\\nProject Stage: Inception\\\\nOrganisational Reach: Project\\\\nStakeholder Roles: Any\\\\nOwner Role: Lead Architect\\\",\\n\\t\\t\\\"assigned_to_id\\\": 1,\\n\\t\\t\\\"tracker_id\\\": 3\\n\\t}\\n}\"," +
+				"	\"taskTemplate\":{" +
+				"		\"id\":" + taskPropertyValues[0].getTask().getId() + "," +
+				"		\"name\":\"Rank criterions\"," +
+				"		\"properties\":[" +
+				"			{\"id\":" + taskPropertyValues[0].getId() + ",\"property\":{\"id\":" + taskPropertyValues[0].getProperty().getId() + ",\"name\":\"Assignee\"},\"value\":\"Customer\"}," +
+				"			{\"id\":" + taskPropertyValues[1].getId() + ",\"property\":{\"id\":" + taskPropertyValues[1].getProperty().getId() + ",\"name\":\"Type\"},\"value\":\"Task\"}]," +
+				"		\"parent\":null," +
+				"		\"attributes\":{\"Assignee\":\"Customer\",\"Type\":\"Task\"}" +
+				"	}," +
+				"	\"taskProperties\":[" +
+				"		{\"id\":" + taskPropertyValues[0].getId() + ",\"property\":{\"id\":" + taskPropertyValues[0].getProperty().getId() + ",\"name\":\"Assignee\"},\"value\":\"Customer\"}," +
+				"		{\"id\":" + taskPropertyValues[1].getId() + ",\"property\":{\"id\":" + taskPropertyValues[1].getProperty().getId() + ",\"name\":\"Type\"},\"value\":\"Task\"}" +
+				"	]," +
+				"	\"project\":{\"id\":2,\"name\":\"Project\"}" +
+				"}")).withSession(AuthenticationChecker.SESSION_USER_IDENTIFIER, user.getId() + ""));
+
+		//Verification
+		assertThat(headers(result).get("Content-Type")).startsWith("application/json");
+		assertThat(status(result)).isEqualTo(resultStatus);
+		assertCheckJsonResponse(result, Json.parse("{\"content\": \"" + resultString + "\", \"type\": \"text/html; charset=utf-8\"}"));
 	}
 
 }

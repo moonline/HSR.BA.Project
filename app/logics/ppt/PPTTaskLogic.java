@@ -16,7 +16,9 @@ import play.libs.ws.WS;
 import play.libs.ws.WSResponse;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 
@@ -57,7 +59,15 @@ public class PPTTaskLogic {
 		task.setFinalRequestContent(form.content);
 		task.setFinalRequestUrl(url);
 		task.setFinalResponseStatus(wsResponse.getStatus());
-		task.setFinalResponseContent(wsResponse.asJson());
+		String responseContentType = wsResponse.getHeader("Content-Type");
+		if (responseContentType != null && responseContentType.startsWith("application/json")) {
+			task.setFinalResponseContent(wsResponse.asJson());
+		} else {
+			Map<String, String> responseContent = new HashMap<>();
+			responseContent.put("content", wsResponse.getBody());
+			responseContent.put("type", responseContentType);
+			task.setFinalResponseContent(Json.toJson(responseContent));
+		}
 		TASK_DAO.persist(task);
 		for (TaskPropertyValue taskProperty : form.taskProperties) {
 			TaskPropertyValue newTaskProperty = new TaskPropertyValue();
