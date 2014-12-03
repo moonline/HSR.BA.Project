@@ -101,6 +101,11 @@ sudo gem install bundler
 echo "== Make Redmine-folder owned by Webserver-User =="
 sudo chown www-data:www-data -R /usr/share/redmine
 
+echo "== Configuring Redmine (from backup) =="
+sudo cp /vagrant/redmine-database /var/lib/dbconfig-common/sqlite3/redmine/instances/default/redmine_default
+sudo chown root:www-data /var/lib/dbconfig-common/sqlite3/redmine/instances/default/redmine_default
+sudo chmod 660 /var/lib/dbconfig-common/sqlite3/redmine/instances/default/redmine_default
+
 echo "== Restarting Apache =="
 sudo service apache2 restart
 
