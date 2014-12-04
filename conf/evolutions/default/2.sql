@@ -115,9 +115,9 @@ INSERT INTO REQUESTTEMPLATE (ID, NAME, REQUESTBODYTEMPLATE, URL, PROJECT_ID, PPT
 ','		"project_id": "${pptProject}",
 ','		$!ifElse:(parentRequestData.issue.id,""parent_issue_id": "$!{parentRequestData.issue.id}"\,", "")$
 ','		"subject": "${taskTemplate.name}",
-','		"description": "${taskTemplate.attributes.Description} \nDecision: ${node.name} \nDKS link: ${node.self} \nAttributes: \n$objectToString:(node.attributes, ": ", "\n")$",
 ','		$mapExistingAssignees:(taskTemplate.attributes.Assignee, "Project Planner:1\,Customer:1\,Architect:1",""assigned_to_id": ${taskTemplate.attributes.Assignee}\,")$
-','		$replaceTaskTemplateValueByPPTValue:(taskTemplate.attributes.Type, "Bug:1\,Feature:2\,Support:3",""tracker_id": ${taskTemplate.attributes.Type}")$
+','		$replaceTaskTemplateValueByPPTValue:(taskTemplate.attributes.Type, "Bug:1\,Feature:2\,Support:3",""tracker_id": ${taskTemplate.attributes.Type}\,")$
+','		"description": "${taskTemplate.attributes.Description} \nDecision: ${node.name} \nDKS link: ${node.self} \nAttributes: \n$objectToString:(node.attributes, ": ", "\n")$"
 ','	}
 }'),'/issues.json',(SELECT id FROM PROJECT WHERE name='Project'),(SELECT id FROM PPT WHERE name='Project Planning Tool'));
 

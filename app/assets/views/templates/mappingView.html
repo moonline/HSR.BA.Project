@@ -167,7 +167,7 @@ relations to DKS nodes (mappings) and exported tasks.
 			<div class="operationState">
 				<span class="messagebox saving taskDetail" data-ng-if="taskTemplateSavingStatus === ApplicationState.saving">Saving ...</span>
 				<span class="messagebox success taskDetail" data-ng-if="taskTemplateSavingStatus === ApplicationState.successful">Saved successfully!</span>
-				<span class="messagebox error taskDetail" data-ng-if="taskTemplateSavingStatus === ApplicationState.failed">Could not save! Maybe server is not available or you tried to save empty fields. Please ensure all field values are correct and try again or reload the page or file a bug report.</span>
+				<span class="messagebox error taskDetail inline" data-ng-if="taskTemplateSavingStatus === ApplicationState.failed">Could not save! Maybe server is not available or you tried to save empty fields. Please ensure all field values are correct and try again or reload the page or file a bug report.</span>
 			</div>
 			<form data-ng-if="currentTaskTemplate" class="detailForm">
 				<div class="formLine" data-columns="3" data-ng-if="currentTaskTemplate.properties.length < taskProperties.length">

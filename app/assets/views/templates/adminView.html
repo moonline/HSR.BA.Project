@@ -12,7 +12,7 @@
 		<div class="operationState">
 			<span class="messagebox saving" data-ng-if="manageDKSStatus === ApplicationState.saving">Saving ...</span>
 			<span class="messagebox success" data-ng-if="manageDKSStatus === ApplicationState.successful">Saved successfully!</span>
-			<span class="messagebox error" data-ng-if="manageDKSStatus === ApplicationState.failed">Could not save! Please try again, reload the page or file a bug report.</span>
+			<span class="messagebox error" data-ng-if="manageDKSStatus === ApplicationState.failed">Could not save! Maybe you tried to save empty fields. Please try again, reload the page or file a bug report.</span>
 		</div>
 		<p class="description">A DKS is the source of all your Problems and Options. It is only read, noting is written to it. In this version of EEPPI only one DKS is supported, however you can change it's URL here.</p>
 		<form>
@@ -35,7 +35,7 @@
 		<div class="operationState">
 			<span class="messagebox saving" data-ng-if="managePropertiesStatus === ApplicationState.saving">Saving ...</span>
 			<span class="messagebox success" data-ng-if="managePropertiesStatus === ApplicationState.successful">Saved successfully!</span>
-			<span class="messagebox error" data-ng-if="managePropertiesStatus === ApplicationState.failed">Could not save! Please try again, reload the page or file a bug report.</span>
+			<span class="messagebox error" data-ng-if="managePropertiesStatus === ApplicationState.failed">Could not save! Maybe you tried to save empty fields. Please try again, reload the page or file a bug report.</span>
 		</div>
 		<p class="description">Task Template Properties are the different properties a Task Template can possess. Task Templates always have a name and you can enrich them here with additional Properties.</p>
 		<form>
@@ -43,7 +43,7 @@
 				<label>New Property</label>
 				<input type="text" name="newTaskPropertyName" data-ng-model="newTaskPropertyName" placeholder="Name"
 					title="Name of the new property, e.g. 'Stakeholder'" />
-				<button class="action create" data-ng-click="createTaskProperty(newTaskPropertyName); newTaskPropertyName = '';"
+				<button class="action create" data-ng-disabled="!newTaskPropertyName" data-ng-click="createTaskProperty(newTaskPropertyName); newTaskPropertyName = '';"
 					title="Create a new Property">
 					<span class="icon big">&#x2b;</span>Add
 				</button>
@@ -86,7 +86,7 @@
 		<div class="operationState">
 			<span class="messagebox saving" data-ng-if="manageRequestTemplatesStatus === ApplicationState.saving">Saving ...</span>
 			<span class="messagebox success" data-ng-if="manageRequestTemplatesStatus === ApplicationState.successful">Saved successfully!</span>
-			<span class="messagebox error" data-ng-if="manageRequestTemplatesStatus === ApplicationState.failed">Could not save! Please try again, reload the page or file a bug report.</span>
+			<span class="messagebox error" data-ng-if="manageRequestTemplatesStatus === ApplicationState.failed">Could not save! Maybe you tried to save empty fields. Please try again, reload the page or file a bug report.</span>
 		</div>
 		<div class="description">
 			EEPPI works with different Project Planning Tools and Project Planning Tool configurations.
@@ -168,7 +168,8 @@
 	}
 }'>
 				</textarea>
-				<button class="action create" data-ng-click="addRequestTemplate(newRequestTemplateName, newRequestTemplateUrl, newRequestTemplateProject, newRequestTemplatePPT, newRequestTemplateBodyTemplate); newRequestTemplateName = ''; newRequestTemplateUrl = ''; newRequestTemplateProject = null; newRequestTemplatePPT = null; newRequestTemplateBodyTemplate = '';"
+				<button class="action create" data-ng-disabled="!newRequestTemplateName || !newRequestTemplateUrl || !newRequestTemplateProject || !newRequestTemplatePPT || !newRequestTemplateBodyTemplate"
+						data-ng-click="addRequestTemplate(newRequestTemplateName, newRequestTemplateUrl, newRequestTemplateProject, newRequestTemplatePPT, newRequestTemplateBodyTemplate); newRequestTemplateName = ''; newRequestTemplateUrl = ''; newRequestTemplateProject = null; newRequestTemplatePPT = null; newRequestTemplateBodyTemplate = '';"
 						title="Create a new Request Template">
 					<span class="icon big">&#x2b;</span>Add
 				</button>
@@ -220,7 +221,7 @@
 		<div class="operationState">
 			<span class="messagebox saving" data-ng-if="manageProcessorsStatus === ApplicationState.saving">Saving ...</span>
 			<span class="messagebox success" data-ng-if="manageProcessorsStatus === ApplicationState.successful">Saved successfully!</span>
-			<span class="messagebox error" data-ng-if="manageProcessorsStatus === ApplicationState.failed">Could not save! Please try again, reload the page or file a bug report.</span>
+			<span class="messagebox error" data-ng-if="manageProcessorsStatus === ApplicationState.failed">Could not save! Maybe you tried to save empty fields. Please try again, reload the page or file a bug report.</span>
 		</div>
 		<p class="description">
 			Processors are normal JavaScript functions enabling the Request Template to perform complex operations. You can manage them here.
@@ -252,7 +253,8 @@ function(switchArgument, caseArguments) {
 	}
 }">
 				</textarea>
-				<button class="action create" data-ng-click="createProcessor(newProcessorName, newProcessorProject, newProcessorCode); newProcessorName = ''; newProcessorProject = ''; newProcessorCode = '';"
+				<button class="action create" data-ng-disabled="!newProcessorName || !newProcessorProject || !newProcessorCode"
+					data-ng-click="createProcessor(newProcessorName, newProcessorProject, newProcessorCode); newProcessorName = ''; newProcessorProject = ''; newProcessorCode = '';"
 					title="Create a new Processor">
 					<span class="icon big">&#x2b;</span>Add
 				</button>
