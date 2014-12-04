@@ -69,7 +69,7 @@ module app.application {
 			$scope.decisions = [];
 			$scope.orderedMappings = {};
 			$scope.decisionMappings = {};
-			$scope.pptAccounts = [];
+			$scope.pptAccounts = null;
 			$scope.requestTemplates = [];
 			$scope.transmitNodes = {};
 			$scope.exportRequests = [];

@@ -18,6 +18,7 @@
 						<label>Target system</label>
 						<select title="Choose the target project planning tool to transmit tasks" data-ng-model="targetPPTAccount" data-ng-options="pptAccount.pptUrl for pptAccount in pptAccounts"
 								data-ng-change="setTarget(targetPPTAccount)"></select>
+						<span data-ng-if="pptAccounts && pptAccounts.length == 0"> &nbsp; Please <a href="#/account">configure a Project Planning Tool Account</a>.</span>
 					</div>
 					<div class="formLine">
 						<label>Request template to transmit</label>
