@@ -174,7 +174,7 @@ relations to DKS nodes (mappings) and exported tasks.
 							data-ng-options="taskProperty.name for taskProperty in taskProperties | filter:notYetUsed() | orderBy:'name'"
 							onchange="document.getElementById('newTaskPropertyValue').focus()"></select>
 					<input id="newTaskPropertyValue" type="text" data-ng-disabled="!newTaskProperty" data-ng-model="newTaskPropertyValue" placeholder="New {{newTaskProperty.name}}"/>
-					<button data-ng-disabled="!newTaskProperty" class="action create" title="Add property"
+					<button data-ng-disabled="!newTaskProperty || !newTaskPropertyValue" class="action create" title="Add property"
 							data-ng-click="addPropertyValue(newTaskProperty, newTaskPropertyValue); newTaskPropertyValue = '';">
 						<span class="icon big">&#x2b;</span>Add
 					</button>
