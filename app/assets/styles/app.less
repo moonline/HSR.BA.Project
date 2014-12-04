@@ -68,6 +68,9 @@ footer { height: 2rem; position: fixed; bottom: 0; z-index: 100%; width: 100%; }
 
 	h3 { margin-top: 1rem; background: rgb(110,170,220); padding: 0.25rem; color: white; margin-left: -0.5rem; margin-right: -0.5rem; }
 	.operationState { margin-left: -0.5rem; margin-right: -0.5rem; margin-top: -0.25rem; }
+
+	h3 + .operationState { margin-top: -0.25rem; }
+
 	ul li {
 		list-style-type: none;
 		margin: 0.2rem 0;
@@ -76,12 +79,16 @@ footer { height: 2rem; position: fixed; bottom: 0; z-index: 100%; width: 100%; }
 	a:hover { color: gray; }
 	.accordion { padding: 0.5rem; }
 }
+.admin .operationState { margin-top: -0.5rem; }
 
 .verticalFlex { .displayFlex; .flexDirection(column); }
 
 .taskTemplateList { .flexGrow(1); overflow-x: hidden; overflow-y: scroll; height: 5em; }
 
-.taskTemplateDetail { .alignSelf(flex-end); min-height: 38.2%; max-height: 62.8%; } //height min/max according to golden ratio
+.taskTemplateDetail { .alignSelf(flex-end); min-height: 38.2%; max-height: 62.8%;  //height min/max according to golden ratio
+	.propertyValues { margin-top: 1rem; }
+	.detailForm { margin-top: 0.5rem; margin-bottom: 0.5rem; }
+}
 
 [data-scroll="y"] { height: 100%; overflow-x: hidden; overflow-y: scroll; }
 
@@ -106,6 +113,24 @@ nav.mainNavigation {
 	}
 }
 
+.welcome.view {
+	width: 100%; height: 100%; .displayFlex; .flexDirection(column); .alignItems(center); .justifyContent(center);
+}
+
+.splashScreen {
+	height: 20rem; width: 35rem; box-shadow: 0 0 0.5rem gray;
+	background: repeating-linear-gradient(
+		55deg,
+		rgb(170, 190, 190),
+		rgb(170, 190, 190) 1rem,
+		rgb(160, 180, 180) 1rem,
+		rgb(160, 180, 180) 2rem
+	);
+	.displayFlex; .flexDirection(column); .alignItems(center); .justifyContent(center);
+
+	img { width: auto; height: 8rem; margin-bottom: 2rem; }
+	h2 { text-align: center; font-size: 3rem; }
+}
 
 
 /**
@@ -157,6 +182,7 @@ pre { overflow-x: scroll; }
 .icon {
 	font-weight: bold; margin-right: 0.5rem;
 	&[data-icon] { width: 1rem; height: 1rem; background-size: 1rem 1rem; }
+	&.big[data-icon] { width: 1.2rem; height: 1.2rem; background-size: 1.2rem 1.2rem; }
 	&[data-icon="settings"] {
 		// Icon made by Freepik (http://www.freepik.com) from Flaticon (http://www.flaticon.com)
 		//is licensed under Creative Commons BY 3.0 (http://creativecommons.org/licenses/by/3.0/)
@@ -167,7 +193,7 @@ pre { overflow-x: scroll; }
 		// is licensed under Creative Commons BY 3.0 (http://creativecommons.org/licenses/by/3.0/)
 		background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAQAAADZc7J/AAABDUlEQVR4Ac3VMWoCURDG8f8LhKCIiAewsVhShxQewGvYCMEDeBF7W0sLcw8FyxTClmITLBRDXCavyfLIjnGGFPH3VW9gPpa3sBv4o7sbLsiYsuI9ZsWUDKcXzkiSc5w49Mr1tKKH2RxRMrffwbN9GtTZB/dUffKAWJ6gpa4Tpy2wFBy55GgraCNohLatYEhAExjaCoRLBJMuB0TJgS5GjxSV9SJOHRaVggUu/UpBH5fAGkmyJuCUsS/X92T+D8obG75t4sntKXkTRTw5NBjwyglJcoqTAQ2uqjNmh6Bnx5g6vxixRa5kywhVjRlizIwaP3RYIo4s6ZBokiPO5DQpTRD8mVDKEfzJAf7/7/wFZgkWyRTk6ZIAAAAASUVORK5CYII54b59d4b57850cefeb238dd4202069de');
 	}
-	&[data-icon="transmit"] {
+	&[data-icon="transmission"] {
 		// Icon made by Freepik (http://www.freepik.com) from Flaticon (http://www.flaticon.com)
 		// is licensed under Creative Commons BY 3.0 (http://creativecommons.org/licenses/by/3.0/)
 		background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAADhAAAA4QBAwW54QAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAF7SURBVFiF7Zc9KEZhGIavW34ySCmTLJRsTBZlMCiLhRQWu0VWoSzKwmxVfrIpZUAZDUbDNxikTOorRf5yG7736PTl+9PJUc5dT+/fc55zvef0Ps85sk2aqkv17hlABvAXAOqjjqRWYAVoSyh2zvZaRS/bhFwwDbhGuwDyoX8c2kfgPPS7ovilLP4KGn+wy5sA8AFcAW/AA3Ad1hsqBagvGudDgGo1ENpbYBy4C+Nh4AlQrQCrtjdrACgpSXvV+KV+CjKAXwGQ1JwagKQ54FDSQUh2vwsAjARbB/aLIYqP4Y8kaYJCHniJTbcASxRywZTtHUmLwK6kMdvviQEAk8CM7bdyTrYvJZ0CQ8BZkgAnwIGk5xLr27aPJHUAo8BWnCoqRrPAfKXiUa0Be0AvcBTGfWHX3XG/pJ5AOeUkLQODwKTt+/hiHOAV6JTUH5trooqCUkLtwIvtBUk9tle/c1L0X5DAB8kHhU1EytneqHTRF0Ba+h+1IAPIAMrpEygu0vmF9olCAAAAAElFTkSuQmCCc5cffd4f7a0138cd7e37c3c991c06938');
@@ -177,9 +203,15 @@ pre { overflow-x: scroll; }
 		// is licensed under Creative Commons BY 3.0 (http://creativecommons.org/licenses/by/3.0/)
 		background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAA3NCSVQICAjb4U/gAAAACXBIWXMAAA3XAAAN1wFCKJt4AAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAJBQTFRF////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPUIf2wAAAC90Uk5TAAECAwQGDBkaISUmKjpMUFJjam9we3+Ag4eIjp6jpbO1ubzAw8XP0Nzk5ufw9v6vCUf3AAABIUlEQVQ4y32T2ZaCMBAFL7iAouLG4A4iuIBY//938+CowZPhviXVyenUSUuWDFdpVSZxIHucRQ0A9dKx8X7GO6mlop8D+cTzwwJY2nnkSpK7hjqw8dcxt4CfFi6FkLRx+VA23pd9teVBZRYsvtueQGr6qyEyuZvDylivIHc1v246fxsR1EOjIIWJdINjT5K0BBbmjRV4UgxsXzxrqL7DQHL28BhJUyDvv96/O4+lC8wkdU+wlQ4mz+EgbeHUlTSDizQ+70zOVBo9YO9IA7jb/W2BuM1f7wi3Vn+dzXX+jz8jdn+f/OOvwZv+SvCb/O3nmQTCNq4YCreFK6hh/fzmkY0/jxWh701yO5eTfkYts3DJWb6GdWEdVklBnJRVuhra2C8BGzNi6Z2KWQAAAABJRU5ErkJggg6210a74d53f6ce508a3ab556d1f69cfc');
 	}
+	&[data-icon="readOnly"] {
+		// Icon made by Google McMin (http://www.google.com) from Flaticon (http://www.flaticon.com)
+		// is licensed under Creative Commons BY 3.0 (http://creativecommons.org/licenses/by/3.0/)
+		background-image: url('data:image/png;base64,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');
+	}
 	&.iconOnly { margin-right: 0; }
 }
 
+.icon.info { background: steelblue; color: white; border-radius: 2rem; width: 1.2rem; height: 1.1rem; text-align: center; font-size: 1rem; box-shadow: 0 0 0.5rem white; }
 
 
 /**
@@ -264,6 +296,7 @@ select {
 
 	option {
 		background: silver; padding: 0.2rem; border: none;
+		&[value=""] { font-weight: bold; }
 	}
 }
 
@@ -279,16 +312,26 @@ select {
 	}
 }
 
-/**
- * Transmission
- */
-.transmission {
-	table { border-collapse: collapse; width: 100%; margin: 0.5rem 0; }
-	table td, table th { border: 0.05rem solid #4682B4; padding: 0.2rem; }
-	table td.disappearable { padding-left: 0; padding-right: 0; }
-	table th { border-bottom-width: 0.3rem; }
-	td input, td select {width: 100%; }
+.ProblemDetail  {
+	> dl {
+		> dt { border-bottom: 0.15rem solid #6EAADC; padding: 0.5rem 0.25rem 0.1rem 0.5rem;
+			margin: 0.5rem -0.5rem 0.5rem -0.5rem;
+		}
+		> dt:first-child { margin-top: -0.5rem; }
+		> dd { margin-bottom: 0.25rem; }
+	}
+	.currentMappings { min-height: 5rem; }
 }
+
+table.attributes {
+	border-collapse: collapse; width: 100%; width: calc(100% + 1rem);
+	margin: 0 -0.5rem;
+
+	th, td { padding: 0.25rem 0.5rem; }
+	th { color: rgb(40,40,40); }
+	tr:nth-child(2n+2) { background: rgb(230,230,230); }
+}
+
 
  /**
  * Register
@@ -368,3 +411,4 @@ select {
 	&.success { background: rgba(46, 139, 87, 0.87); }
 }
 .inline .messagebox, .inline.messagebox {position: inherit; }
+.area.pane .messagebox.taskDetail { margin-top: 0; margin-left: 0; }

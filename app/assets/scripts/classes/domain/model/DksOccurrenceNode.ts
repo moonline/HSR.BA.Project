@@ -1,9 +1,13 @@
 /// <reference path='../../domain/model/Node.ts' />
+/// <reference path='../../domain/model/Alternative.ts' />
 /// <reference path='../../domain/model/DksNode.ts' />
+
 /// <reference path='../../domain/repository/PersistentEntity.ts' />
 /// <reference path='../../domain/factory/FactoryConfiguration.ts' />
 
 module app.domain.model.dks {
+	'use strict';
+
 	export class DksOccurrenceNode extends DksNode implements app.domain.model.dks.Node, app.domain.repository.core.PersistentEntity {
 		public static factoryConfiguration: app.domain.factory.FactoryConfiguration = {
 			constructorArguments: [

@@ -1,10 +1,12 @@
-/// <reference path='../repository/PersistentEntity.ts' />
-/// <reference path='../../domain/factory/FactoryConfiguration.ts' />
-
 /// <reference path='../../domain/model/TaskProperty.ts' />
 
+/// <reference path='../../domain/repository/PersistentEntity.ts' />
+/// <reference path='../../domain/factory/FactoryConfiguration.ts' />
+
 module app.domain.model.core {
-    export class TaskPropertyValue implements app.domain.repository.core.PersistentEntity {
+	'use strict';
+
+	export class TaskPropertyValue implements app.domain.repository.core.PersistentEntity {
 		public static factoryConfiguration: app.domain.factory.FactoryConfiguration = {
 			constructorArguments: [
 				{ name: "property", type: app.domain.model.core.TaskProperty, subType: null },

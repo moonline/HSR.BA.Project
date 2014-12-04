@@ -1,12 +1,24 @@
 package controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import logics.docs.DocumentationLogic;
+import org.jetbrains.annotations.NotNull;
+import play.db.jpa.JPA;
+import play.libs.F;
 import play.libs.Json;
 import play.mvc.Controller;
+import play.mvc.Http;
 
 import java.util.Collection;
 
 public abstract class AbstractController extends Controller {
+
+	private final DocumentationLogic DOCUMENTATION_LOGIC;
+
+	public AbstractController(DocumentationLogic documentationLogic) {
+		DOCUMENTATION_LOGIC = documentationLogic;
+	}
+
 	protected JsonNode jsonify(Object object) {
 		if (object instanceof Collection) {
 			object = new CollectionWrapper((Collection) object);
@@ -25,4 +37,51 @@ public abstract class AbstractController extends Controller {
 			return items;
 		}
 	}
+
+	@NotNull
+	static String getPersistenceUnitForCall(@NotNull DocumentationLogic documentationLogic, @NotNull Http.Request request) {
+		if (documentationLogic.isDocumentationRequest(request)) {
+			return DocumentationLogic.DOCUMENTATION_PERSISTENCE_UNIT;
+		}
+		return "default";
+	}
+
+	protected void withTransaction(F.Callback0 block) {
+		try {
+			withTransaction(() -> {
+				block.invoke();
+				//noinspection ConstantConditions
+				return null;
+			});
+		} catch (RuntimeException runtimeException) {
+			throw runtimeException;
+		} catch (Throwable throwable) {
+			throw new RuntimeException(throwable); // I don't expect this ever to be called, because a Block does not throw (not runtime) exceptions
+		}
+	}
+
+	protected <T> T withTransaction(F.Function0<T> block, boolean readOnly) throws Throwable {
+		return withTransaction(block, 5, readOnly);
+	}
+
+	protected <T> T withTransaction(F.Function0<T> block) throws Throwable {
+		return withTransaction(block, 5, false);
+	}
+
+	protected <T> T withTransaction(F.Function0<T> block, int retries, boolean readOnly) throws Throwable {
+		return JPA.withTransaction(getPersistenceUnitForCall(DOCUMENTATION_LOGIC, request()), readOnly, new F.Function0<T>() {
+			@Override
+			public T apply() throws Throwable {
+				try {
+					return block.apply();
+				} catch (RuntimeException e) {
+					if (e.getMessage() != null && e.getMessage().startsWith("No EntityManager bound to this thread") && retries > 0) {
+						return withTransaction(block, retries - 1, readOnly); //try again, an EntityManager SHOULD be there!
+					}
+					throw e;
+				}
+			}
+		});
+	}
+
 }

@@ -1,11 +1,6 @@
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
-# Package Files #
-*.jar
-*.war
-*.ear
-
 # Webstorm trash
 /public/.idea
 /app/.idea
@@ -35,5 +30,5 @@ target
 # secret configuration files
 jira-license.key
 # Vagrant cached files
-test/integration/*/downloads/*
+test/tools/vagrants/*/downloads/*
 project/vagrant/downloads/*

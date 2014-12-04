@@ -62,4 +62,19 @@
 				padding: 0.5rem; width: 100%; display: inline-block; margin: 0 -0.5rem; box-sizing: content-box; }
 		}
 	}
+	table {
+		border-collapse: collapse; width: 100%; margin: 0.5rem 0;
+		td, th { padding: 0.2rem; }
+		td.disappearable { padding-left: 0; padding-right: 0; }
+		td input, td select { width: 100%; }
+
+		thead {
+			tr { background: linear-gradient(#1F8FFC, #4482B6);
+				.typeDeclaration { color: #dcdcdc; }
+			}
+		}
+		tbody {
+			tr:nth-child(2n+2) { background: lightblue; }
+		}
+	}
 }

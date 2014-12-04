@@ -1,6 +1,6 @@
 /// <reference path='../../../configuration/paths.ts' />
 
-/// <reference path='Repository.ts' />
+/// <reference path='../../domain/repository/Repository.ts' />
 /// <reference path='../../domain/model/Alternative.ts' />
 
 module app.domain.repository.dks {

@@ -1,0 +1,98 @@
+<div class="main area page register" data-scroll="y">
+	<div class="operationState">
+		<span class="messagebox success" data-ng-if="(registerStatus === Status.success) && (authenticator.loggedInUser == null)">Registration successful.</span>
+		<span class="messagebox error" data-ng-if="(registerStatus === Status.error) && (authenticator.loggedInUser == null)">Registration failed.</span>
+	</div>
+	<h2>Account</h2>
+
+	<div class="area accordion" data-ng-if="authenticator.loggedInUser == null">
+		<h3>Register new EEPPI-Account</h3>
+		<form class="register simpleForm">
+			<fieldset>
+				<div class="formLine">
+					<label for="registerUserName">Username</label><br />
+					<input type="text" id="registerUserName" name="registerUserName" data-ng-model="registerUserName" />
+				</div>
+				<div class="formLine">
+					<label for="registerPassword">Password</label><br />
+					<input type="password" id="registerPassword" name="registerPassword" data-ng-model="registerPassword" />
+				</div>
+				<div class="formLine">
+					<label for="registerPasswordRepeat">Password Repeat</label><br />
+					<input type="password" id="registerPasswordRepeat" name="registerPasswordRepeat" data-ng-model="registerPasswordRepeat" />
+				</div>
+				<button class="action save" data-ng-disabled="!registerUserName || !registerPassword || !registerPasswordRepeat"
+						data-ng-click="register(registerUserName, registerPassword, registerPasswordRepeat); registerUserName = ''; registerPassword = ''; registerPasswordRepeat = '';"
+						title="Register a new EEPPI-Account.">
+					<span class="icon big">&#x2b;</span>Register
+				</button>
+			</fieldset>
+		</form>
+	</div>
+
+	<div class="area accordion" data-ng-if="authenticator.loggedInUser != null">
+		<h3>Change EEPPI Password</h3>
+		<div class="operationState inline">
+			<span class="messagebox saving" data-ng-if="changePasswordStatus === ApplicationState.saving">Changing Password ...</span>
+			<span class="messagebox success" data-ng-if="changePasswordStatus === ApplicationState.successful">Password changed successfully!</span>
+			<span class="messagebox error" data-ng-if="changePasswordStatus === ApplicationState.failed">Could not change Password! Maybe the new Passwords differ?</span>
+		</div>
+		<form>
+			<div class="formLine" data-columns="5">
+				<label>Change Password</label>
+				<input type="password" name="oldPassword" data-ng-model="oldPassword" placeholder="Old Password"/>
+				<input type="password" name="newPassword" data-ng-model="newPassword" placeholder="New Password"/>
+				<input type="password" name="newPasswordRepeat" data-ng-model="newPasswordRepeat" placeholder="New Password Repeat"/>
+				<button class="action update" data-ng-disabled="!oldPassword || !newPassword || !newPasswordRepeat"
+						data-ng-click="changePassword(oldPassword, newPassword, newPasswordRepeat); oldPassword = ''; newPassword = ''; newPasswordRepeat = '';"
+						title="Change the Password for an existing EEPPI-Account.">
+					<span class="icon">&#x270E;</span>Change Password
+				</button>
+			</div>
+		</form>
+	</div>
+
+	<div class="area accordion" data-ng-if="authenticator.loggedInUser != null">
+		<h3>Manage Project Planning Tool (PPT) Accounts</h3>
+		<div class="operationState">
+			<span class="messagebox saving" data-ng-if="pptAccountStatus === ApplicationState.saving">Saving ...</span>
+			<span class="messagebox success" data-ng-if="pptAccountStatus === ApplicationState.successful">Saved successfully!</span>
+			<span class="messagebox error inline" data-ng-if="pptAccountStatus === ApplicationState.failed">Could not save! Please try again, reload the page or file a bug report.</span>
+		</div>
+		<p class="description">
+			To export Tasks to a PPT you need to configure it here.
+			Note: Your password for this account will be stored in plain text on the server. It is needed to create the Tasks in your name in the PPT.
+		</p>
+		<form>
+			<div class="formLine" data-columns="6">
+				<label>New PPT Account</label>
+				<input type="text" name="newPPTAccountUrl" data-ng-model="newPPTAccountUrl" placeholder="PPT Domain (e.g. http://example.com:8080)" />
+				<input type="text" name="newPPTAccountUsername" data-ng-model="newPPTAccountUsername" placeholder="PPT Username" />
+				<input type="password" name="newPPTAccountPassword" data-ng-model="newPPTAccountPassword" placeholder="PPT Password" />
+				<select name="newPPTAccountPPT" data-ng-model="newPPTAccountPPT"
+						data-ng-options="ppt.name for ppt in projectPlanningTools" >
+				</select>
+				<button class="action create" data-ng-disabled="!newPPTAccountUrl || !newPPTAccountUsername || !newPPTAccountPassword || !newPPTAccountPPT"
+						data-ng-click="createPPTAccount(newPPTAccountUrl, newPPTAccountUsername, newPPTAccountPassword, newPPTAccountPPT); newPPTAccountUrl = ''; newPPTAccountUsername = ''; newPPTAccountPassword = '';"
+						title="Create a new Project Planning Tool Account">
+					<span class="icon big">&#x2b;</span>Add
+				</button>
+			</div>
+			<div class="formLine" data-columns="6">
+				<select data-ng-model="toUpdatePPTAccount" data-ng-options="pptAccount as (pptAccount.pptUrl + ':' + pptAccount.pptUsername) for pptAccount in pptAccounts" data-ng-change="showSelectedPPTAccount(toUpdatePPTAccount)"></select>
+				<input data-ng-disabled="!toUpdatePPTAccount" type="text" name="toUpdatePPTAccountUrl" data-ng-model="toUpdatePPTAccount.pptUrl" placeholder="PPT Domain (e.g. http://example.com:8080)"
+					   data-ng-blur="updatePPTAccount(toUpdatePPTAccount)" data-ng-change="pptAccountChanged()"/>
+				<input data-ng-disabled="!toUpdatePPTAccount" type="text" name="toUpdatePPTAccountUsername" data-ng-model="toUpdatePPTAccount.pptUsername" placeholder="PPT Username"
+					   data-ng-blur="updatePPTAccount(toUpdatePPTAccount)" data-ng-change="pptAccountChanged()"/>
+				<input data-ng-disabled="!toUpdatePPTAccount" type="password" name="toUpdatePPTAccountPassword" data-ng-model="toUpdatePPTAccount.pptPassword" placeholder="PPT Password"
+					   data-ng-blur="updatePPTAccount(toUpdatePPTAccount)" data-ng-change="pptAccountChanged()"/>
+				<select data-ng-disabled="!toUpdatePPTAccount" name="toUpdatePPTAccountPPT" data-ng-model="toUpdatePPTAccount.ppt" data-ng-options="ppt.name for ppt in projectPlanningTools"
+						data-ng-blur="updatePPTAccount(toUpdatePPTAccount)" data-ng-change="pptAccountChanged()"></select>
+				<button data-ng-disabled="!toUpdatePPTAccount" class="action remove" data-ng-click="removePPTAccount(toUpdatePPTAccount); toUpdatePPTAccount = null;"
+						title="Remove Project Planning Tool Account">
+					<span class="icon big">&minus;</span>Remove
+				</button>
+			</div>
+		</form>
+	</div>
+</div>

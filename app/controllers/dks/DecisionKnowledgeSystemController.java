@@ -4,12 +4,10 @@ import controllers.AbstractCRUDController;
 import controllers.GuaranteeAuthenticatedUser;
 import daos.dks.DecisionKnowledgeSystemDAO;
 import logics.dks.DecisionKnowledgeSystemLogic;
-import logics.docs.QueryDescription;
-import logics.docs.QueryExamples;
-import logics.docs.QueryParameters;
-import logics.docs.QueryResponses;
+import logics.docs.*;
 import models.dks.DecisionKnowledgeSystem;
-import play.db.jpa.Transactional;
+import org.jetbrains.annotations.NotNull;
+import controllers.Transactional;
 import play.libs.F;
 import play.mvc.Result;
 
@@ -19,11 +17,12 @@ import static logics.docs.QueryResponses.Response;
 
 public class DecisionKnowledgeSystemController extends AbstractCRUDController {
 
-	public static final Status NOT_IMPLEMENTED_YET = internalServerError("This is not implemented yet, it is a known limitation of this version.");
+	private static final Status NOT_IMPLEMENTED_YET = internalServerError("This is not implemented yet, it is a known limitation of this version.");
 	private final DecisionKnowledgeSystemLogic DKS_LOGIC;
 	private final DecisionKnowledgeSystemDAO DKS_DAO;
 
-	public DecisionKnowledgeSystemController(DecisionKnowledgeSystemLogic dksLogic, DecisionKnowledgeSystemDAO dksDao) {
+	public DecisionKnowledgeSystemController(DecisionKnowledgeSystemLogic dksLogic, DecisionKnowledgeSystemDAO dksDao, DocumentationLogic documentationLogic) {
+		super(documentationLogic);
 		DKS_LOGIC = dksLogic;
 		DKS_DAO = dksDao;
 	}
@@ -42,7 +41,7 @@ public class DecisionKnowledgeSystemController extends AbstractCRUDController {
 			@Example(id = "http://headers.jsontest.com/", parameters = {}),
 			@Example(id = "hatetepe?__no-valid-url", parameters = {})
 	})
-	public F.Promise<Result> getFromDKS(String url) {
+	public F.Promise<Result> getFromDKS(@NotNull String url) {
 		//noinspection RedundantCast
 		return F.Promise.promise(() ->
 						DKS_LOGIC.getFromDKS(url)
@@ -52,6 +51,7 @@ public class DecisionKnowledgeSystemController extends AbstractCRUDController {
 				F.Promise.pure(badRequest("Could not load " + url)));
 	}
 
+	@NotNull
 	@Override
 	protected String getEntityName() {
 		return "DecisionKnowledgeSystem";

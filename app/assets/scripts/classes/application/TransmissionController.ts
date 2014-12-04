@@ -14,7 +14,7 @@
 /// <reference path='../domain/repository/DecisionKnowledgeSystemRepository.ts' />
 /// <reference path='../domain/repository/PPTAccountRepository.ts' />
 
-/// <reference path='../service/TemplateProcesser.ts' />
+/// <reference path='../service/TemplateProcessor.ts' />
 
 module app.application {
 	'use strict';
@@ -69,7 +69,7 @@ module app.application {
 			$scope.decisions = [];
 			$scope.orderedMappings = {};
 			$scope.decisionMappings = {};
-			$scope.pptAccounts = [];
+			$scope.pptAccounts = null;
 			$scope.requestTemplates = [];
 			$scope.transmitNodes = {};
 			$scope.exportRequests = [];
@@ -161,26 +161,23 @@ module app.application {
 				getTaskTemplatesOfSelectedDecisionsAndAlternatives($scope.allMappingInformation).forEach(function (transmitNode:{
 					node: app.domain.model.dks.DksNode;
 					type: any;
-					mappings: app.domain.model.core.Mapping[];
+					mapping: app.domain.model.core.Mapping;
 					subNodes: {[index:string]:{
 						node: app.domain.model.dks.Option;
 						type: any;
 						mappings: app.domain.model.core.Mapping[]
 					}}
 				}) {
-					var parentRequests:{[index: string]:{
+					var parentRequest:{
 						requestBody: any;
 						node: app.domain.model.dks.DksNode;
 						taskTemplate: app.domain.model.core.TaskTemplate;
 						exportState: app.application.ApplicationState;
-					}} = {};
-					transmitNode.mappings.forEach(function (mapping:app.domain.model.core.Mapping) {
-						parentRequests[transmitNode.node.id + "_" + mapping.taskTemplate.id] = renderRequestTemplates($scope, mapping, transmitNode.node, authenticationService, processors, null);
-					});
+					} = renderRequestTemplates($scope, transmitNode.mapping, transmitNode.node, authenticationService, processors, null);
 					Object.keys(transmitNode.subNodes).forEach(function (subNodeKey) {
 						var subNode = transmitNode.subNodes[subNodeKey];
 						subNode.mappings.forEach(function (mapping:app.domain.model.core.Mapping) {
-							renderRequestTemplates($scope, mapping, subNode.node, authenticationService, processors, parentRequests[transmitNode.node.id + "_" + mapping.taskTemplate.parent.id]);
+							renderRequestTemplates($scope, mapping, subNode.node, authenticationService, processors, parentRequest);
 						});
 					});
 				});
@@ -204,7 +201,7 @@ module app.application {
 						parentRequestData = null;
 					}
 
-					var templateProcessor = new app.service.TemplateProcesser({parentRequestData: parentRequestData}, currentRequest.requestBody, processors);
+					var templateProcessor = new app.service.TemplateProcessor({parentRequestData: parentRequestData}, currentRequest.requestBody, processors);
 					try {
 						currentRequest.requestBody = templateProcessor.processSecondary();
 					} catch (error) {
@@ -238,6 +235,14 @@ module app.application {
 
 			$scope.goToDataSelectionStep = function () {
 				$scope.currentWizardStep = ExportWizardSteps.DataSelection;
+			};
+
+			$scope.setPPTProject = function (pptProject) {
+				$scope.pptProject = pptProject;
+			};
+
+			$scope.setRequestTemplate = function (requestTemplate) {
+				$scope.requestTemplate = requestTemplate;
 			};
 
 			$scope.selectUnselectAll = function (selected:boolean) {
@@ -451,7 +456,7 @@ module app.application {
 					mappings: $scope.decisionMappings
 				};
 
-				var templateProcessor = new app.service.TemplateProcesser(exportDecisionData, $scope.requestTemplate.requestBodyTemplate, processors);
+				var templateProcessor = new app.service.TemplateProcessor(exportDecisionData, $scope.requestTemplate.requestBodyTemplate, processors);
 				var renderedTemplate;
 				try {
 					renderedTemplate = templateProcessor.process();
@@ -488,7 +493,7 @@ module app.application {
 			function getTaskTemplatesOfSelectedDecisionsAndAlternatives(allMappingInformation:MappingInformation[]):{
 				node: app.domain.model.dks.DksNode;
 				type: any;
-				mappings: app.domain.model.core.Mapping[];
+				mapping: app.domain.model.core.Mapping;
 				subNodes: {[index:string]:{
 					node: app.domain.model.dks.DksNode;
 					type: any;
@@ -498,7 +503,7 @@ module app.application {
 				var ret:{[index:string]:{
 					node: app.domain.model.dks.DksNode;
 					type: any;
-					mappings: app.domain.model.core.Mapping[];
+					mapping: app.domain.model.core.Mapping;
 					subNodes: {[index:string]:{
 						node: app.domain.model.dks.DksNode;
 						type: any;
@@ -514,19 +519,19 @@ module app.application {
 							var node:app.domain.model.dks.DksNode = aMappingInformation.getAlternativeIfAvailable();
 							var transmitNodeId:string = node.id + "_" + mapping.taskTemplate.id;
 							if (aMappingInformation.selectedParent == null) {
-								//console.log("Adding parent mapping for " + node.name + ": Task " + mapping.taskTemplate.name + " [" + transmitNodeId + "]");
+								console.log("Adding parent mapping for " + node.name + ": Task " + mapping.taskTemplate.name + " [" + transmitNodeId + "]");
 								if (!ret[transmitNodeId]) {
 									ret[transmitNodeId] = {
 										node: node,
 										type: app.domain.model.dks.DksNode,
-										mappings: [],
+										mapping: null,
 										subNodes: {}
 									};
 								}
-								ret[transmitNodeId].mappings.push(mapping);
+								ret[transmitNodeId].mapping=mapping;
 							} else {
-								var parentTransmitNodeId:string = node.id + "_" + aMappingInformation.selectedParent.mapping.taskTemplate.id;
-								//console.log("Adding child mapping for " + node.name + ": Task " + mapping.taskTemplate.name + " with parent " + parentTransmitNodeId + " with available parents: " + Object.keys(ret));
+								var parentTransmitNodeId:string = aMappingInformation.selectedParent.getAlternativeIfAvailable().id + "_" + aMappingInformation.selectedParent.mapping.taskTemplate.id;
+								console.log("Adding child mapping for " + node.name + ": Task " + mapping.taskTemplate.name + " with parent " + parentTransmitNodeId + " with available parents: " + Object.keys(ret));
 								if (!ret[parentTransmitNodeId].subNodes[transmitNodeId]) {
 									ret[parentTransmitNodeId].subNodes[transmitNodeId] = {
 										node: node,
@@ -552,7 +557,7 @@ module app.application {
 				if (!mapping.taskTemplate['attributes']) {
 					mapping.taskTemplate['attributes'] = {};
 					mapping.taskTemplate.properties.forEach(function (taskPropertyValue, index) {
-						mapping.taskTemplate['attributes'][taskPropertyValue.property.name.toLowerCase()] = taskPropertyValue.value;
+						mapping.taskTemplate['attributes'][taskPropertyValue.property.name] = taskPropertyValue.value;
 					});
 				}
 			}

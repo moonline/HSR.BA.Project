@@ -1,21 +1,62 @@
 * { -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; }
 
 html, body { margin: 0; padding: 0; }
-body { font-family: Arial, Helvetica, sans-serif; }
+body { font-family: Arial, Helvetica, sans-serif; counter-reset: chapter; }
 
+section 	{ padding: 0.5rem; }
+.subSubsection { background: rgb(230,238,245); padding: 0.5rem; margin: 1rem 0;}
+
+
+/* font */
 h1, h2, h3, h4, h5 { padding: 0.5rem; margin-top: 1.5rem; margin-bottom: 0.25rem; }
-h1 { padding: 1rem; margin-top: 2.5rem; background: dodgerblue; background: linear-gradient(dodgerblue, steelblue);
-    color: white; border-bottom: 0.25rem solid black;}
-h1:first-of-type { margin-top: 0; }
-h2 { background: #2E3D54; color: white; margin-top: 2rem; }
+h1 			{ padding: 1rem; margin-top: 0; background: dodgerblue; background: linear-gradient(dodgerblue, steelblue);
+				color: white; border-bottom: 0.25rem solid black;}
 
-p { padding: 0.5rem; }
+h2 			{ counter-increment: chapter; counter-reset: subchapter; background: silver; background: linear-gradient(gainsboro, silver);
+				margin-top: 2rem; font-size: 2rem; }
+h2::before 	{ content: counter(chapter) "\00a0\00a0\00a0"; }
+h3, h4, h5 	{ padding-left: 0; }
+h3 			{ counter-increment: subchapter; border-bottom: 0.2rem #000 solid; }
+h3::before 	{ content: counter(chapter) "." counter(subchapter) "\00a0\00a0\00a0"; }
+h4 			{ margin: -0.5rem -0.5rem 0.5rem -0.5rem; background: linear-gradient(skyblue, steelblue); padding: 0.5rem;}
+
+p 			{ }
+
+pre 		{ white-space: pre-wrap; background: white; border-color: silver!important; }
+
+a.toTop 	{ dispaly: inline-block; float: right; background: black; padding: 0.5rem 1rem; font-size: 1rem; border-radius: 2rem; color: #FFF;
+				text-decoration: none; }
+h4 > a.toTop { margin: -0.25rem 0; padding: 0.25rem 1rem;}
 
 
-table { border-collapse: collapse; }
+/* lists */
+ol, ul 		{ list-style-position: inside; }
+section ul { padding: 0; list-style-position: outside; padding-left: 1rem;}
+section ul ul { padding-left: 2rem; list-style-position: outside }
+
+ol.index.list { counter-reset: indexChapter; padding: 0; }
+ol.index.list a, ol.index.list a:link, ol.index.list a:visited { color: black;}
+ol.index.list a:hover { color: gray; }
+
+ol.index.list > li 			{ counter-increment: indexChapter; counter-reset: indexSubChapter; list-style-type: none; }
+ol.index.list > li::before 	{ content: counter(indexChapter, decimal); margin-right: 0.75rem; }
+ol.index.list li > a 		{ font-weight: bold; text-decoration: none; }
+
+ol.index.list > li ol.index.subList { padding: 0; padding-left: 1.25rem; }
+
+ol.index.list > li ol.index.subList > li 			{ counter-increment: indexSubChapter; list-style-type: none; }
+ol.index.list > li ol.index.subList > li::before	{ content: counter(indexChapter) "." counter(indexSubChapter); margin-right: 0.75rem; }
+
+ol.index.list > li ol.index.subList > li ul 		{ list-style-type: circle; padding-left: 2.2rem; }
+
+/* tables */
+table { border-collapse: collapse; width: 100%; }
 table th, table td { padding: 0.5rem; text-align: left; }
-table tr th { background: #2E3D54; color: white; }
+table tr th { background: dodgerblue; background: linear-gradient(dodgerblue, steelblue); color: white; }
 table tr:nth-child(odd) td { background: silver; }
 table tr:nth-child(even) td { background: gainsboro; }
 
-pre { white-space: pre-wrap; }
+
+@media print {
+	a.toTop { display: none; }
+}

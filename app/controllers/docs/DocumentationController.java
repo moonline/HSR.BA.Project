@@ -15,17 +15,15 @@ public class DocumentationController extends AbstractController {
 
 	private final DocumentationLogic DOCUMENTATION_LOGIC;
 
-	private ExampleDataCreator EXAMPLE_DATA_CREATOR;
-
-	public DocumentationController(DocumentationLogic documentationLogic, ExampleDataCreator exampleDataCreator) {
+	public DocumentationController(DocumentationLogic documentationLogic) {
+		super(documentationLogic);
 		DOCUMENTATION_LOGIC = documentationLogic;
-		EXAMPLE_DATA_CREATOR = exampleDataCreator;
 	}
 
 	public Result getAPIDocumentation() throws Throwable {
 		final Map<Class<? extends Controller>, List<DocumentationLogic.MethodDocumentation>> allAPICalls = DOCUMENTATION_LOGIC.getAllAPICalls();
-		JPA.withTransaction(() -> DOCUMENTATION_LOGIC.createCallExampleData(allAPICalls.values(), EXAMPLE_DATA_CREATOR));
-		return JPA.withTransaction("default", true, () -> ok(documentation.render(allAPICalls, DOCUMENTATION_LOGIC, EXAMPLE_DATA_CREATOR)));
+		ExampleDataCreator exampleDataCreator = JPA.withTransaction(DocumentationLogic.DOCUMENTATION_PERSISTENCE_UNIT, false, () -> DOCUMENTATION_LOGIC.createCallExampleData(allAPICalls.values()));
+		return JPA.withTransaction(DocumentationLogic.DOCUMENTATION_PERSISTENCE_UNIT, true, () -> ok(documentation.render(allAPICalls, DOCUMENTATION_LOGIC, exampleDataCreator)));
 	}
 
 }

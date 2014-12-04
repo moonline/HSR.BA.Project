@@ -1,8 +1,7 @@
 /// <reference path='../../../configuration/paths.ts' />
 
-/// <reference path='Repository.ts' />
+/// <reference path='../../domain/repository/Repository.ts' />
 /// <reference path='../../domain/model/DecisionKnowledgeSystem.ts' />
-/// <reference path='../../domain/factory/ObjectFactory.ts' />
 
 module app.domain.repository.dks {
 	export class DecisionKnowledgeSystemRepository extends app.domain.repository.core.Repository<app.domain.model.dks.DecisionKnowledgeSystem> {

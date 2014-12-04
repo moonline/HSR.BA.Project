@@ -1,4 +1,6 @@
-/// <reference path='../../classes/application/RegisterController.ts' />
+/// <reference path='../../configuration/application.ts' />
+
+/// <reference path='../../classes/application/AccountController.ts' />
 /// <reference path='../../classes/application/MappingController.ts' />
 /// <reference path='../../classes/application/TransmissionController.ts' />
 /// <reference path='../../classes/application/AdminController.ts' />
@@ -42,6 +44,7 @@ module app.mod {
 				});
 
 				$rootScope.currentView = $location;
+				$rootScope.logoutStatus = null;
 
 				// make Status available in view
 				$rootScope.Status = app.application.Status;
@@ -57,9 +60,17 @@ module app.mod {
 					});
 				};
 				$rootScope.logout = function() {
-					authenticationService.logout();
-					$rootScope.loginStatus = null;
-					$location.path("/");
+					authenticationService.logout(function(success: boolean){
+						if(success) {
+							$rootScope.logoutStatus = app.application.Status.success;
+							setTimeout(() => { $rootScope.logoutStatus = null; $rootScope.$apply(); }, configuration.settings.successDelay);
+							$rootScope.loginStatus = null;
+							$location.path("/");
+						} else {
+							$rootScope.logoutStatus = app.application.Status.error;
+							setTimeout(() => { $rootScope.logoutStatus = null; $rootScope.$apply(); }, configuration.settings.successDelay);
+						}
+					});
 				}
 			}]);
 		}
@@ -100,9 +111,9 @@ module app.mod {
 						}]
 					}
 				});
-				$routeProvider.when('/register', {
-					templateUrl: '/public/views/templates/registerView.html',
-					controller: 'registerController'
+				$routeProvider.when('/account', {
+					templateUrl: '/public/views/templates/accountView.html',
+					controller: 'accountController'
 				});
 				$routeProvider.otherwise({
 					redirectTo:'/'
@@ -111,10 +122,10 @@ module app.mod {
 		}
 
 		private addControllers() {
-			this.module.controller('mappingController', ['$scope', '$location', '$http', 'persistenceService', app.application.MappingController]);
+			this.module.controller('mappingController', ['$scope', 'persistenceService', '$sce', app.application.MappingController]);
 			this.module.controller('transmissionController', ['$scope', '$location', 'persistenceService', 'authenticationService', '$http', app.application.TransmissionController]);
-			this.module.controller('registerController', ['$scope', '$location', '$http', 'persistenceService', 'authenticationService', app.application.RegisterController]);
-			this.module.controller('adminController', ['$scope', '$location', '$http', 'persistenceService', 'authenticationService', app.application.AdminController]);
+			this.module.controller('accountController', ['$scope', 'persistenceService', 'authenticationService', app.application.AccountController]);
+			this.module.controller('adminController', ['$scope', 'persistenceService', app.application.AdminController]);
 			this.module.controller('dashboardController', ['$scope', '$location', '$http', 'persistenceService', app.application.DashboardController]);
 
 		}

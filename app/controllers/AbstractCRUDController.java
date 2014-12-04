@@ -2,13 +2,19 @@ package controllers;
 
 import daos.AbstractDAO;
 import logics.CRUDLogicInterface;
+import logics.docs.DocumentationLogic;
 import logics.docs.QueryParameters;
 import logics.docs.QueryResponses;
 import models.AbstractEntity;
+import org.jetbrains.annotations.NotNull;
 import play.data.Form;
 import play.mvc.Result;
 
 public abstract class AbstractCRUDController extends AbstractReadController {
+
+	public AbstractCRUDController(DocumentationLogic documentationLogic) {
+		super(documentationLogic);
+	}
 
 	@QueryResponses({
 			@QueryResponses.Response(status = BAD_REQUEST, description = "If the request parameter contain errors."),
@@ -16,7 +22,8 @@ public abstract class AbstractCRUDController extends AbstractReadController {
 	})
 	public abstract Result create();
 
-	protected <E extends AbstractEntity> Result create(CRUDLogicInterface<E> logic, Class<E> createFormClass) {
+	@NotNull
+	protected <E extends AbstractEntity> Result create(@NotNull CRUDLogicInterface<E> logic, Class<E> createFormClass) {
 		Form<E> form = Form.form(createFormClass).bindFromRequest();
 		if (form.hasErrors()) {
 			return badRequest(form.errorsAsJson());
@@ -32,7 +39,7 @@ public abstract class AbstractCRUDController extends AbstractReadController {
 	})
 	public abstract Result update(long id);
 
-	protected <E extends AbstractEntity> Result update(AbstractDAO<E> dao, CRUDLogicInterface<E> logic, Class<E> updateFormClass, long id) {
+	protected <E extends AbstractEntity> Result update(@NotNull AbstractDAO<E> dao, @NotNull CRUDLogicInterface<E> logic, Class<E> updateFormClass, long id) {
 		E entity = dao.readById(id);
 		if (entity == null) {
 			return notFound(id);
@@ -52,7 +59,7 @@ public abstract class AbstractCRUDController extends AbstractReadController {
 	})
 	public abstract Result delete(long id);
 
-	protected <E extends AbstractEntity> Result delete(AbstractDAO<E> dao, CRUDLogicInterface<E> logic, long id) {
+	protected <E extends AbstractEntity> Result delete(@NotNull AbstractDAO<E> dao, @NotNull CRUDLogicInterface<E> logic, long id) {
 		E entity = dao.readById(id);
 		if (entity == null) {
 			return notFound(id);

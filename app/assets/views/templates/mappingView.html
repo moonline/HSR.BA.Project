@@ -1,9 +1,30 @@
 <div class="main area page mapping" data-layout="flow" data-flow-direction="row" data-align="start">
 	<div class="column1 area pane" data-layout="flow" data-flow-direction="column" data-scroll="y">
 		<div class="areaContent">
-			<h2><span title="Problem Templates in DKS">Problems</span> <a href="{{currentDks.url}}" target="_blank" title="from {{currentDks.name}} ({{currentDks.url}})">(read only)</a> (&Sigma;:{{problems.length}})</h2>
+			<h2>
+				<span title="Problem Templates in DKS">Problems</span>
+				<a href="{{currentDks.url}}" target="_blank" title="Read only - loaded from {{currentDks.name}} (DKS data source: {{currentDks.url}})">
+					<span class="icon big" data-icon="readOnly"></span></a>
+				(&Sigma;:{{problems.length}})
 
-			<span class="messagebox error" data-ng-if="problemsLoadingStatus === ApplicationState.failed">Loading of DKS elements failed. Maybe service is not available.</span>
+				<span class="infoBox"
+					  style="float: right; "
+					  title="You didn't find the Problem (ProblemTemplate) or
+Alternative (OptionTemplate) you created in your DKS?
+
+Ensure the nodes you created are correct and complete and you
+structured them the correct way:
+
+[ProblemTemplate]  1 --- *  [OptionTemplate].
+
+Don't mix the elements and don't use ProblemTemples as alternatives of
+other ProblemTemplates. Incorrect nodes or incorrect structured nodes
+will be filtered by EEPPI.">
+					<span class="icon info">&#x2139;</span>
+				</span>
+			</h2>
+
+			<span class="messagebox error" data-ng-if="problemsLoadingStatus === ApplicationState.failed">Loading of DKS elements failed. Maybe service is not available. Check if <a href="{{currentDks.url}}" target="_blank" >DKS</a> is running and DKS configuration is correct and reload the page.</span>
 			<span class="messagebox pending" data-ng-if="problemsLoadingStatus === ApplicationState.pending">Loading ...</span>
 
 			<ul data-type="list">
@@ -37,21 +58,26 @@
 				<h2>{{currentDksNode.name}} [#{{currentDksNode.id}}]</h2>
 				<dl>
 					<dt data-ng-if="currentDksNode.notes">Notes</dt>
-					<dd data-ng-if="currentDksNode.notes"><pre class="multilineText">{{currentDksNode.notes}}</pre></dd>
+					<dd data-ng-if="currentDksNode.notes"><p data-ng-bind-html="currentDksNode.secureNotes" class="multilineText"></p></dd>
 					<dt>Path</dt>
 					<dd><span data-ng-repeat="pathSegment in currentDksNode.path">
 					<span class="pathDivider" data-ng-if="!$first">/</span><span class="pathSegment">{{pathSegment}}</span></span>
 					</dd>
 					<dt>Attributes</dt>
 					<dd>
-						<ul>
-							<li data-ng-repeat="(name, value) in currentDksNode.attributes">{{name}}: {{value}}</li>
-						</ul>
+						<table class="attributes">
+							<tbody>
+								<tr data-ng-repeat="(name, value) in currentDksNode.attributes">
+									<th>{{name}}</th>
+									<td>{{value}}</td>
+								</tr>
+							</tbody>
+						</table>
 					</dd>
-					<dt>DKS link</dt>
+					<dt>DKS link (data resource)</dt>
 					<dd><a href="{{currentDksNode.self}}" target="_blank">{{currentDksNode.self}}</a></dd>
-					<dt data-ng-if="currentDksNode.alternatives">Options</dt>
-					<dd data-ng-if="currentDksNode.alternatives">
+					<dt data-ng-if="currentDksNode.alternatives && currentDksNode.alternatives.length > 0">Options</dt>
+					<dd data-ng-if="currentDksNode.alternatives && currentDksNode.alternatives.length > 0">
 						<ul>
 							<li data-ng-repeat="option in currentDksNode.alternatives | orderBy:'name'">
 								<span data-ng-click="setCurrentDksNode(option)">
@@ -62,17 +88,28 @@
 					</dd>
 				</dl>
 
-				<h3>Mapping ({{currentDksNode.name}} &hArr; Task Templates)</h3>
+				<h3>Mapping ({{currentDksNode.name}} &hArr; Task Templates)
+					<span class="infoBox"
+						  style="float: right; "
+						  title="Mapped task templates are tasks related to this problem/alternative
+you should do everytime in your project if you have
+to decide this problem or if you have choosen this
+alternative.">
+						<span class="icon info">&#x2139;</span>
+					</span>
+				</h3>
 
 				<span class="messagebox error" data-ng-if="mappingsLoadingStatus === ApplicationState.failed">Loading of task mappings failed. Maybe server is not available.</span>
 				<span class="messagebox pending" data-ng-if="mappingsLoadingStatus === ApplicationState.pending">Loading ...</span>
 				<span class="messagebox saving" data-ng-if="mappingsSavingStatus === ApplicationState.saving">Saving ...</span>
 				<span class="messagebox success" data-ng-if="mappingsSavingStatus === ApplicationState.successful">Saved successfully</span>
 				<span class="messagebox error" data-ng-if="mappingsSavingStatus === ApplicationState.failed">Could not save! Please try again, reload the page or file a bug report.</span>
-				<ul>
+
+				<ul class="currentMappings">
 					<li data-ng-repeat="mapping in currentMappings | orderBy:'name'">
 						<button class="action remove" data-ng-click="removeMapping(mapping)"
-							title="Remove mapping "><span class="icon small iconOnly">&Chi;</span>
+							title="Release mapping">
+							<span class="icon small iconOnly">&Chi;</span>&nbsp;&nbsp;Unmap
 						</button>
 						<span data-ng-click="setCurrentTaskTemplate(mapping.taskTemplate)" title="Edit task template">
 							{{mapping.taskTemplate.name}} [{{mapping.taskTemplate.id}}]
@@ -96,10 +133,10 @@
 					data-state="{{template.id == currentTaskTemplate.id && 'selected' || '' }}">
 					<button class="action update" data-ng-if="currentDksNode" data-ng-disabled="hasMappingFor(template)"
 							data-ng-click="mapTaskTemplate(template)"
-							title="{{hasMappingFor(template)?'There is already a mapping for this Task Template':'Map this Task Template with the selected DKS element'}}">&lt; map
+							title="{{hasMappingFor(template)?'There is already a mapping for this Task Template':'Map this Task Template with the selected DKS element'}}">&lt; Map
 					</button>
 					<span data-ng-click="setCurrentTaskTemplate(template)" title="Edit task template">
-						<button class="action edit">&#x270E;</button> {{template.name}}
+						<button class="action {{template.id != currentTaskTemplate.id && 'edit' || '' }}">&#x270E;</button> {{template.name}}
 					</span>
 				</li>
 			</ul>
@@ -111,37 +148,42 @@
 				<div class="formLine" data-columns="3">
 					<label>New Task Template</label>
 					<input type="text" name="createTaskTemplateName" data-ng-model="createTaskTemplateName" placeholder="Name" />
-					<button class="action create" data-ng-click="createNewTaskTemplate(createTaskTemplateName); createTaskTemplateName = '';"
+					<button class="action create" data-ng-disabled="!createTaskTemplateName"
+						data-ng-click="createNewTaskTemplate(createTaskTemplateName); createTaskTemplateName = '';"
 						title="Create a new Task Template">
 						<span class="icon">&#x2b;</span>Create
 					</button>
 				</div>
-				<span class="infoBox" title="Task Templates can't be removed because of its relations to DKS nodes (mappings) and exported tasks. Rename Task Templates to reuse it.">
-					<span class="icon info"  style="background: steelblue; color: white; border-radius: 2rem; width: 1.2rem; height: 1.1rem; text-align: center;">&#x2139;</span>
+				<span class="infoBox" title="Task Templates can't be removed because of its
+relations to DKS nodes (mappings) and exported tasks.
+
+➡ Rename Task Templates to reuse it.">
+					<span class="icon info" >&#x2139;</span>
 					How to remove Task Templates?
 				</span>
 			</form>
 
-			<h3 data-ng-if="currentTaskTemplate">{{currentTaskTemplate.name}} [{{currentTaskTemplate.id}}]</h3>
+			<h3 data-ng-if="currentTaskTemplate">{{currentTaskTemplate.name}} [#{{currentTaskTemplate.id}}]</h3>
 			<div class="operationState">
-				<span class="messagebox saving" data-ng-if="taskTemplateSavingStatus === ApplicationState.saving">Saving ...</span>
-				<span class="messagebox success" data-ng-if="taskTemplateSavingStatus === ApplicationState.successful">Saved successfully!</span>
-				<span class="messagebox error" data-ng-if="taskTemplateSavingStatus === ApplicationState.failed">Could not save! Please try again, reload the page or file a bug report.</span>
+				<span class="messagebox saving taskDetail" data-ng-if="taskTemplateSavingStatus === ApplicationState.saving">Saving ...</span>
+				<span class="messagebox success taskDetail" data-ng-if="taskTemplateSavingStatus === ApplicationState.successful">Saved successfully!</span>
+				<span class="messagebox error taskDetail inline" data-ng-if="taskTemplateSavingStatus === ApplicationState.failed">Could not save! Maybe server is not available or you tried to save empty fields. Please ensure all field values are correct and try again or reload the page or file a bug report.</span>
 			</div>
-			<form data-ng-if="currentTaskTemplate">
+			<form data-ng-if="currentTaskTemplate" class="detailForm">
 				<div class="formLine" data-columns="3" data-ng-if="currentTaskTemplate.properties.length < taskProperties.length">
-					<select data-ng-model="newTaskProperty"
+					<select data-ng-model="newTaskProperty" id="newTaskPropertySelect"
 							data-ng-options="taskProperty.name for taskProperty in taskProperties | filter:notYetUsed() | orderBy:'name'"
 							onchange="document.getElementById('newTaskPropertyValue').focus()"></select>
 					<input id="newTaskPropertyValue" type="text" data-ng-disabled="!newTaskProperty" data-ng-model="newTaskPropertyValue" placeholder="New {{newTaskProperty.name}}"/>
-					<button data-ng-disabled="!newTaskProperty" class="action create" title="Add property"
+					<button data-ng-disabled="!newTaskProperty || !newTaskPropertyValue" class="action create" title="Add property"
 							data-ng-click="addPropertyValue(newTaskProperty, newTaskPropertyValue); newTaskPropertyValue = '';">
 						<span class="icon big">&#x2b;</span>Add
 					</button>
 				</div>
 				<div class="formLine" data-columns="3">
 					<label>Name</label>
-					<input type="text" data-ng-model="currentTaskTemplate.name" data-ng-blur="updateTaskTemplate()" data-ng-change="taskTemplateChanged()"/>
+					<input type="text" data-ng-model="currentTaskTemplate.name" data-ng-blur="updateTaskTemplate()"
+						data-ng-change="taskTemplateChanged()" title="Name of the task template, e.g. 'Install database environment on server'" />
 					<span></span>
 				</div>
 				<div class="formLine" data-columns="3">
@@ -151,16 +193,39 @@
 							data-ng-options="taskTemplate.name for taskTemplate in taskTemplates | filter:isNotSubtask() | filter:isNotSelf() | orderBy:'name'"
 							data-ng-disabled="isParentTask(currentTaskTemplate)"
 							data-ng-attr-title="{{isParentTask(currentTaskTemplate)?'This Task Template is already a Parent and can thus not have a parent itself (only one layer is supported).':''}}">
-								<option value="" style="font-weight: bold">No Parent Task</option>
+								<option value="">No Parent Task</option>
 							</select>
 					<span></span>
 				</div>
-				<div data-ng-repeat="propertyValue in currentTaskTemplate.properties | orderBy:'name'" class="formLine" data-columns="3"	>
-					<label>{{propertyValue.property.name}}</label>
-					<input data-ng-model="propertyValue.value" data-ng-blur="updateTaskTemplate()" data-ng-change="taskTemplateChanged()"/>
-					<button class="action remove" data-ng-click="removePropertyValue(propertyValue)"
-							title="Remove property "><span class="icon big">&minus;</span>Remove
-					</button>
+				<div class="propertyValues">
+					<span class="infoBox" title="Properties are user defined (see Administration) and its
+values depend on your target PPT and the processors you defined
+to transform this values to PPT specific values.
+
+So we can't give you information about what you should input as value,
+but we can give you some examples properties with
+example values to inspire you:
+
+	Assignee: Project Planner,
+	Description: Install DB environment including application drivers,
+	Due Date: 14\14\14,
+	Estimated Duration: 10h,
+	Type: Feature
+
+If you are looking for placeholders (variable, processors) this is not the right place.
+You can not use placeholders inside property values because they are target independent.
+You have to replace values (e.g. Assignee) on transmitting using processors.">
+						<span class="icon info" >&#x2139;</span>
+						Property values examples
+					</span>
+
+					<div data-ng-repeat="propertyValue in currentTaskTemplate.properties | orderBy:'property.name'" class="formLine" data-columns="3">
+						<label>{{propertyValue.property.name}}</label>
+						<input data-ng-model="propertyValue.value" data-ng-blur="updateTaskTemplate()" data-ng-change="taskTemplateChanged()"/>
+						<button class="action remove" data-ng-click="removePropertyValue(propertyValue)"
+								title="Remove property "><span class="icon big">&minus;</span>Remove
+						</button>
+					</div>
 				</div>
 			</form>
 		</div>

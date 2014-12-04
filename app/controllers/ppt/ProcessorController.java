@@ -3,20 +3,19 @@ package controllers.ppt;
 import controllers.AbstractCRUDController;
 import controllers.GuaranteeAuthenticatedUser;
 import daos.ppt.ProcessorDAO;
-import logics.docs.QueryDescription;
-import logics.docs.QueryExamples;
-import logics.docs.QueryParameters;
-import logics.docs.QueryResponses;
+import logics.docs.*;
 import logics.ppt.ProcessorLogic;
 import models.ppt.Processor;
-import play.db.jpa.Transactional;
+import org.jetbrains.annotations.NotNull;
+import controllers.Transactional;
 import play.mvc.Result;
 
 public class ProcessorController extends AbstractCRUDController {
 	private final ProcessorLogic PROCESSOR_LOGIC;
 	private final ProcessorDAO PROCESSOR_DAO;
 
-	public ProcessorController(ProcessorLogic processorLogic, ProcessorDAO processorDAO) {
+	public ProcessorController(ProcessorLogic processorLogic, ProcessorDAO processorDAO, DocumentationLogic documentationLogic) {
+		super(documentationLogic);
 		PROCESSOR_LOGIC = processorLogic;
 		PROCESSOR_DAO = processorDAO;
 	}
@@ -55,7 +54,7 @@ public class ProcessorController extends AbstractCRUDController {
 	@QueryExamples({
 			@QueryExamples.Example(id = "9999", parameters = {"Example processor", "9998", "function() {}"}),
 			@QueryExamples.Example(id = "REFERENCE_PROCESSOR_1000000000000000055", parameters = {"Example processor 2", "9898", "function() {}"}),
-			@QueryExamples.Example(id = "REFERENCE_PROCESSOR_1000000000000000056", parameters = {"Example processor", "REFERENCE_PROJECT_1000000000000000043", "function(a) { return a+'.'+a; }" })
+			@QueryExamples.Example(id = "REFERENCE_PROCESSOR_1000000000000000056", parameters = {"Example processor", "REFERENCE_PROJECT_1000000000000000043", "function(a) { return a+'.'+a; }"})
 	})
 	public Result update(long id) {
 		return update(PROCESSOR_DAO, PROCESSOR_LOGIC, Processor.class, id);
@@ -77,6 +76,7 @@ public class ProcessorController extends AbstractCRUDController {
 		return delete(PROCESSOR_DAO, PROCESSOR_LOGIC, id);
 	}
 
+	@NotNull
 	@Override
 	protected String getEntityName() {
 		return "Processor";

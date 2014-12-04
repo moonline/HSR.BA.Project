@@ -3,8 +3,22 @@ package logics.docs;
 import controllers.AbstractCRUDController;
 import controllers.AbstractController;
 import controllers.GuaranteeAuthenticatedUser;
+import daos.dks.DKSMappingDAO;
+import daos.dks.DecisionKnowledgeSystemDAO;
+import daos.ppt.ProcessorDAO;
+import daos.ppt.ProjectPlanningToolDAO;
+import daos.ppt.RequestTemplateDAO;
+import daos.task.TaskPropertyDAO;
+import daos.task.TaskPropertyValueDAO;
+import daos.task.TaskTemplateDAO;
+import daos.user.PPTAccountDAO;
+import daos.user.ProjectDAO;
+import daos.user.UserDAO;
+import logics.user.UserLogic;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.exception.ConstraintViolationException;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
@@ -14,13 +28,17 @@ import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
 import play.Logger;
 import play.api.mvc.Call;
+import play.db.jpa.JPA;
 import play.libs.F;
 import play.libs.ws.WS;
 import play.libs.ws.WSRequestHolder;
 import play.libs.ws.WSResponse;
 import play.mvc.Controller;
+import play.mvc.Http;
 import play.mvc.Result;
 
+import javax.persistence.PersistenceException;
+import javax.persistence.metamodel.EntityType;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -34,10 +52,41 @@ import static play.mvc.Http.Context.Implicit.ctx;
 public class DocumentationLogic {
 
 	public static final int MAGIC_CONSTANT_PARAMETER_IDENTIFICATION = 42;
+	public static final String DOCUMENTATION_REQUEST_HEADER = "isDocumentationRequest";
+	public static final String DOCUMENTATION_PERSISTENCE_UNIT = "documentation";
+
+	private final UserLogic USER_LOGIC;
+	private final UserDAO USER_DAO;
+	private final PPTAccountDAO PPT_ACCOUNT_DAO;
+	private final ProjectPlanningToolDAO PROJECT_PLANNING_TOOL_DAO;
+	private final TaskTemplateDAO TASK_TEMPLATE_DAO;
+	private final TaskPropertyDAO TASK_PROPERTY_DAO;
+	private final TaskPropertyValueDAO TASK_PROPERTY_VALUE_DAO;
+	private final DKSMappingDAO DKS_MAPPING_DAO;
+	private final RequestTemplateDAO REQUEST_TEMPLATE_DAO;
+	private final ProjectDAO PROJECT_DAO;
+	private final ProcessorDAO PROCESSOR_DAO;
+	private final DecisionKnowledgeSystemDAO DKS_DAO;
+
+	public DocumentationLogic(UserLogic userLogic, UserDAO userDAO, PPTAccountDAO pptAccountDAO, ProjectPlanningToolDAO projectPlanningToolDAO, TaskTemplateDAO taskTemplateDAO, TaskPropertyDAO taskPropertyDAO, TaskPropertyValueDAO taskPropertyValueDAO, DKSMappingDAO dksMappingDAO, RequestTemplateDAO requestTemplateDAO, ProjectDAO projectDAO, ProcessorDAO processorDAO, DecisionKnowledgeSystemDAO decisionKnowledgeSystemDAO) {
+		USER_LOGIC = userLogic;
+		USER_DAO = userDAO;
+		PPT_ACCOUNT_DAO = pptAccountDAO;
+		PROJECT_PLANNING_TOOL_DAO = projectPlanningToolDAO;
+		TASK_TEMPLATE_DAO = taskTemplateDAO;
+		TASK_PROPERTY_DAO = taskPropertyDAO;
+		TASK_PROPERTY_VALUE_DAO = taskPropertyValueDAO;
+		DKS_MAPPING_DAO = dksMappingDAO;
+		REQUEST_TEMPLATE_DAO = requestTemplateDAO;
+		PROJECT_DAO = projectDAO;
+		PROCESSOR_DAO = processorDAO;
+		DKS_DAO = decisionKnowledgeSystemDAO;
+	}
 
 	/**
 	 * Gets all methods in all controllers (see getAllControllerClasses()) which is implicitly a list of all public API endpoints
 	 */
+	@NotNull
 	public Map<Class<? extends Controller>, List<MethodDocumentation>> getAllAPICalls() {
 		Map<Class<? extends Controller>, List<MethodDocumentation>> classesAndMethods = new TreeMap<>((Comparator<Class>) (o1, o2) -> o1.getCanonicalName().compareTo(o2.getCanonicalName()));
 		//For each Controller
@@ -62,11 +111,11 @@ public class DocumentationLogic {
 	 * Gets the first part of the Play internal routing (the one, that corresponds to the given _class_).
 	 * For example for the controllers.user.UserController (Class) the controller.user.routes.UserController (Field/Object) is returned.
 	 */
-	private Object getRouteObject(Class<? extends Controller> controllerClass) {
+	private Object getRouteObject(@NotNull Class<? extends Controller> controllerClass) {
 		Class<?> routesClass = Reflections.forName(controllerClass.getPackage().getName() + ".routes");
 		try {
 			return routesClass.getField(controllerClass.getSimpleName()).get(routesClass.newInstance());
-		} catch (NoSuchFieldException | InstantiationException | IllegalAccessException e) {
+		} catch (@NotNull NoSuchFieldException | InstantiationException | IllegalAccessException e) {
 			Logger.error("Could not create instance for " + routesClass, e);
 			throw new RuntimeException("An Error occurred on 23523464", e);
 		}
@@ -77,11 +126,12 @@ public class DocumentationLogic {
 	 * Gets the second part of the Play internal routing (the one, that corresponds to the given _method_).
 	 * For example for controller.user.routes.UserController (Object) and controllers.user.UserController#login() the call controllers.user.routes.UserController.login() is returned.
 	 */
-	private Call getCallObject(Object routesObject, Method method) {
+	@NotNull
+	private Call getCallObject(@NotNull Object routesObject, @NotNull Method method) {
 		try {
 			Class<?> routesClass = routesObject.getClass();
 			return (Call) routesClass.getMethod(method.getName(), method.getParameterTypes()).invoke(routesObject, getExampleParams(method.getParameterTypes()));
-		} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+		} catch (@NotNull NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
 			Logger.error("Could not create call object for " + routesObject + "/" + method, e);
 			throw new RuntimeException("An Error occurred on 823489", e);
 		}
@@ -92,7 +142,8 @@ public class DocumentationLogic {
 	 * For a list of classes (parameter types) a list of instances of this class is returned.
 	 * And for later identification of this instances, they have always the value of MAGIC_CONSTANT_PARAMETER_IDENTIFICATION.
 	 */
-	private Object[] getExampleParams(Class<?>[] parameterTypes) {
+	@NotNull
+	private Object[] getExampleParams(@NotNull Class<?>[] parameterTypes) {
 		ArrayList<Object> params = new ArrayList<>();
 		for (Class<?> parameterType : parameterTypes) {
 			if (parameterType.equals(Integer.class) || parameterType.equals(int.class)) {
@@ -113,6 +164,7 @@ public class DocumentationLogic {
 	/**
 	 * Uses reflection to get all API-controller classes (extending AbstractController and in package controllers but not in package controllers.docs and not Abstract).
 	 */
+	@NotNull
 	private Set<Class<? extends AbstractController>> getAllControllerClasses() {
 		List<ClassLoader> classLoadersList = new LinkedList<>();
 		classLoadersList.add(ClasspathHelper.contextClassLoader());
@@ -138,14 +190,15 @@ public class DocumentationLogic {
 	/**
 	 * Transforms Controller names (from e.g. TaskTemplateController to "Task Template")
 	 */
-	public String getHumanFriendlyClassName(Class<? extends Controller> c) {
+	public String getHumanFriendlyClassName(@NotNull Class<? extends Controller> c) {
 		String name = c.getSimpleName(); //class name
 		name = name.replaceFirst("Controller$", "");//...without "Controller"
 		name = name.replaceAll("((?<=[a-z])[A-Z])", " $1"); //...with CamelCase to Camel-Space-Case Transformation
 		return name;
 	}
 
-	public String getCurlRequestString(MethodDocumentation method, QueryExamples.Example example) {
+	@NotNull
+	public String getCurlRequestString(@NotNull MethodDocumentation method, @NotNull QueryExamples.Example example) {
 		StringBuilder request = new StringBuilder("curl");
 		if (!method.call.method().equals("GET")) {
 			request.append(" --request ").append(method.call.method());
@@ -158,7 +211,7 @@ public class DocumentationLogic {
 		return request.toString();
 	}
 
-	public String getRequestUrl(MethodDocumentation method, boolean asAbsolute, String[] ids) {
+	public String getRequestUrl(@NotNull MethodDocumentation method, boolean asAbsolute, @NotNull String[] ids) {
 		String url;
 		if (asAbsolute) {
 			url = method.call.absoluteURL(ctx().request());
@@ -171,7 +224,8 @@ public class DocumentationLogic {
 		return url;
 	}
 
-	public String[] getIds(QueryParameters.Parameter[] queryParameters) {
+	@NotNull
+	public String[] getIds(@Nullable QueryParameters.Parameter[] queryParameters) {
 		List<String> ids = new ArrayList<>();
 		if (queryParameters != null) {
 			for (QueryParameters.Parameter queryParameter : queryParameters) {
@@ -187,7 +241,8 @@ public class DocumentationLogic {
 	 * @param wrapper A String of which the array elements are created, "x" is replaced with the parameters name.
 	 * @return A list of all IDs formatted with the wrapper.
 	 */
-	public String[] getIdsWrapped(QueryParameters.Parameter[] queryParameters, String wrapper) {
+	@NotNull
+	public String[] getIdsWrapped(@Nullable QueryParameters.Parameter[] queryParameters, @NotNull String wrapper) {
 		List<String> ids = new ArrayList<>();
 		if (queryParameters != null) {
 			for (QueryParameters.Parameter queryParameter : queryParameters) {
@@ -203,7 +258,8 @@ public class DocumentationLogic {
 	 * Returns a response for a call example of the API.
 	 * This is either the response data in the description of the method (if there is one) or the result of an executed call with the given example data.
 	 */
-	public SimpleResponse getResponseString(MethodDocumentation method, QueryExamples.Example example, ExampleDataCreator exampleDataCreator) {
+	@NotNull
+	public SimpleResponse getResponseString(@NotNull MethodDocumentation method, @NotNull QueryExamples.Example example, @NotNull ExampleDataCreator exampleDataCreator) {
 		QueryExamples.Example.Response exampleResponse = example.response();
 		if (exampleResponse.status() > 0) {
 			return new SimpleResponse(exampleResponse.status(), null, exampleResponse.content(), false);
@@ -212,23 +268,25 @@ public class DocumentationLogic {
 		}
 	}
 
-	private SimpleResponse simulateRequest(MethodDocumentation method, QueryExamples.Example example, ExampleDataCreator exampleDataCreator) {
-		WSRequestHolder url = WS.url(getRequestUrl(method, true, example.id()));
+	@NotNull
+	private SimpleResponse simulateRequest(@NotNull MethodDocumentation method, @NotNull QueryExamples.Example example, @NotNull ExampleDataCreator exampleDataCreator) {
+		WSRequestHolder request = WS.url(getRequestUrl(method, true, example.id()));
 		String queryString = calculateQueryString(method, example.parameters());
 		if (queryString != null) {
-			url.setQueryString(queryString);
+			request.setQueryString(queryString);
 		}
 		if (example.provideAuthentication()) {
-			url.setAuth(exampleDataCreator.USER_NAME, exampleDataCreator.USER_PASSWORD);
-			url.setQueryParameter("basicAuth", "true");
+			request.setAuth(exampleDataCreator.USER_NAME, exampleDataCreator.USER_PASSWORD);
+			request.setQueryParameter("basicAuth", "true");
 		}
-		F.Promise<WSResponse> promise = url.execute(method.call.method());
+		request.setHeader(DocumentationLogic.DOCUMENTATION_REQUEST_HEADER, "true");
+		F.Promise<WSResponse> promise = request.execute(method.call.method());
 		WSResponse wsResponse = promise.get(30, SECONDS);
 		return new SimpleResponse(wsResponse.getStatus(), wsResponse.getStatusText(), wsResponse.getBody(), true);
 	}
 
 	@Nullable
-	private String calculateQueryString(MethodDocumentation method, String[] parameterValues) {
+	private String calculateQueryString(@NotNull MethodDocumentation method, @NotNull String[] parameterValues) {
 		int numberOfParameters;
 		if (method.queryParameters == null) {
 			numberOfParameters = 0;
@@ -256,14 +314,14 @@ public class DocumentationLogic {
 	 * Some query parameters need to be backed up by real data and they are reference with REFERENCE_TYPE_ID.
 	 * This method strips the ID out of this string.
 	 */
-	private String getRealQueryParameter(String queryParameter) {
+	private String getRealQueryParameter(@NotNull String queryParameter) {
 		return queryParameter.replaceFirst("REFERENCE_[^_]+_", "");
 	}
 
 	/**
 	 * @return The number of parameters that are no ID.
 	 */
-	private int calculateNumberOfRegularParameters(MethodDocumentation method, String[] examples) {
+	private int calculateNumberOfRegularParameters(@NotNull MethodDocumentation method, @NotNull String[] examples) {
 		int numberOfParameters = 0;
 		for (QueryParameters.Parameter parameter : method.queryParameters) {
 			if (!parameter.isId()) {
@@ -280,7 +338,9 @@ public class DocumentationLogic {
 	 * Some query parameters need to be backed up by real data and they are reference with REFERENCE_TYPE_ID.
 	 * This method creates the data that is referenced in the given methods.
 	 */
-	public void createCallExampleData(Collection<List<MethodDocumentation>> allAPIMethods, ExampleDataCreator exampleDataCreator) {
+	public ExampleDataCreator createCallExampleData(@NotNull Collection<List<MethodDocumentation>> allAPIMethods) {
+		removeAllExistingData(PROCESSOR_DAO, TASK_PROPERTY_VALUE_DAO, PPT_ACCOUNT_DAO, REQUEST_TEMPLATE_DAO, DKS_MAPPING_DAO);
+		ExampleDataCreator exampleDataCreator = new ExampleDataCreator(USER_LOGIC, USER_DAO, PPT_ACCOUNT_DAO, PROJECT_PLANNING_TOOL_DAO, TASK_TEMPLATE_DAO, TASK_PROPERTY_DAO, TASK_PROPERTY_VALUE_DAO, DKS_MAPPING_DAO, REQUEST_TEMPLATE_DAO, PROJECT_DAO, PROCESSOR_DAO, DKS_DAO);
 		for (List<MethodDocumentation> apiMethods : allAPIMethods) {
 			for (MethodDocumentation apiMethod : apiMethods) {
 				for (QueryExamples.Example queryExample : apiMethod.queryExamples) {
@@ -297,6 +357,32 @@ public class DocumentationLogic {
 				}
 			}
 		}
+		return exampleDataCreator;
+	}
+
+	private void removeAllExistingData(ProcessorDAO processorDAO, TaskPropertyValueDAO taskPropertyValueDAO, PPTAccountDAO pptAccountDAO, RequestTemplateDAO requestTemplateDAO, DKSMappingDAO dksMappingDAO) {
+		//Remove the ones, that have dependencies
+		processorDAO.removeAll();
+		taskPropertyValueDAO.removeAll();
+		pptAccountDAO.removeAll();
+		requestTemplateDAO.removeAll();
+		dksMappingDAO.removeAll();
+		//Remove the rest
+		for (EntityType<?> entity : JPA.em().getMetamodel().getEntities()) {
+			try {
+				JPA.em().createQuery("delete from " + entity.getName()).executeUpdate();
+			} catch (PersistenceException e) {
+				if (e.getCause() instanceof ConstraintViolationException) {
+					throw new RuntimeException("Could not delete all existing data, as something depends on the one just tried to delete. Please delete it manually before.", e);
+				} else {
+					throw e;
+				}
+			}
+		}
+	}
+
+	public boolean isDocumentationRequest(@NotNull Http.Request request) {
+		return request.hasHeader(DOCUMENTATION_REQUEST_HEADER);
 	}
 
 	public static class SimpleResponse {
@@ -306,7 +392,7 @@ public class DocumentationLogic {
 		private final String body;
 		private final boolean isRealSimulation;
 
-		public SimpleResponse(int status, String statusText, String body, boolean isRealSimulation) {
+		public SimpleResponse(int status, @Nullable String statusText, String body, boolean isRealSimulation) {
 			this.status = status;
 			this.statusText = statusText;
 			this.body = body;
@@ -317,6 +403,7 @@ public class DocumentationLogic {
 			return status;
 		}
 
+		@Nullable
 		public String getStatusText() {
 			return statusText;
 		}
@@ -342,7 +429,7 @@ public class DocumentationLogic {
 		public final QueryExamples.Example[] queryExamples;
 		public final boolean requireAuthentication;
 
-		public MethodDocumentation(Method method, Call call) {
+		public MethodDocumentation(@NotNull Method method, Call call) {
 			this.call = call;
 			this.queryParameters = getAnnotationContent(method, QueryParameters.class, QueryParameters::value);
 			this.queryDescription = getAnnotationContent(method, QueryDescription.class, QueryDescription::value);
@@ -351,7 +438,8 @@ public class DocumentationLogic {
 			this.requireAuthentication = method.getAnnotationsByType(GuaranteeAuthenticatedUser.class).length > 0;
 		}
 
-		private <A extends Annotation, Return> Return getAnnotationContent(Method method, Class<A> annotationClass, Function<A, Return> get) {
+		@Nullable
+		private <A extends Annotation, Return> Return getAnnotationContent(@NotNull Method method, Class<A> annotationClass, @NotNull Function<A, Return> get) {
 			A[] annotation;
 			boolean foundAnnotation;
 			Class<?> clazz = method.getDeclaringClass();

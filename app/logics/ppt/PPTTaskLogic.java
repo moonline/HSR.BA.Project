@@ -16,7 +16,9 @@ import play.libs.ws.WS;
 import play.libs.ws.WSResponse;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 
@@ -32,40 +34,43 @@ public class PPTTaskLogic {
 		TASK_PROPERTY_VALUE_DAO = taskPropertyValueDao;
 	}
 
-	@Deprecated
-	public WSResponse createPPTTaskWithoutStoring(@NotNull CreatePPTTaskWithoutStoringForm form) {
-		PPTAccount account = form.account;
-		return WS.url(account.getPptUrl() + form.path)
-				.setHeader("Content-Type", "application/json")
-				.setAuth(account.getPptUsername(), account.getPptPassword())
-				.post(form.content)
-				.get(30, SECONDS);
-	}
-
 	/**
 	 * @param form    All data needed for creating a Task
 	 * @param account The PPT-Account to create the task for (cannot use the one from the form, as the password probably is not passed there).
-	 * @return The created Task including the response from the remote server
+	 * @return The response from the remote server
 	 */
-	public Task createPPTTask(@NotNull CreatePPTTaskForm form, PPTAccount account) {
-		String url = account.getPptUrl() + form.path;
+	@NotNull
+	public WSResponse createPPTTaskOnRemoteServer(@NotNull CreatePPTTaskForm form, @NotNull PPTAccount account) {
+		String url = getUrl(form, account);
 		LOGGER.debug("Performing request: curl --header 'Content-Type: application/json' --user '" + account.getPptUsername() + ":********' --header 'Content-Type: application/json;charset=UTF-8' --data-binary '" + Json.stringify(form.content) + "' " + url);
-		WSResponse wsResponse = WS.url(url)
+		return WS.url(url)
 				.setHeader("Content-Type", "application/json")
 				.setAuth(account.getPptUsername(), account.getPptPassword())
 				.post(form.content)
 				.get(30, SECONDS);
-		return createTaskForRequest(form, url, wsResponse);
 	}
 
-	private Task createTaskForRequest(CreatePPTTaskForm form, String url, WSResponse wsResponse) {
+	private String getUrl(CreatePPTTaskForm form, PPTAccount account) {
+		return account.getPptUrl() + form.path;
+	}
+
+	@NotNull
+	public Task storeCreatedTask(@NotNull CreatePPTTaskForm form, @NotNull PPTAccount account, @NotNull WSResponse wsResponse) {
 		Task task = new Task();
 		task.setCreatedFrom(form.taskTemplate);
 		task.setProject(form.project);
 		task.setFinalRequestContent(form.content);
-		task.setFinalRequestUrl(url);
+		task.setFinalRequestUrl(getUrl(form, account));
 		task.setFinalResponseStatus(wsResponse.getStatus());
-		task.setFinalResponseContent(wsResponse.asJson());
+		String responseContentType = wsResponse.getHeader("Content-Type");
+		if (responseContentType != null && responseContentType.startsWith("application/json")) {
+			task.setFinalResponseContent(wsResponse.asJson());
+		} else {
+			Map<String, String> responseContent = new HashMap<>();
+			responseContent.put("content", wsResponse.getBody());
+			responseContent.put("type", responseContentType);
+			task.setFinalResponseContent(Json.toJson(responseContent));
+		}
 		TASK_DAO.persist(task);
 		for (TaskPropertyValue taskProperty : form.taskProperties) {
 			TaskPropertyValue newTaskProperty = new TaskPropertyValue();
@@ -77,28 +82,6 @@ public class PPTTaskLogic {
 		}
 		TASK_PROPERTY_VALUE_DAO.flush();
 		return task;
-	}
-
-	@Deprecated
-	public static class CreatePPTTaskWithoutStoringForm {
-		@Constraints.Required
-		public PPTAccount account;
-		@Constraints.Required
-		public String path;
-		@Constraints.Required
-		public JsonNode content;
-
-		public void setAccount(PPTAccount account) {
-			this.account = account;
-		}
-
-		public void setPath(String path) {
-			this.path = path;
-		}
-
-		public void setContent(JsonNode content) {
-			this.content = content;
-		}
 	}
 
 	public static class CreatePPTTaskForm {

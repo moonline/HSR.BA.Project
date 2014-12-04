@@ -16,6 +16,7 @@ public abstract class AbstractEntity {
 		return id;
 	}
 
+	@Deprecated //only used for hibernate
 	public void setId(Long id) {
 		this.id = id;
 	}

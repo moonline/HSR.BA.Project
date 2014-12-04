@@ -4,6 +4,7 @@ import daos.dks.DecisionKnowledgeSystemDAO;
 import logics.CRUDLogicInterface;
 import models.dks.DecisionKnowledgeSystem;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import play.libs.ws.WS;
 import play.libs.ws.WSResponse;
 
@@ -21,13 +22,15 @@ public class DecisionKnowledgeSystemLogic implements CRUDLogicInterface<Decision
 		return WS.url(url).get().get(30, SECONDS);
 	}
 
+	@NotNull
 	@Override
-	public DecisionKnowledgeSystem create(DecisionKnowledgeSystem postedEntity) {
+	public DecisionKnowledgeSystem create(@NotNull DecisionKnowledgeSystem postedEntity) {
 		return update(new DecisionKnowledgeSystem(), postedEntity);
 	}
 
+	@NotNull
 	@Override
-	public DecisionKnowledgeSystem update(DecisionKnowledgeSystem persistedEntity, DecisionKnowledgeSystem postedEntity) {
+	public DecisionKnowledgeSystem update(@NotNull DecisionKnowledgeSystem persistedEntity, @NotNull DecisionKnowledgeSystem postedEntity) {
 		persistedEntity.setName(postedEntity.getName());
 		persistedEntity.setUrl(postedEntity.getUrl());
 		DKS_DAO.persist(persistedEntity);
@@ -38,6 +41,7 @@ public class DecisionKnowledgeSystemLogic implements CRUDLogicInterface<Decision
 	 * @param entity The entity to delete
 	 * @return null (if the entity could be deleted) or an error message.
 	 */
+	@Nullable
 	@Override
 	public String delete(DecisionKnowledgeSystem entity) {
 		DKS_DAO.remove(entity);

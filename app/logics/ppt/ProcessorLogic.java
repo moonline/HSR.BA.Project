@@ -3,6 +3,8 @@ package logics.ppt;
 import daos.ppt.ProcessorDAO;
 import logics.CRUDLogicInterface;
 import models.ppt.Processor;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class ProcessorLogic implements CRUDLogicInterface<Processor> {
 	private final ProcessorDAO PROCESSOR_DAO;
@@ -11,13 +13,15 @@ public class ProcessorLogic implements CRUDLogicInterface<Processor> {
 		PROCESSOR_DAO = processorDAO;
 	}
 
+	@NotNull
 	@Override
-	public Processor create(Processor postedEntity) {
+	public Processor create(@NotNull Processor postedEntity) {
 		return update(new Processor(), postedEntity);
 	}
 
+	@NotNull
 	@Override
-	public Processor update(Processor persistedEntity, Processor postedEntity) {
+	public Processor update(@NotNull Processor persistedEntity, @NotNull Processor postedEntity) {
 		persistedEntity.setName(postedEntity.getName());
 		persistedEntity.setProject(postedEntity.getProject());
 		persistedEntity.setCode(postedEntity.getCode());
@@ -25,6 +29,7 @@ public class ProcessorLogic implements CRUDLogicInterface<Processor> {
 		return persistedEntity;
 	}
 
+	@Nullable
 	@Override
 	public String delete(Processor entity) {
 		PROCESSOR_DAO.remove(entity);

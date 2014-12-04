@@ -8,7 +8,7 @@ VAGRANTFILE_API_VERSION = "2"
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.provider "virtualbox" do |v|
-    v.memory = 1280
+    v.memory = 1792
   end
 
   # All Vagrant configuration is done here. The most common configuration
@@ -133,8 +133,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   #
   #   chef.validation_client_name = "ORGNAME-validator"
   
-  config.vm.provision "shell", path: "../../test/integration/PPT/setup.sh"
-  config.vm.provision "shell", path: "../../test/integration/ADRepo/setup.sh"
+  config.vm.provision "shell", path: "../../test/tools/vagrants/PPT/setup.sh"
+  config.vm.provision "shell", path: "../../test/tools/vagrants/ADRepo/setup.sh"
+  config.vm.provision "shell", path: "../../test/tools/vagrants/ADRepo/startup.sh", run: "always"
   config.vm.provision "shell", path: "setup.sh"
 
 end

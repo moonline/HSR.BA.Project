@@ -1,6 +1,6 @@
 /// <reference path='../../../configuration/paths.ts' />
 
-/// <reference path='Repository.ts' />
+/// <reference path='../../domain/repository/Repository.ts' />
 /// <reference path='../../domain/model/TaskTemplate.ts' />
 
 module app.domain.repository.core {
@@ -11,6 +11,12 @@ module app.domain.repository.core {
 			this.resources = configuration.paths.taskTemplate;
 		}
 
+		/**
+		 * Update all property values of a task template
+		 *
+		 * @param taskTemplate - The task template to update property values.
+		 * @param callback - The callback is called with (true) on success and with (false) on error.
+		 */
 		public updateProperties(taskTemplate: app.domain.model.core.TaskTemplate, callback: (success: boolean) => void) {
 			if(!this.resources['updateProperty']) {
 				throw new Error("Please configure a 'updateProperty' resource for the TaskTemplateRepository repository.");
@@ -47,8 +53,7 @@ module app.domain.repository.core {
 
 					httpService[method](propertyUrl, { property: propertyValue.property.id, value: propertyValue.value })
 						.success(function(data, status, headers, config) {
-							var updatedTaskTemplate: app.domain.model.core.TaskTemplate = app.domain.factory.ObjectFactory.createFromJson(type, data);
-							cache[cachePos] = updatedTaskTemplate;
+							cache[cachePos] = app.domain.factory.ObjectFactory.createFromJson(type, data);
 							recursivPropertyUpdate(index+1, collection);
 							statusCollector.callback(true);
 						})
@@ -61,7 +66,15 @@ module app.domain.repository.core {
 			recursivPropertyUpdate(0,taskTemplate.properties);
 		}
 
-		public addPropertyValue(taskTemplate: app.domain.model.core.TaskTemplate, propertyValue: app.domain.model.core.TaskPropertyValue, callback: (status: boolean, item: app.domain.model.core.TaskTemplate) => void) {
+		/**
+		 * Add a property value to a task template
+		 *
+		 * @param taskTemplate - The task template to update property values.
+		 * @param propertyValue - Value to add
+		 * @param callback - The callback is called with (true. taskTemplate) on success and with (false, null) on error.
+		 */
+		public addPropertyValue(taskTemplate: app.domain.model.core.TaskTemplate, propertyValue: app.domain.model.core.TaskPropertyValue,
+				callback: (status: boolean, taskTemplate: app.domain.model.core.TaskTemplate) => void) {
 			var method: string = this.resources['addProperty']['method'].toLowerCase();
 			var url: string = this.getResourcePath('addProperty').replace('{id}', taskTemplate.id.toString());
 			var cache = this.itemCache;
@@ -79,7 +92,15 @@ module app.domain.repository.core {
 				});
 		}
 
-		public removePropertyValue(taskTemplate: app.domain.model.core.TaskTemplate, propertyValue: app.domain.model.core.TaskPropertyValue, callback: (status: boolean, item: app.domain.model.core.TaskTemplate) => void) {
+		/**
+		 * Remove property value
+		 *
+		 * @param taskTemplate - The task template to update property values.
+		 * @param propertyValue - Value to add
+		 * @param callback - The callback is called with (true. taskTemplate) on success and with (false, null) on error.
+		 */
+		public removePropertyValue(taskTemplate: app.domain.model.core.TaskTemplate, propertyValue: app.domain.model.core.TaskPropertyValue,
+				callback: (status: boolean, taskTemplate: app.domain.model.core.TaskTemplate) => void) {
 			var method: string = this.resources['removeProperty']['method'].toLowerCase();
 			var url: string = this.getResourcePath('removeProperty').replace('{id}', taskTemplate.id.toString()).replace('{propertyValueId}', propertyValue.id.toString());
 			var cache = this.itemCache;

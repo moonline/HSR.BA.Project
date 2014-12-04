@@ -3,6 +3,8 @@ package controllers;
 import daos.user.UserDAO;
 import logics.user.UserLogic;
 import models.user.User;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import play.libs.F;
 import play.mvc.Action;
 import play.mvc.Http;
@@ -23,7 +25,8 @@ public class AuthenticationChecker {
 		USER_LOGIC = userLogic;
 	}
 
-	public User loginUser(UserLogic.LoginForm loginForm, Http.Session session) {
+	@Nullable
+	public User loginUser(@NotNull UserLogic.LoginForm loginForm, @NotNull Http.Session session) {
 		User user = USER_LOGIC.readUser(loginForm.name, loginForm.password);
 		if (user != null) {
 			session.put(SESSION_USER_IDENTIFIER, user.getId() + "");
@@ -31,7 +34,20 @@ public class AuthenticationChecker {
 		return user;
 	}
 
-	public User getLoggedInUser(Http.Context context) {
+	/**
+	 * Gets the logged in user or throws an exception (annotate Controller with @GuaranteeAuthenticatedUser)
+	 */
+	@NotNull
+	public User forceGetLoggedInUser(@NotNull Http.Context context) {
+		User loggedInUser = getLoggedInUser(context);
+		if (loggedInUser == null) {
+			throw new RuntimeException("Could not find the logged in user, which was promised to be there!");
+		}
+		return loggedInUser;
+	}
+
+	@Nullable
+	public User getLoggedInUser(@NotNull Http.Context context) {
 		if (isBasicAuthenticationEnabled(context)) {
 			return getLoggedInUserByHttpBasicAuth(context);
 		} else {
@@ -39,11 +55,12 @@ public class AuthenticationChecker {
 		}
 	}
 
-	private boolean isBasicAuthenticationEnabled(Http.Context ctx) {
+	private boolean isBasicAuthenticationEnabled(@NotNull Http.Context ctx) {
 		return "true".equals(ctx.request().getQueryString("basicAuth"));
 	}
 
-	private User getLoggedInUserByHttpBasicAuth(Http.Context context) {
+	@Nullable
+	private User getLoggedInUserByHttpBasicAuth(@NotNull Http.Context context) {
 		String authHeader = context.request().getHeader("authorization");
 		if (authHeader == null) {
 			return null;
@@ -66,7 +83,8 @@ public class AuthenticationChecker {
 		return user;
 	}
 
-	private User getLoggedInUserByCookie(Http.Context context) {
+	@Nullable
+	private User getLoggedInUserByCookie(@NotNull Http.Context context) {
 		String userIdString = context.session().get(SESSION_USER_IDENTIFIER);
 		if (userIdString == null || !userIdString.matches("\\d+")) {
 			return null;
@@ -82,7 +100,7 @@ public class AuthenticationChecker {
 	public class Authenticator extends Action.Simple {
 
 		@Override
-		public F.Promise<Result> call(final Http.Context ctx) throws Throwable {
+		public F.Promise<Result> call(@NotNull final Http.Context ctx) throws Throwable {
 			boolean isUserLoggedIn = getLoggedInUser(ctx) != null;
 			if (isUserLoggedIn) {
 				return delegate.call(ctx);
@@ -91,7 +109,8 @@ public class AuthenticationChecker {
 			}
 		}
 
-		private F.Promise<Result> denyAccess(Http.Context ctx) {
+		@NotNull
+		private F.Promise<Result> denyAccess(@NotNull Http.Context ctx) {
 			return F.Promise.promise(() -> {
 				if (isBasicAuthenticationEnabled(ctx)) {
 					ctx.response().setHeader("WWW-Authenticate", "Basic realm=\"" + "" /*  <-- you could provide a description for this site here */ + "\"");

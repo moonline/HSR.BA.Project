@@ -4,16 +4,14 @@ import controllers.AbstractCRUDController;
 import controllers.GuaranteeAuthenticatedUser;
 import daos.task.TaskPropertyValueDAO;
 import daos.task.TaskTemplateDAO;
-import logics.docs.QueryDescription;
-import logics.docs.QueryExamples;
-import logics.docs.QueryParameters;
-import logics.docs.QueryResponses;
+import logics.docs.*;
 import logics.task.TaskTemplateLogic;
 import logics.task.WorkLogic;
 import models.task.TaskPropertyValue;
 import models.task.TaskTemplate;
+import org.jetbrains.annotations.NotNull;
 import play.data.Form;
-import play.db.jpa.Transactional;
+import controllers.Transactional;
 import play.mvc.Result;
 
 import static logics.docs.QueryExamples.Example;
@@ -25,12 +23,14 @@ public class TaskTemplateController extends AbstractCRUDController {
 	private final TaskTemplateDAO TASK_TEMPLATE_DAO;
 	private final TaskPropertyValueDAO TASK_PROPERTY_VALUE_DAO;
 
-	public TaskTemplateController(TaskTemplateLogic taskTemplateLogic, TaskTemplateDAO taskTemplateDao, TaskPropertyValueDAO taskPropertyValueDao) {
+	public TaskTemplateController(TaskTemplateLogic taskTemplateLogic, TaskTemplateDAO taskTemplateDao, TaskPropertyValueDAO taskPropertyValueDao, DocumentationLogic documentationLogic) {
+		super(documentationLogic);
 		TASK_TEMPLATE_LOGIC = taskTemplateLogic;
 		TASK_TEMPLATE_DAO = taskTemplateDao;
 		TASK_PROPERTY_VALUE_DAO = taskPropertyValueDao;
 	}
 
+	@NotNull
 	@Override
 	protected String getEntityName() {
 		return "Task Template";

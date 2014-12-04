@@ -4,14 +4,11 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import controllers.AbstractController;
 import controllers.AuthenticationChecker;
 import controllers.GuaranteeAuthenticatedUser;
-import logics.docs.QueryDescription;
-import logics.docs.QueryExamples;
-import logics.docs.QueryParameters;
-import logics.docs.QueryResponses;
+import logics.docs.*;
 import logics.user.UserLogic;
 import models.user.User;
 import play.data.Form;
-import play.db.jpa.Transactional;
+import controllers.Transactional;
 import play.mvc.Result;
 
 import static logics.docs.QueryExamples.Example;
@@ -23,7 +20,8 @@ public class UserController extends AbstractController {
 	private final UserLogic USER_LOGIC;
 	private final AuthenticationChecker AUTHENTICATION_CHECKER;
 
-	public UserController(UserLogic userLogic, AuthenticationChecker authenticationChecker) {
+	public UserController(UserLogic userLogic, AuthenticationChecker authenticationChecker, DocumentationLogic documentationLogic) {
+		super(documentationLogic);
 		USER_LOGIC = userLogic;
 		AUTHENTICATION_CHECKER = authenticationChecker;
 	}
@@ -112,7 +110,7 @@ public class UserController extends AbstractController {
 			@Parameter(name = "oldPassword", description = "the current password for the user"),
 			@Parameter(name = "newPassword", description = "the new password for the user"),
 			@Parameter(name = "newPasswordRepeat", description = "the new password for the user (repetition, to guarantee the user didn't make a typo)")})
-	@QueryDescription("This creates a new EEPPI-user.")
+	@QueryDescription("This changes the password of an EEPPI-user.")
 	@QueryResponses({
 			@Response(status = BAD_REQUEST, description = "If the password could not be changed."),
 			@Response(status = OK, description = "If the password was changed.")
@@ -126,7 +124,7 @@ public class UserController extends AbstractController {
 		if (form.hasErrors()) {
 			return badRequest(form.errorsAsJson());
 		}
-		User user = AUTHENTICATION_CHECKER.getLoggedInUser(ctx());
+		User user = AUTHENTICATION_CHECKER.forceGetLoggedInUser(ctx());
 		if (USER_LOGIC.changePassword(user, form.get())) {
 			return ok();
 		} else {

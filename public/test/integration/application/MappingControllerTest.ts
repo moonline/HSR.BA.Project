@@ -15,12 +15,13 @@
 module test.integration.application {
 	export function MappingControllerTest() {
 		describe("Mapping controller class suite", function() {
-			var http, httpBackend, rootScope, persistenceService;
+			var http, httpBackend, rootScope, persistenceService, sce;
 
-			beforeEach(inject(function ($rootScope, $http, $httpBackend) {
+			beforeEach(inject(function ($rootScope, $http, $httpBackend, $sce) {
 				http = $http;
 				httpBackend = $httpBackend;
 				rootScope = $rootScope;
+				sce = $sce;
 
 				persistenceService = {
 					taskTemplateRepository: new app.domain.repository.core.TaskTemplateRepository($http),
@@ -31,20 +32,20 @@ module test.integration.application {
 					problemRepository: new app.domain.repository.dks.ProblemRepository($http)
 				};
 
-				persistenceService.decisionKnowledgeSystemRepository.resources['list']['url'] = '/dks';
-				persistenceService.taskTemplateRepository.resources['list']['url'] = '/taskTemplate';
-				persistenceService.taskPropertyRepository.resources['list']['url'] = '/taskProperty';
-				persistenceService.mappingRepository.resources['list']['url'] = '/mapping';
+				persistenceService.decisionKnowledgeSystemRepository.resources['list']['url'] = '/rest/api/1/dks';
+				persistenceService.taskTemplateRepository.resources['list']['url'] = '/rest/api/1/taskTemplate';
+				persistenceService.taskPropertyRepository.resources['list']['url'] = '/rest/api/1/taskProperty';
+				persistenceService.mappingRepository.resources['list']['url'] = '/rest/api/1/dksMapping';
 			}));
 
 			it("load problems and decisions from remote dks using dks sources", function() {
 				// for this test taskTemplates and taskProperties are not relevant, so it works with an empty result
-				httpBackend.expectGET('/taskTemplate').respond({});
-				httpBackend.expectGET('/taskProperty').respond({});
-				httpBackend.when('GET','/mapping').respond({});
+				httpBackend.expectGET('/rest/api/1/taskTemplate').respond({});
+				httpBackend.expectGET('/rest/api/1/taskProperty').respond({});
+				httpBackend.when('GET','/rest/api/1/mapping').respond({});
 
 
-				httpBackend.when('GET','/dks').respond({
+				httpBackend.when('GET','/rest/api/1/dks').respond({
 					"items": [
 						{
 							"id": 1,
@@ -53,9 +54,10 @@ module test.integration.application {
 						}
 					]
 				});
-				httpBackend.when('GET','/dks/getFromDKS?url=http%3A%2F%2Flocalhost%3A9940%2Felement%3Fquery%3Dtype%2520is%2520%2522ProblemTemplate%2522').respond({
+				httpBackend.when('GET','/rest/api/1/dks/getFromDKS?url=http%3A%2F%2Flocalhost%3A9940%2Felement%3Fquery%3Dtype%2520is%2520%2522ProblemTemplate%2522').respond({
 					"startAt": 0, "maxResults": 2147483647, "length": 9, "elements": [
 					{
+						"id": 1,
 						"type": "ProblemTemplate",
 						"path": ["Cloud Application", "DB Technologies", "DB Model"],
 						"name": "DB Model",
@@ -64,12 +66,14 @@ module test.integration.application {
 						"notes": "",
 						"alternatives": [
 							{
+								"id": 5,
 								"type": "OptionTemplate",
 								"path": ["Cloud Application", "DB Technologies", "Relational DB"],
 								"name": "Relational DB",
 								"self": "http://152.96.193.210:8080/element/Cloud+Application%2FDB+Technologies%2FRelational+DB"
 							},
 							{
+								"id": 7,
 								"type": "OptionTemplate",
 								"path": ["Cloud Application", "DB Technologies", "Key/Value Store"],
 								"name": "Key/Value Store",
@@ -78,10 +82,28 @@ module test.integration.application {
 						]
 					}
 				]});
-				httpBackend.when('GET','/dks/getFromDKS?url=http%3A%2F%2Flocalhost%3A9940%2Felement%3Fquery%3Dtype%2520is%2520%2522OptionTemplate%2522').respond({});
+
+				httpBackend.when('GET','/rest/api/1/dks/getFromDKS?url=http%3A%2F%2Flocalhost%3A9940%2Felement%3Fquery%3Dtype%2520is%2520%2522OptionTemplate%2522').respond({
+					"elements": [
+						{
+							"id": 5,
+							"type": "OptionTemplate",
+							"path": ["Cloud Application", "DB Technologies", "Relational DB"],
+							"name": "Relational DB",
+							"self": "http://152.96.193.210:8080/element/Cloud+Application%2FDB+Technologies%2FRelational+DB"
+						},
+						{
+							"id": 7,
+							"type": "OptionTemplate",
+							"path": ["Cloud Application", "DB Technologies", "Key/Value Store"],
+							"name": "Key/Value Store",
+							"self": "http://152.96.193.210:8080/element/Cloud+Application%2FDB+Technologies%2FKey%2F%2FValue+Store"
+						}
+					]
+				});
 
 				var scope = rootScope.$new();
-				var controller: app.application.MappingController = new app.application.MappingController(scope, location, http, persistenceService);
+				var controller: app.application.MappingController = new app.application.MappingController(scope, persistenceService, sce);
 				httpBackend.flush();
 
 				var dkSystem = new app.domain.model.dks.DecisionKnowledgeSystem("The DKS", "http://localhost:9940"); dkSystem.id = 1;
