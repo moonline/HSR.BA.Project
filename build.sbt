@@ -51,6 +51,16 @@ jacoco.excludes in jacoco.Config := Seq(
   "controllers.routes*",
   "controllers.javascript.*",
   "controllers.ref.*",
+  "controllers.task.javascript.*",
+  "controllers.ppt.javascript.*",
+  "controllers.dks.javascript.*",
+  "controllers.user.javascript.*",
+  "controllers.docs.javascript.*",
+  "controllers.task.ref.*",
+  "controllers.ppt.ref.*",
+  "controllers.dks.ref.*",
+  "controllers.user.ref.*",
+  "controllers.docs.ref.*",
   "Routes*",
   "views.*"
 )
