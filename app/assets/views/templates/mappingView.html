@@ -148,7 +148,8 @@ alternative.">
 				<div class="formLine" data-columns="3">
 					<label>New Task Template</label>
 					<input type="text" name="createTaskTemplateName" data-ng-model="createTaskTemplateName" placeholder="Name" />
-					<button class="action create" data-ng-click="createNewTaskTemplate(createTaskTemplateName); createTaskTemplateName = '';"
+					<button class="action create" data-ng-disabled="!createTaskTemplateName"
+						data-ng-click="createNewTaskTemplate(createTaskTemplateName); createTaskTemplateName = '';"
 						title="Create a new Task Template">
 						<span class="icon">&#x2b;</span>Create
 					</button>
