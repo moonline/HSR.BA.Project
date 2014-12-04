@@ -17,13 +17,13 @@
 					<div class="formLine">
 						<label>Target system</label>
 						<select title="Choose the target project planning tool to transmit tasks" data-ng-model="targetPPTAccount" data-ng-options="pptAccount.pptUrl for pptAccount in pptAccounts"
-								data-ng-change="setTarget(targetPPTAccount)"></select>
+								data-ng-change="setTarget(targetPPTAccount)" id="targetPPTAccount"></select>
 						<span data-ng-if="pptAccounts && pptAccounts.length == 0"> &nbsp; Please <a href="#/account">configure a Project Planning Tool Account</a>.</span>
 					</div>
 					<div class="formLine">
 						<label>Request template to transmit</label>
 						<select title="Choose the request template to rendering transmitting requests" data-ng-disabled="!targetPPTAccount" data-ng-model="requestTemplate"
-								data-ng-change="setRequestTemplate(requestTemplate)"
+								data-ng-change="setRequestTemplate(requestTemplate)" id="requestTemplate"
 								data-ng-options="pptAccountRequestTemplate.name for pptAccountRequestTemplate in pptAccountRequestTemplates"></select>
 						<span data-ng-if="targetPPTAccount && requestTemplate">&nbsp;&rarr;&nbsp;{{targetPPTAccount.pptUrl}}{{requestTemplate.url}}</span>
 					</div>
@@ -44,7 +44,7 @@ You need to input here the KEY of your Jira project.'>
 								<span class="icon info" >&#x2139;</span>
 							</span>
 						</label>
-						<input title="Project value has to match with the field of the project in the project planning tool you mapped in the request template." type="text" data-ng-model="pptProject" data-ng-change="setPPTProject(pptProject)"/>
+						<input title="Project value has to match with the field of the project in the project planning tool you mapped in the request template." type="text" data-ng-model="pptProject" data-ng-change="setPPTProject(pptProject)" id="pptProject"/>
 					</div>
 
 					<button data-ng-disabled="pptProject.length < 1 || !targetPPTAccount || !requestTemplate"

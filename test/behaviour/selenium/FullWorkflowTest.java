@@ -117,4 +117,31 @@ public class FullWorkflowTest extends AbstractSeleniumTest {
 		browser.click("button", withText("Logout"));
 	}
 
+	@Test
+	public void transmitSomethingTest() {
+		//Setup
+		checkIfVagrantTestsExcluded("selenium.FullWorkflowTest.mapSomethingTest");
+		browser.goTo("/");
+		doLogin(username, password);
+		await(() -> browser.find("a", withText("Transmission")));
+
+		//Test (Select Input Data)
+		browser.click("a", withText("Transmission"));
+		await(() -> browser.find("#targetPPTAccount option", withText("http://localhost:9920")));
+		browser.fillSelect("#targetPPTAccount").withText("http://localhost:9920");
+		await(() -> browser.find("#requestTemplate option", withText("Jira Example Request Template")));
+		browser.fillSelect("#requestTemplate").withText("Jira Example Request Template");
+		browser.fill("#pptProject").with("TEST");
+		browser.click("button", withText().contains("Select decisions"));
+		//Test (Select Tasks to Export)
+		assertThat(browser.find("table tbody tr")).hasSize(4);
+		browser.click("button", withText().contains("Transform selected decisions"));
+		//Test ()
+		assertThat(browser.find("ul.requests > li")).hasSize(2); //two main requests
+		assertThat(browser.find("ul.requests > li:nth-child(2) > ul.subRequests > li")).hasSize(2); //two subrequests
+
+		//Cleanup
+		browser.click("button", withText("Logout"));
+	}
+
 }
