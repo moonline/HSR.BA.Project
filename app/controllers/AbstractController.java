@@ -60,19 +60,23 @@ public abstract class AbstractController extends Controller {
 		}
 	}
 
-	protected <T> T withTransaction(F.Function0<T> block) throws Throwable {
-		return withTransaction(block, 5);
+	protected <T> T withTransaction(F.Function0<T> block, boolean readOnly) throws Throwable {
+		return withTransaction(block, 5, readOnly);
 	}
 
-	protected <T> T withTransaction(F.Function0<T> block, int retries) throws Throwable {
-		return JPA.withTransaction(getPersistenceUnitForCall(DOCUMENTATION_LOGIC, request()), false, new F.Function0<T>() {
+	protected <T> T withTransaction(F.Function0<T> block) throws Throwable {
+		return withTransaction(block, 5, false);
+	}
+
+	protected <T> T withTransaction(F.Function0<T> block, int retries, boolean readOnly) throws Throwable {
+		return JPA.withTransaction(getPersistenceUnitForCall(DOCUMENTATION_LOGIC, request()), readOnly, new F.Function0<T>() {
 			@Override
 			public T apply() throws Throwable {
 				try {
 					return block.apply();
 				} catch (RuntimeException e) {
 					if (e.getMessage() != null && e.getMessage().startsWith("No EntityManager bound to this thread") && retries > 0) {
-						return withTransaction(block, retries - 1); //try again, an EntityManager SHOULD be there!
+						return withTransaction(block, retries - 1, readOnly); //try again, an EntityManager SHOULD be there!
 					}
 					throw e;
 				}

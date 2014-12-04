@@ -37,27 +37,30 @@ public class PPTTaskLogic {
 	/**
 	 * @param form    All data needed for creating a Task
 	 * @param account The PPT-Account to create the task for (cannot use the one from the form, as the password probably is not passed there).
-	 * @return The created Task including the response from the remote server
+	 * @return The response from the remote server
 	 */
 	@NotNull
-	public Task createPPTTask(@NotNull CreatePPTTaskForm form, @NotNull PPTAccount account) {
-		String url = account.getPptUrl() + form.path;
+	public WSResponse createPPTTaskOnRemoteServer(@NotNull CreatePPTTaskForm form, @NotNull PPTAccount account) {
+		String url = getUrl(form, account);
 		LOGGER.debug("Performing request: curl --header 'Content-Type: application/json' --user '" + account.getPptUsername() + ":********' --header 'Content-Type: application/json;charset=UTF-8' --data-binary '" + Json.stringify(form.content) + "' " + url);
-		WSResponse wsResponse = WS.url(url)
+		return WS.url(url)
 				.setHeader("Content-Type", "application/json")
 				.setAuth(account.getPptUsername(), account.getPptPassword())
 				.post(form.content)
 				.get(30, SECONDS);
-		return createTaskForRequest(form, url, wsResponse);
+	}
+
+	private String getUrl(CreatePPTTaskForm form, PPTAccount account) {
+		return account.getPptUrl() + form.path;
 	}
 
 	@NotNull
-	private Task createTaskForRequest(@NotNull CreatePPTTaskForm form, String url, @NotNull WSResponse wsResponse) {
+	public Task storeCreatedTask(@NotNull CreatePPTTaskForm form, @NotNull PPTAccount account, @NotNull WSResponse wsResponse) {
 		Task task = new Task();
 		task.setCreatedFrom(form.taskTemplate);
 		task.setProject(form.project);
 		task.setFinalRequestContent(form.content);
-		task.setFinalRequestUrl(url);
+		task.setFinalRequestUrl(getUrl(form, account));
 		task.setFinalResponseStatus(wsResponse.getStatus());
 		String responseContentType = wsResponse.getHeader("Content-Type");
 		if (responseContentType != null && responseContentType.startsWith("application/json")) {

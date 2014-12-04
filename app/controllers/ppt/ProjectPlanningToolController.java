@@ -13,6 +13,7 @@ import models.user.PPTAccount;
 import org.jetbrains.annotations.NotNull;
 import play.data.Form;
 import play.libs.F;
+import play.libs.ws.WSResponse;
 import play.mvc.Result;
 
 import java.net.ConnectException;
@@ -93,8 +94,11 @@ public class ProjectPlanningToolController extends AbstractReadController {
 			if (account == null) {
 				form.reject("account", "Could not find account on server");
 			} else {
-				return F.Promise.promise(() -> withTransaction(() ->
-						PPT_TASK_LOGIC.createPPTTask(form.get(), account))).map(task -> {
+				return F.Promise.promise(() -> {
+					PPTTaskLogic.CreatePPTTaskForm createPPTTaskForm = form.get();
+					WSResponse response = withTransaction(() -> PPT_TASK_LOGIC.createPPTTaskOnRemoteServer(createPPTTaskForm, account), true);
+					return withTransaction(() -> PPT_TASK_LOGIC.storeCreatedTask(createPPTTaskForm, account, response));
+				}).map(task -> {
 							//noinspection CodeBlock2Expr
 							return (Result) status(task.getFinalResponseStatus(), task.getFinalResponseContent());
 						}

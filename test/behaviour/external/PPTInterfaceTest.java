@@ -3,13 +3,13 @@ package external;
 import daos.task.TaskDAO;
 import daos.task.TaskPropertyValueDAO;
 import logics.ppt.PPTTaskLogic;
-import models.task.Task;
 import models.task.TaskTemplate;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import play.db.jpa.JPA;
 import play.libs.Json;
+import play.libs.ws.WSResponse;
 import test.AbstractTestDataCreator;
 
 import static org.fest.assertions.Assertions.assertThat;
@@ -68,10 +68,10 @@ public class PPTInterfaceTest extends AbstractVagrantTest {
 			});
 			form.taskProperties = form.taskTemplate.getProperties();
 			//Test
-			Task generatedTask = JPA.withTransaction(() -> new PPTTaskLogic(new TaskDAO(), new TaskPropertyValueDAO()).createPPTTask(form, form.account));
+			WSResponse generatedTask = JPA.withTransaction(() -> new PPTTaskLogic(new TaskDAO(), new TaskPropertyValueDAO()).createPPTTaskOnRemoteServer(form, form.account));
 			//Verification
-			assertThat(generatedTask.getFinalResponseStatus()).isEqualTo(CREATED);
-			assertThat(generatedTask.getFinalResponseContent().has("key")).isTrue();
+			assertThat(generatedTask.getStatus()).isEqualTo(CREATED);
+			assertThat(generatedTask.asJson().has("key")).isTrue();
 		}
 
 		System.out.println("PPTIntegrationTest.testLoginStatusForUser: END");
