@@ -105,7 +105,7 @@ alternative.">
 				<span class="messagebox success" data-ng-if="mappingsSavingStatus === ApplicationState.successful">Saved successfully</span>
 				<span class="messagebox error" data-ng-if="mappingsSavingStatus === ApplicationState.failed">Could not save! Please try again, reload the page or file a bug report.</span>
 
-				<ul>
+				<ul class="currentMappings">
 					<li data-ng-repeat="mapping in currentMappings | orderBy:'name'">
 						<button class="action remove" data-ng-click="removeMapping(mapping)"
 							title="Release mapping">
@@ -170,7 +170,7 @@ relations to DKS nodes (mappings) and exported tasks.
 			</div>
 			<form data-ng-if="currentTaskTemplate" class="detailForm">
 				<div class="formLine" data-columns="3" data-ng-if="currentTaskTemplate.properties.length < taskProperties.length">
-					<select data-ng-model="newTaskProperty"
+					<select data-ng-model="newTaskProperty" id="newTaskPropertySelect"
 							data-ng-options="taskProperty.name for taskProperty in taskProperties | filter:notYetUsed() | orderBy:'name'"
 							onchange="document.getElementById('newTaskPropertyValue').focus()"></select>
 					<input id="newTaskPropertyValue" type="text" data-ng-disabled="!newTaskProperty" data-ng-model="newTaskPropertyValue" placeholder="New {{newTaskProperty.name}}"/>
@@ -192,7 +192,7 @@ relations to DKS nodes (mappings) and exported tasks.
 							data-ng-options="taskTemplate.name for taskTemplate in taskTemplates | filter:isNotSubtask() | filter:isNotSelf() | orderBy:'name'"
 							data-ng-disabled="isParentTask(currentTaskTemplate)"
 							data-ng-attr-title="{{isParentTask(currentTaskTemplate)?'This Task Template is already a Parent and can thus not have a parent itself (only one layer is supported).':''}}">
-								<option value="" style="font-weight: bold">No Parent Task</option>
+								<option value="">No Parent Task</option>
 							</select>
 					<span></span>
 				</div>

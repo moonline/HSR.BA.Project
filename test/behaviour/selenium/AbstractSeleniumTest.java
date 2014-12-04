@@ -20,7 +20,7 @@ public class AbstractSeleniumTest {
 		server = Helpers.testServer(Helpers$.MODULE$.testServerPort(), Helpers.fakeApplication(inMemoryDatabase()));
 		Helpers.start(server);
 		browser = Helpers.testBrowser(FIREFOX);
-		browser.manage().window().setSize(new Dimension(1000, 700));
+		browser.manage().window().setSize(new Dimension(1250, 700));
 	}
 
 	@After

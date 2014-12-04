@@ -32,9 +32,8 @@ public class PPTInterfaceTest extends AbstractVagrantTest {
 
 	@Test
 	public void testEverything() throws Throwable {
-		if (vagrantTestsExcluded("integration.PPTIntegrationTest.testEverything")) {
-			return;
-		}
+		checkIfVagrantTestsExcluded("integration.PPTIntegrationTest.testEverything");
+
 		System.out.println("PPTIntegrationTest.testLoginStatusForUser: START");
 
 		String projectKey = "TEST";

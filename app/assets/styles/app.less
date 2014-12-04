@@ -294,6 +294,7 @@ select {
 
 	option {
 		background: silver; padding: 0.2rem; border: none;
+		&[value=""] { font-weight: bold; }
 	}
 }
 
@@ -317,6 +318,7 @@ select {
 		> dt:first-child { margin-top: -0.5rem; }
 		> dd { margin-bottom: 0.25rem; }
 	}
+	.currentMappings { min-height: 5rem; }
 }
 
 table.attributes {
