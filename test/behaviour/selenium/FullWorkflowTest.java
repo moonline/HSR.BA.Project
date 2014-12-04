@@ -38,9 +38,7 @@ public class FullWorkflowTest extends AbstractSeleniumTest {
 
 	@Override
 	public void setUp() {
-		if (!vagrantTestsExcluded()) {
-			super.setUp();
-		}
+		super.setUp();
 	}
 
 	@Override
