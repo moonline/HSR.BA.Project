@@ -10,7 +10,7 @@ by Laurin Murer and Tobias Blaser.
 --------------------------
 
 The description for the API is generated on runtime by reflection and
-can be found at [/api/documentation](http://localhost:9000/api/documentation).
+can be found at [/rest/api/documentation](http://localhost:9000/rest/api/documentation).
 
 
 
@@ -127,12 +127,12 @@ In development, play will compile the TypeScript for you. But if you won't to co
 
 #### 4.4.1. Application
 
-tsc --target ES5 --out public/scripts/Main.js app/assets/scripts/Main.ts
+tsc --target ES5 --out 'htmlMainJSIncludePath' app/assets/scripts/Main.ts
 
 
 #### 4.4.2. Tests
 
-tsc --target ES5 --out public/test/Tests.js public/test/Tests.ts
+tsc --target ES5 --out 'htmlTestJSIncludePath' public/test/Tests.ts
 
 
 #### 4.4.3. Run client tests
