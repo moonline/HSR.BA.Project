@@ -21,7 +21,8 @@
 					<label for="registerPasswordRepeat">Password Repeat</label><br />
 					<input type="password" id="registerPasswordRepeat" name="registerPasswordRepeat" data-ng-model="registerPasswordRepeat" />
 				</div>
-				<button class="action save" data-ng-click="register(registerUserName, registerPassword, registerPasswordRepeat); registerUserName = ''; registerPassword = ''; registerPasswordRepeat = '';"
+				<button class="action save" data-ng-disabled="!registerUserName || !registerPassword || !registerPasswordRepeat"
+						data-ng-click="register(registerUserName, registerPassword, registerPasswordRepeat); registerUserName = ''; registerPassword = ''; registerPasswordRepeat = '';"
 						title="Register a new EEPPI-Account.">
 					<span class="icon big">&#x2b;</span>Register
 				</button>
@@ -42,7 +43,8 @@
 				<input type="password" name="oldPassword" data-ng-model="oldPassword" placeholder="Old Password"/>
 				<input type="password" name="newPassword" data-ng-model="newPassword" placeholder="New Password"/>
 				<input type="password" name="newPasswordRepeat" data-ng-model="newPasswordRepeat" placeholder="New Password Repeat"/>
-				<button class="action update" data-ng-click="changePassword(oldPassword, newPassword, newPasswordRepeat); oldPassword = ''; newPassword = ''; newPasswordRepeat = '';"
+				<button class="action update" data-ng-disabled="!oldPassword || !newPassword || !newPasswordRepeat"
+						data-ng-click="changePassword(oldPassword, newPassword, newPasswordRepeat); oldPassword = ''; newPassword = ''; newPasswordRepeat = '';"
 						title="Change the Password for an existing EEPPI-Account.">
 					<span class="icon">&#x270E;</span>Change Password
 				</button>
@@ -70,7 +72,8 @@
 				<select name="newPPTAccountPPT" data-ng-model="newPPTAccountPPT"
 						data-ng-options="ppt.name for ppt in projectPlanningTools" >
 				</select>
-				<button class="action create" data-ng-click="createPPTAccount(newPPTAccountUrl, newPPTAccountUsername, newPPTAccountPassword, newPPTAccountPPT); newPPTAccountUrl = ''; newPPTAccountUsername = ''; newPPTAccountPassword = '';"
+				<button class="action create" data-ng-disabled="!newPPTAccountUrl || !newPPTAccountUsername || !newPPTAccountPassword || !newPPTAccountPPT"
+						data-ng-click="createPPTAccount(newPPTAccountUrl, newPPTAccountUsername, newPPTAccountPassword, newPPTAccountPPT); newPPTAccountUrl = ''; newPPTAccountUsername = ''; newPPTAccountPassword = '';"
 						title="Create a new Project Planning Tool Account">
 					<span class="icon big">&#x2b;</span>Add
 				</button>

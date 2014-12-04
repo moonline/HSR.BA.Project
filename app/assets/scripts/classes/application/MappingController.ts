@@ -254,7 +254,7 @@ module app.application {
 		addPropertyValue(property: app.domain.model.core.TaskProperty, value: string):void {
 			var scope = this.$scope;
 
-			if(this.$scope.currentTaskTemplate) {
+			if(this.$scope.currentTaskTemplate && value && value != '') {
 				var taskPropertyValue: app.domain.model.core.TaskPropertyValue = new app.domain.model.core.TaskPropertyValue(property, value);
 				(<app.domain.model.core.TaskTemplate>this.$scope.currentTaskTemplate).addProperty(taskPropertyValue);
 				this.$scope.taskTemplateSavingStatus = app.application.ApplicationState.saving;

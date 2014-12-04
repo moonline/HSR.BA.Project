@@ -148,7 +148,8 @@ alternative.">
 				<div class="formLine" data-columns="3">
 					<label>New Task Template</label>
 					<input type="text" name="createTaskTemplateName" data-ng-model="createTaskTemplateName" placeholder="Name" />
-					<button class="action create" data-ng-click="createNewTaskTemplate(createTaskTemplateName); createTaskTemplateName = '';"
+					<button class="action create" data-ng-disabled="!createTaskTemplateName"
+						data-ng-click="createNewTaskTemplate(createTaskTemplateName); createTaskTemplateName = '';"
 						title="Create a new Task Template">
 						<span class="icon">&#x2b;</span>Create
 					</button>
@@ -174,7 +175,7 @@ relations to DKS nodes (mappings) and exported tasks.
 							data-ng-options="taskProperty.name for taskProperty in taskProperties | filter:notYetUsed() | orderBy:'name'"
 							onchange="document.getElementById('newTaskPropertyValue').focus()"></select>
 					<input id="newTaskPropertyValue" type="text" data-ng-disabled="!newTaskProperty" data-ng-model="newTaskPropertyValue" placeholder="New {{newTaskProperty.name}}"/>
-					<button data-ng-disabled="!newTaskProperty" class="action create" title="Add property"
+					<button data-ng-disabled="!newTaskProperty || !newTaskPropertyValue" class="action create" title="Add property"
 							data-ng-click="addPropertyValue(newTaskProperty, newTaskPropertyValue); newTaskPropertyValue = '';">
 						<span class="icon big">&#x2b;</span>Add
 					</button>

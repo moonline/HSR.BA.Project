@@ -113,7 +113,7 @@ INSERT INTO REQUESTTEMPLATE (ID, NAME, REQUESTBODYTEMPLATE, URL, PROJECT_ID, PPT
 INSERT INTO REQUESTTEMPLATE (ID, NAME, REQUESTBODYTEMPLATE, URL, PROJECT_ID, PPT_ID) VALUES (nextval('entity_seq'),'Redmine Example Request Template',CONCAT('{
 ','	"issue": {
 ','		"project_id": "${pptProject}",
-','		$!ifElse:(parentRequestData.issue.issue_id,""parent_issue_id": "$!{parentRequestData.issue.issue_id}"\,", "")$
+','		$!ifElse:(parentRequestData.issue.id,""parent_issue_id": "$!{parentRequestData.issue.id}"\,", "")$
 ','		"subject": "${taskTemplate.name}",
 ','		"description": "${taskTemplate.attributes.Description} \nDecision: ${node.name} \nDKS link: ${node.self} \nAttributes: \n$objectToString:(node.attributes, ": ", "\n")$",
 ','		$mapExistingAssignees:(taskTemplate.attributes.Assignee, "Project Planner:1\,Customer:1\,Architect:1",""assigned_to_id": ${taskTemplate.attributes.Assignee}\,")$

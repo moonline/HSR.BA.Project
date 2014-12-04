@@ -455,7 +455,6 @@ module app.application {
 					pptProject: $scope.pptProject,
 					mappings: $scope.decisionMappings
 				};
-				console.log(exportDecisionData);
 
 				var templateProcessor = new app.service.TemplateProcessor(exportDecisionData, $scope.requestTemplate.requestBodyTemplate, processors);
 				var renderedTemplate;
