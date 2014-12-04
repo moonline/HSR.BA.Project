@@ -12,46 +12,27 @@ import play.db.jpa.JPA;
 import play.libs.Json;
 import test.AbstractTestDataCreator;
 
-import java.io.File;
-import java.io.IOException;
-
 import static org.fest.assertions.Assertions.assertThat;
 import static play.mvc.Http.Status.CREATED;
 
-public class PPTIntegrationTest extends AbstractIntegrationTest {
+public class PPTInterfaceTest extends AbstractVagrantTest {
 
 	public static final String VAGRANT_PATH = "test/tools/vagrants/PPT";
 	public static final String JIRA_URL = "http://localhost:9920";
 
 	@BeforeClass
 	public static void startApp() {
-		if (integrationTestsExcluded()) {
-			return;
-		}
-		AbstractIntegrationTest.startApp();
-		try {
-			Runtime.getRuntime().exec("vagrant up", null, new File(PPTIntegrationTest.VAGRANT_PATH)).waitFor();
-		} catch (InterruptedException | IOException e) {
-			e.printStackTrace();
-		}
+		startAppWithVagrant(VAGRANT_PATH);
 	}
 
 	@AfterClass
 	public static void stopApp() {
-		if (integrationTestsExcluded()) {
-			return;
-		}
-		try {
-			Runtime.getRuntime().exec("vagrant destroy -f", null, new File(VAGRANT_PATH)).waitFor();
-		} catch (InterruptedException | IOException e) {
-			e.printStackTrace();
-		}
-		AbstractIntegrationTest.stopApp();
+		stopAppWithVagrant(VAGRANT_PATH);
 	}
 
 	@Test
 	public void testEverything() throws Throwable {
-		if (integrationTestsExcluded("integration.PPTIntegrationTest.testEverything")) {
+		if (vagrantTestsExcluded("integration.PPTIntegrationTest.testEverything")) {
 			return;
 		}
 		System.out.println("PPTIntegrationTest.testLoginStatusForUser: START");

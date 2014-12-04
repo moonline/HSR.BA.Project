@@ -75,7 +75,7 @@ The EEPPI application is independent of the choosen persistence.
 * Run `./activator` in this project to start the Play console
   * Optional restrict the memory for java: `./activator -mem 256`
   * Optional debug mode: `./activator -jvm-debug 9999`
-  * Optional exclude integration tests: `./activator -DtestScope=noIntegrationTests`
+  * Optional exclude integration tests: `./activator -DtestScope=noVagrantTests`
 * In the play console the following commands are especially useful:
   * `run` to start this project under http://localhost:9000
   * `test` to run all tests
