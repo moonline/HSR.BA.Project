@@ -14,6 +14,15 @@ module app.domain.repository.ppt {
 			this.resources = configuration.paths.projectPlanningTool;
 		}
 
+		/**
+		 * Transmit tasks to project planning tool
+		 *
+		 * @param exportRequest - E.g. { requestBody: "Example request body", taskTemplate: { ... taskTemplate to transmit ... }}
+		 * @param targetPPTAccount - Account of target system
+		 * @param pptRequestPath - Path of the api 'create resource' of the ppt
+		 * @param project
+		 * @param callback - Returns (true, request Data) on success and (false, requestData) on failure.
+		 */
 		public transmitTasks(exportRequest: any, targetPPTAccount: app.domain.model.ppt.PPTAccount, pptRequestPath: string, project: app.domain.model.core.Project,
 				callback: (success: boolean, item: any) => void) {
 			var method: string = this.resources['transmit']['method'].toLowerCase();

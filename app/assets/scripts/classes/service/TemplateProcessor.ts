@@ -94,9 +94,9 @@ module app.service {
 		private processors: { [index:string]: any };
 
 		/**
-		 * @param {object} data - A dictionary used by variables and processors for template rendering
-		 * @param {string} template - A text template containing markers and processors to replace
-		 * @param {Object.<string, function>} processors - A dictionary with processor functions
+		 * @param data - A dictionary used by variables and processors for template rendering
+		 * @param template - A text template containing markers and processors to replace
+		 * @param processors - A dictionary with processor functions
 		 */
 		constructor(data: Object, template: string, processors: { [index:string]: any }) {
 			this.template = template;
@@ -107,7 +107,7 @@ module app.service {
 		/**
 		 * process member template using member data and member processors
 		 *
-		 * @returns {string} template - The rendered text template
+		 * @returns template - The rendered text template
 		 */
 		public process(): string {
 			var template = this.template;
@@ -123,7 +123,11 @@ module app.service {
 			return template;
 		}
 
-
+		/**
+		 * process member template using member data and member secondary processors
+		 *
+		 * @returns template - The rendered text template
+		 */
 		public processSecondary(): string {
 			var template = this.template;
 			// $!{variable.path.to.something}
@@ -139,6 +143,14 @@ module app.service {
 			return template;
 		}
 
+		/**
+		 * Parse processors and fetch text to replace the processor tags
+		 *
+		 * @param text - Template to search for processors
+		 * @param processorPattern
+		 * @param executer - Function to be execute for every found processor - should return the text which will replace the processor tag
+		 * @return - Template with replaced processor tags
+		 */
 		public parseProcessors(text: string, processorPattern: ProcessorPattern,
 				executer: (processorName: string, processorParameters: string[], startIndex: number, length: number) => string):string {
 			var regex: RegExp = new RegExp(processorPattern.pattern);
@@ -166,11 +178,11 @@ module app.service {
 		/**
 		 * Execute a processor
 		 *
-		 * @param {string} processorName
-		 * @param {string[]} processorParameters - A list with string and path variables
+		 * @param processorName
+		 * @param processorParameters - A list with string and path variables
 		 * 		string variables: 	start and end with ", e.q. "\"a string value\"", "\"variable \, with escaped commas\""
 		 * 		path variables: 	e.q. "path.to.variable"
-		 * @returns {string} - The rendered processor or ""
+		 * @return - The rendered processor or ""
 		 *
 		 * @example:
 		 * 	runProcessor('concat', ["path.to.title", "\":\"", "path.to.value"]);
@@ -211,9 +223,9 @@ module app.service {
 		/**
 		 * Extract the processors name from the matched processor literal
 		 *
-		 * @param {ProcessorPattern} processorPattern
-		 * @param {string} processorLiteral - E.g. $processor:(path.to.variable, "ab")$
-		 * @returns {string}
+		 * @param processorPattern
+		 * @param processorLiteral - E.g. $processor:(path.to.variable, "ab")$
+		 * @return - Processorname or null
 		 */
 		private getProcessorName(processorPattern: ProcessorPattern, processorLiteral: string) {
 			var match;
@@ -229,9 +241,9 @@ module app.service {
 		/**
 		 * Extract processor parameters from processor literal
 		 *
-		 * @param {ProcessorPattern} processorPattern
-		 * @param {string} processorLiteral -  - E.g. $processor:(path.to.variable, "ab")$
-		 * @returns {string[]} parameters - A list with string and path parameters, e.g. ["abc.ef", "\"string param\"", "variable"]
+		 * @param processorPattern
+		 * @param processorLiteral -  - E.g. $processor:(path.to.variable, "ab")$
+		 * @returns parameters - A list with string and path parameters, e.g. ["abc.ef", "\"string param\"", "variable"]
 		 */
 		private getProcessorParameters(processorPattern: ProcessorPattern, processorLiteral: string):string[] {
 			var match;
@@ -257,9 +269,9 @@ module app.service {
 		/**
 		 * find patterns like ${var} or ${var.auto.name} or $!{var}
 		 *
-		 * @param {VariablePattern} variablePattern
-		 * @param {string} text - The template containing variable markers to replace
-		 * @return {string} textToReplace - The template with replaced variable markers
+		 * @param variablePattern
+		 * @param text - The template containing variable markers to replace
+		 * @return textToReplace - The template with replaced variable markers
 		 */
 		public parseVariables(variablePattern: VariablePattern, text: string):string {
 			var regex: RegExp = new RegExp(variablePattern.pattern);
@@ -279,9 +291,9 @@ module app.service {
 		/**
 		 * Split path variables by dots and follow the path inside data to find values
 		 *
-		 * @param {string} path - A path like 'taskTemplate.attributes.assignee'
-		 * @param {object} data - Object with variables like { taskTemplate: { attributes: { assignee: 'admin', description: 'A description' } } }
-		 * @returns {string} value - The found value or ""
+		 * @param path - A path like 'taskTemplate.attributes.assignee'
+		 * @param data - Object with variables like { taskTemplate: { attributes: { assignee: 'admin', description: 'A description' } } }
+		 * @returns value - The found value or ""
 		 */
 		private findValuesInPath(path: string, data: Object): string {
 			var currentSegment:string = null;

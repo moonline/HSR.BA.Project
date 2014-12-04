@@ -33,9 +33,9 @@ module app.service {
 		/**
 		 * log a user in
 		 *
-		 * @param {string} username - Unique identifier (username) of the user
-		 * @param {string} password
-		 * @param {function} callback - Will be called with (true, user) on success successful login and with (false, null) on error
+		 * @param username - Unique identifier (username) of the user
+		 * @param password
+		 * @param callback - Will be called with (true, user) on success successful login and with (false, null) on error
 		 */
 		public login(username: string, password: string, callback: (success: boolean, user: app.domain.model.core.User) => void = (s,i) => {}): void {
 			var method: string = this.resources['login']['method'].toLowerCase();
@@ -57,7 +57,7 @@ module app.service {
 		/**
 		 * log the current user out
 		 *
-		 * @param {function} callback - Will be called with (true) on success successful logout and with (false) on error
+		 * @param callback - Will be called with (true) on success successful logout and with (false) on error
 		 */
 		public logout(callback: (success: boolean) => void = (s) => {}) {
 			var method: string = this.resources['logout']['method'].toLowerCase();
@@ -76,10 +76,10 @@ module app.service {
 		/**
 		 * register a new user
 		 *
-		 * @param {string} username - Unique identifier for the new user
+		 * @param username - Unique identifier for the new user
 		 * @param password
 		 * @param passwordRepeat - Must be same as password. otherwise server will reject request
-		 * @param {function} callback - Will be called with (true) on success successful register and with (false) on error
+		 * @param callback - Will be called with (true) on success successful register and with (false) on error
 		 */
 		public register(username: string, password: string, passwordRepeat: string, callback: (success: boolean, item: app.domain.model.core.User) => void = (s,i) => {}): void {
 			var method: string = this.resources['register']['method'].toLowerCase();
@@ -98,7 +98,7 @@ module app.service {
 		/**
 		 * Finds if a user is logged in and updates the current status
 		 *
-		 * @param {function} callback - Will be called with (user) if a user is logged in and (null) if not.
+		 * @param callback - Will be called with (user) if a user is logged in and (null) if not.
 		 */
 		public loginStatus(callback: (item: app.domain.model.core.User) => void = (i) => {}): void {
 			var method: string = this.resources['status']['method'].toLowerCase();
@@ -119,10 +119,10 @@ module app.service {
 		/**
 		 * Change the password of the current user
 		 *
-		 * @param {string} oldPassword
-		 * @param {string} newPassword
-		 * @param {string} newPasswordRepeat
-		 * @param {function} callback - Will be called with (true) on success successful password change and with (false) on error
+		 * @param oldPassword
+		 * @param newPassword
+		 * @param newPasswordRepeat
+		 * @param callback - Will be called with (true) on success successful password change and with (false) on error
 		 */
 		public changePassword(oldPassword: string, newPassword: string, newPasswordRepeat: string, callback: (success: boolean) => void = (s) => {}) {
 			var method: string = this.resources['changePassword']['method'].toLowerCase();
@@ -148,6 +148,7 @@ module app.service {
 
 		/**
 		 * Angular promise, used to be notified on promise completed
+		 *
 		 * @example:
 		 * 		authenticationService.readyPromise.then(function(user) { $scope.displayUser = user; })
 		 * @returns Angular promise

@@ -16,9 +16,9 @@ module app.domain.repository.core {
 		/**
 		 * Find items by its DKS Node relation by searching in list of all entities
 		 *
-		 * @param {app.domain.model.dks.DksNode} dksNode - The related DKS Node
-		 * @param {function} callback - Will be called with (true, items) on success successful remote/cache call and with (false, []) on error
-		 * @param {boolean} doCache - Returns items from remote api and updates the item cache if false, returns items from local cache if true.
+		 * @param dksNode - The related DKS Node
+		 * @param callback - Will be called with (true, items) on success successful remote/cache call and with (false, []) on error
+		 * @param doCache - Returns items from remote api and updates the item cache if false, returns items from local cache if true.
 		 */
 		public findByDksNode(dksNode: app.domain.model.dks.DksNode, callback: (success: boolean, items: app.domain.model.core.Mapping[]) => void, doCache: boolean = false): void {
 			if(dksNode && dksNode['id']) {

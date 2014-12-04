@@ -10,7 +10,7 @@ module app.domain.factory {
 		 * @param type e.g. String, Number, Object, Array, YourPrototype, ...
 		 * 	-> Own Prototypes must implement static property factoryConfiguration (core.FactoryConfiguration)
 		 * @param data e.g. { "id": 5, "name": "DummyObject" }
-		 * @returns {T}
+		 * @return - New object
 		 */
 		public static createFromJson(type: any, data: any):any {
 			if(type.factoryConfiguration) {
@@ -40,7 +40,7 @@ module app.domain.factory {
 		 * @param type e.g. String, Number, Object, Array, YourPrototype, ...
 		 * 	-> Own Prototypes must implement static property factoryConfiguration (core.FactoryConfiguration)
 		 * @param data e.g. { "id": 5, "name": "DummyObject" }
-		 * @returns {T}
+		 * @return - Updated object
 		 */
 		public static updateFromJson(item: any, type: any, data: any):any {
 			if(type.factoryConfiguration) {
@@ -60,7 +60,6 @@ module app.domain.factory {
 		 *
 		 * @param dataItem e.g. "DummyObject1"
 		 * @param property e.q. { name: "id", type: Number, subType: null }
-		 * @returns {*}
 		 */
 		public static createProperty(dataItem, property): any {
 			if(dataItem) {

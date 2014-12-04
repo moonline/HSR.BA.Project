@@ -14,8 +14,8 @@ module app.domain.repository.core {
 		/**
 		 * Update all property values of a task template
 		 *
-		 * @param {app.domain.model.core.TaskTemplate} taskTemplate - The task template to update property values.
-		 * @param {function} callback - The callback is called with (true) on success and with (false) on error.
+		 * @param taskTemplate - The task template to update property values.
+		 * @param callback - The callback is called with (true) on success and with (false) on error.
 		 */
 		public updateProperties(taskTemplate: app.domain.model.core.TaskTemplate, callback: (success: boolean) => void) {
 			if(!this.resources['updateProperty']) {
@@ -69,9 +69,9 @@ module app.domain.repository.core {
 		/**
 		 * Add a property value to a task template
 		 *
-		 * @param {app.domain.model.core.TaskTemplate} taskTemplate - The task template to update property values.
-		 * @param {app.domain.model.core.TaskPropertyValue} propertyValue - Value to add
-		 * @param {function} callback - The callback is called with (true. taskTemplate) on success and with (false, null) on error.
+		 * @param taskTemplate - The task template to update property values.
+		 * @param propertyValue - Value to add
+		 * @param callback - The callback is called with (true. taskTemplate) on success and with (false, null) on error.
 		 */
 		public addPropertyValue(taskTemplate: app.domain.model.core.TaskTemplate, propertyValue: app.domain.model.core.TaskPropertyValue,
 				callback: (status: boolean, taskTemplate: app.domain.model.core.TaskTemplate) => void) {
@@ -95,9 +95,9 @@ module app.domain.repository.core {
 		/**
 		 * Remove property value
 		 *
-		 * @param {app.domain.model.core.TaskTemplate} taskTemplate - The task template to update property values.
-		 * @param {app.domain.model.core.TaskPropertyValue} propertyValue - Value to add
-		 * @param {function} callback - The callback is called with (true. taskTemplate) on success and with (false, null) on error.
+		 * @param taskTemplate - The task template to update property values.
+		 * @param propertyValue - Value to add
+		 * @param callback - The callback is called with (true. taskTemplate) on success and with (false, null) on error.
 		 */
 		public removePropertyValue(taskTemplate: app.domain.model.core.TaskTemplate, propertyValue: app.domain.model.core.TaskPropertyValue,
 				callback: (status: boolean, taskTemplate: app.domain.model.core.TaskTemplate) => void) {
