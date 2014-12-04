@@ -1,6 +1,6 @@
 {
 	"name": "EEPPI",
-	"version": "0.4",
+	"version": "0.5",
 	"description": "Transform architectural decisions to project planning tasks",
 	"launch_path": "index.html",
 	"icons": {
