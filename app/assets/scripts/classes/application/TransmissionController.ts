@@ -412,7 +412,6 @@ module app.application {
 				}
 			}
 
-			// TODO: refactor all functions using $scope.decisionMappings after this function to user decisionElement.mappings[i].mapping instead of decisionElement.mappings[i]
 			function findDecisionsWithMappings(mappingCollection, decisionMappingCollection) {
 				for (var mi in mappingCollection) {
 					var mappingElement = mappingCollection[mi];

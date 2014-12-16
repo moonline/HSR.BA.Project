@@ -22,7 +22,7 @@ mv /home/vagrant/eeppi_zip/`ls -1 /home/vagrant/eeppi_zip/ | tail -n 1` /home/va
 rmdir /home/vagrant/eeppi_zip
 
 echo "== Starting up EEPPI =="
-sudo /home/vagrant/eeppi/bin/eeppi -Dhttp.port=9990 -DapplyDownEvolutions.default=true -DapplyEvolutions.default=true &
+sudo /home/vagrant/eeppi/bin/eeppi -Dhttp.port=9990 -DapplyDownEvolutions.documentation=true -DapplyEvolutions.documentation=true -DapplyDownEvolutions.default=true -DapplyEvolutions.default=true &
 
 echo "== Create Crontab to start EEPPI after reboot =="
 ( crontab -l 2>/dev/null | grep -Fv ntpdate ; printf -- "@reboot sudo /home/vagrant/eeppi/bin/eeppi -Dhttp.port=9990 -DapplyDownEvolutions.default=true -DapplyEvolutions.default=true &\n" ) | crontab

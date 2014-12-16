@@ -11,15 +11,15 @@
 			<fieldset>
 				<div class="formLine">
 					<label for="registerUserName">Username</label><br />
-					<input type="text" id="registerUserName" name="registerUserName" data-ng-model="registerUserName" />
+					<input type="text" id="registerUserName" name="registerUserName" data-ng-model="registerUserName" placeholder="Username" title="Username, e.g. 'hmeyer'" />
 				</div>
 				<div class="formLine">
 					<label for="registerPassword">Password</label><br />
-					<input type="password" id="registerPassword" name="registerPassword" data-ng-model="registerPassword" />
+					<input type="password" id="registerPassword" name="registerPassword" data-ng-model="registerPassword" placeholder="Password" title="Password" />
 				</div>
 				<div class="formLine">
 					<label for="registerPasswordRepeat">Password Repeat</label><br />
-					<input type="password" id="registerPasswordRepeat" name="registerPasswordRepeat" data-ng-model="registerPasswordRepeat" />
+					<input type="password" id="registerPasswordRepeat" name="registerPasswordRepeat" data-ng-model="registerPasswordRepeat" placeholder="Password repeat" title="password repeat" />
 				</div>
 				<button class="action save" data-ng-disabled="!registerUserName || !registerPassword || !registerPasswordRepeat"
 						data-ng-click="register(registerUserName, registerPassword, registerPasswordRepeat); registerUserName = ''; registerPassword = ''; registerPasswordRepeat = '';"
@@ -40,9 +40,9 @@
 		<form>
 			<div class="formLine" data-columns="5">
 				<label>Change Password</label>
-				<input type="password" name="oldPassword" data-ng-model="oldPassword" placeholder="Old Password"/>
-				<input type="password" name="newPassword" data-ng-model="newPassword" placeholder="New Password"/>
-				<input type="password" name="newPasswordRepeat" data-ng-model="newPasswordRepeat" placeholder="New Password Repeat"/>
+				<input type="password" name="oldPassword" data-ng-model="oldPassword" placeholder="Old Password" title="Old password" />
+				<input type="password" name="newPassword" data-ng-model="newPassword" placeholder="New Password" title="New password" />
+				<input type="password" name="newPasswordRepeat" data-ng-model="newPasswordRepeat" placeholder="New Password Repeat" title="New Password Repeat" />
 				<button class="action update" data-ng-disabled="!oldPassword || !newPassword || !newPasswordRepeat"
 						data-ng-click="changePassword(oldPassword, newPassword, newPasswordRepeat); oldPassword = ''; newPassword = ''; newPasswordRepeat = '';"
 						title="Change the Password for an existing EEPPI-Account.">
@@ -66,10 +66,10 @@
 		<form>
 			<div class="formLine" data-columns="6">
 				<label>New PPT Account</label>
-				<input type="text" name="newPPTAccountUrl" data-ng-model="newPPTAccountUrl" placeholder="PPT Domain (e.g. http://example.com:8080)" />
-				<input type="text" name="newPPTAccountUsername" data-ng-model="newPPTAccountUsername" placeholder="PPT Username" />
-				<input type="password" name="newPPTAccountPassword" data-ng-model="newPPTAccountPassword" placeholder="PPT Password" />
-				<select name="newPPTAccountPPT" data-ng-model="newPPTAccountPPT"
+				<input type="text" name="newPPTAccountUrl" data-ng-model="newPPTAccountUrl" placeholder="PPT Domain (e.g. http://example.com:8080)" title="PPT Domain, e.g. 'http://example.com:8080'" />
+				<input type="text" name="newPPTAccountUsername" data-ng-model="newPPTAccountUsername" placeholder="PPT Username" title="PPT Username, e.g. 'admin'" />
+				<input type="password" name="newPPTAccountPassword" data-ng-model="newPPTAccountPassword" placeholder="PPT Password" title="PPT Password" />
+				<select name="newPPTAccountPPT" data-ng-model="newPPTAccountPPT" title="Project Planning Tool"
 						data-ng-options="ppt.name for ppt in projectPlanningTools" >
 				</select>
 				<button class="action create" data-ng-disabled="!newPPTAccountUrl || !newPPTAccountUsername || !newPPTAccountPassword || !newPPTAccountPPT"
@@ -79,14 +79,14 @@
 				</button>
 			</div>
 			<div class="formLine" data-columns="6">
-				<select data-ng-model="toUpdatePPTAccount" data-ng-options="pptAccount as (pptAccount.pptUrl + ':' + pptAccount.pptUsername) for pptAccount in pptAccounts" data-ng-change="showSelectedPPTAccount(toUpdatePPTAccount)"></select>
-				<input data-ng-disabled="!toUpdatePPTAccount" type="text" name="toUpdatePPTAccountUrl" data-ng-model="toUpdatePPTAccount.pptUrl" placeholder="PPT Domain (e.g. http://example.com:8080)"
+				<select data-ng-model="toUpdatePPTAccount" data-ng-options="pptAccount as (pptAccount.pptUrl + ':' + pptAccount.pptUsername) for pptAccount in pptAccounts" data-ng-change="showSelectedPPTAccount(toUpdatePPTAccount)" title="Account to change"></select>
+				<input data-ng-disabled="!toUpdatePPTAccount" type="text" name="toUpdatePPTAccountUrl" data-ng-model="toUpdatePPTAccount.pptUrl" placeholder="PPT Domain, e.g. 'http://example.com:8080'" title="PPT Domain, e.g. 'http://example.com:8080'"
 					   data-ng-blur="updatePPTAccount(toUpdatePPTAccount)" data-ng-change="pptAccountChanged()"/>
-				<input data-ng-disabled="!toUpdatePPTAccount" type="text" name="toUpdatePPTAccountUsername" data-ng-model="toUpdatePPTAccount.pptUsername" placeholder="PPT Username"
+				<input data-ng-disabled="!toUpdatePPTAccount" type="text" name="toUpdatePPTAccountUsername" data-ng-model="toUpdatePPTAccount.pptUsername" placeholder="PPT Username" title="PPT Username, e.g. 'admin'"
 					   data-ng-blur="updatePPTAccount(toUpdatePPTAccount)" data-ng-change="pptAccountChanged()"/>
-				<input data-ng-disabled="!toUpdatePPTAccount" type="password" name="toUpdatePPTAccountPassword" data-ng-model="toUpdatePPTAccount.pptPassword" placeholder="PPT Password"
+				<input data-ng-disabled="!toUpdatePPTAccount" type="password" name="toUpdatePPTAccountPassword" data-ng-model="toUpdatePPTAccount.pptPassword" placeholder="PPT Password" title="PPT Password"
 					   data-ng-blur="updatePPTAccount(toUpdatePPTAccount)" data-ng-change="pptAccountChanged()"/>
-				<select data-ng-disabled="!toUpdatePPTAccount" name="toUpdatePPTAccountPPT" data-ng-model="toUpdatePPTAccount.ppt" data-ng-options="ppt.name for ppt in projectPlanningTools"
+				<select data-ng-disabled="!toUpdatePPTAccount" name="toUpdatePPTAccountPPT" data-ng-model="toUpdatePPTAccount.ppt" data-ng-options="ppt.name for ppt in projectPlanningTools" title="Project Planning Tool"
 						data-ng-blur="updatePPTAccount(toUpdatePPTAccount)" data-ng-change="pptAccountChanged()"></select>
 				<button data-ng-disabled="!toUpdatePPTAccount" class="action remove" data-ng-click="removePPTAccount(toUpdatePPTAccount); toUpdatePPTAccount = null;"
 						title="Remove Project Planning Tool Account">
